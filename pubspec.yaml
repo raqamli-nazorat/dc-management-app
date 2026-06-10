@@ -28,6 +28,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   shared_preferences: ^2.5.5
+  logger: ^2.7.0
 
 
 dev_dependencies:

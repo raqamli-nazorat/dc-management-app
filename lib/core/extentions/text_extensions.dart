@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart';
 
 extension TextStringExtensions on String {
@@ -9,7 +10,7 @@ extension TextStringExtensions on String {
   Text c(Color color) => Text(this).c(color);
 
   String clearPhoneWithCode() {
-    var clearedPhone = replaceAll(RegExp(r"[^\d+\.]"), '');
+    var clearedPhone = replaceAll(RegExp(r"[^\d+.]"), '');
     if (clearedPhone.length == 9) {
       clearedPhone = "998$clearedPhone";
     }
@@ -37,16 +38,16 @@ extension TextStringExtensions on String {
   }
 
   String clearPhoneNumber() {
-    var clearedPhone = replaceAll(RegExp(r"[^\d+\.]"), '');
+    var clearedPhone = replaceAll(RegExp(r"[^\d+.]"), '');
     return clearedPhone;
   }
 
   String clearPrice() {
-    return replaceAll(RegExp(r"[^\d+\.]"), '');
+    return replaceAll(RegExp(r"[^\d+.]"), '');
   }
 
   String clearCharacters() {
-    return replaceAll(RegExp(r"[^\d+\.]"), '');
+    return replaceAll(RegExp(r"[^\d+.]"), '');
   }
 
   String capitalizePersonName() {
@@ -131,7 +132,6 @@ extension TextExtensions on Text {
     Locale? locale,
     bool? softWrap,
     TextOverflow? overflow,
-    double? textScaleFactor,
     int? maxLines,
     String? semanticsLabel,
     TextWidthBasis? textWidthBasis,
@@ -147,7 +147,6 @@ extension TextExtensions on Text {
         locale: locale ?? this.locale,
         softWrap: softWrap ?? this.softWrap,
         overflow: overflow ?? this.overflow,
-        textScaleFactor: textScaleFactor ?? this.textScaleFactor,
         maxLines: maxLines ?? this.maxLines,
         semanticsLabel: semanticsLabel ?? this.semanticsLabel,
         textWidthBasis: textWidthBasis ?? this.textWidthBasis,
@@ -156,22 +155,22 @@ extension TextExtensions on Text {
       );
 
   Text s(double size) => copyWith(
-        style: (style ?? TextStyle()).copyWith(fontSize: size),
+        style: (style ?? GoogleFonts.manrope()).copyWith(fontSize: size),
       );
 
   Text c(Color color) => copyWith(
-        style: (style ?? TextStyle()).copyWith(color: color),
+        style: (style ?? GoogleFonts.manrope()).copyWith(color: color),
       );
 
   Text w(int fontWeight) {
     final weight = FontWeight.values[fontWeight ~/ 100 - 1];
-    return copyWith(style: (style ?? TextStyle()).copyWith(fontWeight: weight));
+    return copyWith(style: (style ?? GoogleFonts.manrope()).copyWith(fontWeight: weight));
   }
 
   Text a(TextAlign textAlign) => copyWith(style: style, textAlign: textAlign);
 
   Text h(double height) =>
-      copyWith(style: (style ?? TextStyle()).copyWith(height: height));
+      copyWith(style: (style ?? GoogleFonts.manrope()).copyWith(height: height));
 }
 
 extension ResponseExtensions on String {}
