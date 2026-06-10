@@ -1,0 +1,21 @@
+{
+  "@@locale": "en",
+
+  "pinTitle": "Enter PIN code",
+  "pinSubtitle": "Enter your PIN code to confirm sign-in",
+  "pinIncorrect": "Incorrect PIN code",
+  "pinRetry": "Please try again",
+  "pinBlocked": "Access temporarily blocked",
+  "pinBlockedRetryIn": "Try again in: {time}",
+
+  "roleTitle": "You can use the app with multiple roles",
+  "roleSubtitle": "Select one of the following.",
+  "roleAdministrator": "Administrator",
+  "roleManager": "Manager",
+  "roleAccountant": "Accountant",
+  "roleSupervisor": "Supervisor",
+  "roleEmployee": "Employee",
+
+  "commonError": "Something went wrong. Please try again later.",
+  "networkError": "No internet connection. Check your connection."
+}

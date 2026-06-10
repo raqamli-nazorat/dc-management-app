@@ -5,6 +5,19 @@ abstract final class StorageKeys {
   static const languageCode = 'language_code';
   static const onboardingCompleted = 'onboarding_completed';
   static const pendingAuthRoute = 'pending_auth_route';
+  static const sessionExpiresAt = 'session_expires_at';
+  static const attendanceDate = 'attendance_date';
+
+  /// Boshlang‘ich loginda kiritilgan login identifikatori — PIN oqimida
+  /// keshlangan username sifatida ishlatiladi.
+  static const loginUsername = 'login_username';
+
+  /// Tanlangan aktiv rol.
+  static const activeRole = 'active_role';
+
+  /// Boshlang‘ich loginda kiritilgan parol uzunligi — PIN ko‘rsatkichi
+  /// shu uzunlikni dinamik o‘qiydi (qattiq kodlanmaydi).
+  static const pinLength = 'pin_length';
 
   static const all = <String>{
     authToken,
@@ -13,5 +26,10 @@ abstract final class StorageKeys {
     languageCode,
     onboardingCompleted,
     pendingAuthRoute,
+    sessionExpiresAt,
+    attendanceDate,
+    loginUsername,
+    activeRole,
+    pinLength,
   };
 }

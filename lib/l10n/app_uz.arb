@@ -1,0 +1,24 @@
+{
+  "@@locale": "uz",
+
+  "pinTitle": "PIN-kodni kiriting",
+  "pinSubtitle": "Hisobingizga kirishni tasdiqlash uchun PIN-kodni kiriting",
+  "pinIncorrect": "PIN-kod noto‘g‘ri",
+  "pinRetry": "Iltimos, qayta urinib ko‘ring",
+  "pinBlocked": "Kirish vaqtincha bloklandi",
+  "pinBlockedRetryIn": "Qayta urinish uchun: {time}",
+  "@pinBlockedRetryIn": {
+    "placeholders": { "time": { "type": "String" } }
+  },
+
+  "roleTitle": "Siz dasturni bir nechta rol bilan foydalanishingiz mumkin",
+  "roleSubtitle": "Quyidagilardan birini tanlang.",
+  "roleAdministrator": "Administrator",
+  "roleManager": "Menejer",
+  "roleAccountant": "Hisobchi",
+  "roleSupervisor": "Nazoratchi",
+  "roleEmployee": "Xodim",
+
+  "commonError": "Nimadir xato ketdi. Birozdan so‘ng qayta urinib ko‘ring.",
+  "networkError": "Internet aloqasi yo‘q. Ulanishni tekshiring."
+}

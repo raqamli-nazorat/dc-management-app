@@ -69,6 +69,16 @@ class AppColors extends ThemeExtension<AppColors> {
   /// Xarajat kartasi va shunga o‘xshash bosh harf avatarlari uchun fon.
   final Color avatarPlaceholder;
 
+  // ── Control (input / button komponent tokenlari) ──────────────────────
+  /// Input placeholder / ikkilamchi yozuv (Figma: components/control/text/secondary).
+  final Color controlTextSecondary;
+
+  /// O‘chirilgan tugma yozuvi (Figma: components/control/text/disabled).
+  final Color controlTextDisabled;
+
+  /// O‘chirilgan tugma foni (Figma: components/control/bg/disabled).
+  final Color controlBgDisabled;
+
   const AppColors({
     required this.white,
     required this.black,
@@ -118,6 +128,9 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.successSoft,
     required this.successDisabled,
     required this.avatarPlaceholder,
+    required this.controlTextSecondary,
+    required this.controlTextDisabled,
+    required this.controlBgDisabled,
   });
 
   factory AppColors.light() => const AppColors(
@@ -152,7 +165,7 @@ class AppColors extends ThemeExtension<AppColors> {
     strokeWhite: Color(0xFFFFFFFF),
     iconStrong: Color(0xFF1A1D2E),
     iconSub: Color(0xFF5B6078),
-    iconSoft: Color(0xFF9AA1B5),
+    iconSoft: Color(0xFF141B34),
     iconDisabled: Color(0xFFC5CAD8),
     iconWhite: Color(0xFFFFFFFF),
     iconAccent: Color(0xFF526ED3),
@@ -169,6 +182,9 @@ class AppColors extends ThemeExtension<AppColors> {
     successSoft: Color(0xFFDCFCE7),
     successDisabled: Color(0xFFF0FDF4),
     avatarPlaceholder: Color(0xFFDADFF0),
+    controlTextSecondary: Color(0xFF757575),
+    controlTextDisabled: Color(0xFFA3A3A3),
+    controlBgDisabled: Color(0xFFF2F1F0),
   );
 
   factory AppColors.dark() => const AppColors(
@@ -177,18 +193,18 @@ class AppColors extends ThemeExtension<AppColors> {
     shadow: Color(0x3D000000), // alpha 0.24
     backgroundBase: Color(0xFF000000),
     backgroundBase2: Color(0xFF111111),
-    backgroundElevation1: Color(0xFF191A1A),
+    backgroundElevation1: Color(0xFF161B22),
     backgroundElevation1Alt: Color(0xFF222323),
     backgroundElevation2: Color(0xFFE9ECF5),
     backgroundElevation2Alt: Color(0xFF303131),
     backgroundElevation3: Color(0xFF3A3B3B),
     backgroundElevation3Alt: Color(0xFF474848),
-    accentStrong: Color(0xFF3F57B3),
-    accentSub: Color(0xFF526ED3),
+    accentStrong: Color(0xFF2B3553),
+    accentSub: Color(0xFF344064),
     accentSoft: Color(0xFF7F95E6),
     accentDisabled: Color(0xFF1E2B5C),
     accentWhite: Color(0xFFFFFFFF),
-    textStrong: Color(0xFFFFFFFF),
+    textStrong: Color(0xFFE6EDF3),
     textSub: Color(0xFFC2C8E0),
     textSoft: Color(0xFF8E95B5),
     textDisabled: Color(0xFF5C627D),
@@ -197,13 +213,13 @@ class AppColors extends ThemeExtension<AppColors> {
     textInWhite: Color(0xFFFFFFFF),
     textInDark: Color(0xFF000000),
     strokeStrong: Color(0xFF191A1A),
-    strokeSub: Color(0xFF292A2A),
+    strokeSub: Color(0xFF262C36),
     strokeSoft: Color(0xFF474848),
     strokeAccent: Color(0xFF7F95E6),
     strokeWhite: Color(0xFFFFFFFF),
     iconStrong: Color(0xFFFFFFFF),
     iconSub: Color(0xFFC2C8E0),
-    iconSoft: Color(0xFF8E95B5),
+    iconSoft: Color(0xFFC2C8E0),
     iconDisabled: Color(0xFF5C627D),
     iconWhite: Color(0xFFFFFFFF),
     iconAccent: Color(0xFF7F95E6),
@@ -220,6 +236,27 @@ class AppColors extends ThemeExtension<AppColors> {
     successSoft: Color(0xFF142E1B),
     successDisabled: Color(0xFF1B3D24),
     avatarPlaceholder: Color(0xFF3A3B3B),
+    controlTextSecondary: Color(0xFF757575),
+    controlTextDisabled: Color(0xFFA3A3A3),
+    controlBgDisabled: Color(0xFFF2F1F0),
+  );
+
+  /// Auth gradienti ustidagi matn rangi (sarlavha + tavsif).
+  /// Gradient har ikkala rejimda ham OCH — shu sabab matn doim TO‘Q bo‘ladi
+  /// (tema rejimiga bog‘liq emas).
+  static const Color authForeground = Color(0xFF1A1D2E);
+
+  /// Auth/login fon gradienti (Figma: 95.84°, oqish-binafsha → ko‘k).
+  /// Brend gradienti — har ikkala rejimda ham bir xil.
+  static const Gradient authBackgroundGradient = LinearGradient(
+    begin: Alignment(-1.0, -0.1),
+    end: Alignment(1.0, 0.1),
+    colors: [
+      Color(0xFFE6ECFF),
+      Color(0xFFA5B4FC),
+      Color(0xFF6E86E1),
+    ],
+    stops: [0.0025, 0.3575, 1.0],
   );
 
   /// Access from anywhere: `Theme.of(context).extension<AppColors>()!`
@@ -282,6 +319,9 @@ class AppColors extends ThemeExtension<AppColors> {
     Color? successSoft,
     Color? successDisabled,
     Color? avatarPlaceholder,
+    Color? controlTextSecondary,
+    Color? controlTextDisabled,
+    Color? controlBgDisabled,
   }) => AppColors(
     white: white ?? this.white,
     black: black ?? this.black,
@@ -334,6 +374,9 @@ class AppColors extends ThemeExtension<AppColors> {
     successSoft: successSoft ?? this.successSoft,
     successDisabled: successDisabled ?? this.successDisabled,
     avatarPlaceholder: avatarPlaceholder ?? this.avatarPlaceholder,
+    controlTextSecondary: controlTextSecondary ?? this.controlTextSecondary,
+    controlTextDisabled: controlTextDisabled ?? this.controlTextDisabled,
+    controlBgDisabled: controlBgDisabled ?? this.controlBgDisabled,
   );
 
   @override
@@ -414,6 +457,21 @@ class AppColors extends ThemeExtension<AppColors> {
       avatarPlaceholder: Color.lerp(
         avatarPlaceholder,
         other.avatarPlaceholder,
+        t,
+      )!,
+      controlTextSecondary: Color.lerp(
+        controlTextSecondary,
+        other.controlTextSecondary,
+        t,
+      )!,
+      controlTextDisabled: Color.lerp(
+        controlTextDisabled,
+        other.controlTextDisabled,
+        t,
+      )!,
+      controlBgDisabled: Color.lerp(
+        controlBgDisabled,
+        other.controlBgDisabled,
         t,
       )!,
     );

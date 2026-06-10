@@ -6,7 +6,9 @@ class Routes implements Coordinate {
     required this.path,
   });
 
+  @override
   final String name;
+  @override
   final String path;
 
   /// Auth
@@ -16,6 +18,7 @@ class Routes implements Coordinate {
   static const checkCode = Routes._(name: 'check_code_page', path: '/check_code');
   static const confirmCode = Routes._(name: "confirm_code", path: "/confirm_code");
   static const pinCode = Routes._(name: "pin_code", path: "/pin_code");
+  static const roleSelect = Routes._(name: "role_select", path: "/role_select");
 
   static const root = Routes._(name: 'root', path: '/');
   static const home = Routes._(name: 'home_page', path: '/home_page');
