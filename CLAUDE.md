@@ -35,14 +35,22 @@ Dependency direction is strictly inward: presentation → domain ← data. Apply
 ### Navigation — centralized GoRouter
 **All** routing lives in `lib/config/routes/coordinator.dart` (`AppRouter`). Rules:
 - Route descriptors are declared **only** in `lib/config/routes/entity/routes.dart` (`Routes`, implementing `Coordinate`). Navigate by **name**, never raw path strings: `context.goNamed(Routes.home.name)`.
-- A single `redirect` guard makes **all** routing decisions from `SessionBloc` state. `GoRouterRefreshStream` re-runs the guard on every bloc emission — so login / logout / session-timeout / attendance transitions reroute automatically. **Never** branch on auth state inside a page or scatter imperative `context.go()` for guard concerns.
-- Flow: `splash` (status unknown) → `login` (unauthenticated/expired) → attendance gate (`checkCode`, authenticated + `attendanceRequired`) → `home`.
-- Add a screen: declare in `routes.dart` → add `GoRoute` in `coordinator.dart` → it is auto-protected by the guard (anything not splash/login/attendance requires full auth).
-- Session timeout: token + `sessionExpiresAt` in storage; trigger logout-to-login from a 401 interceptor via `getIt<SessionBloc>().add(const SessionExpired())`.
+- A single `redirect` guard makes **all** routing decisions from `SessionBloc` state. `GoRouterRefreshStream` re-runs the guard on every bloc emission — so login / pin / role-selection / logout transitions reroute automatically. **Never** branch on auth state inside a page or scatter imperative `context.go()` for guard concerns.
+- Flow: `splash` (status `unknown`) → `login` (no cached login) → `pinCode` (`pinRequired`: cached login, re-auth) → `roleSelect` (`roleSelectionRequired`: >1 role, none chosen) → `home`. `checkCode` (attendance) route still exists but is **not** in the guard chain.
+- Add a screen: declare in `routes.dart` → add `GoRoute` in `coordinator.dart` → it is auto-protected by the guard (anything not splash/login/pin/roleSelect requires full auth).
 
 ### State management — BLoC only
 Use the **BLoC** pattern (events → states) for all feature state. **Cubits are not permitted** anywhere. Provide blocs via `BlocProvider` / `getIt`; UI reads with `context.read`/`BlocBuilder`/`BlocListener`.
-> App-wide session/auth/attendance state lives in the app-level `SessionBloc` (`lib/app/bloc/session_bloc.dart`) — it drives the router guard. The former `SessionCubit` has been fully migrated; no cubits remain.
+> App-wide session/auth state lives in the app-level `SessionBloc` (`lib/app/bloc/session_bloc.dart`) — it drives the router guard. Statuses: `unknown` / `unauthenticated` / `pinRequired` / `authenticated` (+ `roleSelectionRequired`). No cubits remain.
+
+### Networking
+`Dio` built in `injection_container` (`DioFactory.create()` from `core/network/`), wrapped by `DioClient`. Interceptors, in order: `AuthInterceptor` (attaches `Bearer` from `TokenService`) → `RefreshInterceptor` → `LoggingInterceptor`. The `RefreshInterceptor` is a `QueuedInterceptor`: on a 401 from a **non-auth** path it refreshes the access token via a separate interceptor-free `Dio` and replays the request; on refresh failure it fires `SessionExpired`. It **skips** `/auth/login` and `/auth/refresh` so a wrong password never triggers the refresh/logout loop. Endpoints live in `core/constants/api_constants.dart`; the backend wraps responses in `{ data, error: { errorId, errorMsg }, success }` — data sources unwrap this and map `errorId` → typed `Exception`s (`core/error/`), repos map those to `Failure`s, blocs map `Failure`s to localized text.
+
+### Auth + PIN + role flow
+- First login (`LoginBloc`) stores access+refresh tokens, cached user, **and** the typed login username + password length in storage (`StorageKeys.loginUsername` / `pinLength`).
+- `SessionBloc` bootstrap is intentionally token-agnostic: if a cached login exists it emits `pinRequired` (PIN is required on **every** app launch and on resume — see the lifecycle observer in `app/app.dart`), else `unauthenticated`.
+- The PIN flow has its own dedicated bloc (`features/auth/presentation/pin/bloc/`). PIN **is** the password: a full PIN fires the login API with the cached username. Indicator slot count is **dynamic** (`pinLength` from storage, never hardcoded). 429 → parse remaining seconds from `errorMsg`, run an in-bloc countdown (`Timer.periodic`), render MM:SS blocked state.
+- On auth success `SessionLoggedIn(token, roles)`: 1 role → straight to home; >1 → `roleSelect` (roles listed dynamically from the API response).
 
 ## UI rules
 
@@ -51,6 +59,7 @@ Use the **BLoC** pattern (events → states) for all feature state. **Cubits are
 - **Responsiveness:** use `LayoutBuilder` + adaptive constraints for full responsiveness. Always guard text overflow (`maxLines`, `TextOverflow.ellipsis`, `Flexible`/`Expanded`). Components must degrade gracefully across screen sizes.
 - **Typography:** style text via the extensions in `lib/core/extentions/text_extensions.dart` — chainable: `'label'.s(16.sp).w(600).c(color)`, plus `.a()` (align) and `.h()` (height). Default typeface is `GoogleFonts.manrope` (already the fallback inside those extensions); enforce Manrope everywhere.
 - **Reuse:** prefer existing custom widgets (`lib/core/widgets/`). New shared components must be modular, configurable, and parameterized for multiple call sites — not one-off.
+- **Assets/icons:** reference only via the generated `Assets` class (`core/gen/assets.gen.dart`, flutter_gen) — never hardcode paths or `Icons.*` material glyphs for design icons. Render SVGs with a theme-token `colorFilter` (`Assets.icons.x.svg(colorFilter: ColorFilter.mode(colors.iconStrong, BlendMode.srcIn))`) so they adapt to light/dark. After adding files under `assets/`, regenerate with `dart run build_runner build --delete-conflicting-outputs`.
 
 ## Theme & color
 
