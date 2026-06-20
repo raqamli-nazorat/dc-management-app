@@ -32,13 +32,37 @@ class _AppState extends State<App> with WidgetsBindingObserver {
     super.dispose();
   }
 
+/*  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Fon timeout’i (3 daqiqa) PIN qulfini boshqaradi:
+    // fonga o‘tganda vaqt belgilanadi, qaytganda timeout tekshiriladi.
+    switch (state) {
+      case AppLifecycleState.paused:
+      case AppLifecycleState.hidden:
+      case AppLifecycleState.detached:
+        _session.add(const SessionBackgrounded());
+      case AppLifecycleState.resumed:
+        _session.add(const SessionResumed());
+      case AppLifecycleState.inactive:
+        break;
+    }
+  }*/
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // PIN har ilovaga "kirishda" ham talab qilinadi: foreground'ga qaytganda
-    // autentifikatsiyalangan bo‘lsa — sessiyani qayta baholaymiz (PIN gate).
-    if (state == AppLifecycleState.resumed &&
-        _session.state.isAuthenticated) {
-      _session.add(const SessionStarted());
+    // Faqat `paused` (haqiqiy background) va `detached` (kill) da vaqt belgilanadi.
+    // `hidden`/`inactive` ikki yo‘nalishda ham (chiqish VA qaytish) fire bo‘ladi —
+    // ularni stamp qilish resume’da `lastActiveAt`ni qayta yozib, timeout’ni buzadi.
+    switch (state) {
+      case AppLifecycleState.paused || AppLifecycleState.detached:
+        _session.add(const SessionBackgrounded());
+      case AppLifecycleState.resumed:
+        _session.add(const SessionResumed());
+        // Event-loop nudge: bloc async event navbatdan o‘tgach (microtask) guard
+        // qayta ishga tushadi — `pinRequired` holati allaqachon emit qilingan.
+        Future.delayed(Duration.zero, () => getIt<AppRouter>().router.refresh());
+      case AppLifecycleState.inactive || AppLifecycleState.hidden:
+        break;
     }
   }
 

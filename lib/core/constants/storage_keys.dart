@@ -19,6 +19,10 @@ abstract final class StorageKeys {
   /// shu uzunlikni dinamik o‘qiydi (qattiq kodlanmaydi).
   static const pinLength = 'pin_length';
 
+  /// Ilova oxirgi marta faol bo‘lgan (fonga o‘tgan) vaqt — PIN qulfining
+  /// 3 daqiqalik fon timeout’ini hisoblash uchun.
+  static const lastActiveAt = 'last_active_at';
+
   static const all = <String>{
     authToken,
     refreshToken,
@@ -31,5 +35,6 @@ abstract final class StorageKeys {
     loginUsername,
     activeRole,
     pinLength,
+    lastActiveAt,
   };
 }

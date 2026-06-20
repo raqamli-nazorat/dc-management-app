@@ -48,7 +48,7 @@ Use the **BLoC** pattern (events → states) for all feature state. **Cubits are
 
 ### Auth + PIN + role flow
 - First login (`LoginBloc`) stores access+refresh tokens, cached user, **and** the typed login username + password length in storage (`StorageKeys.loginUsername` / `pinLength`).
-- `SessionBloc` bootstrap is intentionally token-agnostic: if a cached login exists it emits `pinRequired` (PIN is required on **every** app launch and on resume — see the lifecycle observer in `app/app.dart`), else `unauthenticated`.
+- PIN re-auth is gated by a **3-minute background timeout** (`SessionBloc.pinLockTimeout`): the lifecycle observer in `app/app.dart` stamps `StorageKeys.lastActiveAt` on background (`SessionBackgrounded`) and re-checks on resume (`SessionResumed`). Bootstrap + resume emit `authenticated` when a token exists and the gap since `lastActiveAt` is ≤ 3 min, else `pinRequired` (cached login) / `unauthenticated` (no cached login). So leaving and returning within 3 min resumes straight to home; longer forces PIN.
 - The PIN flow has its own dedicated bloc (`features/auth/presentation/pin/bloc/`). PIN **is** the password: a full PIN fires the login API with the cached username. Indicator slot count is **dynamic** (`pinLength` from storage, never hardcoded). 429 → parse remaining seconds from `errorMsg`, run an in-bloc countdown (`Timer.periodic`), render MM:SS blocked state.
 - On auth success `SessionLoggedIn(token, roles)`: 1 role → straight to home; >1 → `roleSelect` (roles listed dynamically from the API response).
 

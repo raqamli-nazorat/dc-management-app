@@ -1,4 +1,4 @@
-package raqamli.nazorat.dc_management_app.dc_management_app
+package raqamli.nazorat.dc_management_app
 
 import io.flutter.embedding.android.FlutterActivity
 

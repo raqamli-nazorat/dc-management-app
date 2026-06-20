@@ -95,7 +95,11 @@ class AppRouter {
       return onLogin ? null : Routes.login.path;
     }
 
-    // Cached login, needs PIN re-auth -> PIN screen.
+    // Cached login, needs PIN re-auth -> PIN screen. Purely state-driven:
+    // `_onResumed` emits `pinRequired` on a real background→resume timeout, and
+    // the resume nudge (`router.refresh()`) re-runs this guard once that state
+    // has settled. No free-running time predicate here — that would falsely
+    // lock during long foreground use (lastActiveAt isn't bumped in foreground).
     if (session.isPinRequired) {
       return onPin ? null : Routes.pinCode.path;
     }

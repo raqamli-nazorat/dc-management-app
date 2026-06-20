@@ -54,3 +54,13 @@ class SessionLogoutRequested extends SessionEvent {
 class SessionKeepAliveRequested extends SessionEvent {
   const SessionKeepAliveRequested();
 }
+
+/// Ilova fonga o‘tdi — fon timeout’i uchun vaqt belgilanadi.
+class SessionBackgrounded extends SessionEvent {
+  const SessionBackgrounded();
+}
+
+/// Ilova foreground’ga qaytdi — fon timeout’i tekshiriladi (PIN qulfi).
+class SessionResumed extends SessionEvent {
+  const SessionResumed();
+}
