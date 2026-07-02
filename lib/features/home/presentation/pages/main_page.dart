@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -5,23 +6,36 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../config/routes/entity/routes.dart';
 import '../../../../config/theme/app_colors.dart';
+import '../../../../core/error/failures.dart';
 import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
-import '../../../../core/util/app_options.dart';
-import '../../../../core/widgets/tui_avatar.dart';
 import '../../../../injection_container.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../profile/presentation/bloc/profile_bloc.dart';
+import '../../../statistics/presentation/bloc/statistics_bloc.dart';
+import '../../../statistics/presentation/widgets/chart_card.dart';
+import '../../../statistics/presentation/widgets/meetings_donut_chart.dart';
+import '../../../statistics/presentation/widgets/projects_bar_chart.dart';
+import '../../../statistics/presentation/widgets/statistics_period_selector.dart';
+import '../../../statistics/presentation/widgets/tasks_line_chart.dart';
 
 /// "Bosh sahifa" tabining tanasi — header (foydalanuvchi ma’lumotlari) +
-/// vaqtinchalik tema test paneli.
+/// davr selektori + statistik grafiklar (vazifalar / loyihalar / yig‘ilishlar).
 class MainPage extends StatelessWidget {
   const MainPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<ProfileBloc>(
-      create: (_) => getIt<ProfileBloc>()..add(const ProfileRequested()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<ProfileBloc>(
+          create: (_) => getIt<ProfileBloc>()..add(const ProfileRequested()),
+        ),
+        BlocProvider<StatisticsBloc>(
+          create: (_) =>
+              getIt<StatisticsBloc>()..add(const StatisticsRequested()),
+        ),
+      ],
       child: const _MainView(),
     );
   }
@@ -30,16 +44,60 @@ class MainPage extends StatelessWidget {
 class _MainView extends StatelessWidget {
   const _MainView();
 
+  /// Statistika + profilni qayta yuklaydi va ikkalasi ham `loading`dan
+  /// chiqquncha kutadi — `RefreshIndicator` shu Future tugaguncha aylanadi.
+  Future<void> _onRefresh(BuildContext context) {
+    final statisticsBloc = context.read<StatisticsBloc>();
+    final profileBloc = context.read<ProfileBloc>();
+    statisticsBloc.add(const StatisticsRequested());
+    profileBloc.add(const ProfileRequested());
+    return Future.wait([
+      statisticsBloc.stream
+          .firstWhere((s) => s.status != StatisticsStatus.loading),
+      profileBloc.stream.firstWhere((s) => s.status != ProfileStatus.loading),
+    ]);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      bottom: false,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: const [
-          _Header(),
-          // TODO: tanlangan tab tanasi bilan almashtiriladi.
-          Expanded(child: _ThemeToggleTestPanel()),
+    final colors = AppColors.of(context);
+    // Sliver AppBar `CustomScrollView` ichida (pinned) — indikator shu
+    // scrollable'ning tepasiga bog‘lanadi, shu bois AppBar balandligicha
+    // pastga suriladi (aks holda ustidan chiqib qoladi).
+    final appBarHeight = MediaQuery.paddingOf(context).top + 64.h;
+
+    return RefreshIndicator(
+      onRefresh: () => _onRefresh(context),
+      color: colors.accentSub,
+      edgeOffset: appBarHeight,
+      child: CustomScrollView(
+        physics: const BouncingScrollPhysics(
+          parent: AlwaysScrollableScrollPhysics(),
+        ),
+        slivers: [
+          SliverAppBar(
+            pinned: true,
+            toolbarHeight: 64.h,
+            titleSpacing: 0,
+            automaticallyImplyLeading: false,
+            backgroundColor: colors.backgroundBase,
+            surfaceTintColor: Colors.transparent,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            title: const _Header(),
+          ),
+          SliverToBoxAdapter(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SizedBox(height: 4.h),
+                const _PeriodRow(),
+                SizedBox(height: 16.h),
+                const _StatisticsSection(),
+                SizedBox(height: 24.h),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -68,7 +126,7 @@ class _Header extends StatelessWidget {
           padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 12.h),
           child: Row(
             children: [
-              TuiAvatar(initial: name.isEmpty ? '?' : name, size: 40),
+              _Avatar(url: profile?.avatar ?? '', initial: name),
               SizedBox(width: 8.w),
               Expanded(
                 child: Column(
@@ -91,7 +149,7 @@ class _Header extends StatelessWidget {
               ),
               SizedBox(width: 8.w),
               _HeaderIconButton(icon: Assets.icons.icTaskDaliy, onTap: () {}),
-              SizedBox(width: 8.w),
+              SizedBox(width: 16.w),
               _HeaderIconButton(
                 icon: Assets.icons.icNotification,
                 onTap: () => context.pushNamed(Routes.notifications.name),
@@ -100,6 +158,78 @@ class _Header extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+/// Header avatar — Figma "Field" (40×40, radius 16, bordered) ichida
+/// "tui-avatar" (32×32, radius 12): rasm bo‘lsa tasvir, aks holda bosh harf.
+class _Avatar extends StatelessWidget {
+  const _Avatar({required this.url, required this.initial});
+
+  final String url;
+  final String initial;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    const innerSize = 32.0;
+    final innerRadius = BorderRadius.circular(12.r);
+
+    Widget inner;
+    if (url.isNotEmpty) {
+      inner = ClipRRect(
+        borderRadius: innerRadius,
+        child: CachedNetworkImage(
+          imageUrl: url,
+          width: innerSize.w,
+          height: innerSize.w,
+          fit: BoxFit.cover,
+          placeholder: (_, _) => _AvatarLetter(initial: initial),
+          errorWidget: (_, _, _) => _AvatarLetter(initial: initial),
+        ),
+      );
+    } else {
+      inner = _AvatarLetter(initial: initial);
+    }
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: colors.backgroundElevation1,
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: colors.strokeStrong, width: 1.w),
+      ),
+      child: SizedBox(
+        width: 40.w,
+        height: 40.w,
+        child: Center(
+          child: SizedBox(
+            width: innerSize.w,
+            height: innerSize.w,
+            child: inner,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AvatarLetter extends StatelessWidget {
+  const _AvatarLetter({required this.initial});
+
+  final String initial;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final letter = initial.isEmpty ? '?' : initial.characters.first.toUpperCase();
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: colors.backgroundElevation3,
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      child: Center(child: letter.s(13.sp).w(800).c(colors.textSub)),
     );
   }
 }
@@ -119,6 +249,7 @@ class _HeaderIconButton extends StatelessWidget {
       borderRadius: BorderRadius.circular(12.r),
       child: DecoratedBox(
         decoration: BoxDecoration(
+          color: colors.backgroundElevation1,
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(color: colors.strokeStrong, width: 1.w),
         ),
@@ -138,78 +269,146 @@ class _HeaderIconButton extends StatelessWidget {
   }
 }
 
-/// TEMPORARY: tema rejimini almashtirish uchun test paneli. Dizayn bo‘yicha
-/// bu yerda tab tanasi bo‘ladi — panel faqat light/dark tekshirish uchun turadi.
-class _ThemeToggleTestPanel extends StatelessWidget {
-  const _ThemeToggleTestPanel();
+/// "Davrni tanlang" + segment selektori qatori.
+class _PeriodRow extends StatelessWidget {
+  const _PeriodRow();
 
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
-    final options = AppOptions.of(context);
+    final l10n = AppLocalizations.of(context);
 
-    void setMode(ThemeMode mode) =>
-        AppOptions.update(context, options.copyWith(themeMode: mode));
-
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          'Theme (test)'.s(13.sp).w(600).c(colors.textSub),
-          SizedBox(height: 12.h),
-          Row(
-            mainAxisSize: MainAxisSize.min,
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      child: BlocBuilder<StatisticsBloc, StatisticsState>(
+        buildWhen: (a, b) => a.period != b.period,
+        builder: (context, state) {
+          return Row(
             children: [
-              for (final mode in ThemeMode.values) ...[
-                _ModeChip(
-                  label: mode.name,
-                  selected: options.themeMode == mode,
-                  onTap: () => setMode(mode),
-                ),
-                SizedBox(width: 8.w),
-              ],
+              Expanded(
+                child: l10n.statPeriodSelect
+                    .s(14.sp)
+                    .w(600)
+                    .c(colors.textStrong)
+                    .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+              ),
+              SizedBox(width: 8.w),
+              StatisticsPeriodSelector(
+                selected: state.period,
+                onChanged: (period) => context
+                    .read<StatisticsBloc>()
+                    .add(StatisticsPeriodChanged(period)),
+              ),
             ],
-          ),
-        ],
+          );
+        },
       ),
     );
   }
 }
 
-class _ModeChip extends StatelessWidget {
-  const _ModeChip({
-    required this.label,
-    required this.selected,
-    required this.onTap,
-  });
+/// Grafiklar bo‘limi — davr statistikasi holatiga qarab yuklanish / xato /
+/// grafiklar ko‘rsatiladi.
+class _StatisticsSection extends StatelessWidget {
+  const _StatisticsSection();
 
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<StatisticsBloc, StatisticsState>(
+      builder: (context, state) {
+        final stats = state.periodStatistics;
+
+        if (stats == null) {
+          if (state.status == StatisticsStatus.failure) {
+            return _StatisticsError(failure: state.failure);
+          }
+          return const _StatisticsLoading();
+        }
+
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              ChartCard(
+                title: AppLocalizations.of(context).statTasksTitle,
+                child: TasksLineChart(stats: stats.tasks),
+              ),
+              SizedBox(height: 16.h),
+              ChartCard(
+                title: AppLocalizations.of(context).statProjectsTitle,
+                child: ProjectsBarChart(stats: stats.projects),
+              ),
+              SizedBox(height: 16.h),
+              ChartCard(
+                title: AppLocalizations.of(context).statMeetingsTitle,
+                child: MeetingsDonutChart(stats: stats.meetings),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _StatisticsLoading extends StatelessWidget {
+  const _StatisticsLoading();
 
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
+    return SizedBox(
+      height: 320.h,
+      child: Center(
+        child: CircularProgressIndicator(
+          strokeWidth: 2.5.w,
+          color: colors.accentSub,
+        ),
+      ),
+    );
+  }
+}
 
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(10.r),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: selected ? colors.accentSub : colors.backgroundElevation1,
-          borderRadius: BorderRadius.circular(10.r),
-          border: Border.all(
-            color: selected ? colors.strokeAccent : colors.strokeStrong,
-            width: 1.w,
+class _StatisticsError extends StatelessWidget {
+  const _StatisticsError({required this.failure});
+
+  final Failure? failure;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final l10n = AppLocalizations.of(context);
+    final message =
+        failure is NetworkFailure ? l10n.networkError : l10n.commonError;
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 40.h),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          message
+              .s(13.sp)
+              .w(500)
+              .c(colors.textSub)
+              .copyWith(textAlign: TextAlign.center),
+          SizedBox(height: 16.h),
+          InkWell(
+            onTap: () =>
+                context.read<StatisticsBloc>().add(const StatisticsRequested()),
+            borderRadius: BorderRadius.circular(12.r),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: colors.accentSub,
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+                child: l10n.commonRetry.s(13.sp).w(600).c(colors.textWhite),
+              ),
+            ),
           ),
-        ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
-          child: label
-              .s(12.sp)
-              .w(600)
-              .c(selected ? colors.textWhite : colors.textSub),
-        ),
+        ],
       ),
     );
   }

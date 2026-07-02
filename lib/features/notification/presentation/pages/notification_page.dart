@@ -63,30 +63,70 @@ class _NotificationView extends StatelessWidget {
           SizedBox(width: 4.w),
         ],
       ),
-      body: BlocBuilder<NotificationBloc, NotificationState>(
-        builder: (context, state) {
-          switch (state.status) {
-            case NotificationStatus.loading:
-            case NotificationStatus.initial:
-              return const Center(child: CircularProgressIndicator());
-            case NotificationStatus.failure:
-              return _ErrorState(
-                onRetry: () => context
-                    .read<NotificationBloc>()
-                    .add(const NotificationsRequested()),
-              );
-            case NotificationStatus.success:
-              if (state.items.isEmpty) {
-                return Center(
-                  child: l10n.notificationsEmpty
-                      .s(14.sp)
-                      .w(500)
-                      .c(colors.textSub),
+      body: RefreshIndicator(
+        color: colors.accentSub,
+        onRefresh: () => _onRefresh(context),
+        child: BlocBuilder<NotificationBloc, NotificationState>(
+          builder: (context, state) {
+            switch (state.status) {
+              case NotificationStatus.loading:
+              case NotificationStatus.initial:
+                return const _CenteredScrollable(
+                  child: CircularProgressIndicator(),
                 );
-              }
-              return _NotificationList(items: state.items);
-          }
-        },
+              case NotificationStatus.failure:
+                return _CenteredScrollable(
+                  child: _ErrorState(
+                    onRetry: () => context
+                        .read<NotificationBloc>()
+                        .add(const NotificationsRequested()),
+                  ),
+                );
+              case NotificationStatus.success:
+                if (state.items.isEmpty) {
+                  return _CenteredScrollable(
+                    child: l10n.notificationsEmpty
+                        .s(14.sp)
+                        .w(500)
+                        .c(colors.textSub),
+                  );
+                }
+                return _NotificationList(items: state.items);
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  /// Bildirishnomalarni qayta yuklaydi va `loading`dan chiqquncha kutadi —
+  /// `RefreshIndicator` shu Future tugaguncha aylanadi.
+  Future<void> _onRefresh(BuildContext context) {
+    final bloc = context.read<NotificationBloc>();
+    bloc.add(const NotificationsRequested());
+    return bloc.stream
+        .firstWhere((s) => s.status != NotificationStatus.loading);
+  }
+}
+
+/// Ro‘yxat bo‘lmagan holatlar (yuklanish/xato/bo‘sh) uchun — `RefreshIndicator`
+/// ishlashi uchun har doim aylantirish mumkin bo‘lgan konteyner.
+class _CenteredScrollable extends StatelessWidget {
+  const _CenteredScrollable({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) => ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        children: [
+          SizedBox(
+            height: constraints.maxHeight,
+            child: Center(child: child),
+          ),
+        ],
       ),
     );
   }
@@ -118,6 +158,7 @@ class _NotificationList extends StatelessWidget {
     final groups = _grouped();
 
     return ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
       padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 24.h),
       children: [
         for (final entry in groups.entries) ...[

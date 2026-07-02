@@ -29,6 +29,35 @@
   "navFinance": "Finance",
   "navReports": "Reports",
 
+  "statPeriodSelect": "Select period",
+  "statPeriod1Month": "1 month",
+  "statPeriod3Months": "3 months",
+  "statPeriod6Months": "6 months",
+  "statPeriod1Year": "1 year",
+
+  "statTasksTitle": "Tasks",
+  "statTaskTodo": "To do",
+  "statTaskInProgress": "In progress",
+  "statTaskDone": "Done",
+  "statTaskProduction": "In production",
+  "statTaskChecked": "Checked",
+  "statTaskRejected": "Rejected",
+  "statTaskOverdue": "Overdue",
+
+  "statProjectsTitle": "Projects",
+  "statProjectCompleted": "Completed",
+  "statProjectActive": "Active",
+  "statProjectCancelled": "Cancelled",
+  "statProjectOverdue": "Overdue",
+  "statProjectPlanning": "Planning",
+
+  "statMeetingsTitle": "Meetings dynamics",
+  "statMeetingAttended": "Attended",
+  "statMeetingExcused": "Excused",
+  "statMeetingUnexcused": "Unexcused",
+
+  "statEmpty": "No data",
+
   "commonError": "Something went wrong. Please try again later.",
   "networkError": "No internet connection. Check your connection."
 }

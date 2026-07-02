@@ -85,6 +85,78 @@ class AppLocalizationsUz extends AppLocalizations {
   String get navReports => 'Hisobotlar';
 
   @override
+  String get statPeriodSelect => 'Davrni tanlang';
+
+  @override
+  String get statPeriod1Month => '1 oy';
+
+  @override
+  String get statPeriod3Months => '3 oy';
+
+  @override
+  String get statPeriod6Months => '6 oy';
+
+  @override
+  String get statPeriod1Year => '1 yil';
+
+  @override
+  String get statTasksTitle => 'Vazifalar';
+
+  @override
+  String get statTaskTodo => 'Qilish kerak';
+
+  @override
+  String get statTaskInProgress => 'Jarayonda';
+
+  @override
+  String get statTaskDone => 'Bajarilgan';
+
+  @override
+  String get statTaskProduction => 'Ishga tushirilgan';
+
+  @override
+  String get statTaskChecked => 'Tekshirilgan';
+
+  @override
+  String get statTaskRejected => 'Rad etilgan';
+
+  @override
+  String get statTaskOverdue => 'Muddati o‘tgan';
+
+  @override
+  String get statProjectsTitle => 'Loyihalar';
+
+  @override
+  String get statProjectCompleted => 'Tugatilgan';
+
+  @override
+  String get statProjectActive => 'Jarayonda';
+
+  @override
+  String get statProjectCancelled => 'Bekor';
+
+  @override
+  String get statProjectOverdue => 'Muddati';
+
+  @override
+  String get statProjectPlanning => 'Rejalashtirilgan';
+
+  @override
+  String get statMeetingsTitle => 'Yig‘ilishlar dinamikasi';
+
+  @override
+  String get statMeetingAttended => 'Qatnashdi';
+
+  @override
+  String get statMeetingExcused => 'Sababli';
+
+  @override
+  String get statMeetingUnexcused => 'Sababsiz';
+
+  @override
+  String get statEmpty => 'Ma’lumot yo‘q';
+
+  @override
   String get commonError =>
       'Nimadir xato ketdi. Birozdan so‘ng qayta urinib ko‘ring.';
 
