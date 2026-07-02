@@ -176,6 +176,72 @@ abstract class AppLocalizations {
   /// **'Xodim'**
   String get roleEmployee;
 
+  /// No description provided for @notificationsTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bildirishnomalar'**
+  String get notificationsTitle;
+
+  /// No description provided for @notificationsEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hozircha bildirishnomalar yo‘q'**
+  String get notificationsEmpty;
+
+  /// No description provided for @notificationMarkAllRead.
+  ///
+  /// In uz, this message translates to:
+  /// **'Barchasini o‘qilgan deb belgilash'**
+  String get notificationMarkAllRead;
+
+  /// No description provided for @notificationClose.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yopish'**
+  String get notificationClose;
+
+  /// No description provided for @comingSoon.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tez orada'**
+  String get comingSoon;
+
+  /// No description provided for @commonRetry.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qayta urinish'**
+  String get commonRetry;
+
+  /// No description provided for @navHome.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bosh sahifa'**
+  String get navHome;
+
+  /// No description provided for @navUsers.
+  ///
+  /// In uz, this message translates to:
+  /// **'Foydalanuvchilar'**
+  String get navUsers;
+
+  /// No description provided for @navProjects.
+  ///
+  /// In uz, this message translates to:
+  /// **'Loyihalar'**
+  String get navProjects;
+
+  /// No description provided for @navFinance.
+  ///
+  /// In uz, this message translates to:
+  /// **'Moliya'**
+  String get navFinance;
+
+  /// No description provided for @navReports.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hisobotlar'**
+  String get navReports;
+
   /// No description provided for @commonError.
   ///
   /// In uz, this message translates to:

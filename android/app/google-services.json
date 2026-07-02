@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "791372978385",
+    "project_id": "raqamli-nazorat",
+    "storage_bucket": "raqamli-nazorat.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:791372978385:android:1cb11f6df0014cd0d40df0",
+        "android_client_info": {
+          "package_name": "raqamli.nazorat.dc_management_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVNJsTbY9M8A9l77GqrIeUrdEtqbrftFk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
