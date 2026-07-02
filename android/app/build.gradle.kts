@@ -1,3 +1,6 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -5,10 +8,27 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+}
+
 android {
     namespace = "raqamli.nazorat.dc_management_app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
+
+    signingConfigs{
+        create("release"){
+            if(keystorePropertiesFile.exists()){
+                keyAlias = keystoreProperties.getProperty("keyAlias")?.trim()
+                keyPassword = keystoreProperties.getProperty("keyPassword")?.trim()
+                storeFile = keystoreProperties.getProperty("storeFile")?.trim()?.let { file(it) }
+                storePassword = keystoreProperties.getProperty("storePassword")?.trim()
+            }
+        }
+    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -34,7 +54,7 @@ android {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 }
