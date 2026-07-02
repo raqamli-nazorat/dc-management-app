@@ -66,6 +66,25 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color successSoft;
   final Color successDisabled;
 
+  // ── Chart (bosh sahifa grafiklari data-vis tokenlari) ─────────────────
+  /// Loyihalar bar: "Tugatilgan" (yashil-limon).
+  final Color chartLime;
+
+  /// Loyihalar bar: "Jarayonda" (moviy-yashil / teal).
+  final Color chartTeal;
+
+  /// Loyihalar bar: "Bekor" (to‘q neytral).
+  final Color chartNeutral;
+
+  /// Loyihalar bar: "Rejalashtirilgan" (och kulrang).
+  final Color chartGrey;
+
+  /// Yig‘ilishlar donut: "Qatnashdi" (yashil).
+  final Color chartGreen;
+
+  /// Yig‘ilishlar donut: "Sababli" (ko‘k).
+  final Color chartBlue;
+
   /// Xarajat kartasi va shunga o‘xshash bosh harf avatarlari uchun fon.
   final Color avatarPlaceholder;
 
@@ -133,6 +152,12 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.successSub,
     required this.successSoft,
     required this.successDisabled,
+    required this.chartLime,
+    required this.chartTeal,
+    required this.chartNeutral,
+    required this.chartGrey,
+    required this.chartGreen,
+    required this.chartBlue,
     required this.avatarPlaceholder,
     required this.badgeRead,
     required this.badgeUnread,
@@ -189,6 +214,12 @@ class AppColors extends ThemeExtension<AppColors> {
     successSub: Color(0xFF4ADE80),
     successSoft: Color(0xFFDCFCE7),
     successDisabled: Color(0xFFF0FDF4),
+    chartLime: Color(0xFFA5CE1B),
+    chartTeal: Color(0xFF7EC3BE),
+    chartNeutral: Color(0xFF1A1D2E),
+    chartGrey: Color(0xFFDADFF0),
+    chartGreen: Color(0xFF2DBE2C),
+    chartBlue: Color(0xFF92BFFF),
     avatarPlaceholder: Color(0xFFDADFF0),
     badgeRead: Color(0xFF526ED3),
     badgeUnread: Color(0xFFFF6A2E),
@@ -245,6 +276,12 @@ class AppColors extends ThemeExtension<AppColors> {
     successSub: Color(0xFF4ADE80),
     successSoft: Color(0xFF142E1B),
     successDisabled: Color(0xFF1B3D24),
+    chartLime: Color(0xFFA5CE1B),
+    chartTeal: Color(0xFF7EC3BE),
+    chartNeutral: Color(0xFF2C2A2A),
+    chartGrey: Color(0xFFCED2DC),
+    chartGreen: Color(0xFF2DBE2C),
+    chartBlue: Color(0xFF92BFFF),
     avatarPlaceholder: Color(0xFF3A3B3B),
     badgeRead: Color(0xFF526ED3),
     badgeUnread: Color(0xFFFF6A2E),
@@ -274,6 +311,11 @@ class AppColors extends ThemeExtension<AppColors> {
   /// Access from anywhere: `Theme.of(context).extension<AppColors>()!`
   static AppColors of(BuildContext context) =>
       Theme.of(context).extension<AppColors>()!;
+
+  /// Grafik kartasi foni (light: `backgroundElevation1Alt`, dark: `backgroundElevation1`).
+  Color get cardSurface => backgroundBase.computeLuminance() < 0.5
+      ? backgroundElevation1
+      : backgroundElevation1Alt;
 
   /// Xarajatlar AppBar filtr/bildirishnoma tugmasi foni (light: `backgroundElevation2`, dark: `strokeSub`).
   Color get expenseAppBarFilterSurface =>
@@ -330,6 +372,12 @@ class AppColors extends ThemeExtension<AppColors> {
     Color? successSub,
     Color? successSoft,
     Color? successDisabled,
+    Color? chartLime,
+    Color? chartTeal,
+    Color? chartNeutral,
+    Color? chartGrey,
+    Color? chartGreen,
+    Color? chartBlue,
     Color? avatarPlaceholder,
     Color? badgeRead,
     Color? badgeUnread,
@@ -387,6 +435,12 @@ class AppColors extends ThemeExtension<AppColors> {
     successSub: successSub ?? this.successSub,
     successSoft: successSoft ?? this.successSoft,
     successDisabled: successDisabled ?? this.successDisabled,
+    chartLime: chartLime ?? this.chartLime,
+    chartTeal: chartTeal ?? this.chartTeal,
+    chartNeutral: chartNeutral ?? this.chartNeutral,
+    chartGrey: chartGrey ?? this.chartGrey,
+    chartGreen: chartGreen ?? this.chartGreen,
+    chartBlue: chartBlue ?? this.chartBlue,
     avatarPlaceholder: avatarPlaceholder ?? this.avatarPlaceholder,
     badgeRead: badgeRead ?? this.badgeRead,
     badgeUnread: badgeUnread ?? this.badgeUnread,
@@ -470,6 +524,12 @@ class AppColors extends ThemeExtension<AppColors> {
       successSub: Color.lerp(successSub, other.successSub, t)!,
       successSoft: Color.lerp(successSoft, other.successSoft, t)!,
       successDisabled: Color.lerp(successDisabled, other.successDisabled, t)!,
+      chartLime: Color.lerp(chartLime, other.chartLime, t)!,
+      chartTeal: Color.lerp(chartTeal, other.chartTeal, t)!,
+      chartNeutral: Color.lerp(chartNeutral, other.chartNeutral, t)!,
+      chartGrey: Color.lerp(chartGrey, other.chartGrey, t)!,
+      chartGreen: Color.lerp(chartGreen, other.chartGreen, t)!,
+      chartBlue: Color.lerp(chartBlue, other.chartBlue, t)!,
       avatarPlaceholder: Color.lerp(
         avatarPlaceholder,
         other.avatarPlaceholder,

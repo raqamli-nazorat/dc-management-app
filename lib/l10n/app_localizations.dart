@@ -242,6 +242,150 @@ abstract class AppLocalizations {
   /// **'Hisobotlar'**
   String get navReports;
 
+  /// No description provided for @statPeriodSelect.
+  ///
+  /// In uz, this message translates to:
+  /// **'Davrni tanlang'**
+  String get statPeriodSelect;
+
+  /// No description provided for @statPeriod1Month.
+  ///
+  /// In uz, this message translates to:
+  /// **'1 oy'**
+  String get statPeriod1Month;
+
+  /// No description provided for @statPeriod3Months.
+  ///
+  /// In uz, this message translates to:
+  /// **'3 oy'**
+  String get statPeriod3Months;
+
+  /// No description provided for @statPeriod6Months.
+  ///
+  /// In uz, this message translates to:
+  /// **'6 oy'**
+  String get statPeriod6Months;
+
+  /// No description provided for @statPeriod1Year.
+  ///
+  /// In uz, this message translates to:
+  /// **'1 yil'**
+  String get statPeriod1Year;
+
+  /// No description provided for @statTasksTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Vazifalar'**
+  String get statTasksTitle;
+
+  /// No description provided for @statTaskTodo.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qilish kerak'**
+  String get statTaskTodo;
+
+  /// No description provided for @statTaskInProgress.
+  ///
+  /// In uz, this message translates to:
+  /// **'Jarayonda'**
+  String get statTaskInProgress;
+
+  /// No description provided for @statTaskDone.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bajarilgan'**
+  String get statTaskDone;
+
+  /// No description provided for @statTaskProduction.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ishga tushirilgan'**
+  String get statTaskProduction;
+
+  /// No description provided for @statTaskChecked.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tekshirilgan'**
+  String get statTaskChecked;
+
+  /// No description provided for @statTaskRejected.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rad etilgan'**
+  String get statTaskRejected;
+
+  /// No description provided for @statTaskOverdue.
+  ///
+  /// In uz, this message translates to:
+  /// **'Muddati o‘tgan'**
+  String get statTaskOverdue;
+
+  /// No description provided for @statProjectsTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Loyihalar'**
+  String get statProjectsTitle;
+
+  /// No description provided for @statProjectCompleted.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tugatilgan'**
+  String get statProjectCompleted;
+
+  /// No description provided for @statProjectActive.
+  ///
+  /// In uz, this message translates to:
+  /// **'Jarayonda'**
+  String get statProjectActive;
+
+  /// No description provided for @statProjectCancelled.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bekor'**
+  String get statProjectCancelled;
+
+  /// No description provided for @statProjectOverdue.
+  ///
+  /// In uz, this message translates to:
+  /// **'Muddati'**
+  String get statProjectOverdue;
+
+  /// No description provided for @statProjectPlanning.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rejalashtirilgan'**
+  String get statProjectPlanning;
+
+  /// No description provided for @statMeetingsTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yig‘ilishlar dinamikasi'**
+  String get statMeetingsTitle;
+
+  /// No description provided for @statMeetingAttended.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qatnashdi'**
+  String get statMeetingAttended;
+
+  /// No description provided for @statMeetingExcused.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sababli'**
+  String get statMeetingExcused;
+
+  /// No description provided for @statMeetingUnexcused.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sababsiz'**
+  String get statMeetingUnexcused;
+
+  /// No description provided for @statEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ma’lumot yo‘q'**
+  String get statEmpty;
+
   /// No description provided for @commonError.
   ///
   /// In uz, this message translates to:

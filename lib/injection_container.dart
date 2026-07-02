@@ -32,6 +32,12 @@ import 'features/profile/domain/usecases/change_password_usecase.dart';
 import 'features/profile/domain/usecases/get_me_usecase.dart';
 import 'features/profile/domain/usecases/update_me_usecase.dart';
 import 'features/profile/presentation/bloc/profile_bloc.dart';
+import 'features/statistics/data/data_sources/statistics_remote_data_source.dart';
+import 'features/statistics/data/repository/statistics_repository_impl.dart';
+import 'features/statistics/domain/repository/statistics_repository.dart';
+import 'features/statistics/domain/usecases/get_efficiency_usecase.dart';
+import 'features/statistics/domain/usecases/get_period_statistics_usecase.dart';
+import 'features/statistics/presentation/bloc/statistics_bloc.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -103,6 +109,24 @@ Future<void> configureDependencies() async {
       () => ChangePasswordUseCase(getIt()),
     )
     ..registerFactory<ProfileBloc>(() => ProfileBloc(getMe: getIt()));
+
+  // ── Statistics feature ────────────────────────────────────────────────
+  getIt
+    ..registerLazySingleton<StatisticsRemoteDataSource>(
+      () => StatisticsRemoteDataSourceImpl(getIt()),
+    )
+    ..registerLazySingleton<StatisticsRepository>(
+      () => StatisticsRepositoryImpl(getIt()),
+    )
+    ..registerLazySingleton<GetPeriodStatisticsUseCase>(
+      () => GetPeriodStatisticsUseCase(getIt()),
+    )
+    ..registerLazySingleton<GetEfficiencyUseCase>(
+      () => GetEfficiencyUseCase(getIt()),
+    )
+    ..registerFactory<StatisticsBloc>(
+      () => StatisticsBloc(getPeriod: getIt(), getEfficiency: getIt()),
+    );
 
   // ── Notification feature ──────────────────────────────────────────────
   getIt

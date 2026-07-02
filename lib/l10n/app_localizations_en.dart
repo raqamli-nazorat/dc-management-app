@@ -83,6 +83,78 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navReports => 'Reports';
 
   @override
+  String get statPeriodSelect => 'Select period';
+
+  @override
+  String get statPeriod1Month => '1 month';
+
+  @override
+  String get statPeriod3Months => '3 months';
+
+  @override
+  String get statPeriod6Months => '6 months';
+
+  @override
+  String get statPeriod1Year => '1 year';
+
+  @override
+  String get statTasksTitle => 'Tasks';
+
+  @override
+  String get statTaskTodo => 'To do';
+
+  @override
+  String get statTaskInProgress => 'In progress';
+
+  @override
+  String get statTaskDone => 'Done';
+
+  @override
+  String get statTaskProduction => 'In production';
+
+  @override
+  String get statTaskChecked => 'Checked';
+
+  @override
+  String get statTaskRejected => 'Rejected';
+
+  @override
+  String get statTaskOverdue => 'Overdue';
+
+  @override
+  String get statProjectsTitle => 'Projects';
+
+  @override
+  String get statProjectCompleted => 'Completed';
+
+  @override
+  String get statProjectActive => 'Active';
+
+  @override
+  String get statProjectCancelled => 'Cancelled';
+
+  @override
+  String get statProjectOverdue => 'Overdue';
+
+  @override
+  String get statProjectPlanning => 'Planning';
+
+  @override
+  String get statMeetingsTitle => 'Meetings dynamics';
+
+  @override
+  String get statMeetingAttended => 'Attended';
+
+  @override
+  String get statMeetingExcused => 'Excused';
+
+  @override
+  String get statMeetingUnexcused => 'Unexcused';
+
+  @override
+  String get statEmpty => 'No data';
+
+  @override
   String get commonError => 'Something went wrong. Please try again later.';
 
   @override

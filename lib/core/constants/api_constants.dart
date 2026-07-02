@@ -12,6 +12,10 @@ abstract final class ApiConstants {
   static const usersMe = '/users/me/';
   static const usersMeChangePassword = '/users/me/change_password/';
 
+  // ── Statistics (bosh sahifa grafiklari) ───────────────────────────────
+  static const usersMePeriodStatistics = '/users/me/period-statistics/';
+  static const usersMeEfficiency = '/users/me/efficiency/';
+
   // ── Notifications ─────────────────────────────────────────────────────
   static const notifications = '/notifications/';
   static const notificationsCount = '/notifications/count/';
