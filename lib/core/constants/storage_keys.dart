@@ -23,6 +23,13 @@ abstract final class StorageKeys {
   /// 3 daqiqalik fon timeout’ini hisoblash uchun.
   static const lastActiveAt = 'last_active_at';
 
+  /// Backendga oxirgi yuborilgan FCM token — takror yuborishning oldini oladi.
+  static const fcmToken = 'fcm_token';
+
+  /// Qurilmaning barqaror identifikatori (bir marta generatsiya, saqlanadi) —
+  /// device register `device_id` maydoni uchun.
+  static const deviceId = 'device_id';
+
   static const all = <String>{
     authToken,
     refreshToken,
@@ -36,5 +43,7 @@ abstract final class StorageKeys {
     activeRole,
     pinLength,
     lastActiveAt,
+    fcmToken,
+    deviceId,
   };
 }

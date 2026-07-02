@@ -19,6 +19,19 @@
   "roleSupervisor": "Nazoratchi",
   "roleEmployee": "Xodim",
 
+  "notificationsTitle": "Bildirishnomalar",
+  "notificationsEmpty": "Hozircha bildirishnomalar yo‘q",
+  "notificationMarkAllRead": "Barchasini o‘qilgan deb belgilash",
+  "notificationClose": "Yopish",
+  "comingSoon": "Tez orada",
+  "commonRetry": "Qayta urinish",
+
+  "navHome": "Bosh sahifa",
+  "navUsers": "Foydalanuvchilar",
+  "navProjects": "Loyihalar",
+  "navFinance": "Moliya",
+  "navReports": "Hisobotlar",
+
   "commonError": "Nimadir xato ketdi. Birozdan so‘ng qayta urinib ko‘ring.",
   "networkError": "Internet aloqasi yo‘q. Ulanishni tekshiring."
 }

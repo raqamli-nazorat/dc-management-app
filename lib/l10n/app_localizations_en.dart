@@ -50,6 +50,39 @@ class AppLocalizationsEn extends AppLocalizations {
   String get roleEmployee => 'Employee';
 
   @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get notificationsEmpty => 'No notifications yet';
+
+  @override
+  String get notificationMarkAllRead => 'Mark all as read';
+
+  @override
+  String get notificationClose => 'Close';
+
+  @override
+  String get comingSoon => 'Coming soon';
+
+  @override
+  String get commonRetry => 'Retry';
+
+  @override
+  String get navHome => 'Home';
+
+  @override
+  String get navUsers => 'Users';
+
+  @override
+  String get navProjects => 'Projects';
+
+  @override
+  String get navFinance => 'Finance';
+
+  @override
+  String get navReports => 'Reports';
+
+  @override
   String get commonError => 'Something went wrong. Please try again later.';
 
   @override

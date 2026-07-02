@@ -69,6 +69,12 @@ class AppColors extends ThemeExtension<AppColors> {
   /// Xarajat kartasi va shunga o‘xshash bosh harf avatarlari uchun fon.
   final Color avatarPlaceholder;
 
+  /// Bildirishnoma avataridagi "o‘qilgan" nishoni (ko‘k check).
+  final Color badgeRead;
+
+  /// Bildirishnoma avataridagi "o‘qilmagan" nishoni (to‘q sariq son).
+  final Color badgeUnread;
+
   // ── Control (input / button komponent tokenlari) ──────────────────────
   /// Input placeholder / ikkilamchi yozuv (Figma: components/control/text/secondary).
   final Color controlTextSecondary;
@@ -128,6 +134,8 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.successSoft,
     required this.successDisabled,
     required this.avatarPlaceholder,
+    required this.badgeRead,
+    required this.badgeUnread,
     required this.controlTextSecondary,
     required this.controlTextDisabled,
     required this.controlBgDisabled,
@@ -182,6 +190,8 @@ class AppColors extends ThemeExtension<AppColors> {
     successSoft: Color(0xFFDCFCE7),
     successDisabled: Color(0xFFF0FDF4),
     avatarPlaceholder: Color(0xFFDADFF0),
+    badgeRead: Color(0xFF526ED3),
+    badgeUnread: Color(0xFFFF6A2E),
     controlTextSecondary: Color(0xFF757575),
     controlTextDisabled: Color(0xFFA3A3A3),
     controlBgDisabled: Color(0xFFF2F1F0),
@@ -236,6 +246,8 @@ class AppColors extends ThemeExtension<AppColors> {
     successSoft: Color(0xFF142E1B),
     successDisabled: Color(0xFF1B3D24),
     avatarPlaceholder: Color(0xFF3A3B3B),
+    badgeRead: Color(0xFF526ED3),
+    badgeUnread: Color(0xFFFF6A2E),
     controlTextSecondary: Color(0xFF757575),
     controlTextDisabled: Color(0xFFA3A3A3),
     controlBgDisabled: Color(0xFFF2F1F0),
@@ -319,6 +331,8 @@ class AppColors extends ThemeExtension<AppColors> {
     Color? successSoft,
     Color? successDisabled,
     Color? avatarPlaceholder,
+    Color? badgeRead,
+    Color? badgeUnread,
     Color? controlTextSecondary,
     Color? controlTextDisabled,
     Color? controlBgDisabled,
@@ -374,6 +388,8 @@ class AppColors extends ThemeExtension<AppColors> {
     successSoft: successSoft ?? this.successSoft,
     successDisabled: successDisabled ?? this.successDisabled,
     avatarPlaceholder: avatarPlaceholder ?? this.avatarPlaceholder,
+    badgeRead: badgeRead ?? this.badgeRead,
+    badgeUnread: badgeUnread ?? this.badgeUnread,
     controlTextSecondary: controlTextSecondary ?? this.controlTextSecondary,
     controlTextDisabled: controlTextDisabled ?? this.controlTextDisabled,
     controlBgDisabled: controlBgDisabled ?? this.controlBgDisabled,
@@ -459,6 +475,8 @@ class AppColors extends ThemeExtension<AppColors> {
         other.avatarPlaceholder,
         t,
       )!,
+      badgeRead: Color.lerp(badgeRead, other.badgeRead, t)!,
+      badgeUnread: Color.lerp(badgeUnread, other.badgeUnread, t)!,
       controlTextSecondary: Color.lerp(
         controlTextSecondary,
         other.controlTextSecondary,

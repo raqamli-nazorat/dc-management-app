@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 
 import 'app/bloc/session_bloc.dart';
@@ -9,6 +10,7 @@ import 'core/network/interceptors/auth_interceptor.dart';
 import 'core/network/interceptors/logging_interceptor.dart';
 import 'core/network/interceptors/refresh_interceptor.dart';
 import 'core/services/logger_service.dart';
+import 'core/services/push_notification_service.dart';
 import 'core/services/storage_service.dart';
 import 'core/services/token_service.dart';
 import 'features/auth/data/data_sources/auth_remote_data_source.dart';
@@ -17,6 +19,19 @@ import 'features/auth/domain/repository/auth_repository.dart';
 import 'features/auth/domain/usecases/login_usecase.dart';
 import 'features/auth/presentation/bloc/login_bloc.dart';
 import 'features/auth/presentation/pin/bloc/pin_bloc.dart';
+import 'features/notification/data/data_sources/notification_remote_data_source.dart';
+import 'features/notification/data/data_sources/notification_socket_service.dart';
+import 'features/notification/data/repository/notification_repository_impl.dart';
+import 'features/notification/domain/repository/notification_repository.dart';
+import 'features/notification/domain/usecases/notification_usecases.dart';
+import 'features/notification/presentation/bloc/notification_bloc.dart';
+import 'features/profile/data/data_sources/profile_remote_data_source.dart';
+import 'features/profile/data/repository/profile_repository_impl.dart';
+import 'features/profile/domain/repository/profile_repository.dart';
+import 'features/profile/domain/usecases/change_password_usecase.dart';
+import 'features/profile/domain/usecases/get_me_usecase.dart';
+import 'features/profile/domain/usecases/update_me_usecase.dart';
+import 'features/profile/presentation/bloc/profile_bloc.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -26,7 +41,10 @@ Future<void> configureDependencies() async {
   getIt
     ..registerSingleton<StorageService>(storage)
     ..registerLazySingleton<LoggerService>(() => LoggerService())
-    ..registerLazySingleton<TokenService>(() => TokenService(getIt()));
+    ..registerLazySingleton<TokenService>(() => TokenService(getIt()))
+    ..registerLazySingleton<PushNotificationService>(
+      () => PushNotificationService(getIt(), getIt()),
+    );
 
   // Session (drives navigation) — singleton so router + UI share one instance.
   getIt.registerLazySingleton<SessionBloc>(
@@ -34,7 +52,9 @@ Future<void> configureDependencies() async {
   );
 
   // ── Network ───────────────────────────────────────────────────────────
-  getIt.registerLazySingleton<DioClient>(() {
+  // `Dio` alohida ro‘yxatga olinadi — Thunder debug overlay’i uni to‘g‘ridan
+  // to‘g‘ri kuzatishi uchun (`getIt<Dio>()`).
+  getIt.registerLazySingleton<Dio>(() {
     final dio = DioFactory.create();
     // Refresh + retry uchun alohida (interceptorsiz) Dio — sikldan saqlaydi.
     final refreshDio = DioFactory.create();
@@ -47,8 +67,9 @@ Future<void> configureDependencies() async {
       ),
       LoggingInterceptor(getIt<LoggerService>()),
     ]);
-    return DioClient(dio);
+    return dio;
   });
+  getIt.registerLazySingleton<DioClient>(() => DioClient(getIt<Dio>()));
 
   // ── Auth feature ──────────────────────────────────────────────────────
   getIt
@@ -66,6 +87,61 @@ Future<void> configureDependencies() async {
     ..registerFactory<LoginBloc>(() => LoginBloc(loginUseCase: getIt()))
     ..registerFactory<PinBloc>(
       () => PinBloc(loginUseCase: getIt(), storage: getIt()),
+    );
+
+  // ── Profile feature ───────────────────────────────────────────────────
+  getIt
+    ..registerLazySingleton<ProfileRemoteDataSource>(
+      () => ProfileRemoteDataSourceImpl(getIt()),
+    )
+    ..registerLazySingleton<ProfileRepository>(
+      () => ProfileRepositoryImpl(getIt()),
+    )
+    ..registerLazySingleton<GetMeUseCase>(() => GetMeUseCase(getIt()))
+    ..registerLazySingleton<UpdateMeUseCase>(() => UpdateMeUseCase(getIt()))
+    ..registerLazySingleton<ChangePasswordUseCase>(
+      () => ChangePasswordUseCase(getIt()),
+    )
+    ..registerFactory<ProfileBloc>(() => ProfileBloc(getMe: getIt()));
+
+  // ── Notification feature ──────────────────────────────────────────────
+  getIt
+    ..registerLazySingleton<NotificationRemoteDataSource>(
+      () => NotificationRemoteDataSourceImpl(getIt()),
+    )
+    // WebSocket real-vaqt oqimi — datasource orqali ticket oladi (repo’ga
+    // bog‘liq emas, sikldan xoli). Singleton — app bo‘yicha yagona ulanish.
+    ..registerLazySingleton<NotificationSocketService>(
+      () => NotificationSocketService(remote: getIt(), logger: getIt()),
+    )
+    ..registerLazySingleton<NotificationRepository>(
+      () => NotificationRepositoryImpl(getIt(), getIt()),
+    )
+    ..registerLazySingleton<GetNotificationsUseCase>(
+      () => GetNotificationsUseCase(getIt()),
+    )
+    ..registerLazySingleton<WatchNotificationsUseCase>(
+      () => WatchNotificationsUseCase(getIt()),
+    )
+    ..registerLazySingleton<GetUnreadCountUseCase>(
+      () => GetUnreadCountUseCase(getIt()),
+    )
+    ..registerLazySingleton<MarkNotificationReadUseCase>(
+      () => MarkNotificationReadUseCase(getIt()),
+    )
+    ..registerLazySingleton<ReadAllNotificationsUseCase>(
+      () => ReadAllNotificationsUseCase(getIt()),
+    )
+    ..registerLazySingleton<RegisterDeviceUseCase>(
+      () => RegisterDeviceUseCase(getIt()),
+    )
+    ..registerFactory<NotificationBloc>(
+      () => NotificationBloc(
+        getNotifications: getIt(),
+        markRead: getIt(),
+        readAll: getIt(),
+        watch: getIt(),
+      ),
     );
 
   // ── Router — built once from the session cubit. ─────────────────────────

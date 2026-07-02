@@ -1,9 +1,12 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:thunder/thunder.dart';
 
 import '../config/routes/coordinator.dart';
 import '../config/theme/app_theme.dart';
+import '../core/util/app_options.dart';
 import '../injection_container.dart';
 import '../l10n/app_localizations.dart';
 import 'bloc/session_bloc.dart';
@@ -72,23 +75,39 @@ class _AppState extends State<App> with WidgetsBindingObserver {
 
     return BlocProvider<SessionBloc>.value(
       value: _session,
-      child: ScreenUtilInit(
-        designSize: const Size(360, 800),
-        minTextAdapt: true,
-        splitScreenMode: true,
-        builder: (context, child) {
-          return MaterialApp.router(
-            scaffoldMessengerKey: _rootScaffoldMessengerKey,
-            debugShowCheckedModeBanner: false,
-            theme: AppTheme.light,
-            darkTheme: AppTheme.dark,
-            themeMode: ThemeMode.system,
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            locale: const Locale('uz'),
-            routerConfig: router,
-          );
-        },
+      // `ModelBinding` runtime’da `themeMode`ni saqlaydi — main_page’dagi test
+      // toggle `AppOptions.update` orqali uni almashtiradi va butun ilova qayta
+      // quriladi (light ↔ dark).
+      child: ModelBinding(
+        initialModel: const AppOptions(
+          themeMode: ThemeMode.system,
+          locale: Locale('uz'),
+        ),
+        child: ScreenUtilInit(
+          designSize: const Size(360, 800),
+          minTextAdapt: true,
+          splitScreenMode: true,
+          builder: (context, child) {
+            final options = AppOptions.of(context);
+            return MaterialApp.router(
+              scaffoldMessengerKey: _rootScaffoldMessengerKey,
+              debugShowCheckedModeBanner: false,
+              theme: AppTheme.light,
+              darkTheme: AppTheme.dark,
+              themeMode: options.themeMode,
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
+              locale: const Locale('uz'),
+              routerConfig: router,
+              // Thunder — Dio tarmoq loglarini ko‘rish uchun debug overlay
+              // (faqat `kIsDebug`da yoqiq, release’da avtomatik o‘chadi).
+              builder: (context, child) => Thunder(
+                dio: [getIt<Dio>()],
+                child: child ?? const SizedBox.shrink(),
+              ),
+            );
+          },
+        ),
       ),
     );
   }

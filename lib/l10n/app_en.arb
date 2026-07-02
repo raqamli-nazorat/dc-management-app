@@ -16,6 +16,19 @@
   "roleSupervisor": "Supervisor",
   "roleEmployee": "Employee",
 
+  "notificationsTitle": "Notifications",
+  "notificationsEmpty": "No notifications yet",
+  "notificationMarkAllRead": "Mark all as read",
+  "notificationClose": "Close",
+  "comingSoon": "Coming soon",
+  "commonRetry": "Retry",
+
+  "navHome": "Home",
+  "navUsers": "Users",
+  "navProjects": "Projects",
+  "navFinance": "Finance",
+  "navReports": "Reports",
+
   "commonError": "Something went wrong. Please try again later.",
   "networkError": "No internet connection. Check your connection."
 }

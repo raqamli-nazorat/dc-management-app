@@ -21,6 +21,14 @@ class $AssetsIconsGen {
   SvgGenImage get cTuilconLoginLarge =>
       const SvgGenImage('assets/icons/c_tuilcon_login_large.svg');
 
+  /// File path: assets/icons/ic_analytics.svg
+  SvgGenImage get icAnalytics =>
+      const SvgGenImage('assets/icons/ic_analytics.svg');
+
+  /// File path: assets/icons/ic_arrow_left_bold.svg
+  SvgGenImage get icArrowLeftBold =>
+      const SvgGenImage('assets/icons/ic_arrow_left_bold.svg');
+
   /// File path: assets/icons/ic_arrow_left_large.svg
   SvgGenImage get icArrowLeftLarge =>
       const SvgGenImage('assets/icons/ic_arrow_left_large.svg');
@@ -29,9 +37,17 @@ class $AssetsIconsGen {
   SvgGenImage get icBreifcase =>
       const SvgGenImage('assets/icons/ic_breifcase.svg');
 
+  /// File path: assets/icons/ic_briefcase_dollar.svg
+  SvgGenImage get icBriefcaseDollar =>
+      const SvgGenImage('assets/icons/ic_briefcase_dollar.svg');
+
   /// File path: assets/icons/ic_buildings.svg
   SvgGenImage get icBuildings =>
       const SvgGenImage('assets/icons/ic_buildings.svg');
+
+  /// File path: assets/icons/ic_dashboard_square.svg
+  SvgGenImage get icDashboardSquare =>
+      const SvgGenImage('assets/icons/ic_dashboard_square.svg');
 
   /// File path: assets/icons/ic_databese.svg
   SvgGenImage get icDatabese =>
@@ -48,36 +64,63 @@ class $AssetsIconsGen {
   SvgGenImage get icEyeOpen =>
       const SvgGenImage('assets/icons/ic_eye_open.svg');
 
+  /// File path: assets/icons/ic_folder.svg
+  SvgGenImage get icFolder => const SvgGenImage('assets/icons/ic_folder.svg');
+
   /// File path: assets/icons/ic_globe.svg
   SvgGenImage get icGlobe => const SvgGenImage('assets/icons/ic_globe.svg');
+
+  /// File path: assets/icons/ic_notification.svg
+  SvgGenImage get icNotification =>
+      const SvgGenImage('assets/icons/ic_notification.svg');
+
+  /// File path: assets/icons/ic_task_daliy.svg
+  SvgGenImage get icTaskDaliy =>
+      const SvgGenImage('assets/icons/ic_task_daliy.svg');
 
   /// File path: assets/icons/ic_user.svg
   SvgGenImage get icUser => const SvgGenImage('assets/icons/ic_user.svg');
 
+  /// File path: assets/icons/ic_user_group.svg
+  SvgGenImage get icUserGroup =>
+      const SvgGenImage('assets/icons/ic_user_group.svg');
+
   /// List of all assets
   List<SvgGenImage> get values => [
     cTuilconLoginLarge,
+    icAnalytics,
+    icArrowLeftBold,
     icArrowLeftLarge,
     icBreifcase,
+    icBriefcaseDollar,
     icBuildings,
+    icDashboardSquare,
     icDatabese,
     icEllipse,
     icEyeClose,
     icEyeOpen,
+    icFolder,
     icGlobe,
+    icNotification,
+    icTaskDaliy,
     icUser,
+    icUserGroup,
   ];
 }
 
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
+  /// File path: assets/images/app_logo.png
+  AssetGenImage get appLogo =>
+      const AssetGenImage('assets/images/app_logo.png');
+
   /// File path: assets/images/cardboard_texture.jpg
   AssetGenImage get cardboardTexture =>
       const AssetGenImage('assets/images/cardboard_texture.jpg');
 
   /// List of all assets
-  List<AssetGenImage> get values => [cardboardTexture];
+  List<AssetGenImage> get values => [appLogo, cardboardTexture];
 }
 
 class Assets {

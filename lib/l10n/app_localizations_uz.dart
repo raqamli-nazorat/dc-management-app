@@ -52,6 +52,39 @@ class AppLocalizationsUz extends AppLocalizations {
   String get roleEmployee => 'Xodim';
 
   @override
+  String get notificationsTitle => 'Bildirishnomalar';
+
+  @override
+  String get notificationsEmpty => 'Hozircha bildirishnomalar yo‘q';
+
+  @override
+  String get notificationMarkAllRead => 'Barchasini o‘qilgan deb belgilash';
+
+  @override
+  String get notificationClose => 'Yopish';
+
+  @override
+  String get comingSoon => 'Tez orada';
+
+  @override
+  String get commonRetry => 'Qayta urinish';
+
+  @override
+  String get navHome => 'Bosh sahifa';
+
+  @override
+  String get navUsers => 'Foydalanuvchilar';
+
+  @override
+  String get navProjects => 'Loyihalar';
+
+  @override
+  String get navFinance => 'Moliya';
+
+  @override
+  String get navReports => 'Hisobotlar';
+
+  @override
   String get commonError =>
       'Nimadir xato ketdi. Birozdan so‘ng qayta urinib ko‘ring.';
 

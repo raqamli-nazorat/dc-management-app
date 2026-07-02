@@ -10,6 +10,7 @@ import '../../features/auth/presentation/pages/splash_page.dart';
 import '../../features/auth/presentation/pin/pages/pin_page.dart';
 import '../../features/auth/presentation/role/pages/role_select_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
+import '../../features/notification/presentation/pages/notification_page.dart';
 import 'entity/routes.dart';
 
 /// Root navigator key — exposed for context-free navigation (snackbars,
@@ -67,6 +68,11 @@ class AppRouter {
           name: Routes.home.name,
           path: Routes.home.path,
           builder: (context, state) => const HomePage(),
+        ),
+        GoRoute(
+          name: Routes.notifications.name,
+          path: Routes.notifications.path,
+          builder: (context, state) => const NotificationPage(),
         ),
       ],
     );

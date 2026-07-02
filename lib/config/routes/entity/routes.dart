@@ -23,6 +23,10 @@ class Routes implements Coordinate {
   static const root = Routes._(name: 'root', path: '/');
   static const home = Routes._(name: 'home_page', path: '/home_page');
 
+  /// Bildirishnomalar (home ustidan push qilinadi).
+  static const notifications =
+      Routes._(name: 'notifications', path: '/notifications');
+
   @override
   String toString() => 'name=$name, path=$path';
 }
