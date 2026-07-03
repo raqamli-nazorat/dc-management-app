@@ -19,6 +19,7 @@ import 'features/auth/domain/repository/auth_repository.dart';
 import 'features/auth/domain/usecases/login_usecase.dart';
 import 'features/auth/presentation/bloc/login_bloc.dart';
 import 'features/auth/presentation/pin/bloc/pin_bloc.dart';
+import 'features/auth/presentation/role/bloc/role_select_bloc.dart';
 import 'features/notification/data/data_sources/notification_remote_data_source.dart';
 import 'features/notification/data/data_sources/notification_socket_service.dart';
 import 'features/notification/data/repository/notification_repository_impl.dart';
@@ -93,6 +94,11 @@ Future<void> configureDependencies() async {
     ..registerFactory<LoginBloc>(() => LoginBloc(loginUseCase: getIt()))
     ..registerFactory<PinBloc>(
       () => PinBloc(loginUseCase: getIt(), storage: getIt()),
+    )
+    // `UpdateMeUseCase` Profile bo‘limida ro‘yxatga olinadi — lazy factory
+    // bo‘lgani uchun chaqiruv vaqtida (getIt<RoleSelectBloc>()) hal bo‘ladi.
+    ..registerFactory<RoleSelectBloc>(
+      () => RoleSelectBloc(updateMe: getIt()),
     );
 
   // ── Profile feature ───────────────────────────────────────────────────

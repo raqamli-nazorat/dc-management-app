@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../core/access/role_type.dart';
 import '../../core/constants/storage_keys.dart';
 import '../../core/services/storage_service.dart';
 import '../../core/services/token_service.dart';
@@ -29,6 +30,7 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
     on<SessionStarted>(_onStarted);
     on<SessionLoggedIn>(_onLoggedIn);
     on<SessionRoleSelected>(_onRoleSelected);
+    on<SessionActiveRoleSynced>(_onActiveRoleSynced);
     on<SessionAttendanceCompleted>(_onAttendanceCompleted);
     on<SessionExpired>(_onExpired);
     on<SessionLogoutRequested>(_onLogoutRequested);
@@ -81,7 +83,11 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
     }
     // Token bor va fon timeout’i tugamagan bo‘lsa — sessiyani tiklaymiz.
     if (_hasToken && !_pinLockExpired) {
-      emit(const SessionState.authenticated());
+      emit(
+        SessionState.authenticated(
+          activeRole: _storage.getString(StorageKeys.activeRole),
+        ),
+      );
       return;
     }
     emit(const SessionState.pinRequired());
@@ -96,13 +102,17 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
     await _touchLastActive();
 
     final roleSelectionRequired = event.roles.length > 1;
-    if (!roleSelectionRequired && event.roles.isNotEmpty) {
-      await _storage.setString(StorageKeys.activeRole, event.roles.first);
+    final activeRole = roleSelectionRequired || event.roles.isEmpty
+        ? null
+        : event.roles.first;
+    if (activeRole != null) {
+      await _storage.setString(StorageKeys.activeRole, activeRole);
     }
 
     emit(SessionState.authenticated(
       roles: event.roles,
       roleSelectionRequired: roleSelectionRequired,
+      activeRole: activeRole,
     ));
   }
 
@@ -130,7 +140,23 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
     Emitter<SessionState> emit,
   ) async {
     await _storage.setString(StorageKeys.activeRole, event.role);
-    emit(state.copyWith(roleSelectionRequired: false));
+    emit(state.copyWith(
+      roleSelectionRequired: false,
+      activeRole: event.role,
+    ));
+  }
+
+  /// `GET /users/me/` javobi autoritativ — token bilan kelgan/tanlangan
+  /// roldan farqli bo‘lsa ham (masalan backend tomonda o‘zgartirilgan),
+  /// shu qiymat ustun bo‘ladi.
+  Future<void> _onActiveRoleSynced(
+    SessionActiveRoleSynced event,
+    Emitter<SessionState> emit,
+  ) async {
+    if (!state.isAuthenticated) return;
+    if (event.role.isEmpty || event.role == state.activeRole) return;
+    await _storage.setString(StorageKeys.activeRole, event.role);
+    emit(state.copyWith(activeRole: event.role));
   }
 
   Future<void> _onAttendanceCompleted(

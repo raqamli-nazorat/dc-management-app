@@ -13,6 +13,7 @@ class SessionState extends Equatable {
     this.roles = const <String>[],
     this.roleSelectionRequired = false,
     this.attendanceRequired = false,
+    this.activeRole,
   });
 
   const SessionState.unknown() : this();
@@ -25,10 +26,12 @@ class SessionState extends Equatable {
   const SessionState.authenticated({
     List<String> roles = const <String>[],
     bool roleSelectionRequired = false,
+    String? activeRole,
   }) : this(
           status: SessionStatus.authenticated,
           roles: roles,
           roleSelectionRequired: roleSelectionRequired,
+          activeRole: activeRole,
         );
 
   final SessionStatus status;
@@ -42,16 +45,25 @@ class SessionState extends Equatable {
   /// Davomat gate (eski oqim — guardda ishlatilmaydi, mosligi uchun saqlanadi).
   final bool attendanceRequired;
 
+  /// Joriy tanlangan rol (xom API string) — bitta rolli login’da avtomatik,
+  /// ko‘p rolli login’da `SessionRoleSelected`dan keyin to‘ldiriladi.
+  final String? activeRole;
+
   bool get isAuthenticated => status == SessionStatus.authenticated;
   bool get isUnauthenticated => status == SessionStatus.unauthenticated;
   bool get isPinRequired => status == SessionStatus.pinRequired;
   bool get isResolved => status != SessionStatus.unknown;
+
+  /// Rolga qarab UI ko‘rinishini boshqarish uchun kanonik tur
+  /// ([NavPermissions] shu bilan ishlaydi).
+  RoleType get roleType => RoleType.fromRaw(activeRole ?? '');
 
   SessionState copyWith({
     SessionStatus? status,
     List<String>? roles,
     bool? roleSelectionRequired,
     bool? attendanceRequired,
+    String? activeRole,
   }) {
     return SessionState(
       status: status ?? this.status,
@@ -59,10 +71,16 @@ class SessionState extends Equatable {
       roleSelectionRequired:
           roleSelectionRequired ?? this.roleSelectionRequired,
       attendanceRequired: attendanceRequired ?? this.attendanceRequired,
+      activeRole: activeRole ?? this.activeRole,
     );
   }
 
   @override
-  List<Object?> get props =>
-      [status, roles, roleSelectionRequired, attendanceRequired];
+  List<Object?> get props => [
+        status,
+        roles,
+        roleSelectionRequired,
+        attendanceRequired,
+        activeRole,
+      ];
 }

@@ -12,6 +12,7 @@ import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
 import '../../../../injection_container.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../auth/presentation/role/role_presentation.dart';
 import '../../domain/entities/profile.dart';
 import '../bloc/profile_bloc.dart';
 
@@ -81,7 +82,9 @@ class _ProfileAppBar extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
 
     final role = context.select<ProfileBloc, String>(
-      (b) => b.state.profile?.displaySubtitle ?? l10n.roleEmployee,
+      (b) => b.state.profile == null
+          ? l10n.roleEmployee
+          : RolePresentation.of(l10n, b.state.profile!.activeRole).label,
     );
 
     return Padding(
