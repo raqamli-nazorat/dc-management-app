@@ -179,6 +179,16 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
+  String roleSwitchedTitle(String role) {
+    return '$role roliga o‘tildi.';
+  }
+
+  @override
+  String roleSwitchedSubtitle(String role) {
+    return 'Siz endi $role sifatida ishlayapsiz.';
+  }
+
+  @override
   String get commonError =>
       'Nimadir xato ketdi. Birozdan so‘ng qayta urinib ko‘ring.';
 

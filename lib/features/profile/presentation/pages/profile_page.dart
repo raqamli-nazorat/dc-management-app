@@ -10,11 +10,13 @@ import '../../../../config/theme/app_colors.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
+import '../../../../core/widgets/app_toast.dart';
 import '../../../../injection_container.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../auth/presentation/role/role_presentation.dart';
 import '../../domain/entities/profile.dart';
 import '../bloc/profile_bloc.dart';
+import '../widgets/role_switch_dialog.dart';
 
 /// Profil sahifasi — foydalanuvchi ma'lumotlari + hisob sozlamalari ro'yxati.
 /// Home ustidan (AppBar user ma'lumotlari bosilganda) push qilinadi.
@@ -154,6 +156,30 @@ class _ProfileBody extends StatelessWidget {
   final Profile profile;
   final String appVersion;
 
+  /// Rol almashtirish dialogini ochadi. Backend tasdiqlangach (dialog yopilgach)
+  /// lokal sessiya + profil yangilanadi va muvaffaqiyat toasti chiqadi.
+  void _openRoleSwitch(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final sessionBloc = context.read<SessionBloc>();
+    final profileBloc = context.read<ProfileBloc>();
+
+    showRoleSwitchDialog(
+      context,
+      roles: profile.roles,
+      activeRole: profile.activeRole,
+      onSwitched: (role) {
+        sessionBloc.add(SessionRoleSelected(role));
+        profileBloc.add(const ProfileRequested());
+        final label = RolePresentation.of(l10n, role).label;
+        AppToast.showSuccess(
+          context,
+          title: l10n.roleSwitchedTitle(label),
+          message: l10n.roleSwitchedSubtitle(label),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -172,7 +198,7 @@ class _ProfileBody extends StatelessWidget {
                   children: [
                     _ProfileInfoCard(profile: profile, onTap: () {}),
                     SizedBox(height: 10.h),
-                    _RoleManageRow(onTap: () {}),
+                    _RoleManageRow(onTap: () => _openRoleSwitch(context)),
                     SizedBox(height: 20.h),
                     _SettingsRow(
                       icon: Assets.icons.icLock,

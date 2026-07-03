@@ -177,6 +177,16 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String roleSwitchedTitle(String role) {
+    return 'Switched to $role.';
+  }
+
+  @override
+  String roleSwitchedSubtitle(String role) {
+    return 'You are now working as $role.';
+  }
+
+  @override
   String get commonError => 'Something went wrong. Please try again later.';
 
   @override

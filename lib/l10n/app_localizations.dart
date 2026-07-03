@@ -422,6 +422,18 @@ abstract class AppLocalizations {
   /// **'Versiya {version}'**
   String profileVersion(String version);
 
+  /// No description provided for @roleSwitchedTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'{role} roliga o‘tildi.'**
+  String roleSwitchedTitle(String role);
+
+  /// No description provided for @roleSwitchedSubtitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Siz endi {role} sifatida ishlayapsiz.'**
+  String roleSwitchedSubtitle(String role);
+
   /// No description provided for @commonError.
   ///
   /// In uz, this message translates to:

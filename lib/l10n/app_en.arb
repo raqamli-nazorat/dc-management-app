@@ -70,6 +70,14 @@
   "@profileVersion": {
     "placeholders": { "version": { "type": "String" } }
   },
+  "roleSwitchedTitle": "Switched to {role}.",
+  "@roleSwitchedTitle": {
+    "placeholders": { "role": { "type": "String" } }
+  },
+  "roleSwitchedSubtitle": "You are now working as {role}.",
+  "@roleSwitchedSubtitle": {
+    "placeholders": { "role": { "type": "String" } }
+  },
 
   "commonError": "Something went wrong. Please try again later.",
   "networkError": "No internet connection. Check your connection."

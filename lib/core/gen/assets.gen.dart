@@ -53,6 +53,13 @@ class $AssetsIconsGen {
   SvgGenImage get icBuildings =>
       const SvgGenImage('assets/icons/ic_buildings.svg');
 
+  /// File path: assets/icons/ic_check_circle.svg
+  SvgGenImage get icCheckCircle =>
+      const SvgGenImage('assets/icons/ic_check_circle.svg');
+
+  /// File path: assets/icons/ic_close.svg
+  SvgGenImage get icClose => const SvgGenImage('assets/icons/ic_close.svg');
+
   /// File path: assets/icons/ic_dashboard_square.svg
   SvgGenImage get icDashboardSquare =>
       const SvgGenImage('assets/icons/ic_dashboard_square.svg');
@@ -126,6 +133,8 @@ class $AssetsIconsGen {
     icBreifcase,
     icBriefcaseDollar,
     icBuildings,
+    icCheckCircle,
+    icClose,
     icDashboardSquare,
     icDatabese,
     icEllipse,
