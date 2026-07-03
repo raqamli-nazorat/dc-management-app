@@ -58,6 +58,19 @@
 
   "statEmpty": "No data",
 
+  "profileTitle": "{role} information",
+  "@profileTitle": {
+    "placeholders": { "role": { "type": "String" } }
+  },
+  "profileRoleManage": "Manage role",
+  "profileSecurity": "Security",
+  "profileTheme": "Design theme",
+  "profileAbout": "About app",
+  "profileVersion": "Version {version}",
+  "@profileVersion": {
+    "placeholders": { "version": { "type": "String" } }
+  },
+
   "commonError": "Something went wrong. Please try again later.",
   "networkError": "No internet connection. Check your connection."
 }

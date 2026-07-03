@@ -155,6 +155,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get statEmpty => 'No data';
 
   @override
+  String profileTitle(String role) {
+    return '$role information';
+  }
+
+  @override
+  String get profileRoleManage => 'Manage role';
+
+  @override
+  String get profileSecurity => 'Security';
+
+  @override
+  String get profileTheme => 'Design theme';
+
+  @override
+  String get profileAbout => 'About app';
+
+  @override
+  String profileVersion(String version) {
+    return 'Version $version';
+  }
+
+  @override
   String get commonError => 'Something went wrong. Please try again later.';
 
   @override

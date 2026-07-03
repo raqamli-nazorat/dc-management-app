@@ -27,6 +27,9 @@ class Routes implements Coordinate {
   static const notifications =
       Routes._(name: 'notifications', path: '/notifications');
 
+  /// Profil (home ustidan, AppBar user ma’lumotlari bosilganda push qilinadi).
+  static const profile = Routes._(name: 'profile', path: '/profile');
+
   @override
   String toString() => 'name=$name, path=$path';
 }

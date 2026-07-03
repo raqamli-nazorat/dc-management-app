@@ -33,6 +33,14 @@ class $AssetsIconsGen {
   SvgGenImage get icArrowLeftLarge =>
       const SvgGenImage('assets/icons/ic_arrow_left_large.svg');
 
+  /// File path: assets/icons/ic_arrow_right.svg
+  SvgGenImage get icArrowRight =>
+      const SvgGenImage('assets/icons/ic_arrow_right.svg');
+
+  /// File path: assets/icons/ic_arrow_right_exit.svg
+  SvgGenImage get icArrowRightExit =>
+      const SvgGenImage('assets/icons/ic_arrow_right_exit.svg');
+
   /// File path: assets/icons/ic_breifcase.svg
   SvgGenImage get icBreifcase =>
       const SvgGenImage('assets/icons/ic_breifcase.svg');
@@ -70,9 +78,31 @@ class $AssetsIconsGen {
   /// File path: assets/icons/ic_globe.svg
   SvgGenImage get icGlobe => const SvgGenImage('assets/icons/ic_globe.svg');
 
+  /// File path: assets/icons/ic_lock.svg
+  SvgGenImage get icLock => const SvgGenImage('assets/icons/ic_lock.svg');
+
   /// File path: assets/icons/ic_notification.svg
   SvgGenImage get icNotification =>
       const SvgGenImage('assets/icons/ic_notification.svg');
+
+  /// File path: assets/icons/ic_personal_information_arrow.svg
+  SvgGenImage get icPersonalInformationArrow =>
+      const SvgGenImage('assets/icons/ic_personal_information_arrow.svg');
+
+  /// File path: assets/icons/ic_personal_information_icon.svg
+  SvgGenImage get icPersonalInformationIcon =>
+      const SvgGenImage('assets/icons/ic_personal_information_icon.svg');
+
+  /// File path: assets/icons/ic_personal_information_switch.svg
+  SvgGenImage get icPersonalInformationSwitch =>
+      const SvgGenImage('assets/icons/ic_personal_information_switch.svg');
+
+  /// File path: assets/icons/ic_profile_notification.svg
+  SvgGenImage get icProfileNotification =>
+      const SvgGenImage('assets/icons/ic_profile_notification.svg');
+
+  /// File path: assets/icons/ic_soon.svg
+  SvgGenImage get icSoon => const SvgGenImage('assets/icons/ic_soon.svg');
 
   /// File path: assets/icons/ic_task_daliy.svg
   SvgGenImage get icTaskDaliy =>
@@ -91,6 +121,8 @@ class $AssetsIconsGen {
     icAnalytics,
     icArrowLeftBold,
     icArrowLeftLarge,
+    icArrowRight,
+    icArrowRightExit,
     icBreifcase,
     icBriefcaseDollar,
     icBuildings,
@@ -101,7 +133,13 @@ class $AssetsIconsGen {
     icEyeOpen,
     icFolder,
     icGlobe,
+    icLock,
     icNotification,
+    icPersonalInformationArrow,
+    icPersonalInformationIcon,
+    icPersonalInformationSwitch,
+    icProfileNotification,
+    icSoon,
     icTaskDaliy,
     icUser,
     icUserGroup,

@@ -126,25 +126,41 @@ class _Header extends StatelessWidget {
           padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 12.h),
           child: Row(
             children: [
-              _Avatar(url: profile?.avatar ?? '', initial: name),
-              SizedBox(width: 8.w),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    (loading && name.isEmpty ? '...' : name)
-                        .s(14.sp)
-                        .w(800)
-                        .c(colors.textStrong)
-                        .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
-                    SizedBox(height: 2.h),
-                    role
-                        .s(11.sp)
-                        .w(500)
-                        .c(colors.textSub)
-                        .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
-                  ],
+                child: InkWell(
+                  onTap: () => context.pushNamed(Routes.profile.name),
+                  borderRadius: BorderRadius.circular(16.r),
+                  child: Row(
+                    children: [
+                      _Avatar(url: profile?.avatar ?? '', initial: name),
+                      SizedBox(width: 8.w),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            (loading && name.isEmpty ? '...' : name)
+                                .s(14.sp)
+                                .w(800)
+                                .c(colors.textStrong)
+                                .copyWith(
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                            SizedBox(height: 2.h),
+                            role
+                                .s(11.sp)
+                                .w(500)
+                                .c(colors.textSub)
+                                .copyWith(
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               SizedBox(width: 8.w),

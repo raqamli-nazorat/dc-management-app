@@ -157,6 +157,28 @@ class AppLocalizationsUz extends AppLocalizations {
   String get statEmpty => 'Ma’lumot yo‘q';
 
   @override
+  String profileTitle(String role) {
+    return '$role ma’lumotlari';
+  }
+
+  @override
+  String get profileRoleManage => 'Rol boshqarish';
+
+  @override
+  String get profileSecurity => 'Xafsizlik';
+
+  @override
+  String get profileTheme => 'Dizayn mavzusi';
+
+  @override
+  String get profileAbout => 'Ilova haqida';
+
+  @override
+  String profileVersion(String version) {
+    return 'Versiya $version';
+  }
+
+  @override
   String get commonError =>
       'Nimadir xato ketdi. Birozdan so‘ng qayta urinib ko‘ring.';
 

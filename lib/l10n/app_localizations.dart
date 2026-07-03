@@ -386,6 +386,42 @@ abstract class AppLocalizations {
   /// **'Ma’lumot yo‘q'**
   String get statEmpty;
 
+  /// No description provided for @profileTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'{role} ma’lumotlari'**
+  String profileTitle(String role);
+
+  /// No description provided for @profileRoleManage.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rol boshqarish'**
+  String get profileRoleManage;
+
+  /// No description provided for @profileSecurity.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xafsizlik'**
+  String get profileSecurity;
+
+  /// No description provided for @profileTheme.
+  ///
+  /// In uz, this message translates to:
+  /// **'Dizayn mavzusi'**
+  String get profileTheme;
+
+  /// No description provided for @profileAbout.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ilova haqida'**
+  String get profileAbout;
+
+  /// No description provided for @profileVersion.
+  ///
+  /// In uz, this message translates to:
+  /// **'Versiya {version}'**
+  String profileVersion(String version);
+
   /// No description provided for @commonError.
   ///
   /// In uz, this message translates to:
