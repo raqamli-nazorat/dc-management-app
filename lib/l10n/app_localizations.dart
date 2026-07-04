@@ -434,6 +434,48 @@ abstract class AppLocalizations {
   /// **'Siz endi {role} sifatida ishlayapsiz.'**
   String roleSwitchedSubtitle(String role);
 
+  /// No description provided for @tasksTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Vazifalar'**
+  String get tasksTitle;
+
+  /// No description provided for @taskAdd.
+  ///
+  /// In uz, this message translates to:
+  /// **'Vazifa qo‘shish'**
+  String get taskAdd;
+
+  /// No description provided for @tasksEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hozircha vazifalar yo‘q'**
+  String get tasksEmpty;
+
+  /// No description provided for @taskPriorityLow.
+  ///
+  /// In uz, this message translates to:
+  /// **'Past'**
+  String get taskPriorityLow;
+
+  /// No description provided for @taskPriorityMedium.
+  ///
+  /// In uz, this message translates to:
+  /// **'O‘rta'**
+  String get taskPriorityMedium;
+
+  /// No description provided for @taskPriorityHigh.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yuqori'**
+  String get taskPriorityHigh;
+
+  /// No description provided for @taskPriorityCritical.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kritik'**
+  String get taskPriorityCritical;
+
   /// No description provided for @meetingsTitle.
   ///
   /// In uz, this message translates to:

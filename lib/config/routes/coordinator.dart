@@ -13,6 +13,7 @@ import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/meetings/presentation/pages/meeting_reason_page.dart';
 import '../../features/meetings/presentation/pages/meetings_page.dart';
 import '../../features/notification/presentation/pages/notification_page.dart';
+import '../../features/tasks/presentation/pages/tasks_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/profile/presentation/pages/security_page.dart';
 import 'entity/routes.dart';
@@ -87,6 +88,11 @@ class AppRouter {
           name: Routes.security.name,
           path: Routes.security.path,
           builder: (context, state) => const SecurityPage(),
+        ),
+        GoRoute(
+          name: Routes.tasks.name,
+          path: Routes.tasks.path,
+          builder: (context, state) => const TasksPage(),
         ),
         GoRoute(
           name: Routes.meetings.name,

@@ -87,6 +87,10 @@ class $AssetsIconsGen {
   SvgGenImage get icDatabese =>
       const SvgGenImage('assets/icons/ic_databese.svg');
 
+  /// File path: assets/icons/ic_document.svg
+  SvgGenImage get icDocument =>
+      const SvgGenImage('assets/icons/ic_document.svg');
+
   /// File path: assets/icons/ic_ellipse.svg
   SvgGenImage get icEllipse => const SvgGenImage('assets/icons/ic_ellipse.svg');
 
@@ -164,6 +168,18 @@ class $AssetsIconsGen {
   SvgGenImage get icTuilconCheck =>
       const SvgGenImage('assets/icons/ic_tuilcon_check.svg');
 
+  /// File path: assets/icons/ic_tuilcon_chervon_down.svg
+  SvgGenImage get icTuilconChervonDown =>
+      const SvgGenImage('assets/icons/ic_tuilcon_chervon_down.svg');
+
+  /// File path: assets/icons/ic_tuilcon_flag.svg
+  SvgGenImage get icTuilconFlag =>
+      const SvgGenImage('assets/icons/ic_tuilcon_flag.svg');
+
+  /// File path: assets/icons/ic_tuilcon_time.svg
+  SvgGenImage get icTuilconTime =>
+      const SvgGenImage('assets/icons/ic_tuilcon_time.svg');
+
   /// File path: assets/icons/ic_user.svg
   SvgGenImage get icUser => const SvgGenImage('assets/icons/ic_user.svg');
 
@@ -191,6 +207,7 @@ class $AssetsIconsGen {
     icClose,
     icDashboardSquare,
     icDatabese,
+    icDocument,
     icEllipse,
     icEyeClose,
     icEyeOpen,
@@ -213,6 +230,9 @@ class $AssetsIconsGen {
     icTaskDaliy,
     icTrash,
     icTuilconCheck,
+    icTuilconChervonDown,
+    icTuilconFlag,
+    icTuilconTime,
     icUser,
     icUserGroup,
   ];
@@ -229,8 +249,25 @@ class $AssetsImagesGen {
   AssetGenImage get cardboardTexture =>
       const AssetGenImage('assets/images/cardboard_texture.jpg');
 
+  /// File path: assets/images/meetings.png
+  AssetGenImage get meetings =>
+      const AssetGenImage('assets/images/meetings.png');
+
+  /// File path: assets/images/projects.png
+  AssetGenImage get projects =>
+      const AssetGenImage('assets/images/projects.png');
+
+  /// File path: assets/images/tasks.png
+  AssetGenImage get tasks => const AssetGenImage('assets/images/tasks.png');
+
   /// List of all assets
-  List<AssetGenImage> get values => [appLogo, cardboardTexture];
+  List<AssetGenImage> get values => [
+    appLogo,
+    cardboardTexture,
+    meetings,
+    projects,
+    tasks,
+  ];
 }
 
 class Assets {

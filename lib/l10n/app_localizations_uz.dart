@@ -189,6 +189,27 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
+  String get tasksTitle => 'Vazifalar';
+
+  @override
+  String get taskAdd => 'Vazifa qo‘shish';
+
+  @override
+  String get tasksEmpty => 'Hozircha vazifalar yo‘q';
+
+  @override
+  String get taskPriorityLow => 'Past';
+
+  @override
+  String get taskPriorityMedium => 'O‘rta';
+
+  @override
+  String get taskPriorityHigh => 'Yuqori';
+
+  @override
+  String get taskPriorityCritical => 'Kritik';
+
+  @override
   String get meetingsTitle => 'Yig‘ilishlar';
 
   @override
