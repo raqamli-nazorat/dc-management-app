@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../config/routes/entity/routes.dart';
 import '../../../../config/theme/app_colors.dart';
 import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
@@ -152,6 +154,22 @@ class _NotificationList extends StatelessWidget {
 
   static String _pad(int v) => v.toString().padLeft(2, '0');
 
+  /// Bildirishnoma bosilganda: yig‘ilish (type=meeting / action=open_meeting)
+  /// bo‘lsa — sabab yozish ekraniga; aks holda batafsil varaq.
+  void _onNotificationTap(BuildContext context, NotificationEntity n) {
+    final isMeeting = n.type == 'meeting' || n.action == 'open_meeting';
+    final meetingId =
+        num.tryParse('${n.extraData['meeting_id'] ?? ''}')?.toInt() ?? 0;
+    if (isMeeting && meetingId > 0) {
+      context.pushNamed(
+        Routes.meetingReason.name,
+        pathParameters: {'id': '$meetingId'},
+      );
+      return;
+    }
+    NotificationDetailSheet.show(context, n);
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
@@ -176,7 +194,7 @@ class _NotificationList extends StatelessWidget {
                       .read<NotificationBloc>()
                       .add(NotificationMarkedRead(n.id));
                 }
-                NotificationDetailSheet.show(context, n);
+                _onNotificationTap(context, n);
               },
             ),
         ],

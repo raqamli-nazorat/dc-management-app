@@ -4,8 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/bloc/session_bloc.dart';
 import '../../../../config/routes/entity/routes.dart';
 import '../../../../config/theme/app_colors.dart';
+import '../../../../core/access/nav_permissions.dart';
+import '../../../../core/access/role_type.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
@@ -65,47 +68,63 @@ class _MainView extends StatelessWidget {
     // scrollable'ning tepasiga bog‘lanadi, shu bois AppBar balandligicha
     // pastga suriladi (aks holda ustidan chiqib qoladi).
     final appBarHeight = MediaQuery.paddingOf(context).top + 64.h;
+    final role =
+        context.select<SessionBloc, RoleType>((b) => b.state.roleType);
+    final showAnalytics = NavPermissions.isVisible(
+      AppSection.analytics,
+      role,
+    );
 
-    return RefreshIndicator(
-      onRefresh: () => _onRefresh(context),
-      color: colors.accentSub,
-      edgeOffset: appBarHeight,
-      child: CustomScrollView(
-        physics: const BouncingScrollPhysics(
-          parent: AlwaysScrollableScrollPhysics(),
-        ),
-        slivers: [
-          SliverAppBar(
-            pinned: true,
-            toolbarHeight: 64.h,
-            titleSpacing: 0,
-            automaticallyImplyLeading: false,
-            backgroundColor: colors.backgroundBase,
-            surfaceTintColor: Colors.transparent,
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            title: const _Header(),
+    return BlocListener<ProfileBloc, ProfileState>(
+      listenWhen: (_, current) =>
+          current.status == ProfileStatus.success && current.profile != null,
+      listener: (context, state) => context
+          .read<SessionBloc>()
+          .add(SessionActiveRoleSynced(state.profile!.activeRole)),
+      child: RefreshIndicator(
+        onRefresh: () => _onRefresh(context),
+        color: colors.accentSub,
+        edgeOffset: appBarHeight,
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(
+            parent: AlwaysScrollableScrollPhysics(),
           ),
-          SliverToBoxAdapter(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                SizedBox(height: 4.h),
-                const _PeriodRow(),
-                SizedBox(height: 16.h),
-                const _StatisticsSection(),
-                SizedBox(height: 24.h),
-              ],
+          slivers: [
+            SliverAppBar(
+              pinned: true,
+              toolbarHeight: 64.h,
+              titleSpacing: 0,
+              automaticallyImplyLeading: false,
+              backgroundColor: colors.backgroundBase,
+              surfaceTintColor: Colors.transparent,
+              elevation: 0,
+              scrolledUnderElevation: 0,
+              title: const _Header(),
             ),
-          ),
-        ],
+            SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SizedBox(height: 4.h),
+                  if (showAnalytics) ...[
+                    const _PeriodRow(),
+                    SizedBox(height: 16.h),
+                    const _StatisticsSection(),
+                    SizedBox(height: 24.h),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-/// Main page header: avatar + ism/rol + amal tugmalari (kunlik vazifa,
+/// Main page header: avatar + ism/rol + amal tugmalari (Arizalar,
 /// bildirishnoma). Ma’lumotlar `ProfileBloc`dan (`/users/me/`) olinadi.
+/// Arizalar tugmasi rolga qarab yashiriladi ([AppSection.applications]).
 class _Header extends StatelessWidget {
   const _Header();
 
@@ -113,6 +132,10 @@ class _Header extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
     final l10n = AppLocalizations.of(context);
+    final roleType =
+        context.select<SessionBloc, RoleType>((b) => b.state.roleType);
+    final showApplications =
+        NavPermissions.isVisible(AppSection.applications, roleType);
 
     return BlocBuilder<ProfileBloc, ProfileState>(
       builder: (context, state) {
@@ -126,29 +149,51 @@ class _Header extends StatelessWidget {
           padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 12.h),
           child: Row(
             children: [
-              _Avatar(url: profile?.avatar ?? '', initial: name),
-              SizedBox(width: 8.w),
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    (loading && name.isEmpty ? '...' : name)
-                        .s(14.sp)
-                        .w(800)
-                        .c(colors.textStrong)
-                        .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
-                    SizedBox(height: 2.h),
-                    role
-                        .s(11.sp)
-                        .w(500)
-                        .c(colors.textSub)
-                        .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
-                  ],
+                child: InkWell(
+                  onTap: () => context.pushNamed(Routes.profile.name),
+                  borderRadius: BorderRadius.circular(16.r),
+                  child: Row(
+                    children: [
+                      _Avatar(url: profile?.avatar ?? '', initial: name),
+                      SizedBox(width: 8.w),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            (loading && name.isEmpty ? '...' : name)
+                                .s(14.sp)
+                                .w(800)
+                                .c(colors.textStrong)
+                                .copyWith(
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                            SizedBox(height: 2.h),
+                            role
+                                .s(11.sp)
+                                .w(500)
+                                .c(colors.textSub)
+                                .copyWith(
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              SizedBox(width: 8.w),
-              _HeaderIconButton(icon: Assets.icons.icTaskDaliy, onTap: () {}),
+              if (showApplications) ...[
+                SizedBox(width: 8.w),
+                // Arizalar tugmasi — feature hali qurilmagan, onTap stub.
+                _HeaderIconButton(
+                  icon: Assets.icons.icTaskDaliy,
+                  onTap: () {},
+                ),
+              ],
               SizedBox(width: 16.w),
               _HeaderIconButton(
                 icon: Assets.icons.icNotification,

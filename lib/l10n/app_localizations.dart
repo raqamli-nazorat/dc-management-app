@@ -386,6 +386,246 @@ abstract class AppLocalizations {
   /// **'Ma’lumot yo‘q'**
   String get statEmpty;
 
+  /// No description provided for @profileTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'{role} ma’lumotlari'**
+  String profileTitle(String role);
+
+  /// No description provided for @profileRoleManage.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rol boshqarish'**
+  String get profileRoleManage;
+
+  /// No description provided for @profileSecurity.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xafsizlik'**
+  String get profileSecurity;
+
+  /// No description provided for @profileTheme.
+  ///
+  /// In uz, this message translates to:
+  /// **'Dizayn mavzusi'**
+  String get profileTheme;
+
+  /// No description provided for @profileAbout.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ilova haqida'**
+  String get profileAbout;
+
+  /// No description provided for @profileVersion.
+  ///
+  /// In uz, this message translates to:
+  /// **'Versiya {version}'**
+  String profileVersion(String version);
+
+  /// No description provided for @roleSwitchedTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'{role} roliga o‘tildi.'**
+  String roleSwitchedTitle(String role);
+
+  /// No description provided for @roleSwitchedSubtitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Siz endi {role} sifatida ishlayapsiz.'**
+  String roleSwitchedSubtitle(String role);
+
+  /// No description provided for @meetingsTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yig‘ilishlar'**
+  String get meetingsTitle;
+
+  /// No description provided for @meetingAdd.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yig‘ilish qo‘shish'**
+  String get meetingAdd;
+
+  /// No description provided for @meetingsEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hozircha yig‘ilishlar yo‘q'**
+  String get meetingsEmpty;
+
+  /// No description provided for @meetingReasonTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yig‘ilishga qatnashmadingiz'**
+  String get meetingReasonTitle;
+
+  /// No description provided for @meetingReasonPrompt.
+  ///
+  /// In uz, this message translates to:
+  /// **'Iltimos, qatnashmaganlik sababini kiriting'**
+  String get meetingReasonPrompt;
+
+  /// No description provided for @meetingReasonHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sababni yozing...'**
+  String get meetingReasonHint;
+
+  /// No description provided for @meetingReasonSubmit.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yuborish'**
+  String get meetingReasonSubmit;
+
+  /// No description provided for @meetingReasonSentTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sabab yuborildi.'**
+  String get meetingReasonSentTitle;
+
+  /// No description provided for @profileLogoutTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Profilingizdan chiqmoqchimisiz?'**
+  String get profileLogoutTitle;
+
+  /// No description provided for @profileLogoutSubtitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Profilingizdan chiqasiz va qayta kirish uchun tizimga yana login qilishingiz kerak bo‘ladi'**
+  String get profileLogoutSubtitle;
+
+  /// No description provided for @profileLogoutBack.
+  ///
+  /// In uz, this message translates to:
+  /// **'Orqaga'**
+  String get profileLogoutBack;
+
+  /// No description provided for @profileLogoutConfirm.
+  ///
+  /// In uz, this message translates to:
+  /// **'Chiqish'**
+  String get profileLogoutConfirm;
+
+  /// No description provided for @profileThemeSheetTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Dizayn mavzusi'**
+  String get profileThemeSheetTitle;
+
+  /// No description provided for @profileThemeSheetSubtitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ilova qanday ko‘rinishini tanlang.'**
+  String get profileThemeSheetSubtitle;
+
+  /// No description provided for @profileThemeLight.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yorug‘lik rejimi'**
+  String get profileThemeLight;
+
+  /// No description provided for @profileThemeDark.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qorong‘i rejim'**
+  String get profileThemeDark;
+
+  /// No description provided for @securityChangePassword.
+  ///
+  /// In uz, this message translates to:
+  /// **'Parol o‘zgartirish'**
+  String get securityChangePassword;
+
+  /// No description provided for @securityAutoLock.
+  ///
+  /// In uz, this message translates to:
+  /// **'Avtomatik qulflash'**
+  String get securityAutoLock;
+
+  /// No description provided for @securityAutoLockValue.
+  ///
+  /// In uz, this message translates to:
+  /// **'3 daqiqa'**
+  String get securityAutoLockValue;
+
+  /// No description provided for @changePasswordTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Parolni o‘zgartirish'**
+  String get changePasswordTitle;
+
+  /// No description provided for @changePasswordSubtitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xavfsizlik uchun joriy parolingizni kiriting va yangi parol o‘rnating.'**
+  String get changePasswordSubtitle;
+
+  /// No description provided for @changePasswordOldLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Joriy parol'**
+  String get changePasswordOldLabel;
+
+  /// No description provided for @changePasswordOldHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Joriy parolni kiriting'**
+  String get changePasswordOldHint;
+
+  /// No description provided for @changePasswordNewLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi parol'**
+  String get changePasswordNewLabel;
+
+  /// No description provided for @changePasswordNewHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi parolni kiriting'**
+  String get changePasswordNewHint;
+
+  /// No description provided for @changePasswordConfirmLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Parolni tasdiqlash'**
+  String get changePasswordConfirmLabel;
+
+  /// No description provided for @changePasswordConfirmHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi parolni qayta kiriting'**
+  String get changePasswordConfirmHint;
+
+  /// No description provided for @changePasswordErrorOldWrong.
+  ///
+  /// In uz, this message translates to:
+  /// **'Joriy parol noto‘g‘ri'**
+  String get changePasswordErrorOldWrong;
+
+  /// No description provided for @changePasswordErrorMismatch.
+  ///
+  /// In uz, this message translates to:
+  /// **'Parollar mos kelmadi'**
+  String get changePasswordErrorMismatch;
+
+  /// No description provided for @changePasswordCancel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bekor qilish'**
+  String get changePasswordCancel;
+
+  /// No description provided for @changePasswordSave.
+  ///
+  /// In uz, this message translates to:
+  /// **'Saqlash'**
+  String get changePasswordSave;
+
+  /// No description provided for @changePasswordSuccess.
+  ///
+  /// In uz, this message translates to:
+  /// **'Parol muvaffaqiyatli o‘zgartirildi.'**
+  String get changePasswordSuccess;
+
   /// No description provided for @commonError.
   ///
   /// In uz, this message translates to:

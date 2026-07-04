@@ -21,6 +21,10 @@ class $AssetsIconsGen {
   SvgGenImage get cTuilconLoginLarge =>
       const SvgGenImage('assets/icons/c_tuilcon_login_large.svg');
 
+  /// File path: assets/icons/ic_alert_circle.svg
+  SvgGenImage get icAlertCircle =>
+      const SvgGenImage('assets/icons/ic_alert_circle.svg');
+
   /// File path: assets/icons/ic_analytics.svg
   SvgGenImage get icAnalytics =>
       const SvgGenImage('assets/icons/ic_analytics.svg');
@@ -33,6 +37,18 @@ class $AssetsIconsGen {
   SvgGenImage get icArrowLeftLarge =>
       const SvgGenImage('assets/icons/ic_arrow_left_large.svg');
 
+  /// File path: assets/icons/ic_arrow_right.svg
+  SvgGenImage get icArrowRight =>
+      const SvgGenImage('assets/icons/ic_arrow_right.svg');
+
+  /// File path: assets/icons/ic_arrow_right_exit.svg
+  SvgGenImage get icArrowRightExit =>
+      const SvgGenImage('assets/icons/ic_arrow_right_exit.svg');
+
+  /// File path: assets/icons/ic_auto_lock.svg
+  SvgGenImage get icAutoLock =>
+      const SvgGenImage('assets/icons/ic_auto_lock.svg');
+
   /// File path: assets/icons/ic_breifcase.svg
   SvgGenImage get icBreifcase =>
       const SvgGenImage('assets/icons/ic_breifcase.svg');
@@ -44,6 +60,24 @@ class $AssetsIconsGen {
   /// File path: assets/icons/ic_buildings.svg
   SvgGenImage get icBuildings =>
       const SvgGenImage('assets/icons/ic_buildings.svg');
+
+  /// File path: assets/icons/ic_calendar.svg
+  SvgGenImage get icCalendar =>
+      const SvgGenImage('assets/icons/ic_calendar.svg');
+
+  /// File path: assets/icons/ic_check.svg
+  SvgGenImage get icCheck => const SvgGenImage('assets/icons/ic_check.svg');
+
+  /// File path: assets/icons/ic_check_circle.svg
+  SvgGenImage get icCheckCircle =>
+      const SvgGenImage('assets/icons/ic_check_circle.svg');
+
+  /// File path: assets/icons/ic_checkmark_circle.svg
+  SvgGenImage get icCheckmarkCircle =>
+      const SvgGenImage('assets/icons/ic_checkmark_circle.svg');
+
+  /// File path: assets/icons/ic_close.svg
+  SvgGenImage get icClose => const SvgGenImage('assets/icons/ic_close.svg');
 
   /// File path: assets/icons/ic_dashboard_square.svg
   SvgGenImage get icDashboardSquare =>
@@ -64,19 +98,71 @@ class $AssetsIconsGen {
   SvgGenImage get icEyeOpen =>
       const SvgGenImage('assets/icons/ic_eye_open.svg');
 
+  /// File path: assets/icons/ic_filter.svg
+  SvgGenImage get icFilter => const SvgGenImage('assets/icons/ic_filter.svg');
+
   /// File path: assets/icons/ic_folder.svg
   SvgGenImage get icFolder => const SvgGenImage('assets/icons/ic_folder.svg');
 
   /// File path: assets/icons/ic_globe.svg
   SvgGenImage get icGlobe => const SvgGenImage('assets/icons/ic_globe.svg');
 
+  /// File path: assets/icons/ic_lock.svg
+  SvgGenImage get icLock => const SvgGenImage('assets/icons/ic_lock.svg');
+
+  /// File path: assets/icons/ic_moon.svg
+  SvgGenImage get icMoon => const SvgGenImage('assets/icons/ic_moon.svg');
+
+  /// File path: assets/icons/ic_more_vertical.svg
+  SvgGenImage get icMoreVertical =>
+      const SvgGenImage('assets/icons/ic_more_vertical.svg');
+
   /// File path: assets/icons/ic_notification.svg
   SvgGenImage get icNotification =>
       const SvgGenImage('assets/icons/ic_notification.svg');
 
+  /// File path: assets/icons/ic_personal_information_arrow.svg
+  SvgGenImage get icPersonalInformationArrow =>
+      const SvgGenImage('assets/icons/ic_personal_information_arrow.svg');
+
+  /// File path: assets/icons/ic_personal_information_icon.svg
+  SvgGenImage get icPersonalInformationIcon =>
+      const SvgGenImage('assets/icons/ic_personal_information_icon.svg');
+
+  /// File path: assets/icons/ic_personal_information_switch.svg
+  SvgGenImage get icPersonalInformationSwitch =>
+      const SvgGenImage('assets/icons/ic_personal_information_switch.svg');
+
+  /// File path: assets/icons/ic_plus.svg
+  SvgGenImage get icPlus => const SvgGenImage('assets/icons/ic_plus.svg');
+
+  /// File path: assets/icons/ic_profile_notification.svg
+  SvgGenImage get icProfileNotification =>
+      const SvgGenImage('assets/icons/ic_profile_notification.svg');
+
+  /// File path: assets/icons/ic_search.svg
+  SvgGenImage get icSearch => const SvgGenImage('assets/icons/ic_search.svg');
+
+  /// File path: assets/icons/ic_share_nodes.svg
+  SvgGenImage get icShareNodes =>
+      const SvgGenImage('assets/icons/ic_share_nodes.svg');
+
+  /// File path: assets/icons/ic_soon.svg
+  SvgGenImage get icSoon => const SvgGenImage('assets/icons/ic_soon.svg');
+
+  /// File path: assets/icons/ic_sun.svg
+  SvgGenImage get icSun => const SvgGenImage('assets/icons/ic_sun.svg');
+
   /// File path: assets/icons/ic_task_daliy.svg
   SvgGenImage get icTaskDaliy =>
       const SvgGenImage('assets/icons/ic_task_daliy.svg');
+
+  /// File path: assets/icons/ic_trash.svg
+  SvgGenImage get icTrash => const SvgGenImage('assets/icons/ic_trash.svg');
+
+  /// File path: assets/icons/ic_tuilcon_check.svg
+  SvgGenImage get icTuilconCheck =>
+      const SvgGenImage('assets/icons/ic_tuilcon_check.svg');
 
   /// File path: assets/icons/ic_user.svg
   SvgGenImage get icUser => const SvgGenImage('assets/icons/ic_user.svg');
@@ -88,21 +174,45 @@ class $AssetsIconsGen {
   /// List of all assets
   List<SvgGenImage> get values => [
     cTuilconLoginLarge,
+    icAlertCircle,
     icAnalytics,
     icArrowLeftBold,
     icArrowLeftLarge,
+    icArrowRight,
+    icArrowRightExit,
+    icAutoLock,
     icBreifcase,
     icBriefcaseDollar,
     icBuildings,
+    icCalendar,
+    icCheck,
+    icCheckCircle,
+    icCheckmarkCircle,
+    icClose,
     icDashboardSquare,
     icDatabese,
     icEllipse,
     icEyeClose,
     icEyeOpen,
+    icFilter,
     icFolder,
     icGlobe,
+    icLock,
+    icMoon,
+    icMoreVertical,
     icNotification,
+    icPersonalInformationArrow,
+    icPersonalInformationIcon,
+    icPersonalInformationSwitch,
+    icPlus,
+    icProfileNotification,
+    icSearch,
+    icShareNodes,
+    icSoon,
+    icSun,
     icTaskDaliy,
+    icTrash,
+    icTuilconCheck,
     icUser,
     icUserGroup,
   ];

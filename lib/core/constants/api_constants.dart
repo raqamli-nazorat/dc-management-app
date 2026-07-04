@@ -10,7 +10,7 @@ abstract final class ApiConstants {
 
   // ── Profile ───────────────────────────────────────────────────────────
   static const usersMe = '/users/me/';
-  static const usersMeChangePassword = '/users/me/change_password/';
+  static const usersMeChangePassword = '/users/me/change-password/';
 
   // ── Statistics (bosh sahifa grafiklari) ───────────────────────────────
   static const usersMePeriodStatistics = '/users/me/period-statistics/';
@@ -32,4 +32,21 @@ abstract final class ApiConstants {
   // ── Device (FCM) ──────────────────────────────────────────────────────
   /// Qurilmani FCM token bilan ro‘yxatdan o‘tkazish (`POST`).
   static const devicesRegister = '/devices/register/';
+
+  // ── Meetings ──────────────────────────────────────────────────────────
+  static const meetings = '/meetings/';
+
+  /// Bitta yig‘ilish: `GET/PUT/PATCH/DELETE /meetings/{id}/`.
+  static String meetingById(int id) => '/meetings/$id/';
+
+  /// Yig‘ilishni yopish: `POST /meetings/{id}/close/`.
+  static String meetingClose(int id) => '/meetings/$id/close/';
+
+  // ── Meeting attendance (qatnashuv) ────────────────────────────────────
+  /// Ro‘yxat + filtr: `GET /meeting-attendance/?meeting=&user=&is_attended=`.
+  static const meetingAttendance = '/meeting-attendance/';
+
+  /// Bitta qatnashuv yozuvi: `GET/PATCH /meeting-attendance/{id}/`
+  /// (qatnashmaslik sababi shu yerga `absence_reason` bilan PATCH qilinadi).
+  static String meetingAttendanceById(int id) => '/meeting-attendance/$id/';
 }

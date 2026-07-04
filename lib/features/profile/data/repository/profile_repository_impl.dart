@@ -22,10 +22,12 @@ class ProfileRepositoryImpl implements ProfileRepository {
   Future<void> changePassword({
     required String oldPassword,
     required String newPassword,
+    required String confirmNewPassword,
   }) =>
       _guard(() => _remote.changePassword(
             oldPassword: oldPassword,
             newPassword: newPassword,
+            confirmNewPassword: confirmNewPassword,
           ));
 
   /// Data source chaqiruvini o‘rab, `Exception` → `Failure` xaritalaydi.

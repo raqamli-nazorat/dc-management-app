@@ -31,8 +31,18 @@ abstract final class ResponseMapper {
 
   static String messageFromBody(Map<String, dynamic> body) {
     final error = body['error'];
-    if (error is Map && error['errorMsg'] is String) {
-      return error['errorMsg'] as String;
+    if (error is Map) {
+      // Maydon darajasidagi validatsiya xabari (`error.details`) eng aniq —
+      // umumiy `errorMsg`dan ustun ("...tekshirishda xatolik" o‘rniga
+      // "Parol kamida 4 ta raqamdan iborat bo‘lishi kerak").
+      final details = error['details'];
+      if (details is Map) {
+        for (final v in details.values) {
+          if (v is List && v.isNotEmpty) return v.first.toString();
+          if (v is String && v.isNotEmpty) return v;
+        }
+      }
+      if (error['errorMsg'] is String) return error['errorMsg'] as String;
     }
     if (body['detail'] is String) return body['detail'] as String;
     return 'Server xatosi';

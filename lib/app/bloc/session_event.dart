@@ -34,6 +34,18 @@ class SessionRoleSelected extends SessionEvent {
   List<Object?> get props => [role];
 }
 
+/// `GET /users/me/` javobidagi `active_role` bilan sessiyani sinxronlash —
+/// backend tomonda faol rol o‘zgargan bo‘lishi mumkin (login/rol tanlashdan
+/// keyin ham), shu sabab profil har yuklanganda tekshiriladi.
+class SessionActiveRoleSynced extends SessionEvent {
+  const SessionActiveRoleSynced(this.role);
+
+  final String role;
+
+  @override
+  List<Object?> get props => [role];
+}
+
 /// Bugungi davomat topshirildi (eski oqim — mosligi uchun).
 class SessionAttendanceCompleted extends SessionEvent {
   const SessionAttendanceCompleted();

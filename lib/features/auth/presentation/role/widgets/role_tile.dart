@@ -13,18 +13,27 @@ class RoleTile extends StatelessWidget {
     required this.label,
     required this.icon,
     required this.onTap,
+    this.enabled = true,
+    this.loading = false,
   });
 
   final String label;
   final SvgGenImage icon;
   final VoidCallback onTap;
 
+  /// `false` bo‘lsa — bosish o‘chiriladi va karta xiralashadi (boshqa karta
+  /// hozir backendga yozilayotganda).
+  final bool enabled;
+
+  /// `true` bo‘lsa — ikonka o‘rniga spinner (bu karta backendga yozilmoqda).
+  final bool loading;
+
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
     final radius = BorderRadius.circular(16.r);
 
-    return DecoratedBox(
+    final tile = DecoratedBox(
       decoration: BoxDecoration(
         color: colors.backgroundElevation1Alt,
         borderRadius: radius,
@@ -32,21 +41,37 @@ class RoleTile extends StatelessWidget {
       child: Material(
         type: MaterialType.transparency,
         child: InkWell(
-          onTap: onTap,
+          onTap: enabled ? onTap : null,
           borderRadius: radius,
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 20.h),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                icon.svg(
-                  width: 28.r,
-                  height: 28.r,
-                  colorFilter: ColorFilter.mode(
-                    colors.iconStrong,
-                    BlendMode.srcIn,
+                if (loading)
+                  SizedBox(
+                    width: 28.r,
+                    height: 28.r,
+                    child: Center(
+                      child: SizedBox(
+                        width: 20.r,
+                        height: 20.r,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5.w,
+                          color: colors.iconStrong,
+                        ),
+                      ),
+                    ),
+                  )
+                else
+                  icon.svg(
+                    width: 28.r,
+                    height: 28.r,
+                    colorFilter: ColorFilter.mode(
+                      colors.iconStrong,
+                      BlendMode.srcIn,
+                    ),
                   ),
-                ),
                 SizedBox(width: 8.w),
                 Flexible(
                   child: label
@@ -63,5 +88,9 @@ class RoleTile extends StatelessWidget {
         ),
       ),
     );
+
+    // Boshqa karta yozilayotganda bu karta xira ko‘rinadi (loading kartaning
+    // o‘zi to‘liq qoladi — spinner allaqachon holatni bildiradi).
+    return Opacity(opacity: enabled || loading ? 1 : 0.5, child: tile);
   }
 }
