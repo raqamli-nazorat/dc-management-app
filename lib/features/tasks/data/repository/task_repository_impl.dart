@@ -12,7 +12,8 @@ class TaskRepositoryImpl implements TaskRepository {
   final TaskRemoteDataSource _remote;
 
   @override
-  Future<List<Task>> getTasks() => _guard(() => _remote.getTasks());
+  Future<TaskPage> getTasks({int page = 1}) =>
+      _guard(() => _remote.getTasks(page: page));
 
   Future<T> _guard<T>(Future<T> Function() action) async {
     try {

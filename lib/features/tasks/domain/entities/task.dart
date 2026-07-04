@@ -1,5 +1,9 @@
 import 'package:equatable/equatable.dart';
 
+/// Bitta sahifa natijasi: yuklangan vazifalar + yana sahifa bor-yo'qligi
+/// (`next != null`). Cheksiz-scroll uchun bloc `hasMore` ni kuzatadi.
+typedef TaskPage = ({List<Task> items, bool hasMore});
+
 /// Vazifa muhimligi (`priority`). Noma'lum qiymat → [unknown].
 enum TaskPriority {
   low,
@@ -24,13 +28,16 @@ enum TaskPriority {
   }
 }
 
-/// Vazifa holati (`status`). Kartadagi nuqta rangini tanlaydi.
+/// Vazifa holati (`status`). Backend `Status298Enum` — 7 qiymat, kartadagi
+/// nuqta rangi shu bo'yicha tanlanadi. Noma'lum qiymat → [unknown].
 enum TaskStatus {
-  todo,
-  inProgress,
-  inReview,
-  done,
-  rejected,
+  todo, // Qilinishi kerak
+  inProgress, // Jarayonda
+  overdue, // Muddati o'tgan
+  done, // Bajarildi
+  production, // Ishga tushirildi
+  checked, // Tekshirildi
+  rejected, // Rad etildi
   unknown;
 
   static TaskStatus fromApi(String? value) {
@@ -39,10 +46,14 @@ enum TaskStatus {
         return TaskStatus.todo;
       case 'in_progress':
         return TaskStatus.inProgress;
-      case 'in_review':
-        return TaskStatus.inReview;
+      case 'overdue':
+        return TaskStatus.overdue;
       case 'done':
         return TaskStatus.done;
+      case 'production':
+        return TaskStatus.production;
+      case 'checked':
+        return TaskStatus.checked;
       case 'rejected':
         return TaskStatus.rejected;
       default:

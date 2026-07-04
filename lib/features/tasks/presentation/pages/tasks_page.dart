@@ -26,8 +26,38 @@ class TasksPage extends StatelessWidget {
   }
 }
 
-class _TasksView extends StatelessWidget {
+class _TasksView extends StatefulWidget {
   const _TasksView();
+
+  @override
+  State<_TasksView> createState() => _TasksViewState();
+}
+
+class _TasksViewState extends State<_TasksView> {
+  final _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
+    super.dispose();
+  }
+
+  /// Oxiriga 300px qolganda keyingi sahifani so'raymiz (bloc qulflarni
+  /// o'zi tekshiradi: reachedMax / isLoadingMore).
+  void _onScroll() {
+    final position = _scrollController.position;
+    if (position.pixels >= position.maxScrollExtent - 300) {
+      context.read<TasksBloc>().add(const TasksLoadMore());
+    }
+  }
 
   Future<void> _onRefresh(BuildContext context) {
     final bloc = context.read<TasksBloc>();
@@ -75,11 +105,32 @@ class _TasksView extends StatelessWidget {
                           );
                         }
                         return ListView.separated(
+                          controller: _scrollController,
                           physics: const AlwaysScrollableScrollPhysics(),
                           padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 24.h),
-                          itemCount: state.items.length,
+                          // Oxirgi element — footer spinner (yana sahifa bo'lsa).
+                          itemCount:
+                              state.items.length +
+                              (state.hasReachedMax ? 0 : 1),
                           separatorBuilder: (_, _) => SizedBox(height: 12.h),
-                          itemBuilder: (_, i) => TaskCard(task: state.items[i]),
+                          itemBuilder: (_, i) {
+                            if (i >= state.items.length) {
+                              return Padding(
+                                padding: EdgeInsets.symmetric(vertical: 16.h),
+                                child: Center(
+                                  child: SizedBox(
+                                    width: 20.w,
+                                    height: 20.w,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2.w,
+                                      color: colors.accentSub,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+                            return TaskCard(task: state.items[i]);
+                          },
                         );
                     }
                   },

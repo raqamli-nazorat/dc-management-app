@@ -7,7 +7,12 @@ sealed class TasksEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-/// Ro'yxatni yuklash / qayta yuklash.
+/// Ro'yxatni yuklash / qayta yuklash (1-sahifadan).
 class TasksRequested extends TasksEvent {
   const TasksRequested();
+}
+
+/// Keyingi sahifani yuklab, ro'yxat oxiriga qo'shish (cheksiz-scroll).
+class TasksLoadMore extends TasksEvent {
+  const TasksLoadMore();
 }

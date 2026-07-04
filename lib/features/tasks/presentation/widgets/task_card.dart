@@ -213,13 +213,17 @@ class _StatusDot extends StatelessWidget {
       case TaskStatus.todo:
         return colors.taskStatusTodo;
       case TaskStatus.inProgress:
-        return colors.accentSub;
-      case TaskStatus.inReview:
-        return colors.chartBlue;
+        return colors.taskStatusInProgress;
+      case TaskStatus.overdue:
+        return colors.taskStatusOverdue;
       case TaskStatus.done:
-        return colors.successStrong;
+        return colors.taskStatusDone;
+      case TaskStatus.production:
+        return colors.taskStatusProduction;
+      case TaskStatus.checked:
+        return colors.taskStatusChecked;
       case TaskStatus.rejected:
-        return colors.errorSub;
+        return colors.taskStatusRejected;
       case TaskStatus.unknown:
         return colors.textSoft;
     }
