@@ -82,6 +82,14 @@
     "placeholders": { "role": { "type": "String" } }
   },
 
+  "tasksTitle": "Vazifalar",
+  "taskAdd": "Vazifa qo‘shish",
+  "tasksEmpty": "Hozircha vazifalar yo‘q",
+  "taskPriorityLow": "Past",
+  "taskPriorityMedium": "O‘rta",
+  "taskPriorityHigh": "Yuqori",
+  "taskPriorityCritical": "Kritik",
+
   "meetingsTitle": "Yig‘ilishlar",
   "meetingAdd": "Yig‘ilish qo‘shish",
   "meetingsEmpty": "Hozircha yig‘ilishlar yo‘q",

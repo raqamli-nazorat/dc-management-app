@@ -33,6 +33,9 @@ abstract final class ApiConstants {
   /// Qurilmani FCM token bilan ro‘yxatdan o‘tkazish (`POST`).
   static const devicesRegister = '/devices/register/';
 
+  // ── Tasks ─────────────────────────────────────────────────────────────
+  static const tasks = '/tasks/';
+
   // ── Meetings ──────────────────────────────────────────────────────────
   static const meetings = '/meetings/';
 

@@ -65,6 +65,9 @@ Two channels deliver the **same notification shape** — `{id, title, message, t
 - The PIN flow has its own dedicated bloc (`features/auth/presentation/pin/bloc/`). PIN **is** the password: a full PIN fires the login API with the cached username. Indicator slot count is **dynamic** (`pinLength` from storage, never hardcoded). 429 → parse remaining seconds from `errorMsg`, run an in-bloc countdown (`Timer.periodic`), render MM:SS blocked state.
 - On auth success `SessionLoggedIn(token, roles)`: 1 role → straight to home; >1 → `roleSelect` (roles listed dynamically from the API response).
 
+### Tasks list
+`features/tasks/` follows the three-layer split (mirrors `features/meetings/` — copy that when adding a similar list feature). `GET /tasks/` is **paginated** (`{count, next, previous, results}`), so the data source relies on `ResponseMapper.asList` unwrapping `results` (it already does — don't hand-roll pagination). `TaskModel.fromJson` is null-tolerant: `project_info` may be a string or nested object, assignee comes from `assignee_info`. `priority`/`status` parse into `TaskPriority`/`TaskStatus` enums (`.fromApi`, unknown → `unknown`); the widget layer maps enum → color/label (blocs stay context-free). `TaskCard` priority pills + status dot use dedicated `AppColors` tokens (`taskPriorityLow/Medium/High/Critical`, `taskStatusTodo`) — `high` has no design swatch (picked `#E2571F`). The deadline countdown chip is computed once at build (no per-second `Timer`). Entry point: the "Vazifalar" tile in `projects_page.dart` pushes `Routes.tasks`. Header add/search/filter buttons are stubs (no flow/endpoint yet), same as meetings.
+
 ### Meetings + absence-reason flow
 `features/meetings/` follows the three-layer split. Two related backend resources, distinct on purpose:
 - `GET /meetings/` + `GET /meetings/{id}/` — meeting records (`Meeting` entity).

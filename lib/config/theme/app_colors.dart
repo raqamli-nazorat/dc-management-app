@@ -85,6 +85,22 @@ class AppColors extends ThemeExtension<AppColors> {
   /// Yig‘ilishlar donut: "Sababli" (ko‘k).
   final Color chartBlue;
 
+  // ── Task priority / status (vazifa kartasi tokenlari) ─────────────────
+  /// Muhimlik "Past" pill foni.
+  final Color taskPriorityLow;
+
+  /// Muhimlik "O‘rta" pill foni.
+  final Color taskPriorityMedium;
+
+  /// Muhimlik "Yuqori" pill foni.
+  final Color taskPriorityHigh;
+
+  /// Muhimlik "Kritik" pill foni.
+  final Color taskPriorityCritical;
+
+  /// "Qilinishi kerak" holati nuqtasi (amber).
+  final Color taskStatusTodo;
+
   /// Xarajat kartasi va shunga o‘xshash bosh harf avatarlari uchun fon.
   final Color avatarPlaceholder;
 
@@ -158,6 +174,11 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.chartGrey,
     required this.chartGreen,
     required this.chartBlue,
+    required this.taskPriorityLow,
+    required this.taskPriorityMedium,
+    required this.taskPriorityHigh,
+    required this.taskPriorityCritical,
+    required this.taskStatusTodo,
     required this.avatarPlaceholder,
     required this.badgeRead,
     required this.badgeUnread,
@@ -220,6 +241,11 @@ class AppColors extends ThemeExtension<AppColors> {
     chartGrey: Color(0xFFDADFF0),
     chartGreen: Color(0xFF2DBE2C),
     chartBlue: Color(0xFF92BFFF),
+    taskPriorityLow: Color(0xFF888780),
+    taskPriorityMedium: Color(0xFFED9121),
+    taskPriorityHigh: Color(0xFFE2571F),
+    taskPriorityCritical: Color(0xFFE24B4A),
+    taskStatusTodo: Color(0xFFFBC02D),
     avatarPlaceholder: Color(0xFFDADFF0),
     badgeRead: Color(0xFF526ED3),
     badgeUnread: Color(0xFFFF6A2E),
@@ -282,6 +308,11 @@ class AppColors extends ThemeExtension<AppColors> {
     chartGrey: Color(0xFFCED2DC),
     chartGreen: Color(0xFF2DBE2C),
     chartBlue: Color(0xFF92BFFF),
+    taskPriorityLow: Color(0xFF888780),
+    taskPriorityMedium: Color(0xFFED9121),
+    taskPriorityHigh: Color(0xFFE2571F),
+    taskPriorityCritical: Color(0xFFE24B4A),
+    taskStatusTodo: Color(0xFFFBC02D),
     avatarPlaceholder: Color(0xFF3A3B3B),
     badgeRead: Color(0xFF526ED3),
     badgeUnread: Color(0xFFFF6A2E),
@@ -300,11 +331,7 @@ class AppColors extends ThemeExtension<AppColors> {
   static const Gradient authBackgroundGradient = LinearGradient(
     begin: Alignment(-1.0, -0.1),
     end: Alignment(1.0, 0.1),
-    colors: [
-      Color(0xFFE6ECFF),
-      Color(0xFFA5B4FC),
-      Color(0xFF6E86E1),
-    ],
+    colors: [Color(0xFFE6ECFF), Color(0xFFA5B4FC), Color(0xFF6E86E1)],
     stops: [0.0025, 0.3575, 1.0],
   );
 
@@ -378,6 +405,11 @@ class AppColors extends ThemeExtension<AppColors> {
     Color? chartGrey,
     Color? chartGreen,
     Color? chartBlue,
+    Color? taskPriorityLow,
+    Color? taskPriorityMedium,
+    Color? taskPriorityHigh,
+    Color? taskPriorityCritical,
+    Color? taskStatusTodo,
     Color? avatarPlaceholder,
     Color? badgeRead,
     Color? badgeUnread,
@@ -441,6 +473,11 @@ class AppColors extends ThemeExtension<AppColors> {
     chartGrey: chartGrey ?? this.chartGrey,
     chartGreen: chartGreen ?? this.chartGreen,
     chartBlue: chartBlue ?? this.chartBlue,
+    taskPriorityLow: taskPriorityLow ?? this.taskPriorityLow,
+    taskPriorityMedium: taskPriorityMedium ?? this.taskPriorityMedium,
+    taskPriorityHigh: taskPriorityHigh ?? this.taskPriorityHigh,
+    taskPriorityCritical: taskPriorityCritical ?? this.taskPriorityCritical,
+    taskStatusTodo: taskStatusTodo ?? this.taskStatusTodo,
     avatarPlaceholder: avatarPlaceholder ?? this.avatarPlaceholder,
     badgeRead: badgeRead ?? this.badgeRead,
     badgeUnread: badgeUnread ?? this.badgeUnread,
@@ -530,6 +567,23 @@ class AppColors extends ThemeExtension<AppColors> {
       chartGrey: Color.lerp(chartGrey, other.chartGrey, t)!,
       chartGreen: Color.lerp(chartGreen, other.chartGreen, t)!,
       chartBlue: Color.lerp(chartBlue, other.chartBlue, t)!,
+      taskPriorityLow: Color.lerp(taskPriorityLow, other.taskPriorityLow, t)!,
+      taskPriorityMedium: Color.lerp(
+        taskPriorityMedium,
+        other.taskPriorityMedium,
+        t,
+      )!,
+      taskPriorityHigh: Color.lerp(
+        taskPriorityHigh,
+        other.taskPriorityHigh,
+        t,
+      )!,
+      taskPriorityCritical: Color.lerp(
+        taskPriorityCritical,
+        other.taskPriorityCritical,
+        t,
+      )!,
+      taskStatusTodo: Color.lerp(taskStatusTodo, other.taskStatusTodo, t)!,
       avatarPlaceholder: Color.lerp(
         avatarPlaceholder,
         other.avatarPlaceholder,

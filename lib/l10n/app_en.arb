@@ -79,6 +79,14 @@
     "placeholders": { "role": { "type": "String" } }
   },
 
+  "tasksTitle": "Tasks",
+  "taskAdd": "Add task",
+  "tasksEmpty": "No tasks yet",
+  "taskPriorityLow": "Low",
+  "taskPriorityMedium": "Medium",
+  "taskPriorityHigh": "High",
+  "taskPriorityCritical": "Critical",
+
   "meetingsTitle": "Meetings",
   "meetingAdd": "Add meeting",
   "meetingsEmpty": "No meetings yet",

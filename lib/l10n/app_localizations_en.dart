@@ -187,6 +187,27 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get tasksTitle => 'Tasks';
+
+  @override
+  String get taskAdd => 'Add task';
+
+  @override
+  String get tasksEmpty => 'No tasks yet';
+
+  @override
+  String get taskPriorityLow => 'Low';
+
+  @override
+  String get taskPriorityMedium => 'Medium';
+
+  @override
+  String get taskPriorityHigh => 'High';
+
+  @override
+  String get taskPriorityCritical => 'Critical';
+
+  @override
   String get meetingsTitle => 'Meetings';
 
   @override

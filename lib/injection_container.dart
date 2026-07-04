@@ -29,6 +29,11 @@ import 'features/meetings/domain/usecases/get_meetings_usecase.dart';
 import 'features/meetings/domain/usecases/submit_absence_reason_usecase.dart';
 import 'features/meetings/presentation/bloc/meeting_reason_bloc.dart';
 import 'features/meetings/presentation/bloc/meetings_bloc.dart';
+import 'features/tasks/data/data_sources/task_remote_data_source.dart';
+import 'features/tasks/data/repository/task_repository_impl.dart';
+import 'features/tasks/domain/repository/task_repository.dart';
+import 'features/tasks/domain/usecases/get_tasks_usecase.dart';
+import 'features/tasks/presentation/bloc/tasks_bloc.dart';
 import 'features/notification/data/data_sources/notification_remote_data_source.dart';
 import 'features/notification/data/data_sources/notification_socket_service.dart';
 import 'features/notification/data/repository/notification_repository_impl.dart';
@@ -155,6 +160,15 @@ Future<void> configureDependencies() async {
         submitReason: getIt(),
       ),
     );
+
+  // ── Tasks feature ─────────────────────────────────────────────────────
+  getIt
+    ..registerLazySingleton<TaskRemoteDataSource>(
+      () => TaskRemoteDataSourceImpl(getIt()),
+    )
+    ..registerLazySingleton<TaskRepository>(() => TaskRepositoryImpl(getIt()))
+    ..registerLazySingleton<GetTasksUseCase>(() => GetTasksUseCase(getIt()))
+    ..registerFactory<TasksBloc>(() => TasksBloc(getTasks: getIt()));
 
   // ── Statistics feature ────────────────────────────────────────────────
   getIt
