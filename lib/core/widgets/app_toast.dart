@@ -13,18 +13,41 @@ import '../gen/assets.gen.dart';
 /// Foydalanish: `AppToast.showSuccess(context, title: ..., message: ...)`.
 /// Overlay orqali chiziladi — chaqiruvchi widget yo'q bo'lib ketsa ham
 /// (masalan dialog yopilsa) toast qoladi (root overlay'ga qo'yiladi).
+enum _ToastVariant { success, error }
+
 abstract final class AppToast {
-  /// Muvaffaqiyat toasti (yashil check ikonka bilan).
+  /// Muvaffaqiyat toasti (yashil check ikonka bilan). [message] ixtiyoriy —
+  /// bo‘lmasa faqat sarlavha ko‘rsatiladi.
   static void showSuccess(
     BuildContext context, {
     required String title,
-    required String message,
+    String? message,
     Duration duration = const Duration(seconds: 3),
-  }) {
+  }) =>
+      _show(context, _ToastVariant.success, title, message, duration);
+
+  /// Xato toasti (qizil ogohlantirish ikonka bilan). Backenddan kelgan
+  /// validatsiya xabarlarini ko‘rsatish uchun.
+  static void showError(
+    BuildContext context, {
+    required String title,
+    String? message,
+    Duration duration = const Duration(seconds: 4),
+  }) =>
+      _show(context, _ToastVariant.error, title, message, duration);
+
+  static void _show(
+    BuildContext context,
+    _ToastVariant variant,
+    String title,
+    String? message,
+    Duration duration,
+  ) {
     final overlay = Overlay.of(context, rootOverlay: true);
     late OverlayEntry entry;
     entry = OverlayEntry(
       builder: (_) => _ToastCard(
+        variant: variant,
         title: title,
         message: message,
         duration: duration,
@@ -39,14 +62,16 @@ abstract final class AppToast {
 
 class _ToastCard extends StatefulWidget {
   const _ToastCard({
+    required this.variant,
     required this.title,
     required this.message,
     required this.duration,
     required this.onDismissed,
   });
 
+  final _ToastVariant variant;
   final String title;
-  final String message;
+  final String? message;
   final Duration duration;
   final VoidCallback onDismissed;
 
@@ -93,6 +118,10 @@ class _ToastCardState extends State<_ToastCard>
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
+    final isError = widget.variant == _ToastVariant.error;
+    final icon =
+        isError ? Assets.icons.icAlertCircle : Assets.icons.icCheckCircle;
+    final iconColor = isError ? colors.errorStrong : colors.successStrong;
 
     return Positioned(
       top: MediaQuery.paddingOf(context).top + 8.h,
@@ -124,11 +153,11 @@ class _ToastCardState extends State<_ToastCard>
                   children: [
                     Padding(
                       padding: EdgeInsets.only(top: 15.h, right: 12.w),
-                      child: Assets.icons.icCheckCircle.svg(
+                      child: icon.svg(
                         width: 16.w,
                         height: 16.w,
                         colorFilter: ColorFilter.mode(
-                          colors.successStrong,
+                          iconColor,
                           BlendMode.srcIn,
                         ),
                       ),
@@ -148,15 +177,18 @@ class _ToastCardState extends State<_ToastCard>
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                 ),
-                            SizedBox(height: 4.h),
-                            widget.message
-                                .s(13.sp)
-                                .w(500)
-                                .c(colors.textSub)
-                                .copyWith(
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+                            if (widget.message != null &&
+                                widget.message!.isNotEmpty) ...[
+                              SizedBox(height: 4.h),
+                              widget.message!
+                                  .s(13.sp)
+                                  .w(500)
+                                  .c(colors.textSub)
+                                  .copyWith(
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                            ],
                           ],
                         ),
                       ),

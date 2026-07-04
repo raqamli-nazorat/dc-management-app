@@ -187,6 +187,104 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get meetingsTitle => 'Meetings';
+
+  @override
+  String get meetingAdd => 'Add meeting';
+
+  @override
+  String get meetingsEmpty => 'No meetings yet';
+
+  @override
+  String get meetingReasonTitle => 'You missed the meeting';
+
+  @override
+  String get meetingReasonPrompt => 'Please enter the reason for your absence';
+
+  @override
+  String get meetingReasonHint => 'Write the reason...';
+
+  @override
+  String get meetingReasonSubmit => 'Submit';
+
+  @override
+  String get meetingReasonSentTitle => 'Reason submitted.';
+
+  @override
+  String get profileLogoutTitle => 'Do you want to log out?';
+
+  @override
+  String get profileLogoutSubtitle =>
+      'You will be logged out and will need to log in again to access your profile.';
+
+  @override
+  String get profileLogoutBack => 'Back';
+
+  @override
+  String get profileLogoutConfirm => 'Log out';
+
+  @override
+  String get profileThemeSheetTitle => 'Design theme';
+
+  @override
+  String get profileThemeSheetSubtitle => 'Choose how the app should look.';
+
+  @override
+  String get profileThemeLight => 'Light mode';
+
+  @override
+  String get profileThemeDark => 'Dark mode';
+
+  @override
+  String get securityChangePassword => 'Change password';
+
+  @override
+  String get securityAutoLock => 'Auto-lock';
+
+  @override
+  String get securityAutoLockValue => '3 minutes';
+
+  @override
+  String get changePasswordTitle => 'Change password';
+
+  @override
+  String get changePasswordSubtitle =>
+      'For security, enter your current password and set a new one.';
+
+  @override
+  String get changePasswordOldLabel => 'Current password';
+
+  @override
+  String get changePasswordOldHint => 'Enter your current password';
+
+  @override
+  String get changePasswordNewLabel => 'New password';
+
+  @override
+  String get changePasswordNewHint => 'Enter a new password';
+
+  @override
+  String get changePasswordConfirmLabel => 'Confirm password';
+
+  @override
+  String get changePasswordConfirmHint => 'Re-enter the new password';
+
+  @override
+  String get changePasswordErrorOldWrong => 'Current password is incorrect';
+
+  @override
+  String get changePasswordErrorMismatch => 'Passwords do not match';
+
+  @override
+  String get changePasswordCancel => 'Cancel';
+
+  @override
+  String get changePasswordSave => 'Save';
+
+  @override
+  String get changePasswordSuccess => 'Password changed successfully.';
+
+  @override
   String get commonError => 'Something went wrong. Please try again later.';
 
   @override

@@ -30,6 +30,10 @@ abstract final class StorageKeys {
   /// device register `device_id` maydoni uchun.
   static const deviceId = 'device_id';
 
+  /// Tanlangan dizayn mavzusi (`'light'` / `'dark'`) — profil sahifasidagi
+  /// mavzu almashtirgichda saqlanadi, ilova ishga tushganda o'qiladi.
+  static const themeMode = 'theme_mode';
+
   static const all = <String>{
     authToken,
     refreshToken,
@@ -45,5 +49,6 @@ abstract final class StorageKeys {
     lastActiveAt,
     fcmToken,
     deviceId,
+    themeMode,
   };
 }

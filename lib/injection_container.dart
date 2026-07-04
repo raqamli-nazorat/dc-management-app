@@ -20,6 +20,15 @@ import 'features/auth/domain/usecases/login_usecase.dart';
 import 'features/auth/presentation/bloc/login_bloc.dart';
 import 'features/auth/presentation/pin/bloc/pin_bloc.dart';
 import 'features/auth/presentation/role/bloc/role_select_bloc.dart';
+import 'features/meetings/data/data_sources/meeting_remote_data_source.dart';
+import 'features/meetings/data/repository/meeting_repository_impl.dart';
+import 'features/meetings/domain/repository/meeting_repository.dart';
+import 'features/meetings/domain/usecases/get_meeting_attendance_usecase.dart';
+import 'features/meetings/domain/usecases/get_meeting_usecase.dart';
+import 'features/meetings/domain/usecases/get_meetings_usecase.dart';
+import 'features/meetings/domain/usecases/submit_absence_reason_usecase.dart';
+import 'features/meetings/presentation/bloc/meeting_reason_bloc.dart';
+import 'features/meetings/presentation/bloc/meetings_bloc.dart';
 import 'features/notification/data/data_sources/notification_remote_data_source.dart';
 import 'features/notification/data/data_sources/notification_socket_service.dart';
 import 'features/notification/data/repository/notification_repository_impl.dart';
@@ -32,6 +41,7 @@ import 'features/profile/domain/repository/profile_repository.dart';
 import 'features/profile/domain/usecases/change_password_usecase.dart';
 import 'features/profile/domain/usecases/get_me_usecase.dart';
 import 'features/profile/domain/usecases/update_me_usecase.dart';
+import 'features/profile/presentation/bloc/change_password_bloc.dart';
 import 'features/profile/presentation/bloc/profile_bloc.dart';
 import 'features/statistics/data/data_sources/statistics_remote_data_source.dart';
 import 'features/statistics/data/repository/statistics_repository_impl.dart';
@@ -114,7 +124,37 @@ Future<void> configureDependencies() async {
     ..registerLazySingleton<ChangePasswordUseCase>(
       () => ChangePasswordUseCase(getIt()),
     )
-    ..registerFactory<ProfileBloc>(() => ProfileBloc(getMe: getIt()));
+    ..registerFactory<ProfileBloc>(() => ProfileBloc(getMe: getIt()))
+    ..registerFactory<ChangePasswordBloc>(
+      () => ChangePasswordBloc(changePassword: getIt(), storage: getIt()),
+    );
+
+  // ── Meetings feature ──────────────────────────────────────────────────
+  getIt
+    ..registerLazySingleton<MeetingRemoteDataSource>(
+      () => MeetingRemoteDataSourceImpl(getIt()),
+    )
+    ..registerLazySingleton<MeetingRepository>(
+      () => MeetingRepositoryImpl(getIt()),
+    )
+    ..registerLazySingleton<GetMeetingsUseCase>(
+      () => GetMeetingsUseCase(getIt()),
+    )
+    ..registerLazySingleton<GetMeetingUseCase>(() => GetMeetingUseCase(getIt()))
+    ..registerLazySingleton<GetMeetingAttendanceUseCase>(
+      () => GetMeetingAttendanceUseCase(getIt()),
+    )
+    ..registerLazySingleton<SubmitAbsenceReasonUseCase>(
+      () => SubmitAbsenceReasonUseCase(getIt()),
+    )
+    ..registerFactory<MeetingsBloc>(() => MeetingsBloc(getMeetings: getIt()))
+    ..registerFactory<MeetingReasonBloc>(
+      () => MeetingReasonBloc(
+        getMeeting: getIt(),
+        getAttendance: getIt(),
+        submitReason: getIt(),
+      ),
+    );
 
   // ── Statistics feature ────────────────────────────────────────────────
   getIt

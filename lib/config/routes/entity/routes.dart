@@ -30,6 +30,16 @@ class Routes implements Coordinate {
   /// Profil (home ustidan, AppBar user ma’lumotlari bosilganda push qilinadi).
   static const profile = Routes._(name: 'profile', path: '/profile');
 
+  /// Xavfsizlik (profil sozlamalaridan push qilinadi).
+  static const security = Routes._(name: 'security', path: '/security');
+
+  /// Yig‘ilishlar ro‘yxati.
+  static const meetings = Routes._(name: 'meetings', path: '/meetings');
+
+  /// "Yig‘ilishga qatnashmadingiz" — sabab yozish (meeting id path param).
+  static const meetingReason =
+      Routes._(name: 'meeting_reason', path: '/meetings/:id/reason');
+
   @override
   String toString() => 'name=$name, path=$path';
 }

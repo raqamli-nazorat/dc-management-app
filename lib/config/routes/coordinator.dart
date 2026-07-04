@@ -10,8 +10,11 @@ import '../../features/auth/presentation/pages/splash_page.dart';
 import '../../features/auth/presentation/pin/pages/pin_page.dart';
 import '../../features/auth/presentation/role/pages/role_select_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
+import '../../features/meetings/presentation/pages/meeting_reason_page.dart';
+import '../../features/meetings/presentation/pages/meetings_page.dart';
 import '../../features/notification/presentation/pages/notification_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
+import '../../features/profile/presentation/pages/security_page.dart';
 import 'entity/routes.dart';
 
 /// Root navigator key — exposed for context-free navigation (snackbars,
@@ -79,6 +82,24 @@ class AppRouter {
           name: Routes.profile.name,
           path: Routes.profile.path,
           builder: (context, state) => const ProfilePage(),
+        ),
+        GoRoute(
+          name: Routes.security.name,
+          path: Routes.security.path,
+          builder: (context, state) => const SecurityPage(),
+        ),
+        GoRoute(
+          name: Routes.meetings.name,
+          path: Routes.meetings.path,
+          builder: (context, state) => const MeetingsPage(),
+        ),
+        GoRoute(
+          name: Routes.meetingReason.name,
+          path: Routes.meetingReason.path,
+          builder: (context, state) {
+            final id = int.tryParse(state.pathParameters['id'] ?? '') ?? 0;
+            return MeetingReasonPage(meetingId: id);
+          },
         ),
       ],
     );

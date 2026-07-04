@@ -16,7 +16,9 @@ import '../../../../l10n/app_localizations.dart';
 import '../../../auth/presentation/role/role_presentation.dart';
 import '../../domain/entities/profile.dart';
 import '../bloc/profile_bloc.dart';
+import '../widgets/logout_confirm_dialog.dart';
 import '../widgets/role_switch_dialog.dart';
+import '../widgets/theme_switch_sheet.dart';
 
 /// Profil sahifasi — foydalanuvchi ma'lumotlari + hisob sozlamalari ro'yxati.
 /// Home ustidan (AppBar user ma'lumotlari bosilganda) push qilinadi.
@@ -111,8 +113,7 @@ class _ProfileAppBar extends StatelessWidget {
           _AppBarButton(
             icon: Assets.icons.icArrowRightExit,
             color: colors.errorSub,
-            onTap: () =>
-                context.read<SessionBloc>().add(const SessionLogoutRequested()),
+            onTap: () => showLogoutConfirmDialog(context),
           ),
         ],
       ),
@@ -203,7 +204,7 @@ class _ProfileBody extends StatelessWidget {
                     _SettingsRow(
                       icon: Assets.icons.icLock,
                       label: l10n.profileSecurity,
-                      onTap: () {},
+                      onTap: () => context.pushNamed(Routes.security.name),
                     ),
                     SizedBox(height: 12.h),
                     _SettingsRow(
@@ -216,7 +217,7 @@ class _ProfileBody extends StatelessWidget {
                     _SettingsRow(
                       icon: Assets.icons.icSoon,
                       label: l10n.profileTheme,
-                      onTap: () {},
+                      onTap: () => showThemeSwitchSheet(context),
                     ),
                     const Spacer(),
                     SizedBox(height: 24.h),

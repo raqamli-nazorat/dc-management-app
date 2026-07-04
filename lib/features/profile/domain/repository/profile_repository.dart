@@ -9,9 +9,10 @@ abstract interface class ProfileRepository {
   /// Profilni qisman yangilaydi (`PATCH /users/me/`).
   Future<Profile> updateMe(Map<String, dynamic> fields);
 
-  /// Parolni almashtiradi (`PUT /users/me/change_password/`).
+  /// Parolni almashtiradi (`PUT /users/me/change-password/`).
   Future<void> changePassword({
     required String oldPassword,
     required String newPassword,
+    required String confirmNewPassword,
   });
 }

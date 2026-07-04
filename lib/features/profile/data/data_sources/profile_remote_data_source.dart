@@ -12,6 +12,7 @@ abstract interface class ProfileRemoteDataSource {
   Future<void> changePassword({
     required String oldPassword,
     required String newPassword,
+    required String confirmNewPassword,
   });
 }
 
@@ -44,11 +45,16 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   Future<void> changePassword({
     required String oldPassword,
     required String newPassword,
+    required String confirmNewPassword,
   }) async {
     try {
       await _client.put(
         ApiConstants.usersMeChangePassword,
-        data: {'old_password': oldPassword, 'new_password': newPassword},
+        data: {
+          'old_password': oldPassword,
+          'new_password': newPassword,
+          'confirm_new_password': confirmNewPassword,
+        },
       );
     } on DioException catch (e) {
       throw ResponseMapper.mapDioException(e);

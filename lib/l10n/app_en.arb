@@ -79,6 +79,43 @@
     "placeholders": { "role": { "type": "String" } }
   },
 
+  "meetingsTitle": "Meetings",
+  "meetingAdd": "Add meeting",
+  "meetingsEmpty": "No meetings yet",
+  "meetingReasonTitle": "You missed the meeting",
+  "meetingReasonPrompt": "Please enter the reason for your absence",
+  "meetingReasonHint": "Write the reason...",
+  "meetingReasonSubmit": "Submit",
+  "meetingReasonSentTitle": "Reason submitted.",
+
+  "profileLogoutTitle": "Do you want to log out?",
+  "profileLogoutSubtitle": "You will be logged out and will need to log in again to access your profile.",
+  "profileLogoutBack": "Back",
+  "profileLogoutConfirm": "Log out",
+
+  "profileThemeSheetTitle": "Design theme",
+  "profileThemeSheetSubtitle": "Choose how the app should look.",
+  "profileThemeLight": "Light mode",
+  "profileThemeDark": "Dark mode",
+
+  "securityChangePassword": "Change password",
+  "securityAutoLock": "Auto-lock",
+  "securityAutoLockValue": "3 minutes",
+
+  "changePasswordTitle": "Change password",
+  "changePasswordSubtitle": "For security, enter your current password and set a new one.",
+  "changePasswordOldLabel": "Current password",
+  "changePasswordOldHint": "Enter your current password",
+  "changePasswordNewLabel": "New password",
+  "changePasswordNewHint": "Enter a new password",
+  "changePasswordConfirmLabel": "Confirm password",
+  "changePasswordConfirmHint": "Re-enter the new password",
+  "changePasswordErrorOldWrong": "Current password is incorrect",
+  "changePasswordErrorMismatch": "Passwords do not match",
+  "changePasswordCancel": "Cancel",
+  "changePasswordSave": "Save",
+  "changePasswordSuccess": "Password changed successfully.",
+
   "commonError": "Something went wrong. Please try again later.",
   "networkError": "No internet connection. Check your connection."
 }

@@ -6,6 +6,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import '../../firebase_options.dart';
 import '../constants/storage_keys.dart';
+import '../util/lenient_json.dart';
 import 'logger_service.dart';
 import 'storage_service.dart';
 
@@ -169,13 +170,17 @@ class PushNotificationService {
 
   /// FCM xabaridan foydali yukni ajratadi. Backend doc: data `payload` kaliti
   /// ichida JSON-string bo‘lib keladi — dekod qilinadi; bo‘lmasa `data`ning o‘zi.
+  ///
+  /// `extra_data` `null` bo‘lganda backend ba'zan uni JSON `null` o‘rniga
+  /// tirnoqsiz Python `None` bilan yuborib qo'yadi — bu butun `payload`
+  /// matnini yaroqsiz qilib, `title`/`message` ham o‘qib bo‘lmay qolishiga
+  /// (demak bildirishnoma umuman ko‘rsatilmasligiga) sabab bo‘lardi.
+  /// [lenientJsonDecode] shu holatni tuzatib qayta uradi.
   Map<String, dynamic> _payload(RemoteMessage message) {
     final raw = message.data['payload'];
     if (raw is String && raw.isNotEmpty) {
-      try {
-        final decoded = jsonDecode(raw);
-        if (decoded is Map) return decoded.cast<String, dynamic>();
-      } catch (_) {}
+      final decoded = lenientJsonDecode(raw);
+      if (decoded != null) return decoded;
     }
     return message.data;
   }

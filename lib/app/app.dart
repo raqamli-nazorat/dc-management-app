@@ -6,6 +6,8 @@ import 'package:thunder/thunder.dart';
 
 import '../config/routes/coordinator.dart';
 import '../config/theme/app_theme.dart';
+import '../core/constants/storage_keys.dart';
+import '../core/services/storage_service.dart';
 import '../core/util/app_options.dart';
 import '../injection_container.dart';
 import '../l10n/app_localizations.dart';
@@ -75,13 +77,20 @@ class _AppState extends State<App> with WidgetsBindingObserver {
 
     return BlocProvider<SessionBloc>.value(
       value: _session,
-      // `ModelBinding` runtime’da `themeMode`ni saqlaydi — main_page’dagi test
-      // toggle `AppOptions.update` orqali uni almashtiradi va butun ilova qayta
-      // quriladi (light ↔ dark).
+      // `ModelBinding` runtime’da `themeMode`ni saqlaydi — profil sahifasidagi
+      // "Dizayn mavzusi" varag'i `AppOptions.update` orqali uni almashtiradi va
+      // butun ilova qayta quriladi (light ↔ dark). Boshlang'ich qiymat
+      // xotiradan o'qiladi (`configureDependencies()` `runApp`dan oldin
+      // bajarilgani uchun `StorageService` shu yerda xavfsiz mavjud).
       child: ModelBinding(
-        initialModel: const AppOptions(
-          themeMode: ThemeMode.system,
-          locale: Locale('uz'),
+        initialModel: AppOptions(
+          themeMode: switch (getIt<StorageService>()
+              .getString(StorageKeys.themeMode)) {
+            'dark' => ThemeMode.dark,
+            'light' => ThemeMode.light,
+            _ => ThemeMode.system,
+          },
+          locale: const Locale('uz'),
         ),
         child: ScreenUtilInit(
           designSize: const Size(360, 800),

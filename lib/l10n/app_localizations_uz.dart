@@ -189,6 +189,105 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
+  String get meetingsTitle => 'Yig‘ilishlar';
+
+  @override
+  String get meetingAdd => 'Yig‘ilish qo‘shish';
+
+  @override
+  String get meetingsEmpty => 'Hozircha yig‘ilishlar yo‘q';
+
+  @override
+  String get meetingReasonTitle => 'Yig‘ilishga qatnashmadingiz';
+
+  @override
+  String get meetingReasonPrompt =>
+      'Iltimos, qatnashmaganlik sababini kiriting';
+
+  @override
+  String get meetingReasonHint => 'Sababni yozing...';
+
+  @override
+  String get meetingReasonSubmit => 'Yuborish';
+
+  @override
+  String get meetingReasonSentTitle => 'Sabab yuborildi.';
+
+  @override
+  String get profileLogoutTitle => 'Profilingizdan chiqmoqchimisiz?';
+
+  @override
+  String get profileLogoutSubtitle =>
+      'Profilingizdan chiqasiz va qayta kirish uchun tizimga yana login qilishingiz kerak bo‘ladi';
+
+  @override
+  String get profileLogoutBack => 'Orqaga';
+
+  @override
+  String get profileLogoutConfirm => 'Chiqish';
+
+  @override
+  String get profileThemeSheetTitle => 'Dizayn mavzusi';
+
+  @override
+  String get profileThemeSheetSubtitle => 'Ilova qanday ko‘rinishini tanlang.';
+
+  @override
+  String get profileThemeLight => 'Yorug‘lik rejimi';
+
+  @override
+  String get profileThemeDark => 'Qorong‘i rejim';
+
+  @override
+  String get securityChangePassword => 'Parol o‘zgartirish';
+
+  @override
+  String get securityAutoLock => 'Avtomatik qulflash';
+
+  @override
+  String get securityAutoLockValue => '3 daqiqa';
+
+  @override
+  String get changePasswordTitle => 'Parolni o‘zgartirish';
+
+  @override
+  String get changePasswordSubtitle =>
+      'Xavfsizlik uchun joriy parolingizni kiriting va yangi parol o‘rnating.';
+
+  @override
+  String get changePasswordOldLabel => 'Joriy parol';
+
+  @override
+  String get changePasswordOldHint => 'Joriy parolni kiriting';
+
+  @override
+  String get changePasswordNewLabel => 'Yangi parol';
+
+  @override
+  String get changePasswordNewHint => 'Yangi parolni kiriting';
+
+  @override
+  String get changePasswordConfirmLabel => 'Parolni tasdiqlash';
+
+  @override
+  String get changePasswordConfirmHint => 'Yangi parolni qayta kiriting';
+
+  @override
+  String get changePasswordErrorOldWrong => 'Joriy parol noto‘g‘ri';
+
+  @override
+  String get changePasswordErrorMismatch => 'Parollar mos kelmadi';
+
+  @override
+  String get changePasswordCancel => 'Bekor qilish';
+
+  @override
+  String get changePasswordSave => 'Saqlash';
+
+  @override
+  String get changePasswordSuccess => 'Parol muvaffaqiyatli o‘zgartirildi.';
+
+  @override
   String get commonError =>
       'Nimadir xato ketdi. Birozdan so‘ng qayta urinib ko‘ring.';
 

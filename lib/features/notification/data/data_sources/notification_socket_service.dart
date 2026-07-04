@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/services/logger_service.dart';
+import '../../../../core/util/lenient_json.dart';
 import '../../domain/entities/notification.dart';
 import '../models/notification_model.dart';
 import 'notification_remote_data_source.dart';
@@ -79,15 +79,15 @@ class NotificationSocketService {
   }
 
   void _onData(dynamic raw) {
-    try {
-      final decoded = jsonDecode(raw is String ? raw : raw.toString());
-      if (decoded is Map) {
-        _controller.add(
-          NotificationModel.fromJson(decoded.cast<String, dynamic>()),
-        );
-      }
-    } catch (e) {
-      _logger.log('WS xabarni o‘qishda xato: $e');
+    // `extra_data` `null` bo‘lganda backend ba'zan JSON `null` o‘rniga
+    // tirnoqsiz Python `None` yuborib qo'yishi mumkin — [lenientJsonDecode]
+    // shu holatni tuzatib qayta uradi (aks holda butun xabar tashlab
+    // yuboriladi va bildirishnoma umuman ko‘rinmaydi).
+    final decoded = lenientJsonDecode(raw is String ? raw : raw.toString());
+    if (decoded != null) {
+      _controller.add(NotificationModel.fromJson(decoded));
+    } else {
+      _logger.log('WS xabarni o‘qishda xato: yaroqsiz JSON');
     }
   }
 
