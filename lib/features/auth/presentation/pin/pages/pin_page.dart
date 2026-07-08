@@ -65,31 +65,40 @@ class _PinView extends StatelessWidget {
                     .h(24 / 15)
                     .copyWith(maxLines: 3, overflow: TextOverflow.ellipsis),
                 Expanded(
-                  child: Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        BlocBuilder<PinBloc, PinState>(
-                          buildWhen: (p, c) =>
-                              p.pin != c.pin ||
-                              p.obscure != c.obscure ||
-                              p.status != c.status ||
-                              p.length != c.length,
-                          builder: (context, state) {
-                            return PinIndicator(
-                              length: state.length,
-                              pin: state.pin,
-                              obscure: state.obscure,
-                              status: state.status,
-                              onToggleVisibility: () => context
-                                  .read<PinBloc>()
-                                  .add(const PinVisibilityToggled()),
-                            );
-                          },
+                  child: LayoutBuilder(
+                    builder: (context, constraints) => SingleChildScrollView(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: constraints.maxHeight,
                         ),
-                        SizedBox(height: 12.h),
-                        const _PinStatusMessage(),
-                      ],
+                        child: Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              BlocBuilder<PinBloc, PinState>(
+                                buildWhen: (p, c) =>
+                                    p.pin != c.pin ||
+                                    p.obscure != c.obscure ||
+                                    p.status != c.status ||
+                                    p.length != c.length,
+                                builder: (context, state) {
+                                  return PinIndicator(
+                                    length: state.length,
+                                    pin: state.pin,
+                                    obscure: state.obscure,
+                                    status: state.status,
+                                    onToggleVisibility: () => context
+                                        .read<PinBloc>()
+                                        .add(const PinVisibilityToggled()),
+                                  );
+                                },
+                              ),
+                              SizedBox(height: 12.h),
+                              const _PinStatusMessage(),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),

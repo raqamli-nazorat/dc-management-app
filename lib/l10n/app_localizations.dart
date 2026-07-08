@@ -476,6 +476,192 @@ abstract class AppLocalizations {
   /// **'Kritik'**
   String get taskPriorityCritical;
 
+  /// No description provided for @taskCreateTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Vazifa qo‘shish'**
+  String get taskCreateTitle;
+
+  /// No description provided for @taskCreateFieldProject.
+  ///
+  /// In uz, this message translates to:
+  /// **'Loyiha'**
+  String get taskCreateFieldProject;
+
+  /// No description provided for @taskCreateProjectHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Loyiha tanlang'**
+  String get taskCreateProjectHint;
+
+  /// No description provided for @taskCreateFieldName.
+  ///
+  /// In uz, this message translates to:
+  /// **'Nomi'**
+  String get taskCreateFieldName;
+
+  /// No description provided for @taskCreateNameHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Nomi kiriting'**
+  String get taskCreateNameHint;
+
+  /// No description provided for @taskCreateFieldDescription.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tavsifi'**
+  String get taskCreateFieldDescription;
+
+  /// No description provided for @taskCreateDescriptionHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tavsifini yozing'**
+  String get taskCreateDescriptionHint;
+
+  /// No description provided for @taskCreateFieldPriority.
+  ///
+  /// In uz, this message translates to:
+  /// **'Darajasi'**
+  String get taskCreateFieldPriority;
+
+  /// No description provided for @taskCreatePriorityHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Darajasi tanlang'**
+  String get taskCreatePriorityHint;
+
+  /// No description provided for @taskCreateFieldType.
+  ///
+  /// In uz, this message translates to:
+  /// **'Turi'**
+  String get taskCreateFieldType;
+
+  /// No description provided for @taskCreateTypeHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Turini tanlang'**
+  String get taskCreateTypeHint;
+
+  /// No description provided for @taskTypeBug.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xatolik (Bug)'**
+  String get taskTypeBug;
+
+  /// No description provided for @taskTypeFeature.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi funksiya'**
+  String get taskTypeFeature;
+
+  /// No description provided for @taskTypeAddition.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qo‘shimcha'**
+  String get taskTypeAddition;
+
+  /// No description provided for @taskTypeResearch.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tadqiqot/O‘rganish'**
+  String get taskTypeResearch;
+
+  /// No description provided for @taskCreateFieldAssigner.
+  ///
+  /// In uz, this message translates to:
+  /// **'Topshiruvchi'**
+  String get taskCreateFieldAssigner;
+
+  /// No description provided for @taskCreateSelectProjectFirst.
+  ///
+  /// In uz, this message translates to:
+  /// **'Avval loyihani tanlang'**
+  String get taskCreateSelectProjectFirst;
+
+  /// No description provided for @taskCreateFieldPositions.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kimlar uchun'**
+  String get taskCreateFieldPositions;
+
+  /// No description provided for @taskCreatePositionsHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tanlang'**
+  String get taskCreatePositionsHint;
+
+  /// No description provided for @taskCreateFieldSprint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sprint'**
+  String get taskCreateFieldSprint;
+
+  /// No description provided for @taskCreateFieldPrice.
+  ///
+  /// In uz, this message translates to:
+  /// **'Vazifa narxi (UZS)'**
+  String get taskCreateFieldPrice;
+
+  /// No description provided for @taskCreatePriceHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'0,00'**
+  String get taskCreatePriceHint;
+
+  /// No description provided for @taskCreateFieldPenalty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Jarima foizi (%)'**
+  String get taskCreateFieldPenalty;
+
+  /// No description provided for @taskCreatePenaltyHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Jarima'**
+  String get taskCreatePenaltyHint;
+
+  /// No description provided for @taskCreateFieldDeadline.
+  ///
+  /// In uz, this message translates to:
+  /// **'Muddati'**
+  String get taskCreateFieldDeadline;
+
+  /// No description provided for @taskCreateFieldTime.
+  ///
+  /// In uz, this message translates to:
+  /// **'Vaqti'**
+  String get taskCreateFieldTime;
+
+  /// No description provided for @taskCreateFieldEstimated.
+  ///
+  /// In uz, this message translates to:
+  /// **'Taxminiy vaqt'**
+  String get taskCreateFieldEstimated;
+
+  /// No description provided for @taskCreateFieldFiles.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qo‘shimcha fayllar'**
+  String get taskCreateFieldFiles;
+
+  /// No description provided for @taskCreateFileUpload.
+  ///
+  /// In uz, this message translates to:
+  /// **'Fayl yuklash'**
+  String get taskCreateFileUpload;
+
+  /// No description provided for @taskCreateRequiredError.
+  ///
+  /// In uz, this message translates to:
+  /// **'Loyiha, nomi va muddat majburiy'**
+  String get taskCreateRequiredError;
+
+  /// No description provided for @taskCreateSuccess.
+  ///
+  /// In uz, this message translates to:
+  /// **'Vazifa qo‘shildi'**
+  String get taskCreateSuccess;
+
   /// No description provided for @meetingsTitle.
   ///
   /// In uz, this message translates to:
