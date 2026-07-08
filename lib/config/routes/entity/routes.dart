@@ -65,6 +65,10 @@ class Routes implements Coordinate {
   /// Yig‘ilishlar ro‘yxati.
   static const meetings = Routes._(name: 'meetings', path: '/meetings');
 
+  static const meetingCreate = Routes._(
+    name: 'meeting_create',
+    path: '/meetings/create',
+  );
   static const meetingFilter = Routes._(
     name: 'meeting_filter',
     path: '/meetings/filter',

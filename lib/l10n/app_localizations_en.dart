@@ -404,6 +404,53 @@ class AppLocalizationsEn extends AppLocalizations {
   String get meetingFilterStartDateRange => 'Start date range';
 
   @override
+  String get meetingCreateNameHint => 'Enter a name';
+
+  @override
+  String get meetingCreatePenaltyHint => 'Enter penalty rate';
+
+  @override
+  String get meetingCreateLink => 'Link';
+
+  @override
+  String get meetingCreateLinkHint => 'Enter link: URL address';
+
+  @override
+  String get meetingCreateDescriptionHint => 'Write a description';
+
+  @override
+  String get meetingCreateStartDate => 'Deadline date';
+
+  @override
+  String get meetingCreateDuration => 'Duration';
+
+  @override
+  String get meetingCreateDurationHint => 'Minutes';
+
+  @override
+  String get meetingCreateParticipantsLabel => 'Add meeting participants';
+
+  @override
+  String get meetingCreateParticipantsHelp =>
+      'Search and select using the button below';
+
+  @override
+  String get meetingCreateParticipantsAdd => 'Add participants';
+
+  @override
+  String get meetingCreateParticipantsTitle => 'Add participants';
+
+  @override
+  String get meetingCreateCompleted => 'Completed?';
+
+  @override
+  String get meetingCreateRequiredError =>
+      'Project, name, link, description, date and duration are required';
+
+  @override
+  String get meetingCreateSuccess => 'Meeting created';
+
+  @override
   String get meetingReasonTitle => 'You missed the meeting';
 
   @override

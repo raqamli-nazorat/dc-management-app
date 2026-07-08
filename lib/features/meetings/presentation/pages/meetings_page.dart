@@ -129,7 +129,15 @@ class _MeetingsHeader extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              _AddMeetingButton(onTap: () {}),
+              _AddMeetingButton(
+                onTap: () async {
+                  final bloc = context.read<MeetingsBloc>();
+                  final created = await context.pushNamed<bool>(
+                    Routes.meetingCreate.name,
+                  );
+                  if (created == true) bloc.add(const MeetingsRequested());
+                },
+              ),
               SizedBox(width: 12.w),
               _SquareIconButton(
                 icon: Assets.icons.icProfileNotification,

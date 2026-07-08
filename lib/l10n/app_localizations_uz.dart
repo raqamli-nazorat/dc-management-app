@@ -405,6 +405,54 @@ class AppLocalizationsUz extends AppLocalizations {
   String get meetingFilterStartDateRange => 'Boshlanish sanasi oralig‘i';
 
   @override
+  String get meetingCreateNameHint => 'Nomi yozing';
+
+  @override
+  String get meetingCreatePenaltyHint => 'Jarima foizini kiriting';
+
+  @override
+  String get meetingCreateLink => 'Havolasi';
+
+  @override
+  String get meetingCreateLinkHint => 'Havolasi kiriting: URL manzil';
+
+  @override
+  String get meetingCreateDescriptionHint => 'Tavsif yozing';
+
+  @override
+  String get meetingCreateStartDate => 'Muddat sanasi';
+
+  @override
+  String get meetingCreateDuration => 'Davomiyligi';
+
+  @override
+  String get meetingCreateDurationHint => 'Daqiqa';
+
+  @override
+  String get meetingCreateParticipantsLabel =>
+      'Yig‘ilish qatnashchilarini qo‘shish';
+
+  @override
+  String get meetingCreateParticipantsHelp =>
+      'Quyidagi tugma orqali qidiring va tanlang';
+
+  @override
+  String get meetingCreateParticipantsAdd => 'Qatnashchilarni qo‘shing';
+
+  @override
+  String get meetingCreateParticipantsTitle => 'Qatnashchilarni qo‘shish';
+
+  @override
+  String get meetingCreateCompleted => 'Tugatildimi?';
+
+  @override
+  String get meetingCreateRequiredError =>
+      'Loyiha, nomi, havolasi, tavsifi, sana va davomiyligi majburiy';
+
+  @override
+  String get meetingCreateSuccess => 'Yig‘ilish qo‘shildi';
+
+  @override
   String get meetingReasonTitle => 'Yig‘ilishga qatnashmadingiz';
 
   @override

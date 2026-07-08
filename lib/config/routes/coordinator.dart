@@ -11,6 +11,7 @@ import '../../features/auth/presentation/pin/pages/pin_page.dart';
 import '../../features/auth/presentation/role/pages/role_select_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/meetings/domain/entities/meeting_filter.dart';
+import '../../features/meetings/presentation/pages/meeting_create_page.dart';
 import '../../features/meetings/presentation/pages/meeting_filter_page.dart';
 import '../../features/meetings/presentation/pages/meeting_reason_page.dart';
 import '../../features/meetings/presentation/pages/meetings_page.dart';
@@ -124,6 +125,11 @@ class AppRouter {
           name: Routes.meetings.name,
           path: Routes.meetings.path,
           builder: (context, state) => const MeetingsPage(),
+        ),
+        GoRoute(
+          name: Routes.meetingCreate.name,
+          path: Routes.meetingCreate.path,
+          builder: (context, state) => const MeetingCreatePage(),
         ),
         GoRoute(
           name: Routes.meetingFilter.name,
