@@ -32,11 +32,14 @@ import 'features/meetings/presentation/bloc/meetings_bloc.dart';
 import 'features/tasks/data/data_sources/task_remote_data_source.dart';
 import 'features/tasks/data/repository/task_repository_impl.dart';
 import 'features/tasks/domain/repository/task_repository.dart';
+import 'features/tasks/domain/usecases/delete_task_usecase.dart';
 import 'features/tasks/domain/usecases/get_project_members_usecase.dart';
 import 'features/tasks/domain/usecases/get_task_form_options_usecase.dart';
 import 'features/tasks/domain/usecases/get_tasks_usecase.dart';
+import 'features/tasks/domain/usecases/get_users_usecase.dart';
 import 'features/tasks/domain/usecases/submit_task_usecase.dart';
 import 'features/tasks/presentation/bloc/task_create_bloc.dart';
+import 'features/tasks/presentation/bloc/task_filter_bloc.dart';
 import 'features/tasks/presentation/bloc/tasks_bloc.dart';
 import 'features/notification/data/data_sources/notification_remote_data_source.dart';
 import 'features/notification/data/data_sources/notification_socket_service.dart';
@@ -178,14 +181,21 @@ Future<void> configureDependencies() async {
     ..registerLazySingleton<GetProjectMembersUseCase>(
       () => GetProjectMembersUseCase(getIt()),
     )
+    ..registerLazySingleton<GetUsersUseCase>(() => GetUsersUseCase(getIt()))
     ..registerLazySingleton<SubmitTaskUseCase>(() => SubmitTaskUseCase(getIt()))
-    ..registerFactory<TasksBloc>(() => TasksBloc(getTasks: getIt()))
+    ..registerLazySingleton<DeleteTaskUseCase>(() => DeleteTaskUseCase(getIt()))
+    ..registerFactory<TasksBloc>(
+      () => TasksBloc(getTasks: getIt(), deleteTask: getIt()),
+    )
     ..registerFactory<TaskCreateBloc>(
       () => TaskCreateBloc(
         getOptions: getIt(),
         getMembers: getIt(),
         submitTask: getIt(),
       ),
+    )
+    ..registerFactory<TaskFilterBloc>(
+      () => TaskFilterBloc(getOptions: getIt(), getUsers: getIt()),
     );
 
   // ── Statistics feature ────────────────────────────────────────────────

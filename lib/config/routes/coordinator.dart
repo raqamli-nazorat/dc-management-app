@@ -13,7 +13,10 @@ import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/meetings/presentation/pages/meeting_reason_page.dart';
 import '../../features/meetings/presentation/pages/meetings_page.dart';
 import '../../features/notification/presentation/pages/notification_page.dart';
+import '../../features/tasks/domain/entities/task_filter.dart';
 import '../../features/tasks/presentation/pages/task_create_page.dart';
+import '../../features/tasks/presentation/pages/task_filter_page.dart';
+import '../../features/tasks/presentation/pages/task_multi_select_page.dart';
 import '../../features/tasks/presentation/pages/tasks_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/profile/presentation/pages/security_page.dart';
@@ -99,6 +102,21 @@ class AppRouter {
           name: Routes.taskCreate.name,
           path: Routes.taskCreate.path,
           builder: (context, state) => const TaskCreatePage(),
+        ),
+        GoRoute(
+          name: Routes.taskFilter.name,
+          path: Routes.taskFilter.path,
+          builder: (context, state) => TaskFilterPage(
+            initial: state.extra is TaskFilter
+                ? state.extra! as TaskFilter
+                : TaskFilter.empty,
+          ),
+        ),
+        GoRoute(
+          name: Routes.taskMultiSelect.name,
+          path: Routes.taskMultiSelect.path,
+          builder: (context, state) =>
+              TaskMultiSelectPage(args: state.extra! as TaskMultiSelectArgs),
         ),
         GoRoute(
           name: Routes.meetings.name,

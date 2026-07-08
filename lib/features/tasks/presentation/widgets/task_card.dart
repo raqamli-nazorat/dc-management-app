@@ -43,11 +43,22 @@ String _formatCountdown(DateTime? deadline) {
 
 /// Vazifalar ro'yxatidagi bitta karta (Figma: elevation-1 fon, 16 radius).
 class TaskCard extends StatelessWidget {
-  const TaskCard({super.key, required this.task, this.onTap, this.onMore});
+  const TaskCard({
+    super.key,
+    required this.task,
+    this.onTap,
+    this.onDetails,
+    this.onDelete,
+  });
 
   final Task task;
   final VoidCallback? onTap;
-  final VoidCallback? onMore;
+
+  /// "Batafsil" tanlanganda (menyudan) — hozircha keyinroq ulanadi.
+  final VoidCallback? onDetails;
+
+  /// "O'chirish" tasdiqlangandan so'ng (o'chirish varag'ida) chaqiriladi.
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -180,18 +191,7 @@ class TaskCard extends StatelessWidget {
                     ),
                   ),
                   SizedBox(width: 8.w),
-                  InkWell(
-                    onTap: onMore,
-                    borderRadius: BorderRadius.circular(12.r),
-                    child: Assets.icons.icMoreVertical.svg(
-                      width: 24.w,
-                      height: 24.w,
-                      colorFilter: ColorFilter.mode(
-                        colors.iconSub,
-                        BlendMode.srcIn,
-                      ),
-                    ),
-                  ),
+                  _MoreMenu(onDetails: onDetails, onDelete: onDelete),
                 ],
               ),
             ],
@@ -311,6 +311,237 @@ class _MetaItem extends StatelessWidget {
               .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
         ),
       ],
+    );
+  }
+}
+
+/// Karta menyusi harakati.
+enum _TaskMenuAction { details, delete }
+
+/// Karta ⋮ tugmasi — bosilganda "Batafsil / O'chirish" menyusini ochadi
+/// (Figma: tui-dropdown, background-base fon, stroke-sub chegara, 12 radius).
+class _MoreMenu extends StatelessWidget {
+  const _MoreMenu({this.onDetails, this.onDelete});
+
+  final VoidCallback? onDetails;
+  final VoidCallback? onDelete;
+
+  Future<void> _onSelected(BuildContext context, _TaskMenuAction action) async {
+    switch (action) {
+      case _TaskMenuAction.details:
+        onDetails?.call();
+      case _TaskMenuAction.delete:
+        final confirmed = await showTaskDeleteSheet(context);
+        if (confirmed == true) onDelete?.call();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final l10n = AppLocalizations.of(context);
+
+    return PopupMenuButton<_TaskMenuAction>(
+      tooltip: '',
+      padding: EdgeInsets.zero,
+      color: colors.backgroundBase,
+      elevation: 0,
+      position: PopupMenuPosition.under,
+      constraints: BoxConstraints(minWidth: 180.w),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.r),
+        side: BorderSide(color: colors.strokeSub, width: 1.w),
+      ),
+      onSelected: (action) => _onSelected(context, action),
+      itemBuilder: (_) => [
+        PopupMenuItem(
+          value: _TaskMenuAction.details,
+          height: 40.h,
+          padding: EdgeInsets.symmetric(horizontal: 8.w),
+          child: _MenuRow(
+            icon: Assets.icons.icAlertCircle,
+            label: l10n.taskMenuDetails,
+            color: colors.textStrong,
+          ),
+        ),
+        PopupMenuItem(
+          value: _TaskMenuAction.delete,
+          height: 40.h,
+          padding: EdgeInsets.symmetric(horizontal: 8.w),
+          child: _MenuRow(
+            icon: Assets.icons.icTrash,
+            label: l10n.taskMenuDelete,
+            color: colors.errorStrong,
+          ),
+        ),
+      ],
+      child: Assets.icons.icMoreVertical.svg(
+        width: 24.w,
+        height: 24.w,
+        colorFilter: ColorFilter.mode(colors.iconSub, BlendMode.srcIn),
+      ),
+    );
+  }
+}
+
+/// Menyu qatori: ikonka + yozuv (yozuv rangi = ikonka rangi).
+class _MenuRow extends StatelessWidget {
+  const _MenuRow({
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
+
+  final SvgGenImage icon;
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        icon.svg(
+          width: 16.w,
+          height: 16.w,
+          colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+        ),
+        SizedBox(width: 8.w),
+        Expanded(
+          child: label
+              .s(13.sp)
+              .w(500)
+              .c(color)
+              .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+        ),
+      ],
+    );
+  }
+}
+
+/// Vazifani o'chirishni tasdiqlash varag'i (Figma: bottom-sheet, 24 radius).
+/// `true` — tasdiqlandi, `null`/`false` — bekor.
+Future<bool?> showTaskDeleteSheet(BuildContext context) {
+  final colors = AppColors.of(context);
+  return showModalBottomSheet<bool>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: colors.backgroundBase,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+    ),
+    builder: (_) => const _TaskDeleteSheet(),
+  );
+}
+
+class _TaskDeleteSheet extends StatelessWidget {
+  const _TaskDeleteSheet();
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final l10n = AppLocalizations.of(context);
+
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: colors.strokeSoft,
+                  borderRadius: BorderRadius.circular(1.r),
+                ),
+                child: SizedBox(width: 24.w, height: 3.h),
+              ),
+            ),
+            SizedBox(height: 16.h),
+            l10n.taskDeleteTitle
+                .s(19.sp)
+                .w(800)
+                .c(colors.textStrong)
+                .a(TextAlign.center),
+            SizedBox(height: 4.h),
+            l10n.taskDeleteSubtitle
+                .s(15.sp)
+                .w(500)
+                .c(colors.textSub)
+                .a(TextAlign.center)
+                .copyWith(maxLines: 3, overflow: TextOverflow.ellipsis),
+            SizedBox(height: 24.h),
+            Row(
+              children: [
+                // Bekor qilish (secondary)
+                InkWell(
+                  onTap: () => Navigator.of(context).pop(false),
+                  borderRadius: BorderRadius.circular(16.r),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    child: SizedBox(
+                      height: 52.h,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Assets.icons.icClose.svg(
+                            width: 16.w,
+                            height: 16.w,
+                            colorFilter: ColorFilter.mode(
+                              colors.textStrong,
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                          SizedBox(width: 8.w),
+                          l10n.taskDeleteCancel
+                              .s(15.sp)
+                              .w(800)
+                              .c(colors.textStrong),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: 12.w),
+                // O'chirish (danger)
+                Expanded(
+                  child: InkWell(
+                    onTap: () => Navigator.of(context).pop(true),
+                    borderRadius: BorderRadius.circular(16.r),
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: colors.errorStrong,
+                        borderRadius: BorderRadius.circular(16.r),
+                      ),
+                      child: SizedBox(
+                        height: 52.h,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Assets.icons.icTrash.svg(
+                              width: 16.w,
+                              height: 16.w,
+                              colorFilter: ColorFilter.mode(
+                                colors.textWhite,
+                                BlendMode.srcIn,
+                              ),
+                            ),
+                            SizedBox(width: 8.w),
+                            l10n.taskMenuDelete
+                                .s(15.sp)
+                                .w(800)
+                                .c(colors.textWhite),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

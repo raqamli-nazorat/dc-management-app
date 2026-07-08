@@ -2,6 +2,7 @@ import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
 import '../../domain/entities/new_task.dart';
 import '../../domain/entities/task.dart';
+import '../../domain/entities/task_filter.dart';
 import '../../domain/entities/task_form_options.dart';
 import '../../domain/repository/task_repository.dart';
 import '../data_sources/task_remote_data_source.dart';
@@ -14,11 +15,14 @@ class TaskRepositoryImpl implements TaskRepository {
   final TaskRemoteDataSource _remote;
 
   @override
-  Future<TaskPage> getTasks({int page = 1}) =>
-      _guard(() => _remote.getTasks(page: page));
+  Future<TaskPage> getTasks({int page = 1, TaskFilter filter = TaskFilter.empty}) =>
+      _guard(() => _remote.getTasks(page: page, filter: filter));
 
   @override
   Future<List<Position>> getPositions() => _guard(_remote.getPositions);
+
+  @override
+  Future<List<UserShort>> getUsers() => _guard(_remote.getUsers);
 
   @override
   Future<List<ProjectShort>> getProjectShorts() =>
@@ -34,6 +38,9 @@ class TaskRepositoryImpl implements TaskRepository {
   @override
   Future<void> uploadAttachment(int taskId, String filePath) =>
       _guard(() => _remote.uploadAttachment(taskId, filePath));
+
+  @override
+  Future<void> deleteTask(int id) => _guard(() => _remote.deleteTask(id));
 
   Future<T> _guard<T>(Future<T> Function() action) async {
     try {

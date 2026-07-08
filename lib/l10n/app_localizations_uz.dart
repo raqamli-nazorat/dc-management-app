@@ -303,6 +303,90 @@ class AppLocalizationsUz extends AppLocalizations {
   String get taskCreateSuccess => 'Vazifa qo‘shildi';
 
   @override
+  String get taskMenuDetails => 'Batafsil';
+
+  @override
+  String get taskMenuDelete => 'O‘chirish';
+
+  @override
+  String get taskDeleteTitle => 'Vazifani o‘chirish';
+
+  @override
+  String get taskDeleteSubtitle =>
+      'Vazifa chiqindi qutisiga yuboriladi va keyinchalik tiklash mumkin.';
+
+  @override
+  String get taskDeleteCancel => 'Bekor qilish';
+
+  @override
+  String get taskFilterTitle => 'Filtrlash';
+
+  @override
+  String get taskFilterStatus => 'Holati';
+
+  @override
+  String get taskFilterStatusHint => 'Holati tanlang';
+
+  @override
+  String get taskStatusTodo => 'Bajarilishi kerak';
+
+  @override
+  String get taskStatusInProgress => 'Jarayonda';
+
+  @override
+  String get taskStatusOverdue => 'Muddati o‘tgan';
+
+  @override
+  String get taskStatusDone => 'Bajarilgan';
+
+  @override
+  String get taskStatusProduction => 'Ishga tushirilgan';
+
+  @override
+  String get taskStatusChecked => 'Tekshirilgan';
+
+  @override
+  String get taskStatusRejected => 'Rad etilgan';
+
+  @override
+  String get taskFilterAuthor => 'Muallif';
+
+  @override
+  String get taskFilterAuthorHint => 'Muallif tanlang';
+
+  @override
+  String get taskFilterEmployee => 'Xodim';
+
+  @override
+  String get taskFilterEmployeeHint => 'Xodim tanlang';
+
+  @override
+  String get taskFilterDeadlineRange => 'Muddat oralig‘i';
+
+  @override
+  String get taskFilterDateHint => 'Sana';
+
+  @override
+  String get taskFilterReset => 'Tozalash';
+
+  @override
+  String get taskFilterApply => 'Qidirish';
+
+  @override
+  String get taskSearchHint => 'Izlash';
+
+  @override
+  String get taskSearchClose => 'Yopish';
+
+  @override
+  String get taskFilterSelectAdd => 'Qo‘shish';
+
+  @override
+  String taskFilterSelectedCount(int count) {
+    return '$count ta tanlangan';
+  }
+
+  @override
   String get meetingsTitle => 'Yig‘ilishlar';
 
   @override

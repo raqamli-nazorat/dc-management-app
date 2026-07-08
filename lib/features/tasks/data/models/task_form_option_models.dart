@@ -30,6 +30,26 @@ class ProjectShortModel extends ProjectShort {
   }
 }
 
+/// [UserShort] JSON serializatsiyasi (`/users/all/` → `results[]`, `UserShort`).
+class UserShortModel extends UserShort {
+  const UserShortModel({
+    required super.id,
+    required super.username,
+    required super.position,
+    required super.avatar,
+  });
+
+  factory UserShortModel.fromJson(Map<String, dynamic> json) {
+    String str(dynamic v) => v?.toString() ?? '';
+    return UserShortModel(
+      id: (json['id'] as num?)?.toInt() ?? 0,
+      username: str(json['username']),
+      position: str(json['position']),
+      avatar: str(json['avatar']),
+    );
+  }
+}
+
 /// [ProjectMember] JSON serializatsiyasi (loyiha detalidagi `*_info` obyektlar).
 class ProjectMemberModel extends ProjectMember {
   const ProjectMemberModel({

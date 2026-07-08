@@ -10,6 +10,7 @@ class TasksState extends Equatable {
     this.page = 1,
     this.hasReachedMax = false,
     this.isLoadingMore = false,
+    this.filter = TaskFilter.empty,
   });
 
   final TasksStatus status;
@@ -25,6 +26,9 @@ class TasksState extends Equatable {
   /// Keyingi sahifa yuklanmoqda — footer spinner + qayta so'rov qulfi.
   final bool isLoadingMore;
 
+  /// Joriy filtr (Loyiha/Muallif/Xodim/Daraja/Turi/Topshiruvchi/muddat + qidiruv).
+  final TaskFilter filter;
+
   TasksState copyWith({
     TasksStatus? status,
     List<Task>? items,
@@ -32,6 +36,7 @@ class TasksState extends Equatable {
     int? page,
     bool? hasReachedMax,
     bool? isLoadingMore,
+    TaskFilter? filter,
   }) => TasksState(
     status: status ?? this.status,
     items: items ?? this.items,
@@ -39,6 +44,7 @@ class TasksState extends Equatable {
     page: page ?? this.page,
     hasReachedMax: hasReachedMax ?? this.hasReachedMax,
     isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+    filter: filter ?? this.filter,
   );
 
   @override
@@ -49,5 +55,6 @@ class TasksState extends Equatable {
     page,
     hasReachedMax,
     isLoadingMore,
+    filter,
   ];
 }

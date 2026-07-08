@@ -40,6 +40,14 @@ class Routes implements Coordinate {
   static const taskCreate =
       Routes._(name: 'task_create', path: '/tasks/create');
 
+  /// Vazifalarni filtrlash sahifasi (vazifalar ro‘yxatidan push qilinadi).
+  static const taskFilter =
+      Routes._(name: 'task_filter', path: '/tasks/filter');
+
+  /// Filtr uchun ko‘p-tanlov sahifasi (Loyiha / Muallif / Xodim tanlash).
+  static const taskMultiSelect =
+      Routes._(name: 'task_multi_select', path: '/tasks/filter/select');
+
   /// Yig‘ilishlar ro‘yxati.
   static const meetings = Routes._(name: 'meetings', path: '/meetings');
 
