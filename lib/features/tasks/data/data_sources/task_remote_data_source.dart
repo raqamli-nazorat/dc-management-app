@@ -40,23 +40,36 @@ abstract interface class TaskRemoteDataSource {
 class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
   const TaskRemoteDataSourceImpl(this._client);
 
+  static const _pageSize = 20;
+
   final DioClient _client;
 
   @override
-  Future<TaskPage> getTasks({int page = 1, TaskFilter filter = TaskFilter.empty}) async {
+  Future<TaskPage> getTasks({
+    int page = 1,
+    TaskFilter filter = TaskFilter.empty,
+  }) async {
     try {
       // Sahifalangan javob (`{count, next, previous, results}`) — sahifa
       // raqami `page` orqali, keyingi sahifa bor-yo'qligi `next != null`.
       final response = await _client.get(
         ApiConstants.tasks,
-        queryParameters: {'page': page, ..._filterParams(filter)},
+        queryParameters: {
+          'page': page,
+          'page_size': _pageSize,
+          ..._filterParams(filter),
+        },
       );
       final body = ResponseMapper.asMap(response.data);
       final items = ResponseMapper.asList(response.data)
           .whereType<Map>()
           .map((e) => TaskModel.fromJson(e.cast<String, dynamic>()))
           .toList();
-      return (items: items, hasMore: body['next'] != null);
+      return (
+        items: items,
+        totalCount: (body['count'] as num?)?.toInt() ?? items.length,
+        hasMore: body['next'] != null,
+      );
     } on DioException catch (e) {
       throw ResponseMapper.mapDioException(e);
     }

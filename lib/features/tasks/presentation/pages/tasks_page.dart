@@ -267,6 +267,8 @@ class _SearchFilterRow extends StatefulWidget {
 class _SearchFilterRowState extends State<_SearchFilterRow> {
   final _controller = TextEditingController();
   final _focus = FocusNode();
+  final _statusLayerLink = LayerLink();
+  final _statusPortalController = OverlayPortalController();
   Timer? _debounce;
   bool _searching = false;
 
@@ -279,6 +281,7 @@ class _SearchFilterRowState extends State<_SearchFilterRow> {
   }
 
   void _openSearch() {
+    _statusPortalController.hide();
     setState(() => _searching = true);
     // Maydon animatsiyada quriladi — keyingi kadrda fokus so'raymiz.
     WidgetsBinding.instance.addPostFrameCallback((_) => _focus.requestFocus());
@@ -303,6 +306,7 @@ class _SearchFilterRowState extends State<_SearchFilterRow> {
   }
 
   Future<void> _openFilter() async {
+    _statusPortalController.hide();
     final bloc = context.read<TasksBloc>();
     final result = await context.pushNamed<Object?>(
       Routes.taskFilter.name,
@@ -311,29 +315,83 @@ class _SearchFilterRowState extends State<_SearchFilterRow> {
     if (result is TaskFilter) bloc.add(TasksFilterChanged(result));
   }
 
+  void _toggleStatusDropdown() {
+    FocusScope.of(context).unfocus();
+    if (_statusPortalController.isShowing) {
+      _statusPortalController.hide();
+    } else {
+      _statusPortalController.show();
+    }
+  }
+
+  void _selectStatus(TaskStatus status) {
+    _statusPortalController.hide();
+    final bloc = context.read<TasksBloc>();
+    bloc.add(TasksFilterChanged(bloc.state.filter.copyWithStatus(status)));
+  }
+
+  Widget _buildStatusOverlay(BuildContext context) {
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: _statusPortalController.hide,
+          ),
+        ),
+        CompositedTransformFollower(
+          link: _statusLayerLink,
+          showWhenUnlinked: false,
+          targetAnchor: Alignment.bottomRight,
+          followerAnchor: Alignment.topRight,
+          offset: Offset(0, 8.h),
+          child: BlocBuilder<TasksBloc, TasksState>(
+            buildWhen: (p, c) =>
+                p.filter.status != c.filter.status ||
+                p.statusPages != c.statusPages,
+            builder: (context, state) => SizedBox(
+              width: 208.w,
+              child: _StatusDropdown(
+                selected: state.filter.status,
+                counts: state.statusCounts,
+                onSelected: _selectStatus,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
-      child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 250),
-        switchInCurve: Curves.easeOut,
-        switchOutCurve: Curves.easeIn,
-        transitionBuilder: (child, animation) =>
-            FadeTransition(opacity: animation, child: child),
-        child: _searching
-            ? _SearchBar(
-                key: const ValueKey('search'),
-                controller: _controller,
-                focus: _focus,
-                onChanged: _onChanged,
-                onClose: _closeSearch,
-              )
-            : _TitleBar(
-                key: const ValueKey('title'),
-                onSearch: _openSearch,
-                onFilter: _openFilter,
-              ),
+    return OverlayPortal(
+      controller: _statusPortalController,
+      overlayChildBuilder: _buildStatusOverlay,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 250),
+          switchInCurve: Curves.easeOut,
+          switchOutCurve: Curves.easeIn,
+          transitionBuilder: (child, animation) =>
+              FadeTransition(opacity: animation, child: child),
+          child: _searching
+              ? _SearchBar(
+                  key: const ValueKey('search'),
+                  controller: _controller,
+                  focus: _focus,
+                  onChanged: _onChanged,
+                  onClose: _closeSearch,
+                )
+              : _TitleBar(
+                  key: const ValueKey('title'),
+                  statusLayerLink: _statusLayerLink,
+                  onSearch: _openSearch,
+                  onFilter: _openFilter,
+                  onStatus: _toggleStatusDropdown,
+                ),
+        ),
       ),
     );
   }
@@ -341,10 +399,18 @@ class _SearchFilterRowState extends State<_SearchFilterRow> {
 
 /// Qidiruv yopiq holati: sarlavha + qidiruv + filtr (nuqtali).
 class _TitleBar extends StatelessWidget {
-  const _TitleBar({required this.onSearch, required this.onFilter, super.key});
+  const _TitleBar({
+    required this.statusLayerLink,
+    required this.onSearch,
+    required this.onFilter,
+    required this.onStatus,
+    super.key,
+  });
 
+  final LayerLink statusLayerLink;
   final VoidCallback onSearch;
   final VoidCallback onFilter;
+  final VoidCallback onStatus;
 
   @override
   Widget build(BuildContext context) {
@@ -381,7 +447,246 @@ class _TitleBar extends StatelessWidget {
             onTap: onFilter,
           ),
         ),
+        SizedBox(width: 12.w),
+        BlocBuilder<TasksBloc, TasksState>(
+          buildWhen: (p, c) =>
+              p.filter.status != c.filter.status ||
+              p.statusPages != c.statusPages,
+          builder: (context, state) => CompositedTransformTarget(
+            link: statusLayerLink,
+            child: _StatusFilterButton(
+              status: state.filter.status,
+              count: state.filter.status == null
+                  ? null
+                  : state.statusCounts[state.filter.status!] ?? 0,
+              onTap: onStatus,
+            ),
+          ),
+        ),
       ],
+    );
+  }
+}
+
+String _statusLabel(TaskStatus status, AppLocalizations l10n) =>
+    switch (status) {
+      TaskStatus.todo => l10n.statTaskTodo,
+      TaskStatus.inProgress => l10n.taskStatusInProgress,
+      TaskStatus.overdue => l10n.taskStatusOverdue,
+      TaskStatus.done => l10n.taskStatusDone,
+      TaskStatus.production => l10n.taskStatusProduction,
+      TaskStatus.checked => l10n.taskStatusChecked,
+      TaskStatus.rejected => l10n.taskStatusRejected,
+      TaskStatus.unknown => '',
+    };
+
+Color _statusColor(TaskStatus status, AppColors colors) => switch (status) {
+  TaskStatus.todo => colors.taskStatusTodo,
+  TaskStatus.inProgress => colors.taskStatusInProgress,
+  TaskStatus.overdue => colors.taskStatusOverdue,
+  TaskStatus.done => colors.taskStatusDone,
+  TaskStatus.production => colors.taskStatusProduction,
+  TaskStatus.checked => colors.taskStatusChecked,
+  TaskStatus.rejected => colors.taskStatusRejected,
+  TaskStatus.unknown => colors.textSoft,
+};
+
+class _StatusFilterButton extends StatelessWidget {
+  const _StatusFilterButton({
+    required this.status,
+    required this.count,
+    required this.onTap,
+  });
+
+  final TaskStatus? status;
+  final int? count;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final l10n = AppLocalizations.of(context);
+    final selected = status;
+    final label = selected == null
+        ? l10n.taskFilterStatus
+        : _statusLabel(selected, l10n);
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12.r),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: colors.backgroundBase,
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(color: colors.strokeSub, width: 1.w),
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
+          child: SizedBox(
+            height: 34.h,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ConstrainedBox(
+                  constraints: BoxConstraints(maxWidth: 94.w),
+                  child: label
+                      .s(11.sp)
+                      .w(800)
+                      .h(16 / 11)
+                      .c(colors.textStrong)
+                      .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+                ),
+                if (selected != null) ...[
+                  SizedBox(width: 8.w),
+                  _StatusBadge(
+                    count: count ?? 0,
+                    color: _statusColor(selected, colors),
+                  ),
+                ],
+                SizedBox(width: 8.w),
+                Assets.icons.icTuilconChervonDown.svg(
+                  width: 16.w,
+                  height: 16.w,
+                  colorFilter: ColorFilter.mode(
+                    colors.iconSub,
+                    BlendMode.srcIn,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _StatusDropdown extends StatelessWidget {
+  const _StatusDropdown({
+    required this.selected,
+    required this.counts,
+    required this.onSelected,
+  });
+
+  final TaskStatus? selected;
+  final Map<TaskStatus, int> counts;
+  final ValueChanged<TaskStatus> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+
+    return Material(
+      type: MaterialType.transparency,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: colors.backgroundBase,
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(color: colors.strokeSub, width: 1.w),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(6.w),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              for (final status in taskFilterStatuses) ...[
+                _StatusDropdownItem(
+                  status: status,
+                  count: counts[status] ?? 0,
+                  selected: status == selected,
+                  onTap: () => onSelected(status),
+                ),
+                if (status != taskFilterStatuses.last) SizedBox(height: 2.h),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _StatusDropdownItem extends StatelessWidget {
+  const _StatusDropdownItem({
+    required this.status,
+    required this.count,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final TaskStatus status;
+  final int count;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final l10n = AppLocalizations.of(context);
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8.r),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: selected ? colors.backgroundElevation1Alt : Colors.transparent,
+          borderRadius: BorderRadius.circular(8.r),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(8.w),
+          child: Row(
+            children: [
+              Expanded(
+                child: _statusLabel(status, l10n)
+                    .s(13.sp)
+                    .w(800)
+                    .h(20 / 13)
+                    .c(colors.textStrong)
+                    .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+              ),
+              SizedBox(width: 8.w),
+              _StatusBadge(count: count, color: _statusColor(status, colors)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _StatusBadge extends StatelessWidget {
+  const _StatusBadge({required this.count, required this.color});
+
+  final int count;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(30.r),
+      ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 5.w),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minWidth: 6.w),
+          child: SizedBox(
+            height: 16.h,
+            child: Center(
+              child: count
+                  .toString()
+                  .s(11.sp)
+                  .w(800)
+                  .h(16 / 11)
+                  .c(colors.textWhite)
+                  .a(TextAlign.center),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

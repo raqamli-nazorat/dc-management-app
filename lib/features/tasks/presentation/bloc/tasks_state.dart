@@ -2,6 +2,48 @@ part of 'tasks_bloc.dart';
 
 enum TasksStatus { initial, loading, success, failure }
 
+class TaskStatusPageSnapshot extends Equatable {
+  const TaskStatusPageSnapshot({
+    required this.items,
+    required this.totalCount,
+    required this.page,
+    required this.hasReachedMax,
+  });
+
+  factory TaskStatusPageSnapshot.first(TaskPage page) => TaskStatusPageSnapshot(
+    items: page.items,
+    totalCount: page.totalCount,
+    page: 1,
+    hasReachedMax: !page.hasMore,
+  );
+
+  final List<Task> items;
+  final int totalCount;
+  final int page;
+  final bool hasReachedMax;
+
+  TaskStatusPageSnapshot append(TaskPage page) => TaskStatusPageSnapshot(
+    items: [...items, ...page.items],
+    totalCount: page.totalCount,
+    page: this.page + 1,
+    hasReachedMax: !page.hasMore,
+  );
+
+  TaskStatusPageSnapshot remove(int id) {
+    final nextItems = items.where((t) => t.id != id).toList();
+    final removed = nextItems.length != items.length;
+    return TaskStatusPageSnapshot(
+      items: nextItems,
+      totalCount: removed && totalCount > 0 ? totalCount - 1 : totalCount,
+      page: page,
+      hasReachedMax: hasReachedMax,
+    );
+  }
+
+  @override
+  List<Object?> get props => [items, totalCount, page, hasReachedMax];
+}
+
 class TasksState extends Equatable {
   const TasksState({
     this.status = TasksStatus.initial,
@@ -11,6 +53,8 @@ class TasksState extends Equatable {
     this.hasReachedMax = false,
     this.isLoadingMore = false,
     this.filter = TaskFilter.empty,
+    this.statusPages = const {},
+    this.statusBaseFilter,
   });
 
   final TasksStatus status;
@@ -29,6 +73,16 @@ class TasksState extends Equatable {
   /// Joriy filtr (Loyiha/Muallif/Xodim/Daraja/Turi/Topshiruvchi/muddat + qidiruv).
   final TaskFilter filter;
 
+  /// Har bir status uchun birinchi sahifa + count cache.
+  final Map<TaskStatus, TaskStatusPageSnapshot> statusPages;
+
+  /// [statusPages] qaysi statussiz filter uchun olingan.
+  final TaskFilter? statusBaseFilter;
+
+  Map<TaskStatus, int> get statusCounts => {
+    for (final entry in statusPages.entries) entry.key: entry.value.totalCount,
+  };
+
   TasksState copyWith({
     TasksStatus? status,
     List<Task>? items,
@@ -37,6 +91,9 @@ class TasksState extends Equatable {
     bool? hasReachedMax,
     bool? isLoadingMore,
     TaskFilter? filter,
+    Map<TaskStatus, TaskStatusPageSnapshot>? statusPages,
+    TaskFilter? statusBaseFilter,
+    bool clearStatusBaseFilter = false,
   }) => TasksState(
     status: status ?? this.status,
     items: items ?? this.items,
@@ -45,6 +102,10 @@ class TasksState extends Equatable {
     hasReachedMax: hasReachedMax ?? this.hasReachedMax,
     isLoadingMore: isLoadingMore ?? this.isLoadingMore,
     filter: filter ?? this.filter,
+    statusPages: statusPages ?? this.statusPages,
+    statusBaseFilter: clearStatusBaseFilter
+        ? null
+        : statusBaseFilter ?? this.statusBaseFilter,
   );
 
   @override
@@ -56,5 +117,7 @@ class TasksState extends Equatable {
     hasReachedMax,
     isLoadingMore,
     filter,
+    statusPages,
+    statusBaseFilter,
   ];
 }

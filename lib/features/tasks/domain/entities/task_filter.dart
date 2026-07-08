@@ -64,6 +64,19 @@ class TaskFilter extends Equatable {
     search: search,
   );
 
+  /// Holat filtrini o'zgartirib nusxa qaytaradi (boshqa filtrlar saqlanadi).
+  TaskFilter copyWithStatus(TaskStatus? status) => TaskFilter(
+    projectIds: projectIds,
+    createdByIds: createdByIds,
+    assigneeIds: assigneeIds,
+    status: status,
+    priority: priority,
+    type: type,
+    deadlineFrom: deadlineFrom,
+    deadlineTo: deadlineTo,
+    search: search,
+  );
+
   @override
   List<Object?> get props => [
     projectIds,
