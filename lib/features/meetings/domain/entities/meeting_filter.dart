@@ -1,5 +1,7 @@
+import 'package:equatable/equatable.dart';
+
 /// Query params for `GET /meetings/`.
-class MeetingFilter {
+class MeetingFilter extends Equatable {
   const MeetingFilter({
     this.isCompleted,
     this.ordering,
@@ -21,4 +23,27 @@ class MeetingFilter {
   final String? search;
   final DateTime? startDateGte;
   final DateTime? startDateLte;
+
+  MeetingFilter copyWithSearch(String search) => MeetingFilter(
+    isCompleted: isCompleted,
+    ordering: ordering,
+    organizerId: organizerId,
+    page: page,
+    projectId: projectId,
+    search: search,
+    startDateGte: startDateGte,
+    startDateLte: startDateLte,
+  );
+
+  @override
+  List<Object?> get props => [
+    isCompleted,
+    ordering,
+    organizerId,
+    page,
+    projectId,
+    search,
+    startDateGte,
+    startDateLte,
+  ];
 }

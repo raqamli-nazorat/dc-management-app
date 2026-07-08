@@ -11,3 +11,13 @@ sealed class MeetingsEvent extends Equatable {
 class MeetingsRequested extends MeetingsEvent {
   const MeetingsRequested();
 }
+
+/// Qidiruv matni o'zgardi - `GET /meetings/?search=...`.
+class MeetingsSearchChanged extends MeetingsEvent {
+  const MeetingsSearchChanged(this.query);
+
+  final String query;
+
+  @override
+  List<Object?> get props => [query];
+}
