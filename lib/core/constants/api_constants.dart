@@ -66,6 +66,12 @@ abstract final class ApiConstants {
   /// Yig‘ilishni yopish: `POST /meetings/{id}/close/`.
   static String meetingClose(int id) => '/meetings/$id/close/';
 
+  static const meetingsTrash = '/meetings/trash/';
+
+  static String meetingHardDelete(int id) => '/meetings/$id/hard_delete/';
+
+  static String meetingRestore(int id) => '/meetings/$id/restore/';
+
   // ── Meeting attendance (qatnashuv) ────────────────────────────────────
   /// Ro‘yxat + filtr: `GET /meeting-attendance/?meeting=&user=&is_attended=`.
   static const meetingAttendance = '/meeting-attendance/';

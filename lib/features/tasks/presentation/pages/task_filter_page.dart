@@ -8,6 +8,7 @@ import '../../../../config/theme/app_colors.dart';
 import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
 import '../../../../core/widgets/app_date_picker.dart';
+import '../../../../core/widgets/app_filter_components.dart';
 import '../../../../injection_container.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/task.dart';
@@ -138,11 +139,7 @@ class _TaskFilterViewState extends State<_TaskFilterView> {
     _close();
     final result = await context.pushNamed<Object?>(
       Routes.taskMultiSelect.name,
-      extra: TaskMultiSelectArgs(
-        title: title,
-        items: items,
-        selected: current,
-      ),
+      extra: TaskMultiSelectArgs(title: title, items: items, selected: current),
     );
     if (result is Set<int>) {
       setState(() {
@@ -255,7 +252,7 @@ class _TaskFilterViewState extends State<_TaskFilterView> {
           child: BlocBuilder<TaskFilterBloc, TaskFilterState>(
             builder: (context, state) => Column(
               children: [
-                _Header(title: l10n.taskFilterTitle),
+                AppFilterHeader(title: l10n.taskFilterTitle),
                 Expanded(
                   child: SingleChildScrollView(
                     padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 24.h),
@@ -263,7 +260,7 @@ class _TaskFilterViewState extends State<_TaskFilterView> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       spacing: 12.h,
                       children: [
-                        _FilterBox(
+                        AppFilterFieldBox(
                           label: l10n.taskCreateFieldProject,
                           value: _summary(
                             _projectIds,
@@ -283,7 +280,7 @@ class _TaskFilterViewState extends State<_TaskFilterView> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Expanded(
-                              child: _FilterBox(
+                              child: AppFilterFieldBox(
                                 label: l10n.taskFilterAuthor,
                                 value: _summary(
                                   _authorIds,
@@ -302,7 +299,7 @@ class _TaskFilterViewState extends State<_TaskFilterView> {
                             ),
                             SizedBox(width: 16.w),
                             Expanded(
-                              child: _FilterBox(
+                              child: AppFilterFieldBox(
                                 label: l10n.taskFilterEmployee,
                                 value: _summary(
                                   _employeeIds,
@@ -321,7 +318,7 @@ class _TaskFilterViewState extends State<_TaskFilterView> {
                             ),
                           ],
                         ),
-                        _FilterBox(
+                        AppFilterFieldBox(
                           label: l10n.taskFilterStatus,
                           value: _status == null
                               ? null
@@ -331,7 +328,7 @@ class _TaskFilterViewState extends State<_TaskFilterView> {
                           onTap: () => _toggle(_Field.status),
                           onClear: () => setState(() => _status = null),
                         ),
-                        _FilterBox(
+                        AppFilterFieldBox(
                           label: l10n.taskCreateFieldPriority,
                           value: _priority == null
                               ? null
@@ -341,10 +338,11 @@ class _TaskFilterViewState extends State<_TaskFilterView> {
                           onTap: () => _toggle(_Field.priority),
                           onClear: () => setState(() => _priority = null),
                         ),
-                        _FilterBox(
+                        AppFilterFieldBox(
                           label: l10n.taskCreateFieldType,
-                          value:
-                              _type == null ? null : _typeLabel(_type!, l10n),
+                          value: _type == null
+                              ? null
+                              : _typeLabel(_type!, l10n),
                           placeholder: l10n.taskCreateTypeHint,
                           link: _links[_Field.type],
                           onTap: () => _toggle(_Field.type),
@@ -366,7 +364,7 @@ class _TaskFilterViewState extends State<_TaskFilterView> {
                     ),
                   ),
                 ),
-                _ActionBar(
+                AppFilterActionBar(
                   resetLabel: l10n.taskFilterReset,
                   applyLabel: l10n.taskFilterApply,
                   onReset: _reset,
@@ -440,10 +438,12 @@ class _TaskFilterViewState extends State<_TaskFilterView> {
 
     switch (_open) {
       case _Field.priority:
-        return _DropdownBox(
+        return AppFilterDropdownBox(
+          emptyText: l10n.statEmpty,
           children: [
             for (final p in _priorities)
-              _DropdownItem(
+              AppFilterDropdownItem(
+                verticalPadding: 6,
                 selected: p == _priority,
                 onTap: () => _pick(() => _priority = p),
                 child: _labelRow(_priorityLabel(p, l10n)),
@@ -451,10 +451,12 @@ class _TaskFilterViewState extends State<_TaskFilterView> {
           ],
         );
       case _Field.type:
-        return _DropdownBox(
+        return AppFilterDropdownBox(
+          emptyText: l10n.statEmpty,
           children: [
             for (final t in _types)
-              _DropdownItem(
+              AppFilterDropdownItem(
+                verticalPadding: 6,
                 selected: t == _type,
                 onTap: () => _pick(() => _type = t),
                 child: _labelRow(_typeLabel(t, l10n)),
@@ -462,10 +464,12 @@ class _TaskFilterViewState extends State<_TaskFilterView> {
           ],
         );
       case _Field.status:
-        return _DropdownBox(
+        return AppFilterDropdownBox(
+          emptyText: l10n.statEmpty,
           children: [
             for (final s in _statuses)
-              _DropdownItem(
+              AppFilterDropdownItem(
+                verticalPadding: 6,
                 selected: s == _status,
                 onTap: () => _pick(() => _status = s),
                 child: _labelRow(_statusLabel(s, l10n)),
@@ -487,8 +491,9 @@ class _TaskFilterViewState extends State<_TaskFilterView> {
     final colors = AppColors.of(context);
     final isDark = colors.backgroundBase.computeLuminance() < 0.5;
     final base = isDark ? ThemeData.dark() : ThemeData.light();
-    final shape =
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r));
+    final shape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(20.r),
+    );
 
     return Theme(
       data: base.copyWith(
@@ -559,211 +564,6 @@ String _fmtTime(TimeOfDay? t) {
 
 // ── Sarlavha ───────────────────────────────────────────────────────────────
 
-class _Header extends StatelessWidget {
-  const _Header({required this.title});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = AppColors.of(context);
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
-      child: Row(
-        children: [
-          InkWell(
-            onTap: () => Navigator.of(context).maybePop(),
-            borderRadius: BorderRadius.circular(12.r),
-            child: Padding(
-              padding: EdgeInsets.all(4.w),
-              child: Assets.icons.icArrowLeftLarge.svg(
-                width: 16.w,
-                height: 16.w,
-                colorFilter:
-                    ColorFilter.mode(colors.iconStrong, BlendMode.srcIn),
-              ),
-            ),
-          ),
-          Expanded(
-            child: title
-                .s(17.sp)
-                .w(800)
-                .c(colors.textStrong)
-                .a(TextAlign.center)
-                .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
-          ),
-          SizedBox(width: 24.w),
-        ],
-      ),
-    );
-  }
-}
-
-// ── Umumiy maydon qismlari ─────────────────────────────────────────────────
-
-class _FieldLabel extends StatelessWidget {
-  const _FieldLabel(this.text);
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(right: 8.w, bottom: 4.h),
-      child: text.s(11.sp).w(700).c(AppColors.of(context).textSub),
-    );
-  }
-}
-
-BoxDecoration _fieldBoxDecoration(AppColors colors) => BoxDecoration(
-  color: colors.backgroundBase,
-  borderRadius: BorderRadius.circular(12.r),
-  border: Border.all(color: colors.strokeSub, width: 1.w),
-);
-
-/// Filtr tanlov maydoni: bosilganda ostidan dropdown ochiladi. Qiymat bo'lsa
-/// o'ng tomonda tozalash (×) tugmasi, aks holda chevron ko'rinadi.
-class _FilterBox extends StatelessWidget {
-  const _FilterBox({
-    required this.label,
-    required this.value,
-    required this.placeholder,
-    required this.onTap,
-    required this.onClear,
-    this.link,
-    this.chevron,
-  });
-
-  final String label;
-  final String? value;
-  final String placeholder;
-  final VoidCallback onTap;
-  final VoidCallback onClear;
-  final LayerLink? link;
-
-  /// Bo'sh holatdagi o'ng ikonka — dropdown maydonlar uchun `null` (pastga
-  /// chevron), alohida sahifaga o'tadigan maydonlar uchun o'ngga strelka.
-  final SvgGenImage? chevron;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = AppColors.of(context);
-    final hasValue = value != null && value!.isNotEmpty;
-
-    Widget box = DecoratedBox(
-      decoration: _fieldBoxDecoration(colors),
-      child: Padding(
-        padding: EdgeInsets.only(left: 12.w, right: hasValue ? 6.w : 12.w),
-        child: SizedBox(
-          height: 44.h,
-          child: Row(
-            children: [
-              Expanded(
-                child: (hasValue ? value! : placeholder)
-                    .s(13.sp)
-                    .w(700)
-                    .c(hasValue ? colors.textStrong : colors.textSub)
-                    .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
-              ),
-              SizedBox(width: 4.w),
-              if (hasValue)
-                InkWell(
-                  onTap: onClear,
-                  borderRadius: BorderRadius.circular(8.r),
-                  child: Padding(
-                    padding: EdgeInsets.all(4.w),
-                    child: Assets.icons.icClose.svg(
-                      width: 16.w,
-                      height: 16.w,
-                      colorFilter:
-                          ColorFilter.mode(colors.iconSub, BlendMode.srcIn),
-                    ),
-                  ),
-                )
-              else
-                (chevron ?? Assets.icons.icTuilconChervonDown).svg(
-                  width: 16.w,
-                  height: 16.w,
-                  colorFilter:
-                      ColorFilter.mode(colors.iconSub, BlendMode.srcIn),
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
-    if (link != null) {
-      box = CompositedTransformTarget(link: link!, child: box);
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _FieldLabel(label),
-        InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(12.r),
-          child: box,
-        ),
-      ],
-    );
-  }
-}
-
-/// Sana/vaqt tanlagichi (dropdown emas — bosilganda picker ochiladi).
-class _PickerBox extends StatelessWidget {
-  const _PickerBox({
-    required this.value,
-    required this.placeholder,
-    required this.icon,
-    required this.onTap,
-  });
-
-  final String value;
-  final String placeholder;
-  final SvgGenImage icon;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = AppColors.of(context);
-    final hasValue = value.isNotEmpty;
-
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12.r),
-      child: DecoratedBox(
-        decoration: _fieldBoxDecoration(colors),
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12.w),
-          child: SizedBox(
-            height: 44.h,
-            child: Row(
-              children: [
-                Expanded(
-                  child: (hasValue ? value : placeholder)
-                      .s(13.sp)
-                      .w(700)
-                      .c(hasValue ? colors.textStrong : colors.textSub)
-                      .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
-                ),
-                SizedBox(width: 4.w),
-                icon.svg(
-                  width: 16.w,
-                  height: 16.w,
-                  colorFilter:
-                      ColorFilter.mode(colors.iconSub, BlendMode.srcIn),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 /// "Muddat oralig'i" — 2×2 (Dan: sana+vaqt, Gacha: sana+vaqt).
 class _DateRange extends StatelessWidget {
   const _DateRange({
@@ -796,7 +596,7 @@ class _DateRange extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: _PickerBox(
+              child: AppFilterPickerBox(
                 value: date,
                 placeholder: dateHint,
                 icon: Assets.icons.icCalendar,
@@ -805,7 +605,7 @@ class _DateRange extends StatelessWidget {
             ),
             SizedBox(width: 16.w),
             Expanded(
-              child: _PickerBox(
+              child: AppFilterPickerBox(
                 value: time,
                 placeholder: '00:00',
                 icon: Assets.icons.icTuilconTime,
@@ -819,7 +619,7 @@ class _DateRange extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        _FieldLabel(label),
+        AppFilterFieldLabel(label),
         row(fromDate, fromTime, onFromDate, onFromTime),
         SizedBox(height: 12.h),
         row(toDate, toTime, onToDate, onToTime),
@@ -829,172 +629,3 @@ class _DateRange extends StatelessWidget {
 }
 
 // ── Dropdown quti + qatorlar ───────────────────────────────────────────────
-
-class _DropdownBox extends StatelessWidget {
-  const _DropdownBox({required this.children});
-
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = AppColors.of(context);
-    final l10n = AppLocalizations.of(context);
-
-    return Material(
-      type: MaterialType.transparency,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: colors.backgroundBase,
-          borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: colors.strokeSub, width: 1.w),
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(6.w),
-          child: children.isEmpty
-              ? Padding(
-                  padding: EdgeInsets.symmetric(vertical: 12.h),
-                  child: Center(
-                    child: l10n.statEmpty.s(13.sp).w(500).c(colors.textSub),
-                  ),
-                )
-              : ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxHeight: MediaQuery.sizeOf(context).height * 0.4,
-                  ),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      spacing: 2.h,
-                      children: children,
-                    ),
-                  ),
-                ),
-        ),
-      ),
-    );
-  }
-}
-
-class _DropdownItem extends StatelessWidget {
-  const _DropdownItem({
-    required this.selected,
-    required this.onTap,
-    required this.child,
-  });
-
-  final bool selected;
-  final VoidCallback onTap;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = AppColors.of(context);
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(10.r),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: selected ? colors.backgroundElevation1Alt : Colors.transparent,
-          borderRadius: BorderRadius.circular(10.r),
-        ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
-          child: child,
-        ),
-      ),
-    );
-  }
-}
-
-// ── Pastki "Tozalash" + "Qidirish" tugmalari ───────────────────────────────
-
-class _ActionBar extends StatelessWidget {
-  const _ActionBar({
-    required this.resetLabel,
-    required this.applyLabel,
-    required this.onReset,
-    required this.onApply,
-  });
-
-  final String resetLabel;
-  final String applyLabel;
-  final VoidCallback onReset;
-  final VoidCallback onApply;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = AppColors.of(context);
-
-    return SafeArea(
-      top: false,
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 8.h),
-        child: Row(
-          children: [
-            Expanded(
-              child: InkWell(
-                onTap: onReset,
-                borderRadius: BorderRadius.circular(16.r),
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: colors.backgroundElevation1Alt,
-                    borderRadius: BorderRadius.circular(16.r),
-                  ),
-                  child: SizedBox(
-                    height: 52.h,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Assets.icons.icClose.svg(
-                          width: 16.w,
-                          height: 16.w,
-                          colorFilter: ColorFilter.mode(
-                            colors.iconStrong,
-                            BlendMode.srcIn,
-                          ),
-                        ),
-                        SizedBox(width: 8.w),
-                        resetLabel.s(15.sp).w(800).c(colors.textStrong),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(width: 12.w),
-            Expanded(
-              child: InkWell(
-                onTap: onApply,
-                borderRadius: BorderRadius.circular(16.r),
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: colors.accentStrong,
-                    borderRadius: BorderRadius.circular(16.r),
-                  ),
-                  child: SizedBox(
-                    height: 52.h,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Assets.icons.icSearch.svg(
-                          width: 16.w,
-                          height: 16.w,
-                          colorFilter: ColorFilter.mode(
-                            colors.textWhite,
-                            BlendMode.srcIn,
-                          ),
-                        ),
-                        SizedBox(width: 8.w),
-                        applyLabel.s(15.sp).w(800).c(colors.textWhite),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}

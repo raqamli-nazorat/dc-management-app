@@ -11,3 +11,23 @@ sealed class MeetingsEvent extends Equatable {
 class MeetingsRequested extends MeetingsEvent {
   const MeetingsRequested();
 }
+
+/// Filtr sahifasidan kelgan filter.
+class MeetingsFilterChanged extends MeetingsEvent {
+  const MeetingsFilterChanged(this.filter);
+
+  final MeetingFilter filter;
+
+  @override
+  List<Object?> get props => [filter];
+}
+
+/// Qidiruv matni o'zgardi - `GET /meetings/?search=...`.
+class MeetingsSearchChanged extends MeetingsEvent {
+  const MeetingsSearchChanged(this.query);
+
+  final String query;
+
+  @override
+  List<Object?> get props => [query];
+}

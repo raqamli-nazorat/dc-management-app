@@ -12,10 +12,16 @@ class MeetingModel extends Meeting {
     required super.id,
     required super.title,
     required super.uid,
+    super.projectId,
     required super.projectName,
+    super.description,
+    super.link,
+    super.penaltyPercentage,
     required super.startDate,
+    super.durationMinutes,
     required super.organizerName,
     required super.organizerRole,
+    super.participantIds,
     required super.participantName,
     required super.participantPosition,
     required super.isCompleted,
@@ -49,6 +55,18 @@ class MeetingModel extends Meeting {
       final p = json['project'];
       if (p is Map) return pick(['name', 'title'], p.cast<String, dynamic>());
       return pick(['project_name', 'project_title']);
+    }
+
+    int? projectId() {
+      final p = json['project'];
+      if (p is Map) return intValue(p['id']);
+      return intValue(p);
+    }
+
+    List<int> participantIds() {
+      final participants = json['participants'];
+      if (participants is! List) return const [];
+      return participants.map(intValue).whereType<int>().toList();
     }
 
     // ── Organizer: nested {full_name/username, role/position} ──────────────
@@ -123,15 +141,24 @@ class MeetingModel extends Meeting {
       id: (json['id'] as num?)?.toInt() ?? 0,
       title: pick(['title', 'name']),
       uid: pick(['uid', 'code', 'meeting_uid']),
+      projectId: projectId(),
       projectName: projectName(),
+      description: str(json['description']),
+      link: str(json['link']),
+      penaltyPercentage: json['penalty_percentage']?.toString(),
       startDate: DateTime.tryParse(
         pick(['start_time', 'start_date', 'date', 'datetime']),
       ),
+      durationMinutes: intValue(json['duration_minutes']),
       organizerName: organizerName,
       organizerRole: organizerRole,
+      participantIds: participantIds(),
       participantName: participantName,
       participantPosition: participantPosition,
-      isCompleted: (json['is_completed'] as bool?) ?? false,
+      isCompleted:
+          (json['is_completed'] as bool?) ??
+          (json['is_complate'] as bool?) ??
+          false,
       reason: str(json['reason']),
       attended: attended(),
     );

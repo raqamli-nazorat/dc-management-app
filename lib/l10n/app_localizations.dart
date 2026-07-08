@@ -842,6 +842,24 @@ abstract class AppLocalizations {
   /// **'Hozircha yig‘ilishlar yo‘q'**
   String get meetingsEmpty;
 
+  /// No description provided for @meetingFilterOrganizer.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tashkilotchi'**
+  String get meetingFilterOrganizer;
+
+  /// No description provided for @meetingFilterOrganizerHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tashkilotchini tanlang'**
+  String get meetingFilterOrganizerHint;
+
+  /// No description provided for @meetingFilterStartDateRange.
+  ///
+  /// In uz, this message translates to:
+  /// **'Boshlanish sanasi oralig‘i'**
+  String get meetingFilterStartDateRange;
+
   /// No description provided for @meetingReasonTitle.
   ///
   /// In uz, this message translates to:

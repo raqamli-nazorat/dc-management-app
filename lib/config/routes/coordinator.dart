@@ -10,6 +10,8 @@ import '../../features/auth/presentation/pages/splash_page.dart';
 import '../../features/auth/presentation/pin/pages/pin_page.dart';
 import '../../features/auth/presentation/role/pages/role_select_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
+import '../../features/meetings/domain/entities/meeting_filter.dart';
+import '../../features/meetings/presentation/pages/meeting_filter_page.dart';
 import '../../features/meetings/presentation/pages/meeting_reason_page.dart';
 import '../../features/meetings/presentation/pages/meetings_page.dart';
 import '../../features/notification/presentation/pages/notification_page.dart';
@@ -124,6 +126,15 @@ class AppRouter {
           builder: (context, state) => const MeetingsPage(),
         ),
         GoRoute(
+          name: Routes.meetingFilter.name,
+          path: Routes.meetingFilter.path,
+          builder: (context, state) => MeetingFilterPage(
+            initial: state.extra is MeetingFilter
+                ? state.extra! as MeetingFilter
+                : MeetingFilter.empty,
+          ),
+        ),
+        GoRoute(
           name: Routes.meetingReason.name,
           path: Routes.meetingReason.path,
           builder: (context, state) {
@@ -186,9 +197,9 @@ class AppRouter {
 class GoRouterRefreshStream extends ChangeNotifier {
   GoRouterRefreshStream(Stream<dynamic> stream) {
     notifyListeners();
-    _subscription = stream
-        .asBroadcastStream()
-        .listen((dynamic _) => notifyListeners());
+    _subscription = stream.asBroadcastStream().listen(
+      (dynamic _) => notifyListeners(),
+    );
   }
 
   late final StreamSubscription<dynamic> _subscription;

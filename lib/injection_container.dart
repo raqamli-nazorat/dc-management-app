@@ -23,10 +23,22 @@ import 'features/auth/presentation/role/bloc/role_select_bloc.dart';
 import 'features/meetings/data/data_sources/meeting_remote_data_source.dart';
 import 'features/meetings/data/repository/meeting_repository_impl.dart';
 import 'features/meetings/domain/repository/meeting_repository.dart';
+import 'features/meetings/domain/usecases/close_meeting_usecase.dart';
+import 'features/meetings/domain/usecases/create_meeting_usecase.dart';
+import 'features/meetings/domain/usecases/delete_meeting_usecase.dart';
 import 'features/meetings/domain/usecases/get_meeting_attendance_usecase.dart';
+import 'features/meetings/domain/usecases/get_meeting_attendance_by_id_usecase.dart';
 import 'features/meetings/domain/usecases/get_meeting_usecase.dart';
 import 'features/meetings/domain/usecases/get_meetings_usecase.dart';
+import 'features/meetings/domain/usecases/get_trashed_meetings_usecase.dart';
+import 'features/meetings/domain/usecases/hard_delete_meeting_usecase.dart';
+import 'features/meetings/domain/usecases/list_meeting_attendance_usecase.dart';
+import 'features/meetings/domain/usecases/patch_meeting_usecase.dart';
+import 'features/meetings/domain/usecases/restore_meeting_usecase.dart';
 import 'features/meetings/domain/usecases/submit_absence_reason_usecase.dart';
+import 'features/meetings/domain/usecases/update_meeting_attendance_usecase.dart';
+import 'features/meetings/domain/usecases/update_meeting_usecase.dart';
+import 'features/meetings/presentation/bloc/meeting_filter_bloc.dart';
 import 'features/meetings/presentation/bloc/meeting_reason_bloc.dart';
 import 'features/meetings/presentation/bloc/meetings_bloc.dart';
 import 'features/tasks/data/data_sources/task_remote_data_source.dart';
@@ -119,9 +131,7 @@ Future<void> configureDependencies() async {
     )
     // `UpdateMeUseCase` Profile bo‘limida ro‘yxatga olinadi — lazy factory
     // bo‘lgani uchun chaqiruv vaqtida (getIt<RoleSelectBloc>()) hal bo‘ladi.
-    ..registerFactory<RoleSelectBloc>(
-      () => RoleSelectBloc(updateMe: getIt()),
-    );
+    ..registerFactory<RoleSelectBloc>(() => RoleSelectBloc(updateMe: getIt()));
 
   // ── Profile feature ───────────────────────────────────────────────────
   getIt
@@ -152,12 +162,48 @@ Future<void> configureDependencies() async {
     ..registerLazySingleton<GetMeetingsUseCase>(
       () => GetMeetingsUseCase(getIt()),
     )
+    ..registerLazySingleton<CreateMeetingUseCase>(
+      () => CreateMeetingUseCase(getIt()),
+    )
     ..registerLazySingleton<GetMeetingUseCase>(() => GetMeetingUseCase(getIt()))
+    ..registerLazySingleton<UpdateMeetingUseCase>(
+      () => UpdateMeetingUseCase(getIt()),
+    )
+    ..registerLazySingleton<PatchMeetingUseCase>(
+      () => PatchMeetingUseCase(getIt()),
+    )
+    ..registerLazySingleton<DeleteMeetingUseCase>(
+      () => DeleteMeetingUseCase(getIt()),
+    )
+    ..registerLazySingleton<CloseMeetingUseCase>(
+      () => CloseMeetingUseCase(getIt()),
+    )
+    ..registerLazySingleton<GetTrashedMeetingsUseCase>(
+      () => GetTrashedMeetingsUseCase(getIt()),
+    )
+    ..registerLazySingleton<HardDeleteMeetingUseCase>(
+      () => HardDeleteMeetingUseCase(getIt()),
+    )
+    ..registerLazySingleton<RestoreMeetingUseCase>(
+      () => RestoreMeetingUseCase(getIt()),
+    )
     ..registerLazySingleton<GetMeetingAttendanceUseCase>(
       () => GetMeetingAttendanceUseCase(getIt()),
     )
+    ..registerLazySingleton<ListMeetingAttendanceUseCase>(
+      () => ListMeetingAttendanceUseCase(getIt()),
+    )
+    ..registerLazySingleton<GetMeetingAttendanceByIdUseCase>(
+      () => GetMeetingAttendanceByIdUseCase(getIt()),
+    )
+    ..registerLazySingleton<UpdateMeetingAttendanceUseCase>(
+      () => UpdateMeetingAttendanceUseCase(getIt()),
+    )
     ..registerLazySingleton<SubmitAbsenceReasonUseCase>(
       () => SubmitAbsenceReasonUseCase(getIt()),
+    )
+    ..registerFactory<MeetingFilterBloc>(
+      () => MeetingFilterBloc(getOptions: getIt(), getUsers: getIt()),
     )
     ..registerFactory<MeetingsBloc>(() => MeetingsBloc(getMeetings: getIt()))
     ..registerFactory<MeetingReasonBloc>(

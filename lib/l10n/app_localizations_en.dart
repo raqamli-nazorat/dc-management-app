@@ -395,6 +395,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get meetingsEmpty => 'No meetings yet';
 
   @override
+  String get meetingFilterOrganizer => 'Organizer';
+
+  @override
+  String get meetingFilterOrganizerHint => 'Select organizer';
+
+  @override
+  String get meetingFilterStartDateRange => 'Start date range';
+
+  @override
   String get meetingReasonTitle => 'You missed the meeting';
 
   @override

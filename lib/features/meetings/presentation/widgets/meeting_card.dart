@@ -78,7 +78,7 @@ class MeetingCard extends StatelessWidget {
                     ),
                   ),
                   SizedBox(width: 8.w),
-                  _AttendanceBadge(attended: meeting.attended),
+                  _AttendanceBadge(checked: meeting.isCompleted),
                 ],
               ),
               if (meeting.uid.isNotEmpty) ...[
@@ -163,20 +163,18 @@ class MeetingCard extends StatelessWidget {
   }
 }
 
-/// Qatnashuv nishoni: yashil check (qatnashdi) / qizil minus (qatnashmadi) /
-/// yo‘q (noma‘lum). `ic_check` — tayyor kompozit nishon (yashil kvadrat + oq
-/// belgi), shu bois rang filtri qo‘llanmaydi.
+/// Qatnashuv nishoni: yashil check (qatnashdi) / qizil minus (qatnashmadi).
+/// `ic_check` — tayyor kompozit nishon (yashil kvadrat + oq belgi), shu bois
+/// rang filtri qo‘llanmaydi.
 class _AttendanceBadge extends StatelessWidget {
-  const _AttendanceBadge({required this.attended});
+  const _AttendanceBadge({required this.checked});
 
-  final bool? attended;
+  final bool checked;
 
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
-    if (attended == null) return SizedBox(width: 24.w, height: 24.w);
-
-    if (attended!) {
+    if (checked) {
       return Assets.icons.icCheck.svg(width: 24.w, height: 24.w);
     }
 
