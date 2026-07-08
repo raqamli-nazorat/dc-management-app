@@ -12,6 +12,7 @@ import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
 import '../../../../injection_container.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../domain/entities/task.dart';
 import '../../domain/entities/task_filter.dart';
 import '../bloc/tasks_bloc.dart';
 import '../widgets/task_card.dart';
@@ -38,6 +39,8 @@ class _TasksView extends StatefulWidget {
 
 class _TasksViewState extends State<_TasksView> {
   final _scrollController = ScrollController();
+  final _countdownNow = ValueNotifier<DateTime>(DateTime.now());
+  Timer? _countdownTimer;
 
   @override
   void initState() {
@@ -47,6 +50,8 @@ class _TasksViewState extends State<_TasksView> {
 
   @override
   void dispose() {
+    _stopCountdownTimer();
+    _countdownNow.dispose();
     _scrollController
       ..removeListener(_onScroll)
       ..dispose();
@@ -68,6 +73,36 @@ class _TasksViewState extends State<_TasksView> {
     return bloc.stream.firstWhere((s) => s.status != TasksStatus.loading);
   }
 
+  bool _hasActiveCountdown(Iterable<Task> items, DateTime now) {
+    return items.any((task) => shouldShowTaskCountdown(task.deadline, now));
+  }
+
+  void _syncCountdownTimer(List<Task> items) {
+    final now = DateTime.now();
+    if (_hasActiveCountdown(items, now)) {
+      _startCountdownTimer();
+    } else {
+      _stopCountdownTimer();
+    }
+  }
+
+  void _startCountdownTimer() {
+    if (_countdownTimer?.isActive ?? false) return;
+    _countdownNow.value = DateTime.now();
+    _countdownTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (!mounted) return;
+      final now = DateTime.now();
+      _countdownNow.value = now;
+      final items = context.read<TasksBloc>().state.items;
+      if (!_hasActiveCountdown(items, now)) _stopCountdownTimer();
+    });
+  }
+
+  void _stopCountdownTimer() {
+    _countdownTimer?.cancel();
+    _countdownTimer = null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
@@ -82,7 +117,14 @@ class _TasksViewState extends State<_TasksView> {
               child: RefreshIndicator(
                 color: colors.accentSub,
                 onRefresh: () => _onRefresh(context),
-                child: BlocBuilder<TasksBloc, TasksState>(
+                child: BlocConsumer<TasksBloc, TasksState>(
+                  listener: (_, state) {
+                    if (state.status == TasksStatus.success) {
+                      _syncCountdownTimer(state.items);
+                    } else {
+                      _stopCountdownTimer();
+                    }
+                  },
                   builder: (context, state) {
                     switch (state.status) {
                       case TasksStatus.loading:
@@ -135,6 +177,7 @@ class _TasksViewState extends State<_TasksView> {
                             final task = state.items[i];
                             return TaskCard(
                               task: task,
+                              countdownTicker: _countdownNow,
                               onDelete: () => context.read<TasksBloc>().add(
                                 TasksTaskDeleted(task.id),
                               ),
@@ -386,8 +429,10 @@ class _SearchBar extends StatelessWidget {
                     Assets.icons.icSearch.svg(
                       width: 16.w,
                       height: 16.w,
-                      colorFilter:
-                          ColorFilter.mode(colors.iconSub, BlendMode.srcIn),
+                      colorFilter: ColorFilter.mode(
+                        colors.iconSub,
+                        BlendMode.srcIn,
+                      ),
                     ),
                     SizedBox(width: 8.w),
                     Expanded(
@@ -520,10 +565,7 @@ class _SquareIconButton extends StatelessWidget {
       decoration: BoxDecoration(
         color: background,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: borderColor ?? colors.strokeSoft,
-          width: 1.w,
-        ),
+        border: Border.all(color: borderColor ?? colors.strokeSoft, width: 1.w),
       ),
       child: SizedBox(
         width: size.w,
