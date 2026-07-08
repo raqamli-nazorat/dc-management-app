@@ -302,6 +302,90 @@ class AppLocalizationsEn extends AppLocalizations {
   String get taskCreateSuccess => 'Task created';
 
   @override
+  String get taskMenuDetails => 'Details';
+
+  @override
+  String get taskMenuDelete => 'Delete';
+
+  @override
+  String get taskDeleteTitle => 'Delete task';
+
+  @override
+  String get taskDeleteSubtitle =>
+      'The task will be moved to the trash and can be restored later.';
+
+  @override
+  String get taskDeleteCancel => 'Cancel';
+
+  @override
+  String get taskFilterTitle => 'Filter';
+
+  @override
+  String get taskFilterStatus => 'Status';
+
+  @override
+  String get taskFilterStatusHint => 'Select status';
+
+  @override
+  String get taskStatusTodo => 'To do';
+
+  @override
+  String get taskStatusInProgress => 'In progress';
+
+  @override
+  String get taskStatusOverdue => 'Overdue';
+
+  @override
+  String get taskStatusDone => 'Done';
+
+  @override
+  String get taskStatusProduction => 'In production';
+
+  @override
+  String get taskStatusChecked => 'Checked';
+
+  @override
+  String get taskStatusRejected => 'Rejected';
+
+  @override
+  String get taskFilterAuthor => 'Author';
+
+  @override
+  String get taskFilterAuthorHint => 'Select author';
+
+  @override
+  String get taskFilterEmployee => 'Employee';
+
+  @override
+  String get taskFilterEmployeeHint => 'Select employee';
+
+  @override
+  String get taskFilterDeadlineRange => 'Deadline range';
+
+  @override
+  String get taskFilterDateHint => 'Date';
+
+  @override
+  String get taskFilterReset => 'Clear';
+
+  @override
+  String get taskFilterApply => 'Search';
+
+  @override
+  String get taskSearchHint => 'Search';
+
+  @override
+  String get taskSearchClose => 'Close';
+
+  @override
+  String get taskFilterSelectAdd => 'Add';
+
+  @override
+  String taskFilterSelectedCount(int count) {
+    return '$count selected';
+  }
+
+  @override
   String get meetingsTitle => 'Meetings';
 
   @override

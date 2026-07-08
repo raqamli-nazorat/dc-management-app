@@ -36,11 +36,18 @@ abstract final class ApiConstants {
   // ── Tasks ─────────────────────────────────────────────────────────────
   static const tasks = '/tasks/';
 
+  /// Bitta vazifa: `GET/PUT/PATCH/DELETE /tasks/{id}/`.
+  static String taskById(int id) => '/tasks/$id/';
+
   /// Lavozimlar — vazifa "Kimlar uchun" tanlovi (`GET /applications/positions/`).
   static const positions = '/applications/positions/';
 
   /// Qisqa loyihalar ro‘yxati — vazifa "Loyiha" tanlovi (`GET /project-shorts/`).
   static const projectShorts = '/project-shorts/';
+
+  /// Barcha foydalanuvchilar (qisqa) — filtr "Muallif"/"Xodim" tanlovi
+  /// (`GET /users/all/`).
+  static const usersAll = '/users/all/';
 
   /// Bitta loyiha to‘liq ma’lumoti — ishtirokchilar (Topshiruvchi tanlovi):
   /// `GET /projects/{id}/`.

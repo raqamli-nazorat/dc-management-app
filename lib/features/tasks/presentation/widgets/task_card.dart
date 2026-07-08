@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../config/theme/app_colors.dart';
@@ -27,13 +28,10 @@ String _formatEstimated(int? minutes) {
 }
 
 /// Muddatgacha qolgan vaqt "HH:MM:SS" — o'tib ketgan/yo'q bo'lsa bo'sh.
-///
-// ponytail: build vaqtida bir marta hisoblanadi (tiklanmaydi). Har-soniya
-// tiklash kerak bo'lsa — kartaga Timer qo'shiladi.
-String _formatCountdown(DateTime? deadline) {
-  if (deadline == null) return '';
-  final diff = deadline.difference(DateTime.now());
-  if (diff.isNegative) return '';
+/// Faqat bugungi deadline uchun ko'rsatiladi; ticker page-level.
+String _formatCountdown(DateTime? deadline, DateTime now) {
+  if (!shouldShowTaskCountdown(deadline, now)) return '';
+  final diff = deadline!.difference(now);
   String two(int v) => v.toString().padLeft(2, '0');
   final h = diff.inHours;
   final m = diff.inMinutes % 60;
@@ -41,18 +39,37 @@ String _formatCountdown(DateTime? deadline) {
   return '${two(h)}:${two(m)}:${two(s)}';
 }
 
+bool shouldShowTaskCountdown(DateTime? deadline, DateTime now) {
+  if (deadline == null || !deadline.isAfter(now)) return false;
+  return deadline.year == now.year &&
+      deadline.month == now.month &&
+      deadline.day == now.day;
+}
+
 /// Vazifalar ro'yxatidagi bitta karta (Figma: elevation-1 fon, 16 radius).
 class TaskCard extends StatelessWidget {
-  const TaskCard({super.key, required this.task, this.onTap, this.onMore});
+  const TaskCard({
+    super.key,
+    required this.task,
+    this.onTap,
+    this.onDetails,
+    this.onDelete,
+    this.countdownTicker,
+  });
 
   final Task task;
   final VoidCallback? onTap;
-  final VoidCallback? onMore;
+  final ValueListenable<DateTime>? countdownTicker;
+
+  /// "Batafsil" tanlanganda (menyudan) — hozircha keyinroq ulanadi.
+  final VoidCallback? onDetails;
+
+  /// "O'chirish" tasdiqlangandan so'ng (o'chirish varag'ida) chaqiriladi.
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
-    final countdown = _formatCountdown(task.deadline);
     final estimated = _formatEstimated(task.estimatedMinutes);
 
     return InkWell(
@@ -142,10 +159,10 @@ class TaskCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  if (countdown.isNotEmpty) ...[
-                    SizedBox(width: 8.w),
-                    _CountdownChip(text: countdown),
-                  ],
+                  _CountdownArea(
+                    deadline: task.deadline,
+                    ticker: countdownTicker,
+                  ),
                 ],
               ),
               SizedBox(height: 8.h),
@@ -180,18 +197,7 @@ class TaskCard extends StatelessWidget {
                     ),
                   ),
                   SizedBox(width: 8.w),
-                  InkWell(
-                    onTap: onMore,
-                    borderRadius: BorderRadius.circular(12.r),
-                    child: Assets.icons.icMoreVertical.svg(
-                      width: 24.w,
-                      height: 24.w,
-                      colorFilter: ColorFilter.mode(
-                        colors.iconSub,
-                        BlendMode.srcIn,
-                      ),
-                    ),
-                  ),
+                  _MoreMenu(onDetails: onDetails, onDelete: onDelete),
                 ],
               ),
             ],
@@ -310,6 +316,302 @@ class _MetaItem extends StatelessWidget {
               .c(colors.textStrong)
               .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
         ),
+      ],
+    );
+  }
+}
+
+/// Karta menyusi harakati.
+enum _TaskMenuAction { details, delete }
+
+/// Karta ⋮ tugmasi — bosilganda "Batafsil / O'chirish" menyusini ochadi
+/// (Figma: tui-dropdown, background-base fon, stroke-sub chegara, 12 radius).
+class _MoreMenu extends StatelessWidget {
+  const _MoreMenu({this.onDetails, this.onDelete});
+
+  final VoidCallback? onDetails;
+  final VoidCallback? onDelete;
+
+  Future<void> _onSelected(BuildContext context, _TaskMenuAction action) async {
+    switch (action) {
+      case _TaskMenuAction.details:
+        onDetails?.call();
+      case _TaskMenuAction.delete:
+        final confirmed = await showTaskDeleteDialog(context);
+        if (confirmed == true) onDelete?.call();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final l10n = AppLocalizations.of(context);
+
+    return PopupMenuButton<_TaskMenuAction>(
+      tooltip: '',
+      padding: EdgeInsets.zero,
+      color: colors.backgroundBase,
+      elevation: 0,
+      position: PopupMenuPosition.under,
+      constraints: BoxConstraints(minWidth: 180.w),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.r),
+        side: BorderSide(color: colors.strokeSub, width: 1.w),
+      ),
+      onSelected: (action) => _onSelected(context, action),
+      itemBuilder: (_) => [
+        PopupMenuItem(
+          value: _TaskMenuAction.details,
+          height: 40.h,
+          padding: EdgeInsets.symmetric(horizontal: 8.w),
+          child: _MenuRow(
+            icon: Assets.icons.icAlertCircle,
+            label: l10n.taskMenuDetails,
+            color: colors.textStrong,
+          ),
+        ),
+        PopupMenuItem(
+          value: _TaskMenuAction.delete,
+          height: 40.h,
+          padding: EdgeInsets.symmetric(horizontal: 8.w),
+          child: _MenuRow(
+            icon: Assets.icons.icTrash,
+            label: l10n.taskMenuDelete,
+            color: colors.errorStrong,
+          ),
+        ),
+      ],
+      child: Assets.icons.icMoreVertical.svg(
+        width: 24.w,
+        height: 24.w,
+        colorFilter: ColorFilter.mode(colors.iconSub, BlendMode.srcIn),
+      ),
+    );
+  }
+}
+
+/// Menyu qatori: ikonka + yozuv (yozuv rangi = ikonka rangi).
+class _MenuRow extends StatelessWidget {
+  const _MenuRow({
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
+
+  final SvgGenImage icon;
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        icon.svg(
+          width: 16.w,
+          height: 16.w,
+          colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+        ),
+        SizedBox(width: 8.w),
+        Expanded(
+          child: label
+              .s(13.sp)
+              .w(500)
+              .c(color)
+              .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+        ),
+      ],
+    );
+  }
+}
+
+/// Vazifani o'chirishni tasdiqlash dialogi (Figma: 350x204, 24 radius).
+/// `true` — tasdiqlandi, `null`/`false` — bekor.
+Future<bool?> showTaskDeleteDialog(BuildContext context) {
+  final colors = AppColors.of(context);
+  return showDialog<bool>(
+    context: context,
+    builder: (_) => Dialog(
+      insetPadding: EdgeInsets.symmetric(horizontal: 20.w),
+      backgroundColor: colors.backgroundBase,
+      elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.r)),
+      child: const _TaskDeleteDialog(),
+    ),
+  );
+}
+
+class _TaskDeleteDialog extends StatelessWidget {
+  const _TaskDeleteDialog();
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final l10n = AppLocalizations.of(context);
+
+    return ConstrainedBox(
+      constraints: BoxConstraints(maxWidth: 350.w),
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.topCenter,
+        children: [
+          Positioned(
+            top: 8.h,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: colors.strokeSoft,
+                borderRadius: BorderRadius.circular(1.r),
+              ),
+              child: SizedBox(width: 24.w, height: 3.h),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                l10n.taskDeleteTitle
+                    .s(19.sp)
+                    .w(800)
+                    .h(28 / 19)
+                    .c(colors.textStrong)
+                    .a(TextAlign.center)
+                    .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+                SizedBox(height: 4.h),
+                l10n.taskDeleteSubtitle
+                    .s(15.sp)
+                    .w(500)
+                    .h(24 / 15)
+                    .c(colors.textSub)
+                    .a(TextAlign.center)
+                    .copyWith(maxLines: 2, overflow: TextOverflow.ellipsis),
+                SizedBox(height: 24.h),
+                Row(
+                  children: [
+                    InkWell(
+                      onTap: () => Navigator.of(context).pop(false),
+                      borderRadius: BorderRadius.circular(12.r),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
+                        child: SizedBox(
+                          height: 52.h,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Assets.icons.icClose.svg(
+                                width: 16.w,
+                                height: 16.w,
+                                colorFilter: ColorFilter.mode(
+                                  colors.textStrong,
+                                  BlendMode.srcIn,
+                                ),
+                              ),
+                              SizedBox(width: 8.w),
+                              l10n.taskDeleteCancel
+                                  .s(15.sp)
+                                  .w(800)
+                                  .h(24 / 15)
+                                  .c(colors.textStrong)
+                                  .copyWith(
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 12.w),
+                    Expanded(
+                      child: InkWell(
+                        onTap: () => Navigator.of(context).pop(true),
+                        borderRadius: BorderRadius.circular(16.r),
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: colors.errorStrong,
+                            borderRadius: BorderRadius.circular(16.r),
+                          ),
+                          child: SizedBox(
+                            height: 52.h,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Assets.icons.icTrash.svg(
+                                  width: 16.w,
+                                  height: 16.w,
+                                  colorFilter: ColorFilter.mode(
+                                    colors.textWhite,
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                                SizedBox(width: 4.w),
+                                Flexible(
+                                  child: l10n.taskMenuDelete
+                                      .s(15.sp)
+                                      .w(800)
+                                      .h(24 / 15)
+                                      .c(colors.textWhite)
+                                      .copyWith(
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CountdownArea extends StatelessWidget {
+  const _CountdownArea({required this.deadline, required this.ticker});
+
+  final DateTime? deadline;
+  final ValueListenable<DateTime>? ticker;
+
+  @override
+  Widget build(BuildContext context) {
+    final fallbackNow = ticker?.value ?? DateTime.now();
+    if (!shouldShowTaskCountdown(deadline, fallbackNow)) {
+      return const SizedBox.shrink();
+    }
+
+    if (ticker == null) {
+      return _CountdownWithGap(text: _formatCountdown(deadline, fallbackNow));
+    }
+
+    return ValueListenableBuilder<DateTime>(
+      valueListenable: ticker!,
+      builder: (_, now, _) {
+        final text = _formatCountdown(deadline, now);
+        if (text.isEmpty) return const SizedBox.shrink();
+        return _CountdownWithGap(text: text);
+      },
+    );
+  }
+}
+
+class _CountdownWithGap extends StatelessWidget {
+  const _CountdownWithGap({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SizedBox(width: 8.w),
+        _CountdownChip(text: text),
       ],
     );
   }

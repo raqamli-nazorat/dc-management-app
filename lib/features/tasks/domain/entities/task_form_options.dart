@@ -49,6 +49,25 @@ class ProjectMember extends Equatable {
   List<Object?> get props => [id, username, position];
 }
 
+/// Foydalanuvchi (qisqa) — filtrda "Muallif" (`created_by`) va "Xodim"
+/// (`assignee`) tanlovlari uchun (`GET /users/all/`, `UserShort`).
+class UserShort extends Equatable {
+  const UserShort({
+    required this.id,
+    required this.username,
+    required this.position,
+    required this.avatar,
+  });
+
+  final int id;
+  final String username;
+  final String position;
+  final String avatar;
+
+  @override
+  List<Object?> get props => [id, username, position, avatar];
+}
+
 /// Formani to‘ldirish uchun bir martada (parallel) yuklanadigan tanlov
 /// ro‘yxatlari: lavozimlar + qisqa loyihalar.
 typedef TaskFormOptions =

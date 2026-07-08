@@ -662,6 +662,168 @@ abstract class AppLocalizations {
   /// **'Vazifa qo‘shildi'**
   String get taskCreateSuccess;
 
+  /// No description provided for @taskMenuDetails.
+  ///
+  /// In uz, this message translates to:
+  /// **'Batafsil'**
+  String get taskMenuDetails;
+
+  /// No description provided for @taskMenuDelete.
+  ///
+  /// In uz, this message translates to:
+  /// **'O‘chirish'**
+  String get taskMenuDelete;
+
+  /// No description provided for @taskDeleteTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Vazifani o‘chirish'**
+  String get taskDeleteTitle;
+
+  /// No description provided for @taskDeleteSubtitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Vazifa chiqindi qutisiga yuboriladi va keyinchalik tiklash mumkin.'**
+  String get taskDeleteSubtitle;
+
+  /// No description provided for @taskDeleteCancel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bekor qilish'**
+  String get taskDeleteCancel;
+
+  /// No description provided for @taskFilterTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Filtrlash'**
+  String get taskFilterTitle;
+
+  /// No description provided for @taskFilterStatus.
+  ///
+  /// In uz, this message translates to:
+  /// **'Holati'**
+  String get taskFilterStatus;
+
+  /// No description provided for @taskFilterStatusHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Holati tanlang'**
+  String get taskFilterStatusHint;
+
+  /// No description provided for @taskStatusTodo.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bajarilishi kerak'**
+  String get taskStatusTodo;
+
+  /// No description provided for @taskStatusInProgress.
+  ///
+  /// In uz, this message translates to:
+  /// **'Jarayonda'**
+  String get taskStatusInProgress;
+
+  /// No description provided for @taskStatusOverdue.
+  ///
+  /// In uz, this message translates to:
+  /// **'Muddati o‘tgan'**
+  String get taskStatusOverdue;
+
+  /// No description provided for @taskStatusDone.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bajarilgan'**
+  String get taskStatusDone;
+
+  /// No description provided for @taskStatusProduction.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ishga tushirilgan'**
+  String get taskStatusProduction;
+
+  /// No description provided for @taskStatusChecked.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tekshirilgan'**
+  String get taskStatusChecked;
+
+  /// No description provided for @taskStatusRejected.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rad etilgan'**
+  String get taskStatusRejected;
+
+  /// No description provided for @taskFilterAuthor.
+  ///
+  /// In uz, this message translates to:
+  /// **'Muallif'**
+  String get taskFilterAuthor;
+
+  /// No description provided for @taskFilterAuthorHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Muallif tanlang'**
+  String get taskFilterAuthorHint;
+
+  /// No description provided for @taskFilterEmployee.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xodim'**
+  String get taskFilterEmployee;
+
+  /// No description provided for @taskFilterEmployeeHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xodim tanlang'**
+  String get taskFilterEmployeeHint;
+
+  /// No description provided for @taskFilterDeadlineRange.
+  ///
+  /// In uz, this message translates to:
+  /// **'Muddat oralig‘i'**
+  String get taskFilterDeadlineRange;
+
+  /// No description provided for @taskFilterDateHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sana'**
+  String get taskFilterDateHint;
+
+  /// No description provided for @taskFilterReset.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tozalash'**
+  String get taskFilterReset;
+
+  /// No description provided for @taskFilterApply.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qidirish'**
+  String get taskFilterApply;
+
+  /// No description provided for @taskSearchHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Izlash'**
+  String get taskSearchHint;
+
+  /// No description provided for @taskSearchClose.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yopish'**
+  String get taskSearchClose;
+
+  /// No description provided for @taskFilterSelectAdd.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qo‘shish'**
+  String get taskFilterSelectAdd;
+
+  /// No description provided for @taskFilterSelectedCount.
+  ///
+  /// In uz, this message translates to:
+  /// **'{count} ta tanlangan'**
+  String taskFilterSelectedCount(int count);
+
   /// No description provided for @meetingsTitle.
   ///
   /// In uz, this message translates to:

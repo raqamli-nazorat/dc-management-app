@@ -38,4 +38,12 @@ class DioClient {
   }) {
     return _dio.put(path, data: data, queryParameters: queryParameters);
   }
+
+  Future<Response<dynamic>> delete(
+    String path, {
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+  }) {
+    return _dio.delete(path, data: data, queryParameters: queryParameters);
+  }
 }

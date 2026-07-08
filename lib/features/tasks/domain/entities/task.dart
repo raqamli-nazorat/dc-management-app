@@ -1,8 +1,9 @@
 import 'package:equatable/equatable.dart';
 
-/// Bitta sahifa natijasi: yuklangan vazifalar + yana sahifa bor-yo'qligi
-/// (`next != null`). Cheksiz-scroll uchun bloc `hasMore` ni kuzatadi.
-typedef TaskPage = ({List<Task> items, bool hasMore});
+/// Bitta sahifa natijasi: yuklangan vazifalar + umumiy son + yana sahifa
+/// bor-yo'qligi (`next != null`). Cheksiz-scroll uchun bloc `hasMore` ni
+/// kuzatadi, status badge uchun `totalCount` ishlatiladi.
+typedef TaskPage = ({List<Task> items, int totalCount, bool hasMore});
 
 /// Vazifa muhimligi (`priority`). Noma'lum qiymat → [unknown].
 enum TaskPriority {
@@ -26,6 +27,40 @@ enum TaskPriority {
         return TaskPriority.unknown;
     }
   }
+
+  /// So'rov paramlari uchun API string'i (`unknown` → `null`).
+  String? get apiValue => switch (this) {
+    TaskPriority.low => 'low',
+    TaskPriority.medium => 'medium',
+    TaskPriority.high => 'high',
+    TaskPriority.critical => 'critical',
+    TaskPriority.unknown => null,
+  };
+}
+
+/// Vazifa turi (`type`, `Type225Enum`). Filtr uchun ishlatiladi. API qiymatlari:
+/// `bug`/`extra`/`feature`/`research` (schema bo'yicha — vazifa yaratish
+/// sahifasidagi eski `addition` emas, `extra`).
+enum TaskType {
+  bug,
+  extra,
+  feature,
+  research;
+
+  static TaskType? fromApi(String? value) => switch (value) {
+    'bug' => TaskType.bug,
+    'extra' => TaskType.extra,
+    'feature' => TaskType.feature,
+    'research' => TaskType.research,
+    _ => null,
+  };
+
+  String get apiValue => switch (this) {
+    TaskType.bug => 'bug',
+    TaskType.extra => 'extra',
+    TaskType.feature => 'feature',
+    TaskType.research => 'research',
+  };
 }
 
 /// Vazifa holati (`status`). Backend `Status298Enum` — 7 qiymat, kartadagi
@@ -60,7 +95,30 @@ enum TaskStatus {
         return TaskStatus.unknown;
     }
   }
+
+  /// So'rov paramlari uchun API string'i (`unknown` → `null`).
+  String? get apiValue => switch (this) {
+    TaskStatus.todo => 'todo',
+    TaskStatus.inProgress => 'in_progress',
+    TaskStatus.overdue => 'overdue',
+    TaskStatus.done => 'done',
+    TaskStatus.production => 'production',
+    TaskStatus.checked => 'checked',
+    TaskStatus.rejected => 'rejected',
+    TaskStatus.unknown => null,
+  };
 }
+
+/// UI va status cache uchun ko'rsatiladigan tartib.
+const taskFilterStatuses = [
+  TaskStatus.todo,
+  TaskStatus.inProgress,
+  TaskStatus.done,
+  TaskStatus.production,
+  TaskStatus.checked,
+  TaskStatus.rejected,
+  TaskStatus.overdue,
+];
 
 /// Bitta vazifa (`/tasks/`).
 ///
