@@ -208,6 +208,100 @@ class AppLocalizationsEn extends AppLocalizations {
   String get taskPriorityCritical => 'Critical';
 
   @override
+  String get taskCreateTitle => 'Add task';
+
+  @override
+  String get taskCreateFieldProject => 'Project';
+
+  @override
+  String get taskCreateProjectHint => 'Select a project';
+
+  @override
+  String get taskCreateFieldName => 'Name';
+
+  @override
+  String get taskCreateNameHint => 'Enter a name';
+
+  @override
+  String get taskCreateFieldDescription => 'Description';
+
+  @override
+  String get taskCreateDescriptionHint => 'Write a description';
+
+  @override
+  String get taskCreateFieldPriority => 'Priority';
+
+  @override
+  String get taskCreatePriorityHint => 'Select priority';
+
+  @override
+  String get taskCreateFieldType => 'Type';
+
+  @override
+  String get taskCreateTypeHint => 'Select type';
+
+  @override
+  String get taskTypeBug => 'Bug';
+
+  @override
+  String get taskTypeFeature => 'New feature';
+
+  @override
+  String get taskTypeAddition => 'Addition';
+
+  @override
+  String get taskTypeResearch => 'Research/Study';
+
+  @override
+  String get taskCreateFieldAssigner => 'Assigner';
+
+  @override
+  String get taskCreateSelectProjectFirst => 'Select a project first';
+
+  @override
+  String get taskCreateFieldPositions => 'For whom';
+
+  @override
+  String get taskCreatePositionsHint => 'Select';
+
+  @override
+  String get taskCreateFieldSprint => 'Sprint';
+
+  @override
+  String get taskCreateFieldPrice => 'Task price (UZS)';
+
+  @override
+  String get taskCreatePriceHint => '0.00';
+
+  @override
+  String get taskCreateFieldPenalty => 'Penalty rate (%)';
+
+  @override
+  String get taskCreatePenaltyHint => 'Penalty';
+
+  @override
+  String get taskCreateFieldDeadline => 'Deadline';
+
+  @override
+  String get taskCreateFieldTime => 'Time';
+
+  @override
+  String get taskCreateFieldEstimated => 'Estimated time';
+
+  @override
+  String get taskCreateFieldFiles => 'Additional files';
+
+  @override
+  String get taskCreateFileUpload => 'Upload file';
+
+  @override
+  String get taskCreateRequiredError =>
+      'Project, name and deadline are required';
+
+  @override
+  String get taskCreateSuccess => 'Task created';
+
+  @override
   String get meetingsTitle => 'Meetings';
 
   @override

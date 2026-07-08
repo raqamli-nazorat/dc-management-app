@@ -3,13 +3,31 @@ import 'package:dio/dio.dart';
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/network/response_mapper.dart';
+import '../../domain/entities/new_task.dart';
 import '../../domain/entities/task.dart';
+import '../../domain/entities/task_form_options.dart';
+import '../models/task_form_option_models.dart';
 import '../models/task_model.dart';
 
 /// Vazifalar backend bilan to'g'ridan-to'g'ri muloqot.
 abstract interface class TaskRemoteDataSource {
   /// Bitta sahifa (`GET /tasks/?page=`).
   Future<TaskPage> getTasks({int page});
+
+  /// Lavozimlar (`GET /applications/positions/?page_size=100`).
+  Future<List<Position>> getPositions();
+
+  /// Qisqa loyihalar (`GET /project-shorts/?page_size=200`).
+  Future<List<ProjectShort>> getProjectShorts();
+
+  /// Bitta loyiha ishtirokchilari (`GET /projects/{id}/`).
+  Future<List<ProjectMember>> getProjectMembers(int projectId);
+
+  /// Vazifa yaratadi (`POST /tasks/`) va yangi `id` ni qaytaradi.
+  Future<int> createTask(NewTask task);
+
+  /// Vazifaga bitta fayl biriktiradi (multipart `POST /task-attachments/`).
+  Future<void> uploadAttachment(int taskId, String filePath);
 }
 
 class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
@@ -32,6 +50,91 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
           .map((e) => TaskModel.fromJson(e.cast<String, dynamic>()))
           .toList();
       return (items: items, hasMore: body['next'] != null);
+    } on DioException catch (e) {
+      throw ResponseMapper.mapDioException(e);
+    }
+  }
+
+  @override
+  Future<List<Position>> getPositions() async {
+    try {
+      final response = await _client.get(
+        ApiConstants.positions,
+        queryParameters: {'page_size': 100},
+      );
+      return ResponseMapper.asList(response.data)
+          .whereType<Map>()
+          .map((e) => PositionModel.fromJson(e.cast<String, dynamic>()))
+          .toList();
+    } on DioException catch (e) {
+      throw ResponseMapper.mapDioException(e);
+    }
+  }
+
+  @override
+  Future<List<ProjectShort>> getProjectShorts() async {
+    try {
+      final response = await _client.get(
+        ApiConstants.projectShorts,
+        queryParameters: {'page_size': 200},
+      );
+      return ResponseMapper.asList(response.data)
+          .whereType<Map>()
+          .map((e) => ProjectShortModel.fromJson(e.cast<String, dynamic>()))
+          .toList();
+    } on DioException catch (e) {
+      throw ResponseMapper.mapDioException(e);
+    }
+  }
+
+  @override
+  Future<List<ProjectMember>> getProjectMembers(int projectId) async {
+    try {
+      final response = await _client.get(ApiConstants.projectById(projectId));
+      return ProjectMemberModel.membersFromProjectJson(
+        ResponseMapper.asMap(response.data),
+      );
+    } on DioException catch (e) {
+      throw ResponseMapper.mapDioException(e);
+    }
+  }
+
+  @override
+  Future<int> createTask(NewTask task) async {
+    try {
+      // Ixtiyoriy maydonlar faqat qiymati bo'lsa yuboriladi. `priority`/`type`
+      // — API stringlari; `deadline` — ISO-8601.
+      final body = <String, dynamic>{
+        'project': task.project,
+        'title': task.title,
+        'description': task.description,
+        'deadline': task.deadline.toIso8601String(),
+        if (task.priority != null) 'priority': task.priority,
+        if (task.type != null) 'type': task.type,
+        if (task.assignee != null) 'assignee': task.assignee,
+        if (task.position != null) 'position': task.position,
+        if (task.taskPrice != null) 'task_price': task.taskPrice,
+        if (task.penaltyPercentage != null)
+          'penalty_percentage': task.penaltyPercentage,
+        if (task.sprint != null) 'sprint': task.sprint,
+        if (task.estimatedMinutes != null)
+          'estimated_minutes': task.estimatedMinutes,
+      };
+      final response = await _client.post(ApiConstants.tasks, data: body);
+      return (ResponseMapper.asMap(response.data)['id'] as num?)?.toInt() ?? 0;
+    } on DioException catch (e) {
+      throw ResponseMapper.mapDioException(e);
+    }
+  }
+
+  @override
+  Future<void> uploadAttachment(int taskId, String filePath) async {
+    try {
+      final formData = FormData.fromMap({
+        'task': taskId,
+        'file': await MultipartFile.fromFile(filePath),
+      });
+      await _client.post(ApiConstants.taskAttachments, data: formData);
     } on DioException catch (e) {
       throw ResponseMapper.mapDioException(e);
     }

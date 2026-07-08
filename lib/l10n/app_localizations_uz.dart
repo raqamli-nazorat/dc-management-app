@@ -210,6 +210,99 @@ class AppLocalizationsUz extends AppLocalizations {
   String get taskPriorityCritical => 'Kritik';
 
   @override
+  String get taskCreateTitle => 'Vazifa qo‘shish';
+
+  @override
+  String get taskCreateFieldProject => 'Loyiha';
+
+  @override
+  String get taskCreateProjectHint => 'Loyiha tanlang';
+
+  @override
+  String get taskCreateFieldName => 'Nomi';
+
+  @override
+  String get taskCreateNameHint => 'Nomi kiriting';
+
+  @override
+  String get taskCreateFieldDescription => 'Tavsifi';
+
+  @override
+  String get taskCreateDescriptionHint => 'Tavsifini yozing';
+
+  @override
+  String get taskCreateFieldPriority => 'Darajasi';
+
+  @override
+  String get taskCreatePriorityHint => 'Darajasi tanlang';
+
+  @override
+  String get taskCreateFieldType => 'Turi';
+
+  @override
+  String get taskCreateTypeHint => 'Turini tanlang';
+
+  @override
+  String get taskTypeBug => 'Xatolik (Bug)';
+
+  @override
+  String get taskTypeFeature => 'Yangi funksiya';
+
+  @override
+  String get taskTypeAddition => 'Qo‘shimcha';
+
+  @override
+  String get taskTypeResearch => 'Tadqiqot/O‘rganish';
+
+  @override
+  String get taskCreateFieldAssigner => 'Topshiruvchi';
+
+  @override
+  String get taskCreateSelectProjectFirst => 'Avval loyihani tanlang';
+
+  @override
+  String get taskCreateFieldPositions => 'Kimlar uchun';
+
+  @override
+  String get taskCreatePositionsHint => 'Tanlang';
+
+  @override
+  String get taskCreateFieldSprint => 'Sprint';
+
+  @override
+  String get taskCreateFieldPrice => 'Vazifa narxi (UZS)';
+
+  @override
+  String get taskCreatePriceHint => '0,00';
+
+  @override
+  String get taskCreateFieldPenalty => 'Jarima foizi (%)';
+
+  @override
+  String get taskCreatePenaltyHint => 'Jarima';
+
+  @override
+  String get taskCreateFieldDeadline => 'Muddati';
+
+  @override
+  String get taskCreateFieldTime => 'Vaqti';
+
+  @override
+  String get taskCreateFieldEstimated => 'Taxminiy vaqt';
+
+  @override
+  String get taskCreateFieldFiles => 'Qo‘shimcha fayllar';
+
+  @override
+  String get taskCreateFileUpload => 'Fayl yuklash';
+
+  @override
+  String get taskCreateRequiredError => 'Loyiha, nomi va muddat majburiy';
+
+  @override
+  String get taskCreateSuccess => 'Vazifa qo‘shildi';
+
+  @override
   String get meetingsTitle => 'Yig‘ilishlar';
 
   @override

@@ -176,7 +176,16 @@ class _TasksHeader extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              _AddTaskButton(onTap: () {}),
+              _AddTaskButton(
+                onTap: () async {
+                  final bloc = context.read<TasksBloc>();
+                  final created = await context.pushNamed<bool>(
+                    Routes.taskCreate.name,
+                  );
+                  // Yangi vazifa qo'shilgan bo'lsa ro'yxatni qayta yuklaymiz.
+                  if (created == true) bloc.add(const TasksRequested());
+                },
+              ),
               SizedBox(width: 12.w),
               _SquareIconButton(
                 icon: Assets.icons.icProfileNotification,
