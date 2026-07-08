@@ -8,6 +8,7 @@ import '../../../../config/theme/app_colors.dart';
 import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
 import '../../../../core/widgets/app_date_picker.dart';
+import '../../../../core/widgets/app_filter_components.dart';
 import '../../../../injection_container.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/task.dart';
@@ -255,7 +256,7 @@ class _TaskFilterViewState extends State<_TaskFilterView> {
           child: BlocBuilder<TaskFilterBloc, TaskFilterState>(
             builder: (context, state) => Column(
               children: [
-                _Header(title: l10n.taskFilterTitle),
+                AppFilterHeader(title: l10n.taskFilterTitle),
                 Expanded(
                   child: SingleChildScrollView(
                     padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 24.h),
@@ -263,7 +264,7 @@ class _TaskFilterViewState extends State<_TaskFilterView> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       spacing: 12.h,
                       children: [
-                        _FilterBox(
+                        AppFilterFieldBox(
                           label: l10n.taskCreateFieldProject,
                           value: _summary(
                             _projectIds,
@@ -283,7 +284,7 @@ class _TaskFilterViewState extends State<_TaskFilterView> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Expanded(
-                              child: _FilterBox(
+                              child: AppFilterFieldBox(
                                 label: l10n.taskFilterAuthor,
                                 value: _summary(
                                   _authorIds,
@@ -302,7 +303,7 @@ class _TaskFilterViewState extends State<_TaskFilterView> {
                             ),
                             SizedBox(width: 16.w),
                             Expanded(
-                              child: _FilterBox(
+                              child: AppFilterFieldBox(
                                 label: l10n.taskFilterEmployee,
                                 value: _summary(
                                   _employeeIds,
@@ -321,7 +322,7 @@ class _TaskFilterViewState extends State<_TaskFilterView> {
                             ),
                           ],
                         ),
-                        _FilterBox(
+                        AppFilterFieldBox(
                           label: l10n.taskFilterStatus,
                           value: _status == null
                               ? null
@@ -331,7 +332,7 @@ class _TaskFilterViewState extends State<_TaskFilterView> {
                           onTap: () => _toggle(_Field.status),
                           onClear: () => setState(() => _status = null),
                         ),
-                        _FilterBox(
+                        AppFilterFieldBox(
                           label: l10n.taskCreateFieldPriority,
                           value: _priority == null
                               ? null
@@ -341,7 +342,7 @@ class _TaskFilterViewState extends State<_TaskFilterView> {
                           onTap: () => _toggle(_Field.priority),
                           onClear: () => setState(() => _priority = null),
                         ),
-                        _FilterBox(
+                        AppFilterFieldBox(
                           label: l10n.taskCreateFieldType,
                           value:
                               _type == null ? null : _typeLabel(_type!, l10n),
@@ -366,7 +367,7 @@ class _TaskFilterViewState extends State<_TaskFilterView> {
                     ),
                   ),
                 ),
-                _ActionBar(
+                AppFilterActionBar(
                   resetLabel: l10n.taskFilterReset,
                   applyLabel: l10n.taskFilterApply,
                   onReset: _reset,
@@ -440,10 +441,12 @@ class _TaskFilterViewState extends State<_TaskFilterView> {
 
     switch (_open) {
       case _Field.priority:
-        return _DropdownBox(
+        return AppFilterDropdownBox(
+          emptyText: l10n.statEmpty,
           children: [
             for (final p in _priorities)
-              _DropdownItem(
+              AppFilterDropdownItem(
+                verticalPadding: 6,
                 selected: p == _priority,
                 onTap: () => _pick(() => _priority = p),
                 child: _labelRow(_priorityLabel(p, l10n)),
@@ -451,10 +454,12 @@ class _TaskFilterViewState extends State<_TaskFilterView> {
           ],
         );
       case _Field.type:
-        return _DropdownBox(
+        return AppFilterDropdownBox(
+          emptyText: l10n.statEmpty,
           children: [
             for (final t in _types)
-              _DropdownItem(
+              AppFilterDropdownItem(
+                verticalPadding: 6,
                 selected: t == _type,
                 onTap: () => _pick(() => _type = t),
                 child: _labelRow(_typeLabel(t, l10n)),
@@ -462,10 +467,12 @@ class _TaskFilterViewState extends State<_TaskFilterView> {
           ],
         );
       case _Field.status:
-        return _DropdownBox(
+        return AppFilterDropdownBox(
+          emptyText: l10n.statEmpty,
           children: [
             for (final s in _statuses)
-              _DropdownItem(
+              AppFilterDropdownItem(
+                verticalPadding: 6,
                 selected: s == _status,
                 onTap: () => _pick(() => _status = s),
                 child: _labelRow(_statusLabel(s, l10n)),
@@ -796,7 +803,7 @@ class _DateRange extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: _PickerBox(
+              child: AppFilterPickerBox(
                 value: date,
                 placeholder: dateHint,
                 icon: Assets.icons.icCalendar,
@@ -805,7 +812,7 @@ class _DateRange extends StatelessWidget {
             ),
             SizedBox(width: 16.w),
             Expanded(
-              child: _PickerBox(
+              child: AppFilterPickerBox(
                 value: time,
                 placeholder: '00:00',
                 icon: Assets.icons.icTuilconTime,
@@ -819,7 +826,7 @@ class _DateRange extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        _FieldLabel(label),
+        AppFilterFieldLabel(label),
         row(fromDate, fromTime, onFromDate, onFromTime),
         SizedBox(height: 12.h),
         row(toDate, toTime, onToDate, onToTime),

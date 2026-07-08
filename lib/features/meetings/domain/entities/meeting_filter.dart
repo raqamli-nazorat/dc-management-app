@@ -24,7 +24,31 @@ class MeetingFilter extends Equatable {
   final DateTime? startDateGte;
   final DateTime? startDateLte;
 
+  bool get hasActiveFilters =>
+      isCompleted != null ||
+      organizerId != null ||
+      projectId != null ||
+      startDateGte != null ||
+      startDateLte != null;
+
   MeetingFilter copyWithSearch(String search) => MeetingFilter(
+    isCompleted: isCompleted,
+    ordering: ordering,
+    organizerId: organizerId,
+    page: page,
+    projectId: projectId,
+    search: search,
+    startDateGte: startDateGte,
+    startDateLte: startDateLte,
+  );
+
+  MeetingFilter copyWithFilters({
+    bool? isCompleted,
+    int? organizerId,
+    int? projectId,
+    DateTime? startDateGte,
+    DateTime? startDateLte,
+  }) => MeetingFilter(
     isCompleted: isCompleted,
     ordering: ordering,
     organizerId: organizerId,

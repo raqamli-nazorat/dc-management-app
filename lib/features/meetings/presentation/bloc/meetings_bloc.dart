@@ -15,6 +15,7 @@ class MeetingsBloc extends Bloc<MeetingsEvent, MeetingsState> {
     : _getMeetings = getMeetings,
       super(const MeetingsState()) {
     on<MeetingsRequested>(_onRequested);
+    on<MeetingsFilterChanged>(_onFilterChanged);
     on<MeetingsSearchChanged>(_onSearchChanged);
   }
 
@@ -29,6 +30,11 @@ class MeetingsBloc extends Bloc<MeetingsEvent, MeetingsState> {
     MeetingsSearchChanged event,
     Emitter<MeetingsState> emit,
   ) => _reload(state.filter.copyWithSearch(event.query), emit);
+
+  Future<void> _onFilterChanged(
+    MeetingsFilterChanged event,
+    Emitter<MeetingsState> emit,
+  ) => _reload(event.filter, emit);
 
   Future<void> _reload(
     MeetingFilter filter,

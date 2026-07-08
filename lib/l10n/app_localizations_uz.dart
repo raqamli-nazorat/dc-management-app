@@ -396,6 +396,15 @@ class AppLocalizationsUz extends AppLocalizations {
   String get meetingsEmpty => 'Hozircha yig‘ilishlar yo‘q';
 
   @override
+  String get meetingFilterOrganizer => 'Tashkilotchi';
+
+  @override
+  String get meetingFilterOrganizerHint => 'Tashkilotchini tanlang';
+
+  @override
+  String get meetingFilterStartDateRange => 'Boshlanish sanasi oralig‘i';
+
+  @override
   String get meetingReasonTitle => 'Yig‘ilishga qatnashmadingiz';
 
   @override

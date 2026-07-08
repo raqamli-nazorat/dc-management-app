@@ -12,6 +12,7 @@ import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
 import '../../../../injection_container.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../domain/entities/meeting_filter.dart';
 import '../bloc/meetings_bloc.dart';
 import '../widgets/meeting_card.dart';
 
@@ -191,6 +192,17 @@ class _SearchFilterRowState extends State<_SearchFilterRow> {
     });
   }
 
+  Future<void> _openFilter() async {
+    final bloc = context.read<MeetingsBloc>();
+    final result = await context.pushNamed<Object?>(
+      Routes.meetingFilter.name,
+      extra: bloc.state.filter,
+    );
+    if (result is MeetingFilter) {
+      bloc.add(MeetingsFilterChanged(result));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -212,7 +224,7 @@ class _SearchFilterRowState extends State<_SearchFilterRow> {
             : _TitleBar(
                 key: const ValueKey('title'),
                 onSearch: _openSearch,
-                onFilter: () {},
+                onFilter: _openFilter,
               ),
       ),
     );
@@ -248,12 +260,17 @@ class _TitleBar extends StatelessWidget {
           onTap: onSearch,
         ),
         SizedBox(width: 12.w),
-        _SquareIconButton(
-          icon: Assets.icons.icFilter,
-          background: colors.backgroundElevation1,
-          size: 40,
-          iconSize: 16,
-          onTap: onFilter,
+        BlocBuilder<MeetingsBloc, MeetingsState>(
+          buildWhen: (p, c) =>
+              p.filter.hasActiveFilters != c.filter.hasActiveFilters,
+          builder: (context, state) => _SquareIconButton(
+            icon: Assets.icons.icFilter,
+            background: colors.backgroundElevation1,
+            size: 40,
+            iconSize: 16,
+            showDot: state.filter.hasActiveFilters,
+            onTap: onFilter,
+          ),
         ),
       ],
     );
@@ -417,6 +434,7 @@ class _SquareIconButton extends StatelessWidget {
     this.size = 36,
     this.iconSize = 20,
     this.borderColor,
+    this.showDot = false,
   });
 
   final SvgGenImage icon;
@@ -425,35 +443,56 @@ class _SquareIconButton extends StatelessWidget {
   final double size;
   final double iconSize;
   final Color? borderColor;
+  final bool showDot;
 
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
 
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12.r),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: background,
-          borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(
-            color: borderColor ?? colors.strokeSoft,
-            width: 1.w,
-          ),
-        ),
-        child: SizedBox(
-          width: size.w,
-          height: size.w,
-          child: Center(
-            child: icon.svg(
-              width: iconSize.w,
-              height: iconSize.w,
-              colorFilter: ColorFilter.mode(colors.iconStrong, BlendMode.srcIn),
-            ),
+    Widget square = DecoratedBox(
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: borderColor ?? colors.strokeSoft, width: 1.w),
+      ),
+      child: SizedBox(
+        width: size.w,
+        height: size.w,
+        child: Center(
+          child: icon.svg(
+            width: iconSize.w,
+            height: iconSize.w,
+            colorFilter: ColorFilter.mode(colors.iconStrong, BlendMode.srcIn),
           ),
         ),
       ),
+    );
+
+    if (showDot) {
+      square = Stack(
+        clipBehavior: Clip.none,
+        children: [
+          square,
+          Positioned(
+            top: -2.h,
+            right: -2.w,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: colors.accentSub,
+                shape: BoxShape.circle,
+                border: Border.all(color: colors.backgroundBase, width: 2.w),
+              ),
+              child: SizedBox(width: 10.w, height: 10.w),
+            ),
+          ),
+        ],
+      );
+    }
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12.r),
+      child: square,
     );
   }
 }
