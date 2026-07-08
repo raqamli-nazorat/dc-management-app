@@ -14,6 +14,8 @@ class Meeting extends Equatable {
     required this.startDate,
     required this.organizerName,
     required this.organizerRole,
+    required this.participantName,
+    required this.participantPosition,
     required this.isCompleted,
     required this.reason,
     required this.attended,
@@ -37,6 +39,9 @@ class Meeting extends Equatable {
   final String organizerName;
   final String organizerRole;
 
+  final String participantName;
+  final String participantPosition;
+
   final bool isCompleted;
 
   /// Qatnashmaslik sababi (bo‘lsa).
@@ -48,15 +53,17 @@ class Meeting extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        title,
-        uid,
-        projectName,
-        startDate,
-        organizerName,
-        organizerRole,
-        isCompleted,
-        reason,
-        attended,
-      ];
+    id,
+    title,
+    uid,
+    projectName,
+    startDate,
+    organizerName,
+    organizerRole,
+    participantName,
+    participantPosition,
+    isCompleted,
+    reason,
+    attended,
+  ];
 }

@@ -31,6 +31,8 @@ class MeetingCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
+    final participantName = meeting.participantName;
+    final participantPosition = meeting.participantPosition;
 
     return InkWell(
       onTap: onTap,
@@ -93,8 +95,10 @@ class MeetingCard extends StatelessWidget {
                   Assets.icons.icCalendar.svg(
                     width: 16.w,
                     height: 16.w,
-                    colorFilter:
-                        ColorFilter.mode(colors.iconStrong, BlendMode.srcIn),
+                    colorFilter: ColorFilter.mode(
+                      colors.iconStrong,
+                      BlendMode.srcIn,
+                    ),
                   ),
                   SizedBox(width: 4.w),
                   Flexible(
@@ -102,26 +106,21 @@ class MeetingCard extends StatelessWidget {
                         .s(13.sp)
                         .w(500)
                         .c(colors.textStrong)
-                        .copyWith(
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                        .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
                   ),
                 ],
               ),
               SizedBox(height: 8.h),
               Row(
                 children: [
-                  TuiAvatar(initial: meeting.organizerName, size: 24),
+                  TuiAvatar(initial: participantName, size: 24),
                   SizedBox(width: 8.w),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        (meeting.organizerName.isEmpty
-                                ? '—'
-                                : meeting.organizerName)
+                        (participantName.isEmpty ? '—' : participantName)
                             .s(13.sp)
                             .w(500)
                             .c(colors.textStrong)
@@ -129,8 +128,8 @@ class MeetingCard extends StatelessWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
-                        if (meeting.organizerRole.isNotEmpty)
-                          meeting.organizerRole
+                        if (participantPosition.isNotEmpty)
+                          participantPosition
                               .s(11.sp)
                               .w(500)
                               .c(colors.textSoft)
@@ -148,8 +147,10 @@ class MeetingCard extends StatelessWidget {
                     child: Assets.icons.icMoreVertical.svg(
                       width: 24.w,
                       height: 24.w,
-                      colorFilter:
-                          ColorFilter.mode(colors.iconSub, BlendMode.srcIn),
+                      colorFilter: ColorFilter.mode(
+                        colors.iconSub,
+                        BlendMode.srcIn,
+                      ),
                     ),
                   ),
                 ],

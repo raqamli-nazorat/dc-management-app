@@ -16,6 +16,8 @@ class MeetingModel extends Meeting {
     required super.startDate,
     required super.organizerName,
     required super.organizerRole,
+    required super.participantName,
+    required super.participantPosition,
     required super.isCompleted,
     required super.reason,
     required super.attended,
@@ -36,6 +38,12 @@ class MeetingModel extends Meeting {
       return '';
     }
 
+    int? intValue(dynamic value) {
+      if (value is num) return value.toInt();
+      if (value is String) return int.tryParse(value);
+      return null;
+    }
+
     // ── Project nomi: nested {name/title} yoki tekis project_name ──────────
     String projectName() {
       final p = json['project'];
@@ -45,15 +53,49 @@ class MeetingModel extends Meeting {
 
     // ── Organizer: nested {full_name/username, role/position} ──────────────
     final organizer = json['organizer'];
-    final orgMap =
-        organizer is Map ? organizer.cast<String, dynamic>() : const {};
+    final orgMap = organizer is Map
+        ? organizer.cast<String, dynamic>()
+        : const {};
     final organizerName = orgMap.isNotEmpty
-        ? pick(['full_name', 'name', 'username'], orgMap.cast<String, dynamic>())
+        ? pick([
+            'full_name',
+            'name',
+            'username',
+          ], orgMap.cast<String, dynamic>())
         : pick(['organizer_name']);
     final organizerRole = orgMap.isNotEmpty
-        ? pick(['role', 'active_role', 'position'],
-            orgMap.cast<String, dynamic>())
+        ? pick([
+            'role',
+            'active_role',
+            'position',
+          ], orgMap.cast<String, dynamic>())
         : pick(['organizer_role']);
+
+    final organizerId = orgMap.isNotEmpty
+        ? intValue(orgMap['id'])
+        : intValue(organizer);
+
+    Map<String, dynamic> organizerParticipantInfo() {
+      final participants = json['participants_info'];
+      if (participants is List) {
+        for (final participant in participants) {
+          if (participant is! Map) continue;
+          final participantMap = participant.cast<String, dynamic>();
+          if (intValue(participantMap['id']) == organizerId) {
+            return participantMap;
+          }
+        }
+      }
+      return const <String, dynamic>{};
+    }
+
+    final participantMap = organizerParticipantInfo();
+    final participantName = participantMap.isNotEmpty
+        ? pick(['username', 'full_name', 'name'], participantMap)
+        : pick(['participant_name']);
+    final participantPosition = participantMap.isNotEmpty
+        ? pick(['position'], participantMap)
+        : pick(['participant_position']);
 
     // ── Attendance: joriy foydalanuvchining yozuvi ─────────────────────────
     bool? attended() {
@@ -87,6 +129,8 @@ class MeetingModel extends Meeting {
       ),
       organizerName: organizerName,
       organizerRole: organizerRole,
+      participantName: participantName,
+      participantPosition: participantPosition,
       isCompleted: (json['is_completed'] as bool?) ?? false,
       reason: str(json['reason']),
       attended: attended(),

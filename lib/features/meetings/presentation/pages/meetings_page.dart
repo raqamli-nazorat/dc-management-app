@@ -131,7 +131,7 @@ class _MeetingsHeader extends StatelessWidget {
               SizedBox(width: 12.w),
               _SquareIconButton(
                 icon: Assets.icons.icProfileNotification,
-                background: colors.backgroundElevation2,
+                background: colors.backgroundElevation1,
                 borderColor: colors.strokeSub,
                 onTap: () => context.pushNamed(Routes.notifications.name),
               ),
