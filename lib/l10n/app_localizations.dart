@@ -860,6 +860,96 @@ abstract class AppLocalizations {
   /// **'Boshlanish sanasi oralig‘i'**
   String get meetingFilterStartDateRange;
 
+  /// No description provided for @meetingCreateNameHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Nomi yozing'**
+  String get meetingCreateNameHint;
+
+  /// No description provided for @meetingCreatePenaltyHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Jarima foizini kiriting'**
+  String get meetingCreatePenaltyHint;
+
+  /// No description provided for @meetingCreateLink.
+  ///
+  /// In uz, this message translates to:
+  /// **'Havolasi'**
+  String get meetingCreateLink;
+
+  /// No description provided for @meetingCreateLinkHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Havolasi kiriting: URL manzil'**
+  String get meetingCreateLinkHint;
+
+  /// No description provided for @meetingCreateDescriptionHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tavsif yozing'**
+  String get meetingCreateDescriptionHint;
+
+  /// No description provided for @meetingCreateStartDate.
+  ///
+  /// In uz, this message translates to:
+  /// **'Muddat sanasi'**
+  String get meetingCreateStartDate;
+
+  /// No description provided for @meetingCreateDuration.
+  ///
+  /// In uz, this message translates to:
+  /// **'Davomiyligi'**
+  String get meetingCreateDuration;
+
+  /// No description provided for @meetingCreateDurationHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Daqiqa'**
+  String get meetingCreateDurationHint;
+
+  /// No description provided for @meetingCreateParticipantsLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yig‘ilish qatnashchilarini qo‘shish'**
+  String get meetingCreateParticipantsLabel;
+
+  /// No description provided for @meetingCreateParticipantsHelp.
+  ///
+  /// In uz, this message translates to:
+  /// **'Quyidagi tugma orqali qidiring va tanlang'**
+  String get meetingCreateParticipantsHelp;
+
+  /// No description provided for @meetingCreateParticipantsAdd.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qatnashchilarni qo‘shing'**
+  String get meetingCreateParticipantsAdd;
+
+  /// No description provided for @meetingCreateParticipantsTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qatnashchilarni qo‘shish'**
+  String get meetingCreateParticipantsTitle;
+
+  /// No description provided for @meetingCreateCompleted.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tugatildimi?'**
+  String get meetingCreateCompleted;
+
+  /// No description provided for @meetingCreateRequiredError.
+  ///
+  /// In uz, this message translates to:
+  /// **'Loyiha, nomi, havolasi, tavsifi, sana va davomiyligi majburiy'**
+  String get meetingCreateRequiredError;
+
+  /// No description provided for @meetingCreateSuccess.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yig‘ilish qo‘shildi'**
+  String get meetingCreateSuccess;
+
   /// No description provided for @meetingReasonTitle.
   ///
   /// In uz, this message translates to:

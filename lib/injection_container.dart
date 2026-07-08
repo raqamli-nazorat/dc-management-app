@@ -38,6 +38,7 @@ import 'features/meetings/domain/usecases/restore_meeting_usecase.dart';
 import 'features/meetings/domain/usecases/submit_absence_reason_usecase.dart';
 import 'features/meetings/domain/usecases/update_meeting_attendance_usecase.dart';
 import 'features/meetings/domain/usecases/update_meeting_usecase.dart';
+import 'features/meetings/presentation/bloc/meeting_create_bloc.dart';
 import 'features/meetings/presentation/bloc/meeting_filter_bloc.dart';
 import 'features/meetings/presentation/bloc/meeting_reason_bloc.dart';
 import 'features/meetings/presentation/bloc/meetings_bloc.dart';
@@ -204,6 +205,14 @@ Future<void> configureDependencies() async {
     )
     ..registerFactory<MeetingFilterBloc>(
       () => MeetingFilterBloc(getOptions: getIt(), getUsers: getIt()),
+    )
+    ..registerFactory<MeetingCreateBloc>(
+      () => MeetingCreateBloc(
+        getOptions: getIt(),
+        getMembers: getIt(),
+        createMeeting: getIt(),
+        closeMeeting: getIt(),
+      ),
     )
     ..registerFactory<MeetingsBloc>(() => MeetingsBloc(getMeetings: getIt()))
     ..registerFactory<MeetingReasonBloc>(
