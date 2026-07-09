@@ -33,6 +33,15 @@ class ProjectsStatusChanged extends ProjectsEvent {
   List<Object?> get props => [status];
 }
 
+class ProjectsFilterChanged extends ProjectsEvent {
+  const ProjectsFilterChanged(this.filter);
+
+  final ProjectFilter filter;
+
+  @override
+  List<Object?> get props => [filter];
+}
+
 class ProjectDeleted extends ProjectsEvent {
   const ProjectDeleted(this.id);
 

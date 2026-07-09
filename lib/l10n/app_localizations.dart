@@ -848,10 +848,34 @@ abstract class AppLocalizations {
   /// **'Loyiha izlash'**
   String get projectSearchHint;
 
+  /// No description provided for @projectFilterManager.
+  ///
+  /// In uz, this message translates to:
+  /// **'Menejer'**
+  String get projectFilterManager;
+
+  /// No description provided for @projectFilterManagerHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Menejer tanlang'**
+  String get projectFilterManagerHint;
+
+  /// No description provided for @projectFilterTitleField.
+  ///
+  /// In uz, this message translates to:
+  /// **'Titul'**
+  String get projectFilterTitleField;
+
+  /// No description provided for @projectFilterTitleHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Titul bo‘yicha izlash'**
+  String get projectFilterTitleHint;
+
   /// No description provided for @projectStatusPlanning.
   ///
   /// In uz, this message translates to:
-  /// **'Reja'**
+  /// **'Rejalashtirilmoqda'**
   String get projectStatusPlanning;
 
   /// No description provided for @projectStatusActive.
@@ -863,7 +887,7 @@ abstract class AppLocalizations {
   /// No description provided for @projectStatusOverdue.
   ///
   /// In uz, this message translates to:
-  /// **'Muddat o‘tgan'**
+  /// **'Muddati o‘tgan'**
   String get projectStatusOverdue;
 
   /// No description provided for @projectStatusCompleted.
@@ -875,7 +899,7 @@ abstract class AppLocalizations {
   /// No description provided for @projectStatusCancelled.
   ///
   /// In uz, this message translates to:
-  /// **'Bekor'**
+  /// **'Bekor qilingan'**
   String get projectStatusCancelled;
 
   /// No description provided for @meetingsTitle.

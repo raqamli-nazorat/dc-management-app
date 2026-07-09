@@ -16,6 +16,8 @@ import '../../features/meetings/presentation/pages/meeting_filter_page.dart';
 import '../../features/meetings/presentation/pages/meeting_reason_page.dart';
 import '../../features/meetings/presentation/pages/meetings_page.dart';
 import '../../features/notification/presentation/pages/notification_page.dart';
+import '../../features/projects/domain/entities/project_filter.dart';
+import '../../features/projects/presentation/pages/project_filter_page.dart';
 import '../../features/projects/presentation/pages/projects_list_page.dart';
 import '../../features/tasks/domain/entities/task_filter.dart';
 import '../../features/tasks/presentation/pages/task_create_page.dart';
@@ -106,6 +108,15 @@ class AppRouter {
           name: Routes.projectsList.name,
           path: Routes.projectsList.path,
           builder: (context, state) => const ProjectsListPage(),
+        ),
+        GoRoute(
+          name: Routes.projectFilter.name,
+          path: Routes.projectFilter.path,
+          builder: (context, state) => ProjectFilterPage(
+            initial: state.extra is ProjectFilter
+                ? state.extra! as ProjectFilter
+                : ProjectFilter.empty,
+          ),
         ),
         GoRoute(
           name: Routes.taskCreate.name,
