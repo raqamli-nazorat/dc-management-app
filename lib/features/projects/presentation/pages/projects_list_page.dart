@@ -440,38 +440,50 @@ class _SearchBar extends StatelessWidget {
 class _AddProjectButton extends StatelessWidget {
   const _AddProjectButton();
 
+  Future<void> _openCreate(BuildContext context) async {
+    final bloc = context.read<ProjectsBloc>();
+    final result = await context.pushNamed<Object?>(Routes.projectCreate.name);
+    if (result == true && context.mounted) {
+      bloc.add(const ProjectsRequested());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
     final l10n = AppLocalizations.of(context);
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: colors.accentStrong,
-        borderRadius: BorderRadius.circular(12.r),
-      ),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-        child: SizedBox(
-          height: 20.h,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Assets.icons.icPlus.svg(
-                width: 20.w,
-                height: 20.w,
-                colorFilter: ColorFilter.mode(
-                  colors.textWhite,
-                  BlendMode.srcIn,
+    return InkWell(
+      onTap: () => _openCreate(context),
+      borderRadius: BorderRadius.circular(12.r),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: colors.accentStrong,
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+          child: SizedBox(
+            height: 20.h,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Assets.icons.icPlus.svg(
+                  width: 20.w,
+                  height: 20.w,
+                  colorFilter: ColorFilter.mode(
+                    colors.textWhite,
+                    BlendMode.srcIn,
+                  ),
                 ),
-              ),
-              SizedBox(width: 8.w),
-              l10n.projectAdd
-                  .s(13.sp)
-                  .w(800)
-                  .c(colors.textWhite)
-                  .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
-            ],
+                SizedBox(width: 8.w),
+                l10n.projectAdd
+                    .s(13.sp)
+                    .w(800)
+                    .c(colors.textWhite)
+                    .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+              ],
+            ),
           ),
         ),
       ),

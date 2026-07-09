@@ -15,6 +15,8 @@ abstract interface class TaskRepository {
   /// Barcha foydalanuvchilar (filtr "Muallif"/"Xodim" tanlovi).
   Future<List<UserShort>> getUsers();
 
+  Future<List<UserShort>> getManagers();
+
   /// Qisqa loyihalar (vazifa "Loyiha" tanlovi).
   Future<List<ProjectShort>> getProjectShorts();
 

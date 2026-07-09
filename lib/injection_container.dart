@@ -49,6 +49,7 @@ import 'features/tasks/domain/usecases/delete_task_usecase.dart';
 import 'features/tasks/domain/usecases/get_project_members_usecase.dart';
 import 'features/tasks/domain/usecases/get_task_form_options_usecase.dart';
 import 'features/tasks/domain/usecases/get_tasks_usecase.dart';
+import 'features/tasks/domain/usecases/get_managers_usecase.dart';
 import 'features/tasks/domain/usecases/get_users_usecase.dart';
 import 'features/tasks/domain/usecases/submit_task_usecase.dart';
 import 'features/tasks/presentation/bloc/task_create_bloc.dart';
@@ -72,6 +73,7 @@ import 'features/projects/data/data_sources/project_remote_data_source.dart';
 import 'features/projects/data/repository/project_repository_impl.dart';
 import 'features/projects/domain/repository/project_repository.dart';
 import 'features/projects/domain/usecases/project_usecases.dart';
+import 'features/projects/presentation/bloc/project_create_bloc.dart';
 import 'features/projects/presentation/bloc/project_filter_bloc.dart';
 import 'features/projects/presentation/bloc/projects_bloc.dart';
 import 'features/statistics/data/data_sources/statistics_remote_data_source.dart';
@@ -243,6 +245,9 @@ Future<void> configureDependencies() async {
       () => GetProjectMembersUseCase(getIt()),
     )
     ..registerLazySingleton<GetUsersUseCase>(() => GetUsersUseCase(getIt()))
+    ..registerLazySingleton<GetManagersUseCase>(
+      () => GetManagersUseCase(getIt()),
+    )
     ..registerLazySingleton<SubmitTaskUseCase>(() => SubmitTaskUseCase(getIt()))
     ..registerLazySingleton<DeleteTaskUseCase>(() => DeleteTaskUseCase(getIt()))
     ..registerFactory<TasksBloc>(
@@ -317,6 +322,13 @@ Future<void> configureDependencies() async {
     )
     ..registerFactory<ProjectFilterBloc>(
       () => ProjectFilterBloc(getUsers: getIt()),
+    )
+    ..registerFactory<ProjectCreateBloc>(
+      () => ProjectCreateBloc(
+        getUsers: getIt(),
+        getManagers: getIt(),
+        createProject: getIt(),
+      ),
     )
     ..registerFactory<ProjectsBloc>(
       () => ProjectsBloc(getProjects: getIt(), deleteProject: getIt()),

@@ -410,6 +410,43 @@ class AppLocalizationsEn extends AppLocalizations {
   String get projectFilterTitleHint => 'Search by title';
 
   @override
+  String get projectCreateDefaultPrefix => 'ERAF';
+
+  @override
+  String get projectCreateDefaultPenalty => '20';
+
+  @override
+  String get projectCreateManagerBonus => 'Manager bonus';
+
+  @override
+  String get projectCreateManagerBonusHint => 'For project: 0.0';
+
+  @override
+  String get projectCreatePrefixHint => 'Enter title';
+
+  @override
+  String get projectCreateEmployees => 'Employees';
+
+  @override
+  String get projectCreateEmployeesHint => 'Select employee';
+
+  @override
+  String get projectCreateTesters => 'Testers';
+
+  @override
+  String get projectCreateTestersHint => 'Select tester';
+
+  @override
+  String get projectCreateActive => 'Active?';
+
+  @override
+  String get projectCreateRequiredError =>
+      'Name, title, manager and deadline are required';
+
+  @override
+  String get projectCreateSuccess => 'Project created';
+
+  @override
   String get projectStatusPlanning => 'Planning';
 
   @override

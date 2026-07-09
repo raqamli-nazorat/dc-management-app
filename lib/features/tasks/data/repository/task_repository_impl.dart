@@ -15,14 +15,19 @@ class TaskRepositoryImpl implements TaskRepository {
   final TaskRemoteDataSource _remote;
 
   @override
-  Future<TaskPage> getTasks({int page = 1, TaskFilter filter = TaskFilter.empty}) =>
-      _guard(() => _remote.getTasks(page: page, filter: filter));
+  Future<TaskPage> getTasks({
+    int page = 1,
+    TaskFilter filter = TaskFilter.empty,
+  }) => _guard(() => _remote.getTasks(page: page, filter: filter));
 
   @override
   Future<List<Position>> getPositions() => _guard(_remote.getPositions);
 
   @override
   Future<List<UserShort>> getUsers() => _guard(_remote.getUsers);
+
+  @override
+  Future<List<UserShort>> getManagers() => _guard(_remote.getManagers);
 
   @override
   Future<List<ProjectShort>> getProjectShorts() =>
@@ -33,7 +38,8 @@ class TaskRepositoryImpl implements TaskRepository {
       _guard(() => _remote.getProjectMembers(projectId));
 
   @override
-  Future<int> createTask(NewTask task) => _guard(() => _remote.createTask(task));
+  Future<int> createTask(NewTask task) =>
+      _guard(() => _remote.createTask(task));
 
   @override
   Future<void> uploadAttachment(int taskId, String filePath) =>

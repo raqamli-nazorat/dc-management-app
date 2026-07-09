@@ -50,6 +50,12 @@ class Routes implements Coordinate {
     path: '/projects',
   );
 
+  /// Loyiha qo‘shish formasi.
+  static const projectCreate = Routes._(
+    name: 'project_create',
+    path: '/projects/create',
+  );
+
   /// Loyihalarni filtrlash sahifasi.
   static const projectFilter = Routes._(
     name: 'project_filter',

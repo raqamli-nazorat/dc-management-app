@@ -50,6 +50,7 @@ abstract final class ApiConstants {
   /// Barcha foydalanuvchilar (qisqa) — filtr "Muallif"/"Xodim" tanlovi
   /// (`GET /users/all/`).
   static const usersAll = '/users/all/';
+  static const users = '/users/';
 
   // ── Projects ─────────────────────────────────────────────────────────────
   static const projects = '/projects/';
