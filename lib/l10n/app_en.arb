@@ -151,6 +151,16 @@
     "placeholders": { "count": { "type": "int" } }
   },
 
+  "projectsTitle": "Projects",
+  "projectAdd": "Add project",
+  "projectsEmpty": "No projects yet",
+  "projectSearchHint": "Search projects",
+  "projectStatusPlanning": "Planned",
+  "projectStatusActive": "Active",
+  "projectStatusOverdue": "Overdue",
+  "projectStatusCompleted": "Completed",
+  "projectStatusCancelled": "Cancelled",
+
   "meetingsTitle": "Meetings",
   "meetingAdd": "Add meeting",
   "meetingsEmpty": "No meetings yet",

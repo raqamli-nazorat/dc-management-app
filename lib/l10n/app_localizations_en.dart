@@ -386,6 +386,33 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get projectsTitle => 'Projects';
+
+  @override
+  String get projectAdd => 'Add project';
+
+  @override
+  String get projectsEmpty => 'No projects yet';
+
+  @override
+  String get projectSearchHint => 'Search projects';
+
+  @override
+  String get projectStatusPlanning => 'Planned';
+
+  @override
+  String get projectStatusActive => 'Active';
+
+  @override
+  String get projectStatusOverdue => 'Overdue';
+
+  @override
+  String get projectStatusCompleted => 'Completed';
+
+  @override
+  String get projectStatusCancelled => 'Cancelled';
+
+  @override
   String get meetingsTitle => 'Meetings';
 
   @override

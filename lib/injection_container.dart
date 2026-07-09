@@ -68,6 +68,11 @@ import 'features/profile/domain/usecases/get_me_usecase.dart';
 import 'features/profile/domain/usecases/update_me_usecase.dart';
 import 'features/profile/presentation/bloc/change_password_bloc.dart';
 import 'features/profile/presentation/bloc/profile_bloc.dart';
+import 'features/projects/data/data_sources/project_remote_data_source.dart';
+import 'features/projects/data/repository/project_repository_impl.dart';
+import 'features/projects/domain/repository/project_repository.dart';
+import 'features/projects/domain/usecases/project_usecases.dart';
+import 'features/projects/presentation/bloc/projects_bloc.dart';
 import 'features/statistics/data/data_sources/statistics_remote_data_source.dart';
 import 'features/statistics/data/repository/statistics_repository_impl.dart';
 import 'features/statistics/domain/repository/statistics_repository.dart';
@@ -251,6 +256,66 @@ Future<void> configureDependencies() async {
     )
     ..registerFactory<TaskFilterBloc>(
       () => TaskFilterBloc(getOptions: getIt(), getUsers: getIt()),
+    );
+
+  getIt
+    ..registerLazySingleton<ProjectRemoteDataSource>(
+      () => ProjectRemoteDataSourceImpl(getIt()),
+    )
+    ..registerLazySingleton<ProjectRepository>(
+      () => ProjectRepositoryImpl(getIt()),
+    )
+    ..registerLazySingleton<GetProjectsUseCase>(
+      () => GetProjectsUseCase(getIt()),
+    )
+    ..registerLazySingleton<CreateProjectUseCase>(
+      () => CreateProjectUseCase(getIt()),
+    )
+    ..registerLazySingleton<GetProjectUseCase>(() => GetProjectUseCase(getIt()))
+    ..registerLazySingleton<UpdateProjectUseCase>(
+      () => UpdateProjectUseCase(getIt()),
+    )
+    ..registerLazySingleton<PatchProjectUseCase>(
+      () => PatchProjectUseCase(getIt()),
+    )
+    ..registerLazySingleton<DeleteProjectUseCase>(
+      () => DeleteProjectUseCase(getIt()),
+    )
+    ..registerLazySingleton<GetTrashedProjectsUseCase>(
+      () => GetTrashedProjectsUseCase(getIt()),
+    )
+    ..registerLazySingleton<HardDeleteProjectUseCase>(
+      () => HardDeleteProjectUseCase(getIt()),
+    )
+    ..registerLazySingleton<RestoreProjectUseCase>(
+      () => RestoreProjectUseCase(getIt()),
+    )
+    ..registerLazySingleton<GetProjectDocumentsUseCase>(
+      () => GetProjectDocumentsUseCase(getIt()),
+    )
+    ..registerLazySingleton<CreateProjectDocumentUseCase>(
+      () => CreateProjectDocumentUseCase(getIt()),
+    )
+    ..registerLazySingleton<GetProjectDocumentUseCase>(
+      () => GetProjectDocumentUseCase(getIt()),
+    )
+    ..registerLazySingleton<UpdateProjectDocumentUseCase>(
+      () => UpdateProjectDocumentUseCase(getIt()),
+    )
+    ..registerLazySingleton<PatchProjectDocumentUseCase>(
+      () => PatchProjectDocumentUseCase(getIt()),
+    )
+    ..registerLazySingleton<DeleteProjectDocumentUseCase>(
+      () => DeleteProjectDocumentUseCase(getIt()),
+    )
+    ..registerLazySingleton<GetProjectShortsUseCase>(
+      () => GetProjectShortsUseCase(getIt()),
+    )
+    ..registerLazySingleton<GetProjectShortUseCase>(
+      () => GetProjectShortUseCase(getIt()),
+    )
+    ..registerFactory<ProjectsBloc>(
+      () => ProjectsBloc(getProjects: getIt(), deleteProject: getIt()),
     );
 
   // ── Statistics feature ────────────────────────────────────────────────

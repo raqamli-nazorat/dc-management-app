@@ -23,6 +23,7 @@ class ProjectsPage extends StatelessWidget {
               label: 'Loyihalar',
               image: Assets.images.projects,
               imageSize: 82.w,
+              onTap: () => context.pushNamed(Routes.projectsList.name),
             ),
             Row(
               spacing: 12,

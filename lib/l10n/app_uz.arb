@@ -154,6 +154,16 @@
     "placeholders": { "count": { "type": "int" } }
   },
 
+  "projectsTitle": "Loyihalar",
+  "projectAdd": "Loyiha qo‘shish",
+  "projectsEmpty": "Hozircha loyihalar yo‘q",
+  "projectSearchHint": "Loyiha izlash",
+  "projectStatusPlanning": "Reja",
+  "projectStatusActive": "Faol",
+  "projectStatusOverdue": "Muddat o‘tgan",
+  "projectStatusCompleted": "Yakunlangan",
+  "projectStatusCancelled": "Bekor",
+
   "meetingsTitle": "Yig‘ilishlar",
   "meetingAdd": "Yig‘ilish qo‘shish",
   "meetingsEmpty": "Hozircha yig‘ilishlar yo‘q",

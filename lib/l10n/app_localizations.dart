@@ -824,6 +824,60 @@ abstract class AppLocalizations {
   /// **'{count} ta tanlangan'**
   String taskFilterSelectedCount(int count);
 
+  /// No description provided for @projectsTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Loyihalar'**
+  String get projectsTitle;
+
+  /// No description provided for @projectAdd.
+  ///
+  /// In uz, this message translates to:
+  /// **'Loyiha qo‘shish'**
+  String get projectAdd;
+
+  /// No description provided for @projectsEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hozircha loyihalar yo‘q'**
+  String get projectsEmpty;
+
+  /// No description provided for @projectSearchHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Loyiha izlash'**
+  String get projectSearchHint;
+
+  /// No description provided for @projectStatusPlanning.
+  ///
+  /// In uz, this message translates to:
+  /// **'Reja'**
+  String get projectStatusPlanning;
+
+  /// No description provided for @projectStatusActive.
+  ///
+  /// In uz, this message translates to:
+  /// **'Faol'**
+  String get projectStatusActive;
+
+  /// No description provided for @projectStatusOverdue.
+  ///
+  /// In uz, this message translates to:
+  /// **'Muddat o‘tgan'**
+  String get projectStatusOverdue;
+
+  /// No description provided for @projectStatusCompleted.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yakunlangan'**
+  String get projectStatusCompleted;
+
+  /// No description provided for @projectStatusCancelled.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bekor'**
+  String get projectStatusCancelled;
+
   /// No description provided for @meetingsTitle.
   ///
   /// In uz, this message translates to:

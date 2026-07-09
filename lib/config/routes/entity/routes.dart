@@ -44,6 +44,12 @@ class Routes implements Coordinate {
   /// Vazifalar ro‘yxati.
   static const tasks = Routes._(name: 'tasks', path: '/tasks');
 
+  /// Loyihalar ro‘yxati.
+  static const projectsList = Routes._(
+    name: 'projects_list',
+    path: '/projects',
+  );
+
   /// Vazifa qo‘shish formasi (vazifalar ro‘yxatidan push qilinadi).
   static const taskCreate = Routes._(
     name: 'task_create',
