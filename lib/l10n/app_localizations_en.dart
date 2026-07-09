@@ -398,7 +398,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get projectSearchHint => 'Search projects';
 
   @override
-  String get projectStatusPlanning => 'Planned';
+  String get projectFilterManager => 'Manager';
+
+  @override
+  String get projectFilterManagerHint => 'Select manager';
+
+  @override
+  String get projectFilterTitleField => 'Title';
+
+  @override
+  String get projectFilterTitleHint => 'Search by title';
+
+  @override
+  String get projectStatusPlanning => 'Planning';
 
   @override
   String get projectStatusActive => 'Active';

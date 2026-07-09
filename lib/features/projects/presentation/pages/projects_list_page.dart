@@ -12,7 +12,7 @@ import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
 import '../../../../injection_container.dart';
 import '../../../../l10n/app_localizations.dart';
-import '../../domain/entities/project.dart';
+import '../../domain/entities/project_filter.dart';
 import '../bloc/projects_bloc.dart';
 import '../widgets/project_card.dart';
 
@@ -220,6 +220,7 @@ class _SearchFilterRowState extends State<_SearchFilterRow> {
   }
 
   void _openSearch() {
+    _controller.text = context.read<ProjectsBloc>().state.filter.search;
     setState(() => _searching = true);
     WidgetsBinding.instance.addPostFrameCallback((_) => _focus.requestFocus());
   }
@@ -244,18 +245,15 @@ class _SearchFilterRowState extends State<_SearchFilterRow> {
     });
   }
 
-  void _cycleStatus() {
+  Future<void> _openFilter() async {
     final bloc = context.read<ProjectsBloc>();
-    final statuses = <ProjectStatus?>[
-      null,
-      ProjectStatus.active,
-      ProjectStatus.planning,
-      ProjectStatus.overdue,
-      ProjectStatus.completed,
-      ProjectStatus.cancelled,
-    ];
-    final index = statuses.indexOf(bloc.state.filter.status);
-    bloc.add(ProjectsStatusChanged(statuses[(index + 1) % statuses.length]));
+    final result = await context.pushNamed<Object?>(
+      Routes.projectFilter.name,
+      extra: bloc.state.filter,
+    );
+    if (result is ProjectFilter && mounted) {
+      bloc.add(ProjectsFilterChanged(result));
+    }
   }
 
   @override
@@ -279,7 +277,7 @@ class _SearchFilterRowState extends State<_SearchFilterRow> {
             : _TitleBar(
                 key: const ValueKey('title'),
                 onSearch: _openSearch,
-                onFilter: _cycleStatus,
+                onFilter: _openFilter,
               ),
       ),
     );
@@ -317,14 +315,15 @@ class _TitleBar extends StatelessWidget {
         ),
         SizedBox(width: 12.w),
         BlocBuilder<ProjectsBloc, ProjectsState>(
-          buildWhen: (previous, current) =>
-              previous.filter.status != current.filter.status,
+          buildWhen: (previous, current) => previous.filter != current.filter,
           builder: (context, state) => _SquareIconButton(
             icon: Assets.icons.icFilter,
             size: 40,
             iconSize: 16,
             background: colors.backgroundElevation1,
-            showDot: state.filter.status != null,
+            showDot:
+                state.filter.hasActiveFilters ||
+                state.filter.search.trim().isNotEmpty,
             onTap: onFilter,
           ),
         ),
@@ -394,6 +393,29 @@ class _SearchBar extends StatelessWidget {
                           hintStyle: style.copyWith(color: colors.textSub),
                         ),
                       ),
+                    ),
+                    ValueListenableBuilder<TextEditingValue>(
+                      valueListenable: controller,
+                      builder: (context, value, _) => value.text.isEmpty
+                          ? const SizedBox.shrink()
+                          : InkWell(
+                              onTap: () {
+                                controller.clear();
+                                onChanged('');
+                              },
+                              borderRadius: BorderRadius.circular(8.r),
+                              child: Padding(
+                                padding: EdgeInsets.all(4.w),
+                                child: Assets.icons.icClose.svg(
+                                  width: 14.w,
+                                  height: 14.w,
+                                  colorFilter: ColorFilter.mode(
+                                    colors.iconSub,
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                              ),
+                            ),
                     ),
                   ],
                 ),

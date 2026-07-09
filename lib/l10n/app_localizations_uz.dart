@@ -399,19 +399,31 @@ class AppLocalizationsUz extends AppLocalizations {
   String get projectSearchHint => 'Loyiha izlash';
 
   @override
-  String get projectStatusPlanning => 'Reja';
+  String get projectFilterManager => 'Menejer';
+
+  @override
+  String get projectFilterManagerHint => 'Menejer tanlang';
+
+  @override
+  String get projectFilterTitleField => 'Titul';
+
+  @override
+  String get projectFilterTitleHint => 'Titul bo‘yicha izlash';
+
+  @override
+  String get projectStatusPlanning => 'Rejalashtirilmoqda';
 
   @override
   String get projectStatusActive => 'Faol';
 
   @override
-  String get projectStatusOverdue => 'Muddat o‘tgan';
+  String get projectStatusOverdue => 'Muddati o‘tgan';
 
   @override
   String get projectStatusCompleted => 'Yakunlangan';
 
   @override
-  String get projectStatusCancelled => 'Bekor';
+  String get projectStatusCancelled => 'Bekor qilingan';
 
   @override
   String get meetingsTitle => 'Yig‘ilishlar';

@@ -20,6 +20,7 @@ class ProjectsBloc extends Bloc<ProjectsEvent, ProjectsState> {
     on<ProjectsLoadMore>(_onLoadMore);
     on<ProjectsSearchChanged>(_onSearchChanged);
     on<ProjectsStatusChanged>(_onStatusChanged);
+    on<ProjectsFilterChanged>(_onFilterChanged);
     on<ProjectDeleted>(_onDeleted);
   }
 
@@ -40,6 +41,11 @@ class ProjectsBloc extends Bloc<ProjectsEvent, ProjectsState> {
     ProjectsStatusChanged event,
     Emitter<ProjectsState> emit,
   ) => _reload(state.filter.copyWithStatus(event.status), emit);
+
+  Future<void> _onFilterChanged(
+    ProjectsFilterChanged event,
+    Emitter<ProjectsState> emit,
+  ) => _reload(event.filter, emit);
 
   Future<void> _reload(
     ProjectFilter filter,

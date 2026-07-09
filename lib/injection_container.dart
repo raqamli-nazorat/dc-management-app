@@ -72,6 +72,7 @@ import 'features/projects/data/data_sources/project_remote_data_source.dart';
 import 'features/projects/data/repository/project_repository_impl.dart';
 import 'features/projects/domain/repository/project_repository.dart';
 import 'features/projects/domain/usecases/project_usecases.dart';
+import 'features/projects/presentation/bloc/project_filter_bloc.dart';
 import 'features/projects/presentation/bloc/projects_bloc.dart';
 import 'features/statistics/data/data_sources/statistics_remote_data_source.dart';
 import 'features/statistics/data/repository/statistics_repository_impl.dart';
@@ -313,6 +314,9 @@ Future<void> configureDependencies() async {
     )
     ..registerLazySingleton<GetProjectShortUseCase>(
       () => GetProjectShortUseCase(getIt()),
+    )
+    ..registerFactory<ProjectFilterBloc>(
+      () => ProjectFilterBloc(getUsers: getIt()),
     )
     ..registerFactory<ProjectsBloc>(
       () => ProjectsBloc(getProjects: getIt(), deleteProject: getIt()),
