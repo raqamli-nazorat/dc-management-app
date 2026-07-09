@@ -395,6 +395,29 @@ class _SearchBar extends StatelessWidget {
                         ),
                       ),
                     ),
+                    ValueListenableBuilder<TextEditingValue>(
+                      valueListenable: controller,
+                      builder: (context, value, _) => value.text.isEmpty
+                          ? const SizedBox.shrink()
+                          : InkWell(
+                              onTap: () {
+                                controller.clear();
+                                onChanged('');
+                              },
+                              borderRadius: BorderRadius.circular(8.r),
+                              child: Padding(
+                                padding: EdgeInsets.all(4.w),
+                                child: Assets.icons.icClose.svg(
+                                  width: 14.w,
+                                  height: 14.w,
+                                  colorFilter: ColorFilter.mode(
+                                    colors.iconSub,
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                              ),
+                            ),
+                    ),
                   ],
                 ),
               ),
