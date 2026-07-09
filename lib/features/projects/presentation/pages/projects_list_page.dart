@@ -5,8 +5,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/bloc/session_bloc.dart';
 import '../../../../config/routes/entity/routes.dart';
 import '../../../../config/theme/app_colors.dart';
+import '../../../../core/access/nav_permissions.dart';
+import '../../../../core/access/role_type.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
@@ -70,6 +73,7 @@ class _ProjectsListViewState extends State<_ProjectsListView> {
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
+    final role = context.select<SessionBloc, RoleType>((b) => b.state.roleType);
     return Scaffold(
       backgroundColor: colors.backgroundBase,
       body: SafeArea(
@@ -132,6 +136,7 @@ class _ProjectsListViewState extends State<_ProjectsListView> {
                             final project = state.items[index];
                             return ProjectCard(
                               project: project,
+                              role: role,
                               onDelete: () => context.read<ProjectsBloc>().add(
                                 ProjectDeleted(project.id),
                               ),
@@ -156,6 +161,8 @@ class _ProjectsHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
+    final role = context.select<SessionBloc, RoleType>((b) => b.state.roleType);
+    final canCreate = NavPermissions.canCreateProject(role);
 
     return Column(
       children: [
@@ -179,8 +186,10 @@ class _ProjectsHeader extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              const _AddProjectButton(),
-              SizedBox(width: 12.w),
+              if (canCreate) ...[
+                const _AddProjectButton(),
+                SizedBox(width: 12.w),
+              ],
               _SquareIconButton(
                 icon: Assets.icons.icProfileNotification,
                 size: 36,

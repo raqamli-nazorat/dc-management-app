@@ -432,6 +432,25 @@ class AppLocalizationsUz extends AppLocalizations {
   String get projectCreateEmployeesHint => 'Xodim tanlang';
 
   @override
+  String get projectMenuEdit => 'Tahrirlash';
+
+  @override
+  String get projectMenuDetails => 'Batafsil';
+
+  @override
+  String get projectMenuDelete => 'O\'chirish';
+
+  @override
+  String get projectDeleteTitle => 'Loyihani o\'chirish';
+
+  @override
+  String get projectDeleteSubtitle =>
+      'Loyihani rostdan ham o\'chirmoqchimisiz? O\'chirilgan loyihani chiqindi qutisidan tiklashingiz mumkin.';
+
+  @override
+  String get projectDeleteCancel => 'Bekor qilish';
+
+  @override
   String get projectCreateTesters => 'Sinovchilar';
 
   @override

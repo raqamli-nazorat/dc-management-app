@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/bloc/session_bloc.dart';
+import '../../core/access/nav_permissions.dart';
 import '../../features/attendance/presentation/pages/attendance_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/splash_page.dart';
@@ -210,6 +211,11 @@ class AppRouter {
     // Authenticated with multiple roles, none chosen -> role selection.
     if (session.roleSelectionRequired) {
       return onRoleSelect ? null : Routes.roleSelect.path;
+    }
+
+    if (location == Routes.projectCreate.path &&
+        !NavPermissions.canCreateProject(session.roleType)) {
+      return Routes.projectsList.path;
     }
 
     // Fully authenticated: keep away from gates.

@@ -5,7 +5,15 @@ import 'role_type.dart';
 ///
 /// [applications] hali qurilmagan (Arizalar bo'limi) — matritsa oldindan
 /// tayyor, feature qo'shilganda faqat `HomePage._sections`ga ulanadi.
-enum AppSection { home, analytics, users, projects, finance, reports, applications }
+enum AppSection {
+  home,
+  analytics,
+  users,
+  projects,
+  finance,
+  reports,
+  applications,
+}
 
 /// Rolga qarab qaysi bo'lim ko'rinishi va harakat (CRUD) qilish mumkinligini
 /// belgilaydigan yagona ruxsat matritsasi.
@@ -71,6 +79,11 @@ abstract final class NavPermissions {
   /// o'chirish/tasdiqlash tugmalarini yashirish uchun. O'z profilini
   /// tahrirlash / parol o'zgartirish shu bilan cheklanmaydi.
   static bool canPerformActions(RoleType role) => role != RoleType.auditor;
+
+  static bool canCreateProject(RoleType role) => role == RoleType.admin;
+
+  static bool canManageProject(RoleType role) =>
+      role == RoleType.admin || role == RoleType.manager;
 
   /// Ariza yaratish — [isVisible]dagi [AppSection.applications]dan alohida
   /// ruxsat: Menejer va Xodim ariza yubora oladi (Xodim bo'limni ko'rmasa

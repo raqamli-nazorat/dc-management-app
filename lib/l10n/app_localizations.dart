@@ -914,6 +914,42 @@ abstract class AppLocalizations {
   /// **'Xodim tanlang'**
   String get projectCreateEmployeesHint;
 
+  /// No description provided for @projectMenuEdit.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tahrirlash'**
+  String get projectMenuEdit;
+
+  /// No description provided for @projectMenuDetails.
+  ///
+  /// In uz, this message translates to:
+  /// **'Batafsil'**
+  String get projectMenuDetails;
+
+  /// No description provided for @projectMenuDelete.
+  ///
+  /// In uz, this message translates to:
+  /// **'O\'chirish'**
+  String get projectMenuDelete;
+
+  /// No description provided for @projectDeleteTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Loyihani o\'chirish'**
+  String get projectDeleteTitle;
+
+  /// No description provided for @projectDeleteSubtitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Loyihani rostdan ham o\'chirmoqchimisiz? O\'chirilgan loyihani chiqindi qutisidan tiklashingiz mumkin.'**
+  String get projectDeleteSubtitle;
+
+  /// No description provided for @projectDeleteCancel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bekor qilish'**
+  String get projectDeleteCancel;
+
   /// No description provided for @projectCreateTesters.
   ///
   /// In uz, this message translates to:
