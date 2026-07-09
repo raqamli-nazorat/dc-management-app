@@ -45,13 +45,28 @@ abstract final class ApiConstants {
   /// Qisqa loyihalar ro‘yxati — vazifa "Loyiha" tanlovi (`GET /project-shorts/`).
   static const projectShorts = '/project-shorts/';
 
+  static String projectShortById(int id) => '/project-shorts/$id/';
+
   /// Barcha foydalanuvchilar (qisqa) — filtr "Muallif"/"Xodim" tanlovi
   /// (`GET /users/all/`).
   static const usersAll = '/users/all/';
 
+  // ── Projects ─────────────────────────────────────────────────────────────
+  static const projects = '/projects/';
+
   /// Bitta loyiha to‘liq ma’lumoti — ishtirokchilar (Topshiruvchi tanlovi):
   /// `GET /projects/{id}/`.
   static String projectById(int id) => '/projects/$id/';
+
+  static const projectsTrash = '/projects/trash/';
+
+  static String projectHardDelete(int id) => '/projects/$id/hard_delete/';
+
+  static String projectRestore(int id) => '/projects/$id/restore/';
+
+  static const projectDocuments = '/project-documents/';
+
+  static String projectDocumentById(int id) => '/project-documents/$id/';
 
   /// Vazifa faylini biriktirish (multipart `{task, file}`):
   /// `POST /task-attachments/`.
