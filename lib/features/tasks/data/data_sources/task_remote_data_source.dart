@@ -21,6 +21,8 @@ abstract interface class TaskRemoteDataSource {
   /// Barcha foydalanuvchilar (`GET /users/all/?page_size=200`).
   Future<List<UserShort>> getUsers();
 
+  Future<List<UserShort>> getManagers();
+
   /// Qisqa loyihalar (`GET /project-shorts/?page_size=200`).
   Future<List<ProjectShort>> getProjectShorts();
 
@@ -116,6 +118,24 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
       return ResponseMapper.asList(response.data)
           .whereType<Map>()
           .map((e) => UserShortModel.fromJson(e.cast<String, dynamic>()))
+          .toList();
+    } on DioException catch (e) {
+      throw ResponseMapper.mapDioException(e);
+    }
+  }
+
+  @override
+  Future<List<UserShort>> getManagers() async {
+    try {
+      final response = await _client.get(
+        ApiConstants.users,
+        queryParameters: const {'roles': 'employee'},
+      );
+      return ResponseMapper.asList(response.data)
+          .whereType<Map>()
+          .map((e) => e.cast<String, dynamic>())
+          .where((json) => UserShortModel.hasRole(json, 'manager'))
+          .map(UserShortModel.fromJson)
           .toList();
     } on DioException catch (e) {
       throw ResponseMapper.mapDioException(e);

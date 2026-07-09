@@ -41,11 +41,24 @@ class UserShortModel extends UserShort {
 
   factory UserShortModel.fromJson(Map<String, dynamic> json) {
     String str(dynamic v) => v?.toString() ?? '';
+    String position(dynamic value) {
+      if (value is Map) return str(value['name']);
+      return str(value);
+    }
+
     return UserShortModel(
       id: (json['id'] as num?)?.toInt() ?? 0,
       username: str(json['username']),
-      position: str(json['position']),
+      position: position(json['position'] ?? json['position_info']),
       avatar: str(json['avatar']),
+    );
+  }
+
+  static bool hasRole(Map<String, dynamic> json, String role) {
+    final roles = json['roles'];
+    if (roles is! List) return false;
+    return roles.any(
+      (value) => value?.toString().toLowerCase() == role.toLowerCase(),
     );
   }
 }

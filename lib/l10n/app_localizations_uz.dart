@@ -411,6 +411,43 @@ class AppLocalizationsUz extends AppLocalizations {
   String get projectFilterTitleHint => 'Titul bo‘yicha izlash';
 
   @override
+  String get projectCreateDefaultPrefix => 'ERAF';
+
+  @override
+  String get projectCreateDefaultPenalty => '20';
+
+  @override
+  String get projectCreateManagerBonus => 'Menejer bonusi';
+
+  @override
+  String get projectCreateManagerBonusHint => 'Loyiha uchun: 0,0';
+
+  @override
+  String get projectCreatePrefixHint => 'Titul kiriting';
+
+  @override
+  String get projectCreateEmployees => 'Xodimlar';
+
+  @override
+  String get projectCreateEmployeesHint => 'Xodim tanlang';
+
+  @override
+  String get projectCreateTesters => 'Sinovchilar';
+
+  @override
+  String get projectCreateTestersHint => 'Sinovchi tanlang';
+
+  @override
+  String get projectCreateActive => 'Faolmi?';
+
+  @override
+  String get projectCreateRequiredError =>
+      'Nomi, titul, menejer va muddat majburiy';
+
+  @override
+  String get projectCreateSuccess => 'Loyiha qo‘shildi';
+
+  @override
   String get projectStatusPlanning => 'Rejalashtirilmoqda';
 
   @override

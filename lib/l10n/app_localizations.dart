@@ -872,6 +872,78 @@ abstract class AppLocalizations {
   /// **'Titul bo‘yicha izlash'**
   String get projectFilterTitleHint;
 
+  /// No description provided for @projectCreateDefaultPrefix.
+  ///
+  /// In uz, this message translates to:
+  /// **'ERAF'**
+  String get projectCreateDefaultPrefix;
+
+  /// No description provided for @projectCreateDefaultPenalty.
+  ///
+  /// In uz, this message translates to:
+  /// **'20'**
+  String get projectCreateDefaultPenalty;
+
+  /// No description provided for @projectCreateManagerBonus.
+  ///
+  /// In uz, this message translates to:
+  /// **'Menejer bonusi'**
+  String get projectCreateManagerBonus;
+
+  /// No description provided for @projectCreateManagerBonusHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Loyiha uchun: 0,0'**
+  String get projectCreateManagerBonusHint;
+
+  /// No description provided for @projectCreatePrefixHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Titul kiriting'**
+  String get projectCreatePrefixHint;
+
+  /// No description provided for @projectCreateEmployees.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xodimlar'**
+  String get projectCreateEmployees;
+
+  /// No description provided for @projectCreateEmployeesHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xodim tanlang'**
+  String get projectCreateEmployeesHint;
+
+  /// No description provided for @projectCreateTesters.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sinovchilar'**
+  String get projectCreateTesters;
+
+  /// No description provided for @projectCreateTestersHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sinovchi tanlang'**
+  String get projectCreateTestersHint;
+
+  /// No description provided for @projectCreateActive.
+  ///
+  /// In uz, this message translates to:
+  /// **'Faolmi?'**
+  String get projectCreateActive;
+
+  /// No description provided for @projectCreateRequiredError.
+  ///
+  /// In uz, this message translates to:
+  /// **'Nomi, titul, menejer va muddat majburiy'**
+  String get projectCreateRequiredError;
+
+  /// No description provided for @projectCreateSuccess.
+  ///
+  /// In uz, this message translates to:
+  /// **'Loyiha qo‘shildi'**
+  String get projectCreateSuccess;
+
   /// No description provided for @projectStatusPlanning.
   ///
   /// In uz, this message translates to:

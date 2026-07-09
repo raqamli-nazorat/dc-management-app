@@ -17,6 +17,7 @@ import '../../features/meetings/presentation/pages/meeting_reason_page.dart';
 import '../../features/meetings/presentation/pages/meetings_page.dart';
 import '../../features/notification/presentation/pages/notification_page.dart';
 import '../../features/projects/domain/entities/project_filter.dart';
+import '../../features/projects/presentation/pages/add_project_page.dart';
 import '../../features/projects/presentation/pages/project_filter_page.dart';
 import '../../features/projects/presentation/pages/projects_list_page.dart';
 import '../../features/tasks/domain/entities/task_filter.dart';
@@ -108,6 +109,11 @@ class AppRouter {
           name: Routes.projectsList.name,
           path: Routes.projectsList.path,
           builder: (context, state) => const ProjectsListPage(),
+        ),
+        GoRoute(
+          name: Routes.projectCreate.name,
+          path: Routes.projectCreate.path,
+          builder: (context, state) => const AddProjectPage(),
         ),
         GoRoute(
           name: Routes.projectFilter.name,
