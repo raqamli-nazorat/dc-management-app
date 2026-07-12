@@ -57,11 +57,7 @@ class AppFilterFieldLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(right: 8.w, bottom: 4.h),
-      child: text
-          .s(11.sp)
-          .w(500)
-          .h(16 / 11)
-          .c(AppColors.of(context).textSub),
+      child: text.s(11.sp).w(500).h(16 / 11).c(AppColors.of(context).textSub),
     );
   }
 }
@@ -79,6 +75,7 @@ class AppFilterFieldBox extends StatelessWidget {
     required this.placeholder,
     required this.onTap,
     required this.onClear,
+    this.showClear = true,
     this.link,
     this.chevron,
     super.key,
@@ -89,6 +86,7 @@ class AppFilterFieldBox extends StatelessWidget {
   final String placeholder;
   final VoidCallback onTap;
   final VoidCallback onClear;
+  final bool showClear;
   final LayerLink? link;
   final SvgGenImage? chevron;
 
@@ -114,7 +112,7 @@ class AppFilterFieldBox extends StatelessWidget {
                     .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
               ),
               SizedBox(width: 4.w),
-              if (hasValue)
+              if (hasValue && showClear)
                 InkWell(
                   onTap: onClear,
                   borderRadius: BorderRadius.circular(8.r),
@@ -130,7 +128,7 @@ class AppFilterFieldBox extends StatelessWidget {
                     ),
                   ),
                 )
-              else
+              else if (!hasValue)
                 (chevron ?? Assets.icons.icTuilconChervonDown).svg(
                   width: 16.w,
                   height: 16.w,
@@ -288,7 +286,10 @@ class AppFilterDropdownItem extends StatelessWidget {
     final colors = AppColors.of(context);
     final content = height == null
         ? child
-        : SizedBox(height: height!.h, child: Center(child: child));
+        : SizedBox(
+            height: height!.h,
+            child: Center(child: child),
+          );
 
     return InkWell(
       onTap: onTap,

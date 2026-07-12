@@ -74,6 +74,7 @@ import 'features/projects/data/repository/project_repository_impl.dart';
 import 'features/projects/domain/repository/project_repository.dart';
 import 'features/projects/domain/usecases/project_usecases.dart';
 import 'features/projects/presentation/bloc/project_create_bloc.dart';
+import 'features/projects/presentation/bloc/project_details_bloc.dart';
 import 'features/projects/presentation/bloc/project_filter_bloc.dart';
 import 'features/projects/presentation/bloc/projects_bloc.dart';
 import 'features/statistics/data/data_sources/statistics_remote_data_source.dart';
@@ -328,7 +329,11 @@ Future<void> configureDependencies() async {
         getUsers: getIt(),
         getManagers: getIt(),
         createProject: getIt(),
+        updateProject: getIt(),
       ),
+    )
+    ..registerFactory<ProjectDetailsBloc>(
+      () => ProjectDetailsBloc(getProject: getIt()),
     )
     ..registerFactory<ProjectsBloc>(
       () => ProjectsBloc(getProjects: getIt(), deleteProject: getIt()),

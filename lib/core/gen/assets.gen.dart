@@ -147,6 +147,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/ic_search.svg
   SvgGenImage get icSearch => const SvgGenImage('assets/icons/ic_search.svg');
 
+  /// File path: assets/icons/ic_settings_large.svg
+  SvgGenImage get icSettingsLarge =>
+      const SvgGenImage('assets/icons/ic_settings_large.svg');
+
   /// File path: assets/icons/ic_share_nodes.svg
   SvgGenImage get icShareNodes =>
       const SvgGenImage('assets/icons/ic_share_nodes.svg');
@@ -224,6 +228,7 @@ class $AssetsIconsGen {
     icPlus,
     icProfileNotification,
     icSearch,
+    icSettingsLarge,
     icShareNodes,
     icSoon,
     icSun,

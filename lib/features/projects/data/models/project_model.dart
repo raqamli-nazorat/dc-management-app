@@ -44,6 +44,8 @@ class ProjectModel extends Project {
     required super.createdAt,
     required super.updatedAt,
     required super.completionPercentage,
+    required super.projectPrice,
+    required super.penaltyPercentage,
   });
 
   factory ProjectModel.fromJson(Map<String, dynamic> json) {
@@ -84,6 +86,8 @@ class ProjectModel extends Project {
       createdAt: DateTime.tryParse(str(json['created_at'])),
       updatedAt: DateTime.tryParse(str(json['updated_at'])),
       completionPercentage: str(json['completion_percentage']),
+      projectPrice: str(json['project_price']),
+      penaltyPercentage: str(json['penalty_percentage']),
     );
   }
 }

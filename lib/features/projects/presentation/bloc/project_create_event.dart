@@ -19,3 +19,13 @@ class ProjectCreateSubmitted extends ProjectCreateEvent {
   @override
   List<Object?> get props => [form];
 }
+
+class ProjectUpdated extends ProjectCreateEvent {
+  const ProjectUpdated(this.id, this.form);
+
+  final int id;
+  final ProjectForm form;
+
+  @override
+  List<Object?> get props => [id, form];
+}

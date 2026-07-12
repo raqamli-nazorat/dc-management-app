@@ -431,6 +431,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get projectCreateEmployeesHint => 'Select employee';
 
   @override
+  String get projectUpdateSuccess => 'Project updated';
+
+  @override
+  String get projectDetailsTitle => 'Project details';
+
+  @override
+  String get projectEditTitle => 'Edit project';
+
+  @override
+  String get projectMenuEdit => 'Edit';
+
+  @override
+  String get projectMenuDetails => 'Details';
+
+  @override
+  String get projectMenuDelete => 'Delete';
+
+  @override
+  String get projectDeleteTitle => 'Delete project';
+
+  @override
+  String get projectDeleteSubtitle =>
+      'Do you really want to delete the project? You can restore the deleted project from the trash.';
+
+  @override
+  String get projectDeleteCancel => 'Cancel';
+
+  @override
   String get projectCreateTesters => 'Testers';
 
   @override

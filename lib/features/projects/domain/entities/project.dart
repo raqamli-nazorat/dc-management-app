@@ -75,6 +75,8 @@ class Project extends Equatable {
     required this.createdAt,
     required this.updatedAt,
     required this.completionPercentage,
+    this.projectPrice = '',
+    this.penaltyPercentage = '',
   });
 
   final int id;
@@ -92,6 +94,8 @@ class Project extends Equatable {
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final String completionPercentage;
+  final String projectPrice;
+  final String penaltyPercentage;
 
   @override
   List<Object?> get props => [
@@ -110,5 +114,7 @@ class Project extends Equatable {
     createdAt,
     updatedAt,
     completionPercentage,
+    projectPrice,
+    penaltyPercentage,
   ];
 }
