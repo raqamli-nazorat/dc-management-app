@@ -431,6 +431,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get projectCreateEmployeesHint => 'Select employee';
 
   @override
+  String get projectUpdateSuccess => 'Project updated';
+
+  @override
+  String get projectDetailsTitle => 'Project details';
+
+  @override
+  String get projectEditTitle => 'Edit project';
+
+  @override
   String get projectMenuEdit => 'Edit';
 
   @override

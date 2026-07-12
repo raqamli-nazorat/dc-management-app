@@ -23,21 +23,44 @@ import '../bloc/project_create_bloc.dart';
 enum _Field { none, status, manager }
 
 class AddProjectPage extends StatelessWidget {
-  const AddProjectPage({super.key});
+  const AddProjectPage({
+    super.key,
+    this.project,
+    this.readOnly = false,
+    this.screenTitle,
+  });
+
+  final Project? project;
+  final bool readOnly;
+  final String? screenTitle;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ProjectCreateBloc>(
-      create: (_) =>
-          getIt<ProjectCreateBloc>()
-            ..add(const ProjectCreateOptionsRequested()),
-      child: const _AddProjectView(),
+      create: (_) {
+        final bloc = getIt<ProjectCreateBloc>();
+        if (!readOnly) bloc.add(const ProjectCreateOptionsRequested());
+        return bloc;
+      },
+      child: _AddProjectView(
+        project: project,
+        readOnly: readOnly,
+        screenTitle: screenTitle,
+      ),
     );
   }
 }
 
 class _AddProjectView extends StatefulWidget {
-  const _AddProjectView();
+  const _AddProjectView({
+    required this.project,
+    required this.readOnly,
+    required this.screenTitle,
+  });
+
+  final Project? project;
+  final bool readOnly;
+  final String? screenTitle;
 
   @override
   State<_AddProjectView> createState() => _AddProjectViewState();
@@ -62,6 +85,8 @@ class _AddProjectViewState extends State<_AddProjectView> {
   final Set<int> _employeeIds = {};
   final Set<int> _testerIds = {};
 
+  Project? get _project => widget.project;
+
   static const _statuses = [
     ProjectStatus.planning,
     ProjectStatus.active,
@@ -69,6 +94,45 @@ class _AddProjectViewState extends State<_AddProjectView> {
     ProjectStatus.completed,
     ProjectStatus.cancelled,
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    final project = widget.project;
+    if (project == null) return;
+
+    _nameCtrl.text = project.title;
+    _descCtrl.text = project.description;
+    _prefixCtrl.text = project.prefix;
+    _priceCtrl.text = project.projectPrice;
+    _penaltyCtrl.text = project.penaltyPercentage;
+    _status = project.status == ProjectStatus.unknown ? null : project.status;
+    _manager = project.manager == null
+        ? null
+        : UserShort(
+            id: project.manager!.id,
+            username: project.manager!.username,
+            position: project.manager!.position,
+            avatar: '',
+          );
+    _employeeIds.addAll(project.employees.map((user) => user.id));
+    _testerIds.addAll(project.testers.map((user) => user.id));
+    _deadlineDate = project.deadline;
+    _deadlineTime = project.deadline == null
+        ? null
+        : TimeOfDay.fromDateTime(project.deadline!);
+    _active = !project.isHidden;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_project == null && _prefixCtrl.text.isEmpty) {
+      final l10n = AppLocalizations.of(context);
+      _prefixCtrl.text = l10n.projectCreateDefaultPrefix;
+      _penaltyCtrl.text = l10n.projectCreateDefaultPenalty;
+    }
+  }
 
   @override
   void dispose() {
@@ -81,6 +145,7 @@ class _AddProjectViewState extends State<_AddProjectView> {
   }
 
   void _toggle(_Field field) {
+    if (widget.readOnly) return;
     FocusScope.of(context).unfocus();
     setState(() => _open = _open == field ? _Field.none : field);
     _open == _Field.none ? _portalCtrl.hide() : _portalCtrl.show();
@@ -100,6 +165,7 @@ class _AddProjectViewState extends State<_AddProjectView> {
   }
 
   Future<void> _pickDate() async {
+    if (widget.readOnly) return;
     final now = DateTime.now();
     final picked = await showAppDatePicker(
       context,
@@ -116,6 +182,7 @@ class _AddProjectViewState extends State<_AddProjectView> {
   }
 
   Future<void> _pickTime() async {
+    if (widget.readOnly) return;
     final picked = await showTimePicker(
       context: context,
       initialTime: _deadlineTime ?? const TimeOfDay(hour: 23, minute: 59),
@@ -129,6 +196,7 @@ class _AddProjectViewState extends State<_AddProjectView> {
     required List<UserShort> users,
     required Set<int> selected,
   }) async {
+    if (widget.readOnly) return;
     _close();
     final result = await context.pushNamed<Object?>(
       Routes.taskMultiSelect.name,
@@ -177,22 +245,23 @@ class _AddProjectViewState extends State<_AddProjectView> {
 
     final price = _decimalText(_priceCtrl.text);
     final penalty = _decimalText(_penaltyCtrl.text);
+    final form = ProjectForm(
+      prefix: _prefixCtrl.text.trim(),
+      title: _nameCtrl.text.trim(),
+      description: _emptyToNull(_descCtrl.text),
+      manager: _manager!.id,
+      testers: _testerIds.toList(),
+      employees: _employeeIds.toList(),
+      deadline: deadline,
+      projectPrice: price.isEmpty ? null : price,
+      penaltyPercentage: penalty.isEmpty ? null : penalty,
+      status: _status,
+      isHidden: !_active,
+    );
     context.read<ProjectCreateBloc>().add(
-      ProjectCreateSubmitted(
-        ProjectForm(
-          prefix: _prefixCtrl.text.trim(),
-          title: _nameCtrl.text.trim(),
-          description: _emptyToNull(_descCtrl.text),
-          manager: _manager!.id,
-          testers: _testerIds.toList(),
-          employees: _employeeIds.toList(),
-          deadline: deadline,
-          projectPrice: price.isEmpty ? null : price,
-          penaltyPercentage: penalty.isEmpty ? null : penalty,
-          status: _status,
-          isHidden: !_active,
-        ),
-      ),
+      _project == null
+          ? ProjectCreateSubmitted(form)
+          : ProjectUpdated(_project!.id, form),
     );
   }
 
@@ -207,7 +276,12 @@ class _AddProjectViewState extends State<_AddProjectView> {
       listener: (context, state) {
         switch (state.submitStatus) {
           case ProjectCreateSubmitStatus.success:
-            AppToast.showSuccess(context, title: l10n.projectCreateSuccess);
+            AppToast.showSuccess(
+              context,
+              title: _project == null
+                  ? l10n.projectCreateSuccess
+                  : l10n.projectUpdateSuccess,
+            );
             Navigator.of(context).maybePop(true);
           case ProjectCreateSubmitStatus.failure:
             AppToast.showError(
@@ -228,7 +302,13 @@ class _AddProjectViewState extends State<_AddProjectView> {
             overlayChildBuilder: _buildOverlay,
             child: Column(
               children: [
-                _Header(title: l10n.projectAdd),
+                _Header(
+                  title:
+                      widget.screenTitle ??
+                      (_project == null
+                          ? l10n.projectAdd
+                          : l10n.projectEditTitle),
+                ),
                 Expanded(
                   child: BlocBuilder<ProjectCreateBloc, ProjectCreateState>(
                     builder: (context, state) => SingleChildScrollView(
@@ -241,6 +321,7 @@ class _AddProjectViewState extends State<_AddProjectView> {
                             label: l10n.taskCreateFieldName,
                             hint: l10n.taskCreateNameHint,
                             controller: _nameCtrl,
+                            readOnly: widget.readOnly,
                           ),
                           AppFilterFieldBox(
                             label: l10n.taskFilterStatus,
@@ -249,26 +330,38 @@ class _AddProjectViewState extends State<_AddProjectView> {
                                 : _statusLabel(_status!, l10n),
                             placeholder: l10n.taskFilterStatusHint,
                             link: _statusLink,
-                            onTap: () => _toggle(_Field.status),
-                            onClear: () => setState(() => _status = null),
+                            onTap: widget.readOnly
+                                ? _noop
+                                : () => _toggle(_Field.status),
+                            onClear: widget.readOnly
+                                ? _noop
+                                : () => setState(() => _status = null),
+                            showClear: !widget.readOnly,
                           ),
                           _TextAreaField(
                             label: l10n.taskCreateFieldDescription,
                             hint: l10n.taskCreateDescriptionHint,
                             controller: _descCtrl,
+                            readOnly: widget.readOnly,
                           ),
                           AppFilterFieldBox(
                             label: l10n.projectFilterManager,
                             value: _manager?.username,
                             placeholder: l10n.projectFilterManagerHint,
                             link: _managerLink,
-                            onTap: () => _toggle(_Field.manager),
-                            onClear: () => setState(() => _manager = null),
+                            onTap: widget.readOnly
+                                ? _noop
+                                : () => _toggle(_Field.manager),
+                            onClear: widget.readOnly
+                                ? _noop
+                                : () => setState(() => _manager = null),
+                            showClear: !widget.readOnly,
                           ),
                           _InputField(
                             label: l10n.projectCreateManagerBonus,
                             hint: l10n.projectCreateManagerBonusHint,
                             controller: _priceCtrl,
+                            readOnly: widget.readOnly,
                             keyboardType: TextInputType.number,
                             inputFormatters: [_DecimalInputFormatter()],
                           ),
@@ -279,6 +372,7 @@ class _AddProjectViewState extends State<_AddProjectView> {
                                   label: l10n.projectFilterTitleField,
                                   hint: l10n.projectCreatePrefixHint,
                                   controller: _prefixCtrl,
+                                  readOnly: widget.readOnly,
                                 ),
                               ),
                               SizedBox(width: 20.w),
@@ -287,6 +381,7 @@ class _AddProjectViewState extends State<_AddProjectView> {
                                   label: l10n.taskCreateFieldPenalty,
                                   hint: l10n.taskCreatePenaltyHint,
                                   controller: _penaltyCtrl,
+                                  readOnly: widget.readOnly,
                                   keyboardType: TextInputType.number,
                                   inputFormatters: [_MaxPercentFormatter()],
                                   suffix: '%',
@@ -297,8 +392,13 @@ class _AddProjectViewState extends State<_AddProjectView> {
                           _UserMultiField(
                             label: l10n.projectCreateEmployees,
                             placeholder: l10n.projectCreateEmployeesHint,
-                            selected: _selectedUsers(state.users, _employeeIds),
+                            selected: widget.readOnly
+                                ? _participantUsers(
+                                    _project?.employees ?? const [],
+                                  )
+                                : _selectedUsers(state.users, _employeeIds),
                             loading: state.optionsLoading,
+                            readOnly: widget.readOnly,
                             onPick: () => _openUsers(
                               title: l10n.projectCreateEmployees,
                               users: state.users,
@@ -310,8 +410,13 @@ class _AddProjectViewState extends State<_AddProjectView> {
                           _UserMultiField(
                             label: l10n.projectCreateTesters,
                             placeholder: l10n.projectCreateTestersHint,
-                            selected: _selectedUsers(state.users, _testerIds),
+                            selected: widget.readOnly
+                                ? _participantUsers(
+                                    _project?.testers ?? const [],
+                                  )
+                                : _selectedUsers(state.users, _testerIds),
                             loading: state.optionsLoading,
+                            readOnly: widget.readOnly,
                             onPick: () => _openUsers(
                               title: l10n.projectCreateTesters,
                               users: state.users,
@@ -327,7 +432,7 @@ class _AddProjectViewState extends State<_AddProjectView> {
                                   value: _fmtDate(_deadlineDate),
                                   placeholder: l10n.taskFilterDateHint,
                                   icon: Assets.icons.icCalendar,
-                                  onTap: _pickDate,
+                                  onTap: widget.readOnly ? _noop : _pickDate,
                                 ),
                               ),
                               SizedBox(width: 16.w),
@@ -336,7 +441,7 @@ class _AddProjectViewState extends State<_AddProjectView> {
                                   value: _fmtTime(_deadlineTime),
                                   placeholder: '00:00',
                                   icon: Assets.icons.icTuilconTime,
-                                  onTap: _pickTime,
+                                  onTap: widget.readOnly ? _noop : _pickTime,
                                 ),
                               ),
                             ],
@@ -350,18 +455,20 @@ class _AddProjectViewState extends State<_AddProjectView> {
                     ),
                   ),
                 ),
-                BlocBuilder<ProjectCreateBloc, ProjectCreateState>(
-                  buildWhen: (previous, current) =>
-                      previous.submitStatus != current.submitStatus,
-                  builder: (context, state) => _SubmitBar(
-                    active: _active,
-                    loading:
-                        state.submitStatus ==
-                        ProjectCreateSubmitStatus.submitting,
-                    onActiveChanged: (value) => setState(() => _active = value),
-                    onSubmit: _submit,
+                if (!widget.readOnly)
+                  BlocBuilder<ProjectCreateBloc, ProjectCreateState>(
+                    buildWhen: (previous, current) =>
+                        previous.submitStatus != current.submitStatus,
+                    builder: (context, state) => _SubmitBar(
+                      active: _active,
+                      loading:
+                          state.submitStatus ==
+                          ProjectCreateSubmitStatus.submitting,
+                      onActiveChanged: (value) =>
+                          setState(() => _active = value),
+                      onSubmit: _submit,
+                    ),
                   ),
-                ),
               ],
             ),
           ),
@@ -373,6 +480,16 @@ class _AddProjectViewState extends State<_AddProjectView> {
   List<UserShort> _selectedUsers(List<UserShort> users, Set<int> ids) => [
     for (final user in users)
       if (ids.contains(user.id)) user,
+  ];
+
+  List<UserShort> _participantUsers(List<ProjectParticipant> users) => [
+    for (final user in users)
+      UserShort(
+        id: user.id,
+        username: user.username,
+        position: user.position,
+        avatar: '',
+      ),
   ];
 
   Widget _buildOverlay(BuildContext context) {
@@ -540,6 +657,7 @@ class _InputField extends StatelessWidget {
     this.keyboardType,
     this.inputFormatters,
     this.suffix,
+    this.readOnly = false,
   });
 
   final String label;
@@ -548,6 +666,7 @@ class _InputField extends StatelessWidget {
   final TextInputType? keyboardType;
   final List<TextInputFormatter>? inputFormatters;
   final String? suffix;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -577,6 +696,7 @@ class _InputField extends StatelessWidget {
                       controller: controller,
                       keyboardType: keyboardType,
                       inputFormatters: inputFormatters,
+                      readOnly: readOnly,
                       style: style,
                       cursorColor: colors.accentSub,
                       decoration: InputDecoration.collapsed(
@@ -604,11 +724,13 @@ class _TextAreaField extends StatelessWidget {
     required this.label,
     required this.hint,
     required this.controller,
+    this.readOnly = false,
   });
 
   final String label;
   final String hint;
   final TextEditingController controller;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -633,6 +755,7 @@ class _TextAreaField extends StatelessWidget {
               height: 60.h,
               child: TextField(
                 controller: controller,
+                readOnly: readOnly,
                 maxLines: null,
                 expands: true,
                 textAlignVertical: TextAlignVertical.top,
@@ -660,6 +783,7 @@ class _UserMultiField extends StatelessWidget {
     required this.loading,
     required this.onPick,
     required this.onRemove,
+    this.readOnly = false,
   });
 
   final String label;
@@ -668,6 +792,7 @@ class _UserMultiField extends StatelessWidget {
   final bool loading;
   final VoidCallback onPick;
   final ValueChanged<int> onRemove;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -679,7 +804,7 @@ class _UserMultiField extends StatelessWidget {
       children: [
         AppFilterFieldLabel(label),
         InkWell(
-          onTap: loading ? null : onPick,
+          onTap: readOnly || loading ? null : onPick,
           borderRadius: BorderRadius.circular(12.r),
           child: DecoratedBox(
             decoration: appFilterFieldDecoration(colors),
@@ -740,6 +865,7 @@ class _UserMultiField extends StatelessWidget {
                                 _UserChip(
                                   user: user,
                                   maxWidth: maxChipWidth,
+                                  showRemove: !readOnly,
                                   onRemove: () => onRemove(user.id),
                                 ),
                             ],
@@ -759,11 +885,13 @@ class _UserChip extends StatelessWidget {
   const _UserChip({
     required this.user,
     required this.maxWidth,
+    required this.showRemove,
     required this.onRemove,
   });
 
   final UserShort user;
   final double maxWidth;
+  final bool showRemove;
   final VoidCallback onRemove;
 
   @override
@@ -798,19 +926,21 @@ class _UserChip extends StatelessWidget {
                     .c(colors.iconSub)
                     .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
               ),
-              SizedBox(width: 4.w),
-              InkWell(
-                onTap: onRemove,
-                borderRadius: BorderRadius.circular(8.r),
-                child: Assets.icons.icClose.svg(
-                  width: 16.w,
-                  height: 16.w,
-                  colorFilter: ColorFilter.mode(
-                    colors.iconSub,
-                    BlendMode.srcIn,
+              if (showRemove) ...[
+                SizedBox(width: 4.w),
+                InkWell(
+                  onTap: onRemove,
+                  borderRadius: BorderRadius.circular(8.r),
+                  child: Assets.icons.icClose.svg(
+                    width: 16.w,
+                    height: 16.w,
+                    colorFilter: ColorFilter.mode(
+                      colors.iconSub,
+                      BlendMode.srcIn,
+                    ),
                   ),
                 ),
-              ),
+              ],
             ],
           ),
         ),
@@ -1086,3 +1216,5 @@ String? _emptyToNull(String text) {
   final value = text.trim();
   return value.isEmpty ? null : value;
 }
+
+void _noop() {}

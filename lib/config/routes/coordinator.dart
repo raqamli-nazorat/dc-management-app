@@ -19,6 +19,8 @@ import '../../features/meetings/presentation/pages/meetings_page.dart';
 import '../../features/notification/presentation/pages/notification_page.dart';
 import '../../features/projects/domain/entities/project_filter.dart';
 import '../../features/projects/presentation/pages/add_project_page.dart';
+import '../../features/projects/presentation/pages/edit_project_page.dart';
+import '../../features/projects/presentation/pages/project_details_page.dart';
 import '../../features/projects/presentation/pages/project_filter_page.dart';
 import '../../features/projects/presentation/pages/projects_list_page.dart';
 import '../../features/tasks/domain/entities/task_filter.dart';
@@ -115,6 +117,20 @@ class AppRouter {
           name: Routes.projectCreate.name,
           path: Routes.projectCreate.path,
           builder: (context, state) => const AddProjectPage(),
+        ),
+        GoRoute(
+          name: Routes.projectDetails.name,
+          path: Routes.projectDetails.path,
+          builder: (context, state) => ProjectDetailsPage(
+            projectId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
+          ),
+        ),
+        GoRoute(
+          name: Routes.projectEdit.name,
+          path: Routes.projectEdit.path,
+          builder: (context, state) => EditProjectPage(
+            projectId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
+          ),
         ),
         GoRoute(
           name: Routes.projectFilter.name,
@@ -216,6 +232,14 @@ class AppRouter {
     if (location == Routes.projectCreate.path &&
         !NavPermissions.canCreateProject(session.roleType)) {
       return Routes.projectsList.path;
+    }
+
+    if (location.endsWith('/edit') &&
+        !NavPermissions.canManageProject(session.roleType)) {
+      final id = state.pathParameters['id'];
+      return id == null
+          ? Routes.projectsList.path
+          : Routes.projectDetails.path.replaceFirst(':id', id);
     }
 
     // Fully authenticated: keep away from gates.

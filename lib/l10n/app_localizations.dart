@@ -914,6 +914,24 @@ abstract class AppLocalizations {
   /// **'Xodim tanlang'**
   String get projectCreateEmployeesHint;
 
+  /// No description provided for @projectUpdateSuccess.
+  ///
+  /// In uz, this message translates to:
+  /// **'Loyiha yangilandi'**
+  String get projectUpdateSuccess;
+
+  /// No description provided for @projectDetailsTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Loyiha tafsilotlari'**
+  String get projectDetailsTitle;
+
+  /// No description provided for @projectEditTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Loyihani tahrirlash'**
+  String get projectEditTitle;
+
   /// No description provided for @projectMenuEdit.
   ///
   /// In uz, this message translates to:

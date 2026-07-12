@@ -17,17 +17,21 @@ class ProjectCreateBloc extends Bloc<ProjectCreateEvent, ProjectCreateState> {
     required GetManagersUseCase getManagers,
     required GetUsersUseCase getUsers,
     required CreateProjectUseCase createProject,
+    required UpdateProjectUseCase updateProject,
   }) : _getManagers = getManagers,
        _getUsers = getUsers,
        _createProject = createProject,
+       _updateProject = updateProject,
        super(const ProjectCreateState()) {
     on<ProjectCreateOptionsRequested>(_onRequested);
     on<ProjectCreateSubmitted>(_onSubmitted);
+    on<ProjectUpdated>(_onUpdated);
   }
 
   final GetManagersUseCase _getManagers;
   final GetUsersUseCase _getUsers;
   final CreateProjectUseCase _createProject;
+  final UpdateProjectUseCase _updateProject;
 
   Future<void> _onRequested(
     ProjectCreateOptionsRequested event,
@@ -55,6 +59,29 @@ class ProjectCreateBloc extends Bloc<ProjectCreateEvent, ProjectCreateState> {
     emit(state.copyWith(submitStatus: ProjectCreateSubmitStatus.submitting));
     try {
       final project = await _createProject(event.form);
+      emit(
+        state.copyWith(
+          submitStatus: ProjectCreateSubmitStatus.success,
+          project: project,
+        ),
+      );
+    } on Failure catch (failure) {
+      emit(
+        state.copyWith(
+          submitStatus: ProjectCreateSubmitStatus.failure,
+          submitFailure: failure,
+        ),
+      );
+    }
+  }
+
+  Future<void> _onUpdated(
+    ProjectUpdated event,
+    Emitter<ProjectCreateState> emit,
+  ) async {
+    emit(state.copyWith(submitStatus: ProjectCreateSubmitStatus.submitting));
+    try {
+      final project = await _updateProject((id: event.id, form: event.form));
       emit(
         state.copyWith(
           submitStatus: ProjectCreateSubmitStatus.success,

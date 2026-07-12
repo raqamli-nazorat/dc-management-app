@@ -137,6 +137,14 @@ class _ProjectsListViewState extends State<_ProjectsListView> {
                             return ProjectCard(
                               project: project,
                               role: role,
+                              onDetails: () => context.pushNamed(
+                                Routes.projectDetails.name,
+                                pathParameters: {'id': '${project.id}'},
+                              ),
+                              onEdit: () => context.pushNamed(
+                                Routes.projectEdit.name,
+                                pathParameters: {'id': '${project.id}'},
+                              ),
                               onDelete: () => context.read<ProjectsBloc>().add(
                                 ProjectDeleted(project.id),
                               ),

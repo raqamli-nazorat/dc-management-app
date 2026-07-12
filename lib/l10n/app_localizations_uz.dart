@@ -432,6 +432,15 @@ class AppLocalizationsUz extends AppLocalizations {
   String get projectCreateEmployeesHint => 'Xodim tanlang';
 
   @override
+  String get projectUpdateSuccess => 'Loyiha yangilandi';
+
+  @override
+  String get projectDetailsTitle => 'Loyiha tafsilotlari';
+
+  @override
+  String get projectEditTitle => 'Loyihani tahrirlash';
+
+  @override
   String get projectMenuEdit => 'Tahrirlash';
 
   @override
