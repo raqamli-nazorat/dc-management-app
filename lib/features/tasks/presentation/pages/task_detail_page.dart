@@ -4,16 +4,22 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../config/theme/app_colors.dart';
 import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
 import '../../../../core/widgets/app_toast.dart';
+import '../../../../core/widgets/app_file_actions.dart';
+import '../../../../core/widgets/swipe_action_button.dart';
+import '../../../../core/widgets/tui_avatar.dart';
 import '../../../../injection_container.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../../config/routes/entity/routes.dart';
 import '../../domain/entities/task.dart';
 import '../../domain/entities/task_detail.dart';
 import '../../domain/usecases/change_task_status_usecase.dart';
+import '../../domain/task_status_policy.dart';
 import '../bloc/task_create_bloc.dart';
 
 /// Vazifa tafsilotlari — "Batafsil" (Figma: o'qish rejimidagi forma
@@ -43,45 +49,52 @@ class _TaskDetailView extends StatelessWidget {
   /// ponytail: taxmin — done/production tekshiruvchi ko'radi
   /// (Tekshirildi/Rad etildi), qolgan ochiq holatlar "Bajarilganga
   /// o'tkazish", checked yakuniy. Rollar aniqlashsa shu yerda toraytiriladi.
-  List<_TaskAction> _actions(TaskStatus status) => switch (status) {
-    TaskStatus.done ||
-    TaskStatus.production => const [_TaskAction.checked, _TaskAction.rejected],
-    TaskStatus.todo ||
-    TaskStatus.inProgress ||
-    TaskStatus.overdue ||
-    TaskStatus.rejected => const [_TaskAction.markDone],
-    _ => const [],
-  };
+  List<TaskStatusAction> _actions(
+    TaskDetail detail,
+    TaskStatusPermissionContext? permissionContext,
+  ) => TaskStatusPolicy.actions(
+    status: detail.status,
+    assigneeId: detail.assigneeId,
+    context: permissionContext,
+  );
 
-  Future<void> _onAction(BuildContext context, _TaskAction action) async {
+  Future<void> _onAction(BuildContext context, TaskStatusAction action) async {
     final bloc = context.read<TaskCreateBloc>();
-    switch (action) {
-      case _TaskAction.checked:
+    if (action == TaskStatusAction.rejected) {
+      final result = await showTaskRejectSheet(context);
+      if (result != null) {
         bloc.add(
           TaskCreateStatusSubmitted(
-            ChangeTaskStatusParams(id: taskId, status: TaskStatus.checked),
-          ),
-        );
-      case _TaskAction.markDone:
-        bloc.add(
-          TaskCreateStatusSubmitted(
-            ChangeTaskStatusParams(id: taskId, status: TaskStatus.done),
-          ),
-        );
-      case _TaskAction.rejected:
-        final result = await showTaskRejectSheet(context);
-        if (result != null) {
-          bloc.add(
-            TaskCreateStatusSubmitted(
-              ChangeTaskStatusParams(
-                id: taskId,
-                status: TaskStatus.rejected,
-                reason: result.reason,
-                photoPaths: result.photoPaths,
-              ),
+            ChangeTaskStatusParams(
+              id: taskId,
+              status: TaskStatus.rejected,
+              reason: result.reason,
+              photoPaths: result.photoPaths,
             ),
-          );
-        }
+          ),
+        );
+      }
+      return;
+    }
+
+    bloc.add(
+      TaskCreateStatusSubmitted(
+        ChangeTaskStatusParams(
+          id: taskId,
+          status: TaskStatusPolicy.target(action),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _editOverdueTask(BuildContext context) async {
+    final updated = await context.pushNamed<bool>(
+      Routes.taskEdit.name,
+      pathParameters: {'id': '$taskId'},
+      extra: true,
+    );
+    if (updated == true && context.mounted) {
+      context.read<TaskCreateBloc>().add(TaskCreateDetailRequested(taskId));
     }
   }
 
@@ -120,6 +133,7 @@ class _TaskDetailView extends StatelessWidget {
                       p.detail != c.detail ||
                       p.detailLoading != c.detailLoading ||
                       p.attachments != c.attachments ||
+                      p.permissionContext != c.permissionContext ||
                       p.submitStatus != c.submitStatus,
                   builder: (context, state) {
                     final detail = state.detail;
@@ -135,6 +149,11 @@ class _TaskDetailView extends StatelessWidget {
                     }
                     final submitting =
                         state.submitStatus == TaskSubmitStatus.submitting;
+                    final actions = _actions(detail, state.permissionContext);
+                    final canEditOverdue =
+                        detail.status == TaskStatus.overdue &&
+                        state.permissionContext?.activeRole.toLowerCase() ==
+                            'admin';
                     return Column(
                       children: [
                         Expanded(
@@ -150,13 +169,19 @@ class _TaskDetailView extends StatelessWidget {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                for (final action in _actions(detail.status))
+                                if (canEditOverdue)
+                                  _DeadlineEditButton(
+                                    loading: submitting,
+                                    onTap: () => _editOverdueTask(context),
+                                  ),
+                                for (final action in actions)
                                   Padding(
                                     padding: EdgeInsets.only(top: 8.h),
-                                    child: _ActionButton(
+                                    child: _TaskSwipeAction(
                                       action: action,
-                                      loading: submitting,
-                                      onTap: () => _onAction(context, action),
+                                      enabled: !submitting,
+                                      onCompleted: () =>
+                                          _onAction(context, action),
                                     ),
                                   ),
                               ],
@@ -216,10 +241,7 @@ class _DetailBody extends StatelessWidget {
               label: l10n.taskCreateFieldType,
               value: _typeLabel(detail.type!, l10n),
             ),
-          _ReadOnlyField(
-            label: l10n.taskDetailCreatedBy,
-            value: detail.createdByName,
-          ),
+          _AssigneeField(detail: detail),
           if (detail.taskPrice.isNotEmpty)
             _ReadOnlyField(
               label: l10n.taskCreateFieldPrice,
@@ -356,6 +378,71 @@ class _ReadOnlyField extends StatelessWidget {
   }
 }
 
+class _AssigneeField extends StatelessWidget {
+  const _AssigneeField({required this.detail});
+
+  final TaskDetail detail;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final l10n = AppLocalizations.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(bottom: 4.h),
+          child: l10n.taskCreateFieldAssigner.s(11.sp).w(700).c(colors.textSub),
+        ),
+        DecoratedBox(
+          decoration: BoxDecoration(
+            color: colors.backgroundBase,
+            borderRadius: BorderRadius.circular(12.r),
+            border: Border.all(color: colors.strokeSub, width: 1.w),
+          ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+            child: Row(
+              children: [
+                TuiAvatar(
+                  initial: detail.assigneeName,
+                  avatarUrl: detail.assigneeAvatar,
+                  size: 32,
+                ),
+                SizedBox(width: 8.w),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      (detail.assigneeName.isEmpty ? '—' : detail.assigneeName)
+                          .s(13.sp)
+                          .w(700)
+                          .c(colors.textStrong)
+                          .copyWith(
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                      if (detail.assigneePosition.isNotEmpty)
+                        detail.assigneePosition
+                            .s(11.sp)
+                            .w(500)
+                            .c(colors.textSub)
+                            .copyWith(
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 /// Biriktirilgan fayl qatori: hujjat ikonkasi + fayl nomi.
 class _AttachmentRow extends StatelessWidget {
   const _AttachmentRow({required this.file});
@@ -395,6 +482,12 @@ class _AttachmentRow extends StatelessWidget {
               .w(700)
               .c(colors.textStrong)
               .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+        ),
+        AppFileActions(
+          url: file.fileUrl,
+          openLabel: AppLocalizations.of(context).commonOpenFile,
+          downloadLabel: AppLocalizations.of(context).commonDownloadFile,
+          errorTitle: AppLocalizations.of(context).commonError,
         ),
       ],
     );
@@ -463,11 +556,87 @@ class _RejectionBox extends StatelessWidget {
 
 // ── Holat tugmalari ──────────────────────────────────────────────────────
 
+class _TaskSwipeAction extends StatelessWidget {
+  const _TaskSwipeAction({
+    required this.action,
+    required this.enabled,
+    required this.onCompleted,
+  });
+
+  final TaskStatusAction action;
+  final bool enabled;
+  final VoidCallback onCompleted;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final l10n = AppLocalizations.of(context);
+    final (label, handleColor) = switch (action) {
+      TaskStatusAction.inProgress => (
+        l10n.taskActionInProgress,
+        colors.taskStatusInProgress,
+      ),
+      TaskStatusAction.done => (l10n.taskActionMarkDone, colors.taskStatusDone),
+      TaskStatusAction.production => (
+        l10n.taskActionProduction,
+        colors.taskStatusProduction,
+      ),
+      TaskStatusAction.checked => (
+        l10n.taskActionChecked,
+        colors.taskStatusChecked,
+      ),
+      TaskStatusAction.rejected => (
+        l10n.taskActionRejected,
+        colors.taskStatusRejected,
+      ),
+    };
+
+    return SwipeActionButton(
+      label: label,
+      onCompleted: onCompleted,
+      enabled: enabled,
+      trackColor: colors.backgroundElevation1Alt,
+      handleColor: handleColor,
+      icon: CustomPaint(
+        size: Size(18.w, 14.w),
+        painter: _DoubleCaretPainter(color: colors.textWhite, pointLeft: false),
+      ),
+    );
+  }
+}
+
+class _DeadlineEditButton extends StatelessWidget {
+  const _DeadlineEditButton({required this.loading, required this.onTap});
+
+  final bool loading;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    return SizedBox(
+      width: double.infinity,
+      child: TextButton.icon(
+        onPressed: loading ? null : onTap,
+        icon: Assets.icons.icArrowRight.svg(
+          width: 16.w,
+          height: 16.w,
+          colorFilter: ColorFilter.mode(colors.iconAccent, BlendMode.srcIn),
+        ),
+        label: AppLocalizations.of(
+          context,
+        ).taskActionEditDeadline.s(15.sp).w(800).c(colors.textAccent),
+      ),
+    );
+  }
+}
+
 enum _TaskAction { checked, rejected, markDone }
 
 /// Holat tugmasi (Figma: kulrang pill + rangli dumaloq ikonka).
 /// ponytail: dizayndagi "slide" imo-ishorasi oddiy bosish bilan almashtirilgan
 /// — talab qat'iylashsa Dismissible/drag bilan boyitiladi.
+// ignore: unused_element
 class _ActionButton extends StatelessWidget {
   const _ActionButton({
     required this.action,

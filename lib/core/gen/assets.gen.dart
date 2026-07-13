@@ -95,6 +95,10 @@ class $AssetsIconsGen {
   SvgGenImage get icDocument =>
       const SvgGenImage('assets/icons/ic_document.svg');
 
+  /// File path: assets/icons/ic_download.svg
+  SvgGenImage get icDownload =>
+      const SvgGenImage('assets/icons/ic_download.svg');
+
   /// File path: assets/icons/ic_ellipse.svg
   SvgGenImage get icEllipse => const SvgGenImage('assets/icons/ic_ellipse.svg');
 
@@ -217,6 +221,7 @@ class $AssetsIconsGen {
     icDashboardSquare,
     icDatabese,
     icDocument,
+    icDownload,
     icEllipse,
     icEyeClose,
     icEyeOpen,

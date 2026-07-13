@@ -22,6 +22,7 @@ class TaskDetail extends Equatable {
     required this.assigneeId,
     required this.assigneeName,
     required this.assigneePosition,
+    required this.assigneeAvatar,
     required this.positionId,
     required this.positionName,
     required this.createdByName,
@@ -45,6 +46,7 @@ class TaskDetail extends Equatable {
   final int? assigneeId;
   final String assigneeName;
   final String assigneePosition;
+  final String assigneeAvatar;
   final int? positionId;
   final String positionName;
 
@@ -75,6 +77,7 @@ class TaskDetail extends Equatable {
     assigneeId,
     assigneeName,
     assigneePosition,
+    assigneeAvatar,
     positionId,
     positionName,
     createdByName,

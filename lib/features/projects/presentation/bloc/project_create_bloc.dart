@@ -6,6 +6,7 @@ import '../../../tasks/domain/entities/task_form_options.dart';
 import '../../../tasks/domain/usecases/get_managers_usecase.dart';
 import '../../../tasks/domain/usecases/get_users_usecase.dart';
 import '../../domain/entities/project.dart';
+import '../../domain/entities/project_document.dart';
 import '../../domain/entities/project_form.dart';
 import '../../domain/usecases/project_usecases.dart';
 
@@ -19,13 +20,18 @@ class ProjectCreateBloc extends Bloc<ProjectCreateEvent, ProjectCreateState> {
     required CreateProjectUseCase createProject,
     required UpdateProjectUseCase updateProject,
     required UploadProjectDocumentUseCase uploadDocument,
+    required GetProjectDocumentsUseCase getDocuments,
+    required DeleteProjectDocumentUseCase deleteDocument,
   }) : _getManagers = getManagers,
        _getUsers = getUsers,
        _createProject = createProject,
        _updateProject = updateProject,
        _uploadDocument = uploadDocument,
+       _getDocuments = getDocuments,
+       _deleteDocument = deleteDocument,
        super(const ProjectCreateState()) {
     on<ProjectCreateOptionsRequested>(_onRequested);
+    on<ProjectDocumentsRequested>(_onDocumentsRequested);
     on<ProjectCreateSubmitted>(_onSubmitted);
     on<ProjectUpdated>(_onUpdated);
   }
@@ -35,6 +41,8 @@ class ProjectCreateBloc extends Bloc<ProjectCreateEvent, ProjectCreateState> {
   final CreateProjectUseCase _createProject;
   final UpdateProjectUseCase _updateProject;
   final UploadProjectDocumentUseCase _uploadDocument;
+  final GetProjectDocumentsUseCase _getDocuments;
+  final DeleteProjectDocumentUseCase _deleteDocument;
 
   Future<void> _onRequested(
     ProjectCreateOptionsRequested event,
@@ -90,6 +98,19 @@ class ProjectCreateBloc extends Bloc<ProjectCreateEvent, ProjectCreateState> {
     }
   }
 
+  Future<void> _onDocumentsRequested(
+    ProjectDocumentsRequested event,
+    Emitter<ProjectCreateState> emit,
+  ) async {
+    emit(state.copyWith(documentsLoading: true));
+    try {
+      final page = await _getDocuments((page: 1, projectId: event.projectId));
+      emit(state.copyWith(documents: page.items, documentsLoading: false));
+    } on Failure catch (_) {
+      emit(state.copyWith(documentsLoading: false));
+    }
+  }
+
   Future<void> _onUpdated(
     ProjectUpdated event,
     Emitter<ProjectCreateState> emit,
@@ -97,10 +118,26 @@ class ProjectCreateBloc extends Bloc<ProjectCreateEvent, ProjectCreateState> {
     emit(state.copyWith(submitStatus: ProjectCreateSubmitStatus.submitting));
     try {
       final project = await _updateProject((id: event.id, form: event.form));
+      var documentsFailed = false;
+      for (final id in event.removedDocumentIds) {
+        try {
+          await _deleteDocument(id);
+        } on Failure catch (_) {
+          documentsFailed = true;
+        }
+      }
+      for (final path in event.filePaths) {
+        try {
+          await _uploadDocument((projectId: event.id, filePath: path));
+        } on Failure catch (_) {
+          documentsFailed = true;
+        }
+      }
       emit(
         state.copyWith(
           submitStatus: ProjectCreateSubmitStatus.success,
           project: project,
+          documentsFailed: documentsFailed,
         ),
       );
     } on Failure catch (failure) {

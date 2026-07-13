@@ -70,6 +70,12 @@ class AppLocalizationsUz extends AppLocalizations {
   String get commonRetry => 'Qayta urinish';
 
   @override
+  String get commonOpenFile => 'Faylni ochish';
+
+  @override
+  String get commonDownloadFile => 'Faylni yuklab olish';
+
+  @override
   String get navHome => 'Bosh sahifa';
 
   @override
@@ -300,6 +306,9 @@ class AppLocalizationsUz extends AppLocalizations {
   String get taskCreateRequiredError => 'Loyiha, nomi va muddat majburiy';
 
   @override
+  String get taskDeadlineChangeRequired => 'Muddatni o‘zgartiring';
+
+  @override
   String get taskCreateSuccess => 'Vazifa qo‘shildi';
 
   @override
@@ -327,7 +336,16 @@ class AppLocalizationsUz extends AppLocalizations {
   String get taskActionRejected => 'Rad etildi';
 
   @override
+  String get taskActionInProgress => 'Jarayonga o‘tkazish';
+
+  @override
   String get taskActionMarkDone => 'Bajarilganga o‘tkazish';
+
+  @override
+  String get taskActionProduction => 'Ishga tushurildi';
+
+  @override
+  String get taskActionEditDeadline => 'Muddatni o‘zgartirish';
 
   @override
   String get taskRejectTitle => 'Vazifani rad etish';
@@ -363,6 +381,10 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String get projectCreateDocsFailed =>
       'Loyiha yaratildi, lekin ba\'zi fayllar yuklanmadi';
+
+  @override
+  String get projectUpdateDocsFailed =>
+      'Loyiha saqlandi, lekin ba\'zi fayllar yuklanmadi';
 
   @override
   String get taskMenuDetails => 'Batafsil';

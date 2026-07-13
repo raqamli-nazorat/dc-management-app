@@ -21,6 +21,14 @@ class ProjectDocument extends Equatable {
   final String value;
   final DateTime? createdAt;
 
+  String get fileUrl => value;
+
+  String get fileName {
+    if (name.isNotEmpty) return name;
+    final segments = Uri.tryParse(fileUrl)?.pathSegments ?? const [];
+    return segments.isEmpty ? fileUrl : segments.last;
+  }
+
   @override
   List<Object?> get props => [id, project, name, value, createdAt];
 }

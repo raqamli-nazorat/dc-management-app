@@ -11,7 +11,12 @@ void main() {
       'description': 'Fix it',
       'priority': 'high',
       'type': 'extra',
-      'assignee_info': {'id': 3, 'username': 'Ali', 'position': 'Dev'},
+      'assignee_info': {
+        'id': 3,
+        'username': 'Ali',
+        'position': 'Dev',
+        'avatar': 'https://x/avatar.png',
+      },
       'position_info': {'id': 5, 'name': 'Backend'},
       'deadline': '2026-07-20T23:59:00',
       'task_price': '150000.00',
@@ -27,11 +32,17 @@ void main() {
     });
 
     expect(model.id, 7);
-    expect(model.projectId, isNull); // faqat nom bor — sahifa nom bo'yicha topadi
+    expect(
+      model.projectId,
+      isNull,
+    ); // faqat nom bor — sahifa nom bo'yicha topadi
     expect(model.projectInfo, 'CRM tizimi');
     expect(model.priority, TaskPriority.high);
     expect(model.type, TaskType.extra);
     expect(model.assigneeId, 3);
+    expect(model.assigneeName, 'Ali');
+    expect(model.assigneePosition, 'Dev');
+    expect(model.assigneeAvatar, 'https://x/avatar.png');
     expect(model.positionId, 5);
     expect(model.taskPrice, '150000.00');
     expect(model.sprint, 2);

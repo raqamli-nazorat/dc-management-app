@@ -8,6 +8,7 @@ import '../../../../config/theme/app_colors.dart';
 import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
 import '../../../../core/widgets/app_date_picker.dart';
+import '../../../../core/widgets/app_file_actions.dart';
 import '../../../../core/widgets/app_toast.dart';
 import '../../../../core/widgets/tui_avatar.dart';
 import '../../../../injection_container.dart';
@@ -27,9 +28,14 @@ enum _Field { none, project, priority, type, assigner, positions }
 /// [taskId] berilsa forma tahrirlash rejimida ochiladi: detal + fayllar
 /// yuklanib maydonlar oldindan to'ldiriladi, saqlash `PATCH` yuboradi.
 class TaskCreatePage extends StatelessWidget {
-  const TaskCreatePage({super.key, this.taskId});
+  const TaskCreatePage({
+    super.key,
+    this.taskId,
+    this.requireDeadlineChange = false,
+  });
 
   final int? taskId;
+  final bool requireDeadlineChange;
 
   @override
   Widget build(BuildContext context) {
@@ -40,15 +46,19 @@ class TaskCreatePage extends StatelessWidget {
         if (taskId != null) bloc.add(TaskCreateDetailRequested(taskId!));
         return bloc;
       },
-      child: _TaskCreateView(taskId: taskId),
+      child: _TaskCreateView(
+        taskId: taskId,
+        requireDeadlineChange: requireDeadlineChange,
+      ),
     );
   }
 }
 
 class _TaskCreateView extends StatefulWidget {
-  const _TaskCreateView({this.taskId});
+  const _TaskCreateView({this.taskId, this.requireDeadlineChange = false});
 
   final int? taskId;
+  final bool requireDeadlineChange;
 
   @override
   State<_TaskCreateView> createState() => _TaskCreateViewState();
@@ -78,6 +88,7 @@ class _TaskCreateViewState extends State<_TaskCreateView> {
   Position? _position;
   DateTime? _deadlineDate;
   TimeOfDay? _deadlineTime;
+  DateTime? _originalDeadline;
   TimeOfDay? _estimated;
   final List<PlatformFile> _files = [];
 
@@ -249,6 +260,7 @@ class _TaskCreateViewState extends State<_TaskCreateView> {
     _type = d.type;
     _projectFallbackTitle = d.projectInfo.isEmpty ? null : d.projectInfo;
     final deadline = d.deadline;
+    _originalDeadline = deadline;
     if (deadline != null) {
       _deadlineDate = deadline;
       _deadlineTime = TimeOfDay.fromDateTime(deadline);
@@ -310,6 +322,13 @@ class _TaskCreateViewState extends State<_TaskCreateView> {
       time.minute,
     );
 
+    if (widget.requireDeadlineChange &&
+        _originalDeadline != null &&
+        _sameMinute(deadline, _originalDeadline!)) {
+      AppToast.showError(context, title: l10n.taskDeadlineChangeRequired);
+      return;
+    }
+
     final price = _digits(_priceCtrl.text);
     final penalty = _digits(_penaltyCtrl.text);
     final estimated = _estimated == null
@@ -348,6 +367,13 @@ class _TaskCreateViewState extends State<_TaskCreateView> {
             ),
     );
   }
+
+  bool _sameMinute(DateTime left, DateTime right) =>
+      left.year == right.year &&
+      left.month == right.month &&
+      left.day == right.day &&
+      left.hour == right.hour &&
+      left.minute == right.minute;
 
   @override
   Widget build(BuildContext context) {
@@ -852,10 +878,7 @@ class _Header extends StatelessWidget {
             onTap: () => Navigator.of(context).maybePop(),
             borderRadius: BorderRadius.circular(12.r),
             child: Assets.icons.icClose.svg(
-              colorFilter: ColorFilter.mode(
-                colors.iconStrong,
-                BlendMode.srcIn,
-              ),
+              colorFilter: ColorFilter.mode(colors.iconStrong, BlendMode.srcIn),
             ),
           ),
         ],
@@ -1404,6 +1427,7 @@ class _FilesRow extends StatelessWidget {
               for (final a in existing)
                 _FileChip(
                   name: a.name,
+                  url: a.fileUrl,
                   onRemove: () => onRemoveExisting?.call(a),
                 ),
               for (final f in files)
@@ -1419,10 +1443,11 @@ class _FilesRow extends StatelessWidget {
 /// Fayl chipi (nom + olib tashlash) — yangi tanlangan ham, mavjud biriktirilgan
 /// ham shu ko'rinishda.
 class _FileChip extends StatelessWidget {
-  const _FileChip({required this.name, required this.onRemove});
+  const _FileChip({required this.name, required this.onRemove, this.url = ''});
 
   final String name;
   final VoidCallback onRemove;
+  final String url;
 
   @override
   Widget build(BuildContext context) {
@@ -1438,14 +1463,23 @@ class _FileChip extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: 160.w),
+              constraints: BoxConstraints(maxWidth: 132.w),
               child: name
                   .s(11.sp)
                   .w(700)
                   .c(colors.textStrong)
                   .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
             ),
-            SizedBox(width: 6.w),
+            if (url.isNotEmpty) ...[
+              SizedBox(width: 4.w),
+              AppFileActions(
+                url: url,
+                openLabel: AppLocalizations.of(context).commonOpenFile,
+                downloadLabel: AppLocalizations.of(context).commonDownloadFile,
+                errorTitle: AppLocalizations.of(context).commonError,
+              ),
+            ],
+            SizedBox(width: 2.w),
             InkWell(
               onTap: onRemove,
               borderRadius: BorderRadius.circular(8.r),

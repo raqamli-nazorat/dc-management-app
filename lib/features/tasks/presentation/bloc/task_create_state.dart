@@ -16,6 +16,7 @@ class TaskCreateState extends Equatable {
     this.detail,
     this.detailLoading = false,
     this.attachments = const [],
+    this.permissionContext,
   });
 
   final List<Position> positions;
@@ -37,6 +38,8 @@ class TaskCreateState extends Equatable {
   /// Vazifaga allaqachon biriktirilgan fayllar (edit rejimida).
   final List<TaskAttachmentInfo> attachments;
 
+  final TaskStatusPermissionContext? permissionContext;
+
   TaskCreateState copyWith({
     List<Position>? positions,
     List<ProjectShort>? projects,
@@ -47,6 +50,7 @@ class TaskCreateState extends Equatable {
     TaskDetail? detail,
     bool? detailLoading,
     List<TaskAttachmentInfo>? attachments,
+    TaskStatusPermissionContext? permissionContext,
   }) => TaskCreateState(
     positions: positions ?? this.positions,
     projects: projects ?? this.projects,
@@ -57,6 +61,7 @@ class TaskCreateState extends Equatable {
     detail: detail ?? this.detail,
     detailLoading: detailLoading ?? this.detailLoading,
     attachments: attachments ?? this.attachments,
+    permissionContext: permissionContext ?? this.permissionContext,
   );
 
   @override
@@ -70,5 +75,6 @@ class TaskCreateState extends Equatable {
     detail,
     detailLoading,
     attachments,
+    permissionContext,
   ];
 }
