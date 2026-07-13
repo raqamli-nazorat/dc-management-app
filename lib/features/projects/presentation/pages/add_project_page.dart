@@ -493,8 +493,14 @@ class _AddProjectViewState extends State<_AddProjectView> {
                             right: l10n.taskCreateFieldTime,
                           ),
                           // Yaratish/tahrirlash/detail uchun umumiy fayl oqimi.
-                          if (_project != null || !widget.readOnly)
+                          if (!widget.readOnly ||
+                              state.documentsLoading ||
+                              state.documents.isNotEmpty ||
+                              _files.isNotEmpty)
                             _FilesSection(
+                              label: widget.readOnly
+                                  ? l10n.projectExistingFilesLabel
+                                  : l10n.projectCreateFilesLabel,
                               files: _files,
                               existing: [
                                 for (final document in state.documents)
@@ -521,6 +527,9 @@ class _AddProjectViewState extends State<_AddProjectView> {
                     buildWhen: (previous, current) =>
                         previous.submitStatus != current.submitStatus,
                     builder: (context, state) => _SubmitBar(
+                      label: _project == null
+                          ? l10n.projectAdd
+                          : l10n.projectEditTitle,
                       active: _active,
                       loading:
                           state.submitStatus ==
@@ -1082,12 +1091,14 @@ class _DropdownLoader extends StatelessWidget {
 
 class _SubmitBar extends StatelessWidget {
   const _SubmitBar({
+    required this.label,
     required this.active,
     required this.loading,
     required this.onActiveChanged,
     required this.onSubmit,
   });
 
+  final String label;
   final bool active;
   final bool loading;
   final ValueChanged<bool> onActiveChanged;
@@ -1096,7 +1107,6 @@ class _SubmitBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
-    final l10n = AppLocalizations.of(context);
 
     return SafeArea(
       top: false,
@@ -1156,7 +1166,7 @@ class _SubmitBar extends StatelessWidget {
                                   ),
                                 ),
                                 SizedBox(width: 8.w),
-                                l10n.projectAdd
+                                label
                                     .s(15.sp)
                                     .w(800)
                                     .h(24 / 15)
@@ -1180,6 +1190,7 @@ class _SubmitBar extends StatelessWidget {
 /// Vazifa qo'shish sahifasidagi naqsh bilan bir xil.
 class _FilesSection extends StatelessWidget {
   const _FilesSection({
+    required this.label,
     required this.files,
     required this.existing,
     required this.loading,
@@ -1189,6 +1200,7 @@ class _FilesSection extends StatelessWidget {
     required this.onRemoveExisting,
   });
 
+  final String label;
   final List<PlatformFile> files;
   final List<ProjectDocument> existing;
   final bool loading;
@@ -1206,7 +1218,7 @@ class _FilesSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        l10n.projectCreateFilesLabel.s(15.sp).w(800).c(colors.textStrong),
+        label.s(15.sp).w(800).c(colors.textStrong),
         SizedBox(height: 8.h),
         if (!readOnly)
           Row(

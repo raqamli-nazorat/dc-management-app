@@ -812,6 +812,12 @@ abstract class AppLocalizations {
   /// **'Fayl qo‘shish'**
   String get projectCreateFilesLabel;
 
+  /// No description provided for @projectExistingFilesLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mavjud fayllar'**
+  String get projectExistingFilesLabel;
+
   /// No description provided for @projectCreateDocsFailed.
   ///
   /// In uz, this message translates to:

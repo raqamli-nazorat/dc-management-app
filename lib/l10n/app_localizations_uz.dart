@@ -379,6 +379,9 @@ class AppLocalizationsUz extends AppLocalizations {
   String get projectCreateFilesLabel => 'Fayl qo‘shish';
 
   @override
+  String get projectExistingFilesLabel => 'Mavjud fayllar';
+
+  @override
   String get projectCreateDocsFailed =>
       'Loyiha yaratildi, lekin ba\'zi fayllar yuklanmadi';
 

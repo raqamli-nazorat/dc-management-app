@@ -143,6 +143,7 @@
   "meetingDeleteTitle": "Delete meeting",
   "meetingDeleteSubtitle": "The meeting will be moved to the trash and can be restored later.",
   "projectCreateFilesLabel": "Add files",
+  "projectExistingFilesLabel": "Existing files",
   "projectCreateDocsFailed": "Project created, but some files failed to upload",
   "projectUpdateDocsFailed": "Project saved, but some files failed to upload",
 

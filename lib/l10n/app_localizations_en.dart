@@ -378,6 +378,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get projectCreateFilesLabel => 'Add files';
 
   @override
+  String get projectExistingFilesLabel => 'Existing files';
+
+  @override
   String get projectCreateDocsFailed =>
       'Project created, but some files failed to upload';
 

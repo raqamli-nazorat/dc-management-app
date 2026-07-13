@@ -146,6 +146,7 @@
   "meetingDeleteTitle": "Yig‘ilishni o‘chirish",
   "meetingDeleteSubtitle": "Yig‘ilish chiqindi qutisiga yuboriladi va keyinchalik tiklash mumkin.",
   "projectCreateFilesLabel": "Fayl qo‘shish",
+  "projectExistingFilesLabel": "Mavjud fayllar",
   "projectCreateDocsFailed": "Loyiha yaratildi, lekin ba'zi fayllar yuklanmadi",
   "projectUpdateDocsFailed": "Loyiha saqlandi, lekin ba'zi fayllar yuklanmadi",
 
