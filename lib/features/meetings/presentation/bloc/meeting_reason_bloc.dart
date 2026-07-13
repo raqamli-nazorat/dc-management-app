@@ -18,10 +18,10 @@ class MeetingReasonBloc extends Bloc<MeetingReasonEvent, MeetingReasonState> {
     required GetMeetingUseCase getMeeting,
     required GetMeetingAttendanceUseCase getAttendance,
     required SubmitAbsenceReasonUseCase submitReason,
-  })  : _getMeeting = getMeeting,
-        _getAttendance = getAttendance,
-        _submitReason = submitReason,
-        super(const MeetingReasonState()) {
+  }) : _getMeeting = getMeeting,
+       _getAttendance = getAttendance,
+       _submitReason = submitReason,
+       super(const MeetingReasonState()) {
     on<MeetingReasonLoaded>(_onLoaded);
     on<MeetingReasonSubmitted>(_onSubmitted);
   }
@@ -61,12 +61,14 @@ class MeetingReasonBloc extends Bloc<MeetingReasonEvent, MeetingReasonState> {
         // e'tiborsiz — attendance’dan sarlavha yetarli.
       }
 
-      emit(state.copyWith(
-        loadStatus: MeetingReasonLoad.success,
-        title: title,
-        startDate: startDate,
-        attendanceId: mine?.id,
-      ));
+      emit(
+        state.copyWith(
+          loadStatus: MeetingReasonLoad.success,
+          title: title,
+          startDate: startDate,
+          attendanceId: mine?.id,
+        ),
+      );
     } on Failure catch (f) {
       emit(state.copyWith(loadStatus: MeetingReasonLoad.failure, failure: f));
     }
@@ -80,10 +82,12 @@ class MeetingReasonBloc extends Bloc<MeetingReasonEvent, MeetingReasonState> {
     if (text.isEmpty) return;
     final attendanceId = state.attendanceId;
     if (attendanceId == null) {
-      emit(state.copyWith(
-        submitStatus: MeetingReasonSubmit.failure,
-        failure: const ServerFailure(),
-      ));
+      emit(
+        state.copyWith(
+          submitStatus: MeetingReasonSubmit.failure,
+          failure: const ServerFailure(),
+        ),
+      );
       return;
     }
     emit(state.copyWith(submitStatus: MeetingReasonSubmit.loading));
@@ -93,10 +97,9 @@ class MeetingReasonBloc extends Bloc<MeetingReasonEvent, MeetingReasonState> {
       );
       emit(state.copyWith(submitStatus: MeetingReasonSubmit.success));
     } on Failure catch (f) {
-      emit(state.copyWith(
-        submitStatus: MeetingReasonSubmit.failure,
-        failure: f,
-      ));
+      emit(
+        state.copyWith(submitStatus: MeetingReasonSubmit.failure, failure: f),
+      );
     }
   }
 }

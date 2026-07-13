@@ -31,3 +31,43 @@ class TaskCreateSubmitted extends TaskCreateEvent {
   @override
   List<Object?> get props => [params.task, params.filePaths];
 }
+
+/// Tahrirlash: vazifa detali + biriktirilgan fayllarni yuklash (prefill).
+class TaskCreateDetailRequested extends TaskCreateEvent {
+  const TaskCreateDetailRequested(this.taskId);
+
+  final int taskId;
+
+  @override
+  List<Object?> get props => [taskId];
+}
+
+/// Batafsil: holatni o'zgartirish (tekshirildi / rad etildi / bajarildi).
+class TaskCreateStatusSubmitted extends TaskCreateEvent {
+  const TaskCreateStatusSubmitted(this.params);
+
+  final ChangeTaskStatusParams params;
+
+  @override
+  List<Object?> get props => [
+    params.id,
+    params.status,
+    params.reason,
+    params.photoPaths,
+  ];
+}
+
+/// Tahrirlashni yuborish: PATCH + fayl o'chirish/qo'shish.
+class TaskCreateUpdateSubmitted extends TaskCreateEvent {
+  const TaskCreateUpdateSubmitted(this.params);
+
+  final UpdateTaskParams params;
+
+  @override
+  List<Object?> get props => [
+    params.id,
+    params.task,
+    params.removedAttachmentIds,
+    params.filePaths,
+  ];
+}

@@ -25,12 +25,12 @@ class MeetingAttendance extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        meetingId,
-        meetingTitle,
-        isAttended,
-        isExcused,
-        absenceReason,
-        userId,
-      ];
+    id,
+    meetingId,
+    meetingTitle,
+    isAttended,
+    isExcused,
+    absenceReason,
+    userId,
+  ];
 }

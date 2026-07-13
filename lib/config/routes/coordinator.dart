@@ -11,6 +11,7 @@ import '../../features/auth/presentation/pages/splash_page.dart';
 import '../../features/auth/presentation/pin/pages/pin_page.dart';
 import '../../features/auth/presentation/role/pages/role_select_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
+import '../../features/meetings/domain/entities/meeting.dart';
 import '../../features/meetings/domain/entities/meeting_filter.dart';
 import '../../features/meetings/presentation/pages/meeting_create_page.dart';
 import '../../features/meetings/presentation/pages/meeting_filter_page.dart';
@@ -25,6 +26,7 @@ import '../../features/projects/presentation/pages/project_filter_page.dart';
 import '../../features/projects/presentation/pages/projects_list_page.dart';
 import '../../features/tasks/domain/entities/task_filter.dart';
 import '../../features/tasks/presentation/pages/task_create_page.dart';
+import '../../features/tasks/presentation/pages/task_detail_page.dart';
 import '../../features/tasks/presentation/pages/task_filter_page.dart';
 import '../../features/tasks/presentation/pages/task_multi_select_page.dart';
 import '../../features/tasks/presentation/pages/tasks_page.dart';
@@ -147,6 +149,13 @@ class AppRouter {
           builder: (context, state) => const TaskCreatePage(),
         ),
         GoRoute(
+          name: Routes.taskEdit.name,
+          path: Routes.taskEdit.path,
+          builder: (context, state) => TaskCreatePage(
+            taskId: int.tryParse(state.pathParameters['id'] ?? ''),
+          ),
+        ),
+        GoRoute(
           name: Routes.taskFilter.name,
           path: Routes.taskFilter.path,
           builder: (context, state) => TaskFilterPage(
@@ -161,6 +170,15 @@ class AppRouter {
           builder: (context, state) =>
               TaskMultiSelectPage(args: state.extra! as TaskMultiSelectArgs),
         ),
+        // `/tasks/:id` — literal yo'llardan (create/filter) keyin turishi
+        // shart, aks holda ularni ham ushlab qoladi.
+        GoRoute(
+          name: Routes.taskDetail.name,
+          path: Routes.taskDetail.path,
+          builder: (context, state) => TaskDetailPage(
+            taskId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
+          ),
+        ),
         GoRoute(
           name: Routes.meetings.name,
           path: Routes.meetings.path,
@@ -170,6 +188,13 @@ class AppRouter {
           name: Routes.meetingCreate.name,
           path: Routes.meetingCreate.path,
           builder: (context, state) => const MeetingCreatePage(),
+        ),
+        GoRoute(
+          name: Routes.meetingEdit.name,
+          path: Routes.meetingEdit.path,
+          builder: (context, state) => MeetingCreatePage(
+            initial: state.extra is Meeting ? state.extra! as Meeting : null,
+          ),
         ),
         GoRoute(
           name: Routes.meetingFilter.name,

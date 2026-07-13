@@ -78,6 +78,18 @@ class Routes implements Coordinate {
     path: '/tasks/create',
   );
 
+  /// Vazifani tahrirlash formasi (karta menyusidan push qilinadi).
+  static const taskEdit = Routes._(name: 'task_edit', path: '/tasks/:id/edit');
+
+  /// Vazifa tafsilotlari (karta menyusidagi "Batafsil").
+  static const taskDetail = Routes._(name: 'task_detail', path: '/tasks/:id');
+
+  /// Yig'ilishni tahrirlash formasi (karta menyusidan push qilinadi).
+  static const meetingEdit = Routes._(
+    name: 'meeting_edit',
+    path: '/meetings/:id/edit',
+  );
+
   /// Vazifalarni filtrlash sahifasi (vazifalar ro‘yxatidan push qilinadi).
   static const taskFilter = Routes._(
     name: 'task_filter',

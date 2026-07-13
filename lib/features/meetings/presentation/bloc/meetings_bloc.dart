@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/error/failures.dart';
 import '../../domain/entities/meeting.dart';
 import '../../domain/entities/meeting_filter.dart';
+import '../../domain/usecases/delete_meeting_usecase.dart';
 import '../../domain/usecases/get_meetings_usecase.dart';
 
 part 'meetings_event.dart';
@@ -11,15 +12,42 @@ part 'meetings_state.dart';
 
 /// Yig‘ilishlar ro‘yxati bloci (`GET /meetings/`).
 class MeetingsBloc extends Bloc<MeetingsEvent, MeetingsState> {
-  MeetingsBloc({required GetMeetingsUseCase getMeetings})
-    : _getMeetings = getMeetings,
-      super(const MeetingsState()) {
+  MeetingsBloc({
+    required GetMeetingsUseCase getMeetings,
+    required DeleteMeetingUseCase deleteMeeting,
+  }) : _getMeetings = getMeetings,
+       _deleteMeeting = deleteMeeting,
+       super(const MeetingsState()) {
     on<MeetingsRequested>(_onRequested);
     on<MeetingsFilterChanged>(_onFilterChanged);
     on<MeetingsSearchChanged>(_onSearchChanged);
+    on<MeetingsMeetingDeleted>(_onDeleted);
   }
 
   final GetMeetingsUseCase _getMeetings;
+  final DeleteMeetingUseCase _deleteMeeting;
+
+  /// Optimistik o'chirish: avval ro'yxatdan olib tashlaymiz, so'rov xato
+  /// bersa eski ro'yxatni qaytaramiz (vazifalar bloci bilan bir xil naqsh).
+  Future<void> _onDeleted(
+    MeetingsMeetingDeleted event,
+    Emitter<MeetingsState> emit,
+  ) async {
+    final before = state.items;
+    emit(
+      state.copyWith(
+        items: [
+          for (final m in before)
+            if (m.id != event.id) m,
+        ],
+      ),
+    );
+    try {
+      await _deleteMeeting(event.id);
+    } on Failure catch (_) {
+      emit(state.copyWith(items: before));
+    }
+  }
 
   Future<void> _onRequested(
     MeetingsRequested event,

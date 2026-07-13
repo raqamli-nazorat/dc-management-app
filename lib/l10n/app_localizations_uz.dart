@@ -303,6 +303,68 @@ class AppLocalizationsUz extends AppLocalizations {
   String get taskCreateSuccess => 'Vazifa qo‘shildi';
 
   @override
+  String get taskEditTitle => 'Vazifani tahrirlash';
+
+  @override
+  String get taskEditSave => 'Saqlash';
+
+  @override
+  String get taskUpdateSuccess => 'Vazifa yangilandi';
+
+  @override
+  String get taskDetailTitle => 'Batafsil';
+
+  @override
+  String get taskDetailCreatedBy => 'Topshiruvchi';
+
+  @override
+  String get taskDetailRejectReason => 'Rad etilish sababi';
+
+  @override
+  String get taskActionChecked => 'Tekshirildi';
+
+  @override
+  String get taskActionRejected => 'Rad etildi';
+
+  @override
+  String get taskActionMarkDone => 'Bajarilganga o‘tkazish';
+
+  @override
+  String get taskRejectTitle => 'Vazifani rad etish';
+
+  @override
+  String get taskRejectSubtitle => 'Rad etish sababini kiriting';
+
+  @override
+  String get taskRejectHint => 'Sababini yozing...';
+
+  @override
+  String get taskRejectConfirm => 'Rad etish';
+
+  @override
+  String get taskStatusUpdated => 'Holat yangilandi';
+
+  @override
+  String get meetingEditTitle => 'Yig‘ilishni tahrirlash';
+
+  @override
+  String get meetingUpdateSuccess => 'Yig‘ilish yangilandi';
+
+  @override
+  String get meetingDeleteTitle => 'Yig‘ilishni o‘chirish';
+
+  @override
+  String get meetingDeleteSubtitle =>
+      'Yig‘ilish chiqindi qutisiga yuboriladi va keyinchalik tiklash mumkin.';
+
+  @override
+  String get projectCreateFilesLabel => 'Fayl qo‘shish';
+
+  @override
+  String get projectCreateDocsFailed =>
+      'Loyiha yaratildi, lekin ba\'zi fayllar yuklanmadi';
+
+  @override
   String get taskMenuDetails => 'Batafsil';
 
   @override

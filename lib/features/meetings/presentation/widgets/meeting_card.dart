@@ -4,7 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../config/theme/app_colors.dart';
 import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
+import '../../../../core/widgets/app_delete_dialog.dart';
 import '../../../../core/widgets/tui_avatar.dart';
+import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/meeting.dart';
 
 /// Yig‘ilish sanasini `dd.MM.yyyy HH:mm` ko‘rinishida formatlaydi.
@@ -21,12 +23,18 @@ class MeetingCard extends StatelessWidget {
     super.key,
     required this.meeting,
     this.onTap,
-    this.onMore,
+    this.onEdit,
+    this.onDelete,
   });
 
   final Meeting meeting;
   final VoidCallback? onTap;
-  final VoidCallback? onMore;
+
+  /// "Tahrirlash" tanlanganda (menyudan) — tahrirlash formasini ochadi.
+  final VoidCallback? onEdit;
+
+  /// "O'chirish" tasdiqlangandan so'ng chaqiriladi.
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -141,24 +149,124 @@ class MeetingCard extends StatelessWidget {
                     ),
                   ),
                   SizedBox(width: 8.w),
-                  InkWell(
-                    onTap: onMore,
-                    borderRadius: BorderRadius.circular(12.r),
-                    child: Assets.icons.icMoreVertical.svg(
-                      width: 24.w,
-                      height: 24.w,
-                      colorFilter: ColorFilter.mode(
-                        colors.iconSub,
-                        BlendMode.srcIn,
-                      ),
-                    ),
-                  ),
+                  _MoreMenu(onEdit: onEdit, onDelete: onDelete),
                 ],
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+enum _MeetingMenuAction { edit, delete }
+
+/// Karta ⋮ tugmasi — "Tahrirlash / O'chirish" menyusi (Figma: tui-dropdown,
+/// background-base fon, stroke-sub chegara, 12 radius; vazifa/loyiha
+/// kartalari bilan bir xil uslub).
+class _MoreMenu extends StatelessWidget {
+  const _MoreMenu({this.onEdit, this.onDelete});
+
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
+
+  Future<void> _onSelected(
+    BuildContext context,
+    _MeetingMenuAction action,
+  ) async {
+    final l10n = AppLocalizations.of(context);
+    switch (action) {
+      case _MeetingMenuAction.edit:
+        onEdit?.call();
+      case _MeetingMenuAction.delete:
+        final confirmed = await showAppDeleteDialog(
+          context,
+          title: l10n.meetingDeleteTitle,
+          subtitle: l10n.meetingDeleteSubtitle,
+        );
+        if (confirmed == true) onDelete?.call();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final l10n = AppLocalizations.of(context);
+
+    return PopupMenuButton<_MeetingMenuAction>(
+      tooltip: '',
+      padding: EdgeInsets.zero,
+      color: colors.backgroundBase,
+      elevation: 0,
+      position: PopupMenuPosition.under,
+      constraints: BoxConstraints(minWidth: 180.w),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.r),
+        side: BorderSide(color: colors.strokeSub, width: 1.w),
+      ),
+      onSelected: (action) => _onSelected(context, action),
+      itemBuilder: (_) => [
+        PopupMenuItem(
+          value: _MeetingMenuAction.edit,
+          height: 40.h,
+          padding: EdgeInsets.symmetric(horizontal: 8.w),
+          child: _MenuRow(
+            icon: Assets.icons.icSettingsLarge,
+            label: l10n.projectMenuEdit,
+            color: colors.textStrong,
+          ),
+        ),
+        PopupMenuItem(
+          value: _MeetingMenuAction.delete,
+          height: 40.h,
+          padding: EdgeInsets.symmetric(horizontal: 8.w),
+          child: _MenuRow(
+            icon: Assets.icons.icTrash,
+            label: l10n.taskMenuDelete,
+            color: colors.errorStrong,
+          ),
+        ),
+      ],
+      child: Assets.icons.icMoreVertical.svg(
+        width: 24.w,
+        height: 24.w,
+        colorFilter: ColorFilter.mode(colors.iconSub, BlendMode.srcIn),
+      ),
+    );
+  }
+}
+
+/// Menyu qatori: ikonka + yozuv (yozuv rangi = ikonka rangi).
+class _MenuRow extends StatelessWidget {
+  const _MenuRow({
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
+
+  final SvgGenImage icon;
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        icon.svg(
+          width: 16.w,
+          height: 16.w,
+          colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+        ),
+        SizedBox(width: 8.w),
+        Expanded(
+          child: label
+              .s(13.sp)
+              .w(500)
+              .c(color)
+              .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+        ),
+      ],
     );
   }
 }

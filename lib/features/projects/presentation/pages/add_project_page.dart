@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -84,6 +85,9 @@ class _AddProjectViewState extends State<_AddProjectView> {
   bool _active = true;
   final Set<int> _employeeIds = {};
   final Set<int> _testerIds = {};
+
+  /// Loyihaga biriktiriladigan hujjatlar (faqat yaratish rejimida).
+  final List<PlatformFile> _files = [];
 
   Project? get _project => widget.project;
 
@@ -223,6 +227,30 @@ class _AddProjectViewState extends State<_AddProjectView> {
     }
   }
 
+  Future<void> _pickFiles() async {
+    // Dizayn talabi: faqat doc/pdf/excel formatlari. Tanlagich platforma
+    // xatolarini otishi mumkin — ilovani yiqitmaymiz.
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        allowMultiple: true,
+        type: FileType.custom,
+        allowedExtensions: const ['doc', 'docx', 'pdf', 'xls', 'xlsx'],
+      );
+      if (result == null) return;
+      setState(() {
+        for (final f in result.files) {
+          if (f.path != null) _files.add(f);
+        }
+      });
+    } catch (_) {
+      if (!mounted) return;
+      AppToast.showError(
+        context,
+        title: AppLocalizations.of(context).commonError,
+      );
+    }
+  }
+
   void _submit() {
     final l10n = AppLocalizations.of(context);
     if (_nameCtrl.text.trim().isEmpty ||
@@ -260,7 +288,10 @@ class _AddProjectViewState extends State<_AddProjectView> {
     );
     context.read<ProjectCreateBloc>().add(
       _project == null
-          ? ProjectCreateSubmitted(form)
+          ? ProjectCreateSubmitted(
+              form,
+              filePaths: [for (final f in _files) f.path!],
+            )
           : ProjectUpdated(_project!.id, form),
     );
   }
@@ -276,12 +307,16 @@ class _AddProjectViewState extends State<_AddProjectView> {
       listener: (context, state) {
         switch (state.submitStatus) {
           case ProjectCreateSubmitStatus.success:
-            AppToast.showSuccess(
-              context,
-              title: _project == null
-                  ? l10n.projectCreateSuccess
-                  : l10n.projectUpdateSuccess,
-            );
+            if (state.documentsFailed) {
+              AppToast.showError(context, title: l10n.projectCreateDocsFailed);
+            } else {
+              AppToast.showSuccess(
+                context,
+                title: _project == null
+                    ? l10n.projectCreateSuccess
+                    : l10n.projectUpdateSuccess,
+              );
+            }
             Navigator.of(context).maybePop(true);
           case ProjectCreateSubmitStatus.failure:
             AppToast.showError(
@@ -450,6 +485,14 @@ class _AddProjectViewState extends State<_AddProjectView> {
                             left: l10n.taskCreateFieldDeadline,
                             right: l10n.taskCreateFieldTime,
                           ),
+                          // Fayl qo'shish — faqat yaratishda (dizayn 469:275292);
+                          // tahrirlashda mavjud hujjatlar oqimi hali yo'q.
+                          if (_project == null && !widget.readOnly)
+                            _FilesSection(
+                              files: _files,
+                              onPick: _pickFiles,
+                              onRemove: (f) => setState(() => _files.remove(f)),
+                            ),
                         ],
                       ),
                     ),
@@ -1157,6 +1200,190 @@ class _SmallSwitch extends StatelessWidget {
       ),
     );
   }
+}
+
+/// "Fayl qo'shish" bo'limi (dizayn 469:275292): ikkita shtrixli quti —
+/// "Fayl yuklash" (accent) va "+" — pastida tanlangan fayl chiplari.
+/// Vazifa qo'shish sahifasidagi naqsh bilan bir xil.
+class _FilesSection extends StatelessWidget {
+  const _FilesSection({
+    required this.files,
+    required this.onPick,
+    required this.onRemove,
+  });
+
+  final List<PlatformFile> files;
+  final VoidCallback onPick;
+  final ValueChanged<PlatformFile> onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final l10n = AppLocalizations.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        l10n.projectCreateFilesLabel.s(15.sp).w(800).c(colors.textStrong),
+        SizedBox(height: 8.h),
+        Row(
+          children: [
+            Expanded(
+              child: InkWell(
+                onTap: onPick,
+                borderRadius: BorderRadius.circular(20.r),
+                child: _DashedBox(
+                  color: colors.strokeAccent,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Assets.icons.icDocument.svg(
+                        width: 16.w,
+                        height: 16.w,
+                        colorFilter: ColorFilter.mode(
+                          colors.textSoft,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                      SizedBox(width: 4.w),
+                      l10n.taskCreateFileUpload
+                          .s(11.sp)
+                          .w(700)
+                          .c(colors.textSoft),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(width: 16.w),
+            Expanded(
+              child: InkWell(
+                onTap: onPick,
+                borderRadius: BorderRadius.circular(20.r),
+                child: _DashedBox(
+                  color: colors.strokeStrong,
+                  child: Assets.icons.icPlus.svg(
+                    width: 16.w,
+                    height: 16.w,
+                    colorFilter: ColorFilter.mode(
+                      colors.iconSub,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        if (files.isNotEmpty) ...[
+          SizedBox(height: 8.h),
+          Wrap(
+            spacing: 8.w,
+            runSpacing: 8.h,
+            children: [
+              for (final f in files)
+                _FileChip(name: f.name, onRemove: () => onRemove(f)),
+            ],
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+class _FileChip extends StatelessWidget {
+  const _FileChip({required this.name, required this.onRemove});
+
+  final String name;
+  final VoidCallback onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: colors.backgroundElevation1Alt,
+        borderRadius: BorderRadius.circular(8.r),
+      ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: 160.w),
+              child: name
+                  .s(11.sp)
+                  .w(700)
+                  .c(colors.textStrong)
+                  .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+            ),
+            SizedBox(width: 6.w),
+            InkWell(
+              onTap: onRemove,
+              borderRadius: BorderRadius.circular(8.r),
+              child: Assets.icons.icClose.svg(
+                width: 14.w,
+                height: 14.w,
+                colorFilter: ColorFilter.mode(colors.iconSub, BlendMode.srcIn),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DashedBox extends StatelessWidget {
+  const _DashedBox({required this.color, required this.child});
+
+  final Color color;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      painter: _DashedRRectPainter(color: color, radius: 20.r),
+      child: SizedBox(
+        height: 56.h,
+        child: Center(child: child),
+      ),
+    );
+  }
+}
+
+/// Shtrixli (dashed) yumaloq to'rtburchak chegara chizuvchi.
+class _DashedRRectPainter extends CustomPainter {
+  _DashedRRectPainter({required this.color, required this.radius});
+
+  final Color color;
+  final double radius;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1;
+    final path = Path()
+      ..addRRect(
+        RRect.fromRectAndRadius(Offset.zero & size, Radius.circular(radius)),
+      );
+    const dash = 5.0, gap = 4.0;
+    for (final metric in path.computeMetrics()) {
+      var dist = 0.0;
+      while (dist < metric.length) {
+        canvas.drawPath(metric.extractPath(dist, dist + dash), paint);
+        dist += dash + gap;
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_DashedRRectPainter old) =>
+      old.color != color || old.radius != radius;
 }
 
 class _DecimalInputFormatter extends TextInputFormatter {

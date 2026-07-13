@@ -12,12 +12,15 @@ class ProjectCreateOptionsRequested extends ProjectCreateEvent {
 }
 
 class ProjectCreateSubmitted extends ProjectCreateEvent {
-  const ProjectCreateSubmitted(this.form);
+  const ProjectCreateSubmitted(this.form, {this.filePaths = const []});
 
   final ProjectForm form;
 
+  /// Loyiha yaratilgach biriktiriladigan hujjatlar (doc/pdf/excel).
+  final List<String> filePaths;
+
   @override
-  List<Object?> get props => [form];
+  List<Object?> get props => [form, filePaths];
 }
 
 class ProjectUpdated extends ProjectCreateEvent {

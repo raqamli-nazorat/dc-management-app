@@ -81,6 +81,10 @@ class ProjectRepositoryImpl implements ProjectRepository {
       _guard(() => _remote.deleteProjectDocument(id));
 
   @override
+  Future<void> uploadProjectDocument(int projectId, String filePath) =>
+      _guard(() => _remote.uploadProjectDocument(projectId, filePath));
+
+  @override
   Future<ProjectPage> getProjectShorts({
     int page = 1,
     String search = '',

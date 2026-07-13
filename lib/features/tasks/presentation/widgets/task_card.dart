@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../config/theme/app_colors.dart';
 import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
+import '../../../../core/widgets/app_delete_dialog.dart';
 import '../../../../core/widgets/tui_avatar.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/task.dart';
@@ -53,6 +54,7 @@ class TaskCard extends StatelessWidget {
     required this.task,
     this.onTap,
     this.onDetails,
+    this.onEdit,
     this.onDelete,
     this.countdownTicker,
   });
@@ -63,6 +65,9 @@ class TaskCard extends StatelessWidget {
 
   /// "Batafsil" tanlanganda (menyudan) — hozircha keyinroq ulanadi.
   final VoidCallback? onDetails;
+
+  /// "Tahrirlash" tanlanganda (menyudan) — tahrirlash formasini ochadi.
+  final VoidCallback? onEdit;
 
   /// "O'chirish" tasdiqlangandan so'ng (o'chirish varag'ida) chaqiriladi.
   final VoidCallback? onDelete;
@@ -197,7 +202,11 @@ class TaskCard extends StatelessWidget {
                     ),
                   ),
                   SizedBox(width: 8.w),
-                  _MoreMenu(onDetails: onDetails, onDelete: onDelete),
+                  _MoreMenu(
+                    onDetails: onDetails,
+                    onEdit: onEdit,
+                    onDelete: onDelete,
+                  ),
                 ],
               ),
             ],
@@ -322,20 +331,24 @@ class _MetaItem extends StatelessWidget {
 }
 
 /// Karta menyusi harakati.
-enum _TaskMenuAction { details, delete }
+enum _TaskMenuAction { details, edit, delete }
 
-/// Karta ⋮ tugmasi — bosilganda "Batafsil / O'chirish" menyusini ochadi
-/// (Figma: tui-dropdown, background-base fon, stroke-sub chegara, 12 radius).
+/// Karta ⋮ tugmasi — bosilganda "Batafsil / Tahrirlash / O'chirish" menyusini
+/// ochadi (Figma: tui-dropdown, background-base fon, stroke-sub chegara,
+/// 12 radius).
 class _MoreMenu extends StatelessWidget {
-  const _MoreMenu({this.onDetails, this.onDelete});
+  const _MoreMenu({this.onDetails, this.onEdit, this.onDelete});
 
   final VoidCallback? onDetails;
+  final VoidCallback? onEdit;
   final VoidCallback? onDelete;
 
   Future<void> _onSelected(BuildContext context, _TaskMenuAction action) async {
     switch (action) {
       case _TaskMenuAction.details:
         onDetails?.call();
+      case _TaskMenuAction.edit:
+        onEdit?.call();
       case _TaskMenuAction.delete:
         final confirmed = await showTaskDeleteDialog(context);
         if (confirmed == true) onDelete?.call();
@@ -367,6 +380,16 @@ class _MoreMenu extends StatelessWidget {
           child: _MenuRow(
             icon: Assets.icons.icAlertCircle,
             label: l10n.taskMenuDetails,
+            color: colors.textStrong,
+          ),
+        ),
+        PopupMenuItem(
+          value: _TaskMenuAction.edit,
+          height: 40.h,
+          padding: EdgeInsets.symmetric(horizontal: 8.w),
+          child: _MenuRow(
+            icon: Assets.icons.icSettingsLarge,
+            label: l10n.projectMenuEdit,
             color: colors.textStrong,
           ),
         ),
@@ -424,152 +447,15 @@ class _MenuRow extends StatelessWidget {
   }
 }
 
-/// Vazifani o'chirishni tasdiqlash dialogi (Figma: 350x204, 24 radius).
-/// `true` — tasdiqlandi, `null`/`false` — bekor.
+/// Vazifani o'chirishni tasdiqlash dialogi — umumiy [showAppDeleteDialog]
+/// ustidan vazifa matnlari bilan.
 Future<bool?> showTaskDeleteDialog(BuildContext context) {
-  final colors = AppColors.of(context);
-  return showDialog<bool>(
-    context: context,
-    builder: (_) => Dialog(
-      insetPadding: EdgeInsets.symmetric(horizontal: 20.w),
-      backgroundColor: colors.backgroundBase,
-      elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.r)),
-      child: const _TaskDeleteDialog(),
-    ),
+  final l10n = AppLocalizations.of(context);
+  return showAppDeleteDialog(
+    context,
+    title: l10n.taskDeleteTitle,
+    subtitle: l10n.taskDeleteSubtitle,
   );
-}
-
-class _TaskDeleteDialog extends StatelessWidget {
-  const _TaskDeleteDialog();
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = AppColors.of(context);
-    final l10n = AppLocalizations.of(context);
-
-    return ConstrainedBox(
-      constraints: BoxConstraints(maxWidth: 350.w),
-      child: Stack(
-        clipBehavior: Clip.none,
-        alignment: Alignment.topCenter,
-        children: [
-          Positioned(
-            top: 8.h,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: colors.strokeSoft,
-                borderRadius: BorderRadius.circular(1.r),
-              ),
-              child: SizedBox(width: 24.w, height: 3.h),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                l10n.taskDeleteTitle
-                    .s(19.sp)
-                    .w(800)
-                    .h(28 / 19)
-                    .c(colors.textStrong)
-                    .a(TextAlign.center)
-                    .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
-                SizedBox(height: 4.h),
-                l10n.taskDeleteSubtitle
-                    .s(15.sp)
-                    .w(500)
-                    .h(24 / 15)
-                    .c(colors.textSub)
-                    .a(TextAlign.center)
-                    .copyWith(maxLines: 2, overflow: TextOverflow.ellipsis),
-                SizedBox(height: 24.h),
-                Row(
-                  children: [
-                    InkWell(
-                      onTap: () => Navigator.of(context).pop(false),
-                      borderRadius: BorderRadius.circular(12.r),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w),
-                        child: SizedBox(
-                          height: 52.h,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Assets.icons.icClose.svg(
-                                width: 16.w,
-                                height: 16.w,
-                                colorFilter: ColorFilter.mode(
-                                  colors.textStrong,
-                                  BlendMode.srcIn,
-                                ),
-                              ),
-                              SizedBox(width: 8.w),
-                              l10n.taskDeleteCancel
-                                  .s(15.sp)
-                                  .w(800)
-                                  .h(24 / 15)
-                                  .c(colors.textStrong)
-                                  .copyWith(
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 12.w),
-                    Expanded(
-                      child: InkWell(
-                        onTap: () => Navigator.of(context).pop(true),
-                        borderRadius: BorderRadius.circular(16.r),
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: colors.errorStrong,
-                            borderRadius: BorderRadius.circular(16.r),
-                          ),
-                          child: SizedBox(
-                            height: 52.h,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Assets.icons.icTrash.svg(
-                                  width: 16.w,
-                                  height: 16.w,
-                                  colorFilter: ColorFilter.mode(
-                                    colors.textWhite,
-                                    BlendMode.srcIn,
-                                  ),
-                                ),
-                                SizedBox(width: 4.w),
-                                Flexible(
-                                  child: l10n.taskMenuDelete
-                                      .s(15.sp)
-                                      .w(800)
-                                      .h(24 / 15)
-                                      .c(colors.textWhite)
-                                      .copyWith(
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 class _CountdownArea extends StatelessWidget {

@@ -35,17 +35,22 @@ class MeetingReasonState extends Equatable {
     DateTime? startDate,
     int? attendanceId,
     Failure? failure,
-  }) =>
-      MeetingReasonState(
-        loadStatus: loadStatus ?? this.loadStatus,
-        submitStatus: submitStatus ?? this.submitStatus,
-        title: title ?? this.title,
-        startDate: startDate ?? this.startDate,
-        attendanceId: attendanceId ?? this.attendanceId,
-        failure: failure,
-      );
+  }) => MeetingReasonState(
+    loadStatus: loadStatus ?? this.loadStatus,
+    submitStatus: submitStatus ?? this.submitStatus,
+    title: title ?? this.title,
+    startDate: startDate ?? this.startDate,
+    attendanceId: attendanceId ?? this.attendanceId,
+    failure: failure,
+  );
 
   @override
-  List<Object?> get props =>
-      [loadStatus, submitStatus, title, startDate, attendanceId, failure];
+  List<Object?> get props => [
+    loadStatus,
+    submitStatus,
+    title,
+    startDate,
+    attendanceId,
+    failure,
+  ];
 }

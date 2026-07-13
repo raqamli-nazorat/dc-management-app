@@ -70,8 +70,17 @@ abstract final class ApiConstants {
   static String projectDocumentById(int id) => '/project-documents/$id/';
 
   /// Vazifa faylini biriktirish (multipart `{task, file}`):
-  /// `POST /task-attachments/`.
+  /// `POST /task-attachments/`; ro‘yxat `GET ?task=`.
   static const taskAttachments = '/task-attachments/';
+
+  /// Bitta biriktirilgan fayl: `DELETE /task-attachments/{id}/`.
+  static String taskAttachmentById(int id) => '/task-attachments/$id/';
+
+  /// Vazifa holatini o'zgartirish (`PATCH`, `{status, rejection_reason}`).
+  static String taskChangeStatus(int id) => '/tasks/$id/change-status/';
+
+  /// Rad etish skrinshoti (multipart `{task, file}`): `POST`.
+  static const taskRejectionFiles = '/task-rejection-files/';
 
   // ── Meetings ──────────────────────────────────────────────────────────
   static const meetings = '/meetings/';

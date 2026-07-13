@@ -77,8 +77,7 @@ class _TaskMultiSelectPageState extends State<TaskMultiSelectPage> {
             Expanded(
               child: items.isEmpty
                   ? Center(
-                      child:
-                          l10n.statEmpty.s(14.sp).w(500).c(colors.textSub),
+                      child: l10n.statEmpty.s(14.sp).w(500).c(colors.textSub),
                     )
                   : ListView.separated(
                       padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 24.h),
@@ -120,8 +119,10 @@ class _Header extends StatelessWidget {
               child: Assets.icons.icArrowLeftLarge.svg(
                 width: 16.w,
                 height: 16.w,
-                colorFilter:
-                    ColorFilter.mode(colors.iconStrong, BlendMode.srcIn),
+                colorFilter: ColorFilter.mode(
+                  colors.iconStrong,
+                  BlendMode.srcIn,
+                ),
               ),
             ),
           ),
@@ -141,8 +142,10 @@ class _Header extends StatelessWidget {
               child: Assets.icons.icTuilconCheck.svg(
                 width: 16.w,
                 height: 16.w,
-                colorFilter:
-                    ColorFilter.mode(colors.iconStrong, BlendMode.srcIn),
+                colorFilter: ColorFilter.mode(
+                  colors.iconStrong,
+                  BlendMode.srcIn,
+                ),
               ),
             ),
           ),
@@ -246,8 +249,10 @@ class _Checkbox extends StatelessWidget {
                 child: Assets.icons.icTuilconCheck.svg(
                   width: 12.w,
                   height: 12.w,
-                  colorFilter:
-                      ColorFilter.mode(colors.textWhite, BlendMode.srcIn),
+                  colorFilter: ColorFilter.mode(
+                    colors.textWhite,
+                    BlendMode.srcIn,
+                  ),
                 ),
               )
             : null,
@@ -287,8 +292,10 @@ class _ConfirmBar extends StatelessWidget {
                   Assets.icons.icUserGroup.svg(
                     width: 16.w,
                     height: 16.w,
-                    colorFilter:
-                        ColorFilter.mode(colors.iconStrong, BlendMode.srcIn),
+                    colorFilter: ColorFilter.mode(
+                      colors.iconStrong,
+                      BlendMode.srcIn,
+                    ),
                   ),
                   SizedBox(width: 8.w),
                   label.s(15.sp).w(800).c(colors.textStrong),
