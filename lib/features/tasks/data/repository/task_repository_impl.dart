@@ -2,6 +2,7 @@ import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
 import '../../domain/entities/new_task.dart';
 import '../../domain/entities/task.dart';
+import '../../domain/entities/task_detail.dart';
 import '../../domain/entities/task_filter.dart';
 import '../../domain/entities/task_form_options.dart';
 import '../../domain/repository/task_repository.dart';
@@ -42,8 +43,32 @@ class TaskRepositoryImpl implements TaskRepository {
       _guard(() => _remote.createTask(task));
 
   @override
+  Future<void> updateTask(int id, NewTask task) =>
+      _guard(() => _remote.updateTask(id, task));
+
+  @override
+  Future<TaskDetail> getTaskDetail(int id) =>
+      _guard(() => _remote.getTaskDetail(id));
+
+  @override
+  Future<List<TaskAttachmentInfo>> getTaskAttachments(int taskId) =>
+      _guard(() => _remote.getTaskAttachments(taskId));
+
+  @override
   Future<void> uploadAttachment(int taskId, String filePath) =>
       _guard(() => _remote.uploadAttachment(taskId, filePath));
+
+  @override
+  Future<void> deleteAttachment(int id) =>
+      _guard(() => _remote.deleteAttachment(id));
+
+  @override
+  Future<void> changeTaskStatus(int id, String status, {String? reason}) =>
+      _guard(() => _remote.changeTaskStatus(id, status, reason: reason));
+
+  @override
+  Future<void> uploadRejectionFile(int taskId, String filePath) =>
+      _guard(() => _remote.uploadRejectionFile(taskId, filePath));
 
   @override
   Future<void> deleteTask(int id) => _guard(() => _remote.deleteTask(id));

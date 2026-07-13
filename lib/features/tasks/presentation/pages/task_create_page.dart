@@ -14,32 +14,41 @@ import '../../../../injection_container.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/new_task.dart';
 import '../../domain/entities/task.dart';
+import '../../domain/entities/task_detail.dart';
 import '../../domain/entities/task_form_options.dart';
 import '../../domain/usecases/submit_task_usecase.dart';
+import '../../domain/usecases/update_task_usecase.dart';
 import '../bloc/task_create_bloc.dart';
-
-/// Vazifa turi (`Turi`) — dizayn bo'yicha 4 qat'iy variant (API yo'q, UI ro'yxati).
-enum TaskType { bug, feature, addition, research }
 
 /// Ochilib turgan dropdown maydoni (bir vaqtda faqat bittasi).
 enum _Field { none, project, priority, type, assigner, positions }
 
-/// Vazifa qo'shish formasi (`Routes.taskCreate`).
+/// Vazifa qo'shish/tahrirlash formasi (`Routes.taskCreate` / `Routes.taskEdit`).
+/// [taskId] berilsa forma tahrirlash rejimida ochiladi: detal + fayllar
+/// yuklanib maydonlar oldindan to'ldiriladi, saqlash `PATCH` yuboradi.
 class TaskCreatePage extends StatelessWidget {
-  const TaskCreatePage({super.key});
+  const TaskCreatePage({super.key, this.taskId});
+
+  final int? taskId;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<TaskCreateBloc>(
-      create: (_) =>
-          getIt<TaskCreateBloc>()..add(const TaskCreateOptionsRequested()),
-      child: const _TaskCreateView(),
+      create: (_) {
+        final bloc = getIt<TaskCreateBloc>()
+          ..add(const TaskCreateOptionsRequested());
+        if (taskId != null) bloc.add(TaskCreateDetailRequested(taskId!));
+        return bloc;
+      },
+      child: _TaskCreateView(taskId: taskId),
     );
   }
 }
 
 class _TaskCreateView extends StatefulWidget {
-  const _TaskCreateView();
+  const _TaskCreateView({this.taskId});
+
+  final int? taskId;
 
   @override
   State<_TaskCreateView> createState() => _TaskCreateViewState();
@@ -72,13 +81,30 @@ class _TaskCreateViewState extends State<_TaskCreateView> {
   TimeOfDay? _estimated;
   final List<PlatformFile> _files = [];
 
+  bool get _isEdit => widget.taskId != null;
+
+  /// Detal maydonlari bir marta to'ldirildi (keyingi emitlarda qayta yozilmaydi).
+  bool _prefilled = false;
+
+  /// Loyiha `project-shorts`da topilmasa ko'rsatiladigan nom (`project_info`).
+  String? _projectFallbackTitle;
+
+  /// Saqlashda o'chiriladigan mavjud biriktirilgan fayl idlari.
+  final List<int> _removedAttachmentIds = [];
+
   static const _priorities = [
     TaskPriority.low,
     TaskPriority.medium,
     TaskPriority.high,
     TaskPriority.critical,
   ];
-  static const _types = TaskType.values;
+  // Dizayn tartibi: Bug / Yangi funksiya / Qo'shimcha / Tadqiqot.
+  static const _types = [
+    TaskType.bug,
+    TaskType.feature,
+    TaskType.extra,
+    TaskType.research,
+  ];
 
   @override
   void dispose() {
@@ -174,7 +200,8 @@ class _TaskCreateViewState extends State<_TaskCreateView> {
   Future<void> _pickTime(bool deadline) async {
     final picked = await showTimePicker(
       context: context,
-      initialTime: (deadline ? _deadlineTime : _estimated) ??
+      initialTime:
+          (deadline ? _deadlineTime : _estimated) ??
           const TimeOfDay(hour: 0, minute: 0),
       builder: (ctx, child) => _themedPicker(ctx, child!),
     );
@@ -206,11 +233,65 @@ class _TaskCreateViewState extends State<_TaskCreateView> {
     }
   }
 
+  // ── Tahrirlash: detal kelganda maydonlarni to'ldirish ─────────────────────
+
+  /// Detal maydonlarini forma holatiga bir marta ko'chiradi.
+  void _applyDetail(TaskDetail d) {
+    _prefilled = true;
+    _nameCtrl.text = d.title;
+    _descCtrl.text = d.description;
+    _priceCtrl.text = _groupThousands(_intPart(d.taskPrice));
+    _penaltyCtrl.text = _intPart(d.penaltyPercentage);
+    _sprintCtrl.text = d.sprint?.toString() ?? '';
+    _priority = d.priority == TaskPriority.unknown ? null : d.priority;
+    _type = d.type;
+    _projectFallbackTitle = d.projectInfo.isEmpty ? null : d.projectInfo;
+    final deadline = d.deadline;
+    if (deadline != null) {
+      _deadlineDate = deadline;
+      _deadlineTime = TimeOfDay.fromDateTime(deadline);
+    }
+    final est = d.estimatedMinutes ?? 0;
+    if (est > 0) {
+      // ponytail: TimeOfDay 23:59 dan oshaolmaydi — kattaroq qiymat qisqaradi.
+      _estimated = TimeOfDay(hour: (est ~/ 60).clamp(0, 23), minute: est % 60);
+    }
+    final assigneeId = d.assigneeId;
+    if (assigneeId != null) {
+      _assigner = ProjectMember(
+        id: assigneeId,
+        username: d.assigneeName,
+        position: d.assigneePosition,
+      );
+    }
+    final positionId = d.positionId;
+    if (positionId != null) {
+      _position = Position(id: positionId, name: d.positionName);
+    }
+  }
+
+  /// Tanlanmagan loyihani detal (`project` id yoki `project_info` nomi)
+  /// bo'yicha `project-shorts` ro'yxatidan topadi — topilsa Topshiruvchi
+  /// ro'yxati ham yuklanadi.
+  void _syncProjectFromDetail(TaskCreateState state) {
+    final d = state.detail;
+    if (_project != null || d == null) return;
+    for (final p in state.projects) {
+      if (p.id == d.projectId ||
+          (d.projectId == null && p.title == d.projectInfo)) {
+        _project = p;
+        context.read<TaskCreateBloc>().add(TaskCreateProjectSelected(p.id));
+        return;
+      }
+    }
+  }
+
   // ── Yuborish ──────────────────────────────────────────────────────────────
 
   void _submit() {
     final l10n = AppLocalizations.of(context);
-    if (_project == null ||
+    // Tahrirlashda loyiha allaqachon mavjud (id topilmasa PATCH'da yuborilmaydi).
+    if ((_project == null && !_isEdit) ||
         _nameCtrl.text.trim().isEmpty ||
         _deadlineDate == null) {
       AppToast.showError(context, title: l10n.taskCreateRequiredError);
@@ -219,21 +300,27 @@ class _TaskCreateViewState extends State<_TaskCreateView> {
 
     final date = _deadlineDate!;
     final time = _deadlineTime ?? const TimeOfDay(hour: 23, minute: 59);
-    final deadline =
-        DateTime(date.year, date.month, date.day, time.hour, time.minute);
+    final deadline = DateTime(
+      date.year,
+      date.month,
+      date.day,
+      time.hour,
+      time.minute,
+    );
 
     final price = _digits(_priceCtrl.text);
     final penalty = _digits(_penaltyCtrl.text);
-    final estimated =
-        _estimated == null ? null : _estimated!.hour * 60 + _estimated!.minute;
+    final estimated = _estimated == null
+        ? null
+        : _estimated!.hour * 60 + _estimated!.minute;
 
     final task = NewTask(
-      project: _project!.id,
+      project: _project?.id,
       title: _nameCtrl.text.trim(),
       description: _descCtrl.text.trim(),
       deadline: deadline,
       priority: _priorityApi(_priority),
-      type: _typeApi(_type),
+      type: _type?.apiValue,
       assignee: _assigner?.id,
       position: (_position != null && _position!.id > 0) ? _position!.id : null,
       taskPrice: price.isEmpty ? null : price,
@@ -241,14 +328,22 @@ class _TaskCreateViewState extends State<_TaskCreateView> {
       sprint: int.tryParse(_sprintCtrl.text),
       estimatedMinutes: estimated,
     );
+    final filePaths = [for (final f in _files) f.path!];
 
+    final taskId = widget.taskId;
     context.read<TaskCreateBloc>().add(
-      TaskCreateSubmitted(
-        SubmitTaskParams(
-          task: task,
-          filePaths: [for (final f in _files) f.path!],
-        ),
-      ),
+      taskId == null
+          ? TaskCreateSubmitted(
+              SubmitTaskParams(task: task, filePaths: filePaths),
+            )
+          : TaskCreateUpdateSubmitted(
+              UpdateTaskParams(
+                id: taskId,
+                task: task,
+                removedAttachmentIds: List.of(_removedAttachmentIds),
+                filePaths: filePaths,
+              ),
+            ),
     );
   }
 
@@ -257,25 +352,48 @@ class _TaskCreateViewState extends State<_TaskCreateView> {
     final colors = AppColors.of(context);
     final l10n = AppLocalizations.of(context);
 
-    return BlocListener<TaskCreateBloc, TaskCreateState>(
-      listenWhen: (p, c) => p.submitStatus != c.submitStatus,
-      listener: (context, state) {
-        switch (state.submitStatus) {
-          case TaskSubmitStatus.success:
-            AppToast.showSuccess(context, title: l10n.taskCreateSuccess);
-            // `true` — ro'yxat sahifasi qaytganda o'zini yangilashi uchun.
-            Navigator.of(context).maybePop(true);
-          case TaskSubmitStatus.failure:
-            AppToast.showError(
-              context,
-              title: l10n.commonError,
-              message: state.submitFailure?.message,
-            );
-          case TaskSubmitStatus.idle:
-          case TaskSubmitStatus.submitting:
-            break;
-        }
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<TaskCreateBloc, TaskCreateState>(
+          listenWhen: (p, c) => p.submitStatus != c.submitStatus,
+          listener: (context, state) {
+            switch (state.submitStatus) {
+              case TaskSubmitStatus.success:
+                AppToast.showSuccess(
+                  context,
+                  title: _isEdit
+                      ? l10n.taskUpdateSuccess
+                      : l10n.taskCreateSuccess,
+                );
+                // `true` — ro'yxat sahifasi qaytganda o'zini yangilashi uchun.
+                Navigator.of(context).maybePop(true);
+              case TaskSubmitStatus.failure:
+                AppToast.showError(
+                  context,
+                  title: l10n.commonError,
+                  message: state.submitFailure?.message,
+                );
+              case TaskSubmitStatus.idle:
+              case TaskSubmitStatus.submitting:
+                break;
+            }
+          },
+        ),
+        // Tahrirlash: detal kelganda bir marta prefill; loyihalar ro'yxati
+        // keyin kelsa ham loyihani moslashtirishga qayta urinamiz.
+        BlocListener<TaskCreateBloc, TaskCreateState>(
+          listenWhen: (p, c) =>
+              p.detail != c.detail || p.projects != c.projects,
+          listener: (context, state) {
+            final detail = state.detail;
+            if (detail == null) return;
+            setState(() {
+              if (!_prefilled) _applyDetail(detail);
+              _syncProjectFromDetail(state);
+            });
+          },
+        ),
+      ],
       child: Scaffold(
         backgroundColor: colors.backgroundBase,
         body: SafeArea(
@@ -284,136 +402,181 @@ class _TaskCreateViewState extends State<_TaskCreateView> {
             overlayChildBuilder: _buildOverlay,
             child: Column(
               children: [
-                _Header(title: l10n.taskCreateTitle),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 24.h),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      spacing: 12.h,
-                      children: [
-                        _SelectField(
-                          label: l10n.taskCreateFieldProject,
-                          value: _project?.title,
-                          placeholder: l10n.taskCreateProjectHint,
-                          link: _links[_Field.project],
-                          onTap: () => _toggle(_Field.project),
-                        ),
-                        _InputField(
-                          label: l10n.taskCreateFieldName,
-                          hint: l10n.taskCreateNameHint,
-                          controller: _nameCtrl,
-                        ),
-                        _TextAreaField(
-                          label: l10n.taskCreateFieldDescription,
-                          hint: l10n.taskCreateDescriptionHint,
-                          controller: _descCtrl,
-                        ),
-                        _SelectField(
-                          label: l10n.taskCreateFieldPriority,
-                          value: _priority == null
-                              ? null
-                              : _priorityLabel(_priority!, l10n),
-                          placeholder: l10n.taskCreatePriorityHint,
-                          link: _links[_Field.priority],
-                          onTap: () => _toggle(_Field.priority),
-                        ),
-                        _SelectField(
-                          label: l10n.taskCreateFieldType,
-                          value:
-                              _type == null ? null : _typeLabel(_type!, l10n),
-                          placeholder: l10n.taskCreateTypeHint,
-                          link: _links[_Field.type],
-                          onTap: () => _toggle(_Field.type),
-                        ),
-                        _SelectField(
-                          label: l10n.taskCreateFieldAssigner,
-                          value: _assigner?.username,
-                          placeholder: l10n.taskCreateFieldAssigner,
-                          link: _links[_Field.assigner],
-                          onTap: _onAssignerTap,
-                        ),
-                        _SelectField(
-                          label: l10n.taskCreateFieldPositions,
-                          value: _position?.name,
-                          placeholder: l10n.taskCreatePositionsHint,
-                          link: _links[_Field.positions],
-                          onTap: () => _toggle(_Field.positions),
-                        ),
-                        _InputField(
-                          label: l10n.taskCreateFieldSprint,
-                          hint: '0',
-                          controller: _sprintCtrl,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                        ),
-                        _InputField(
-                          label: l10n.taskCreateFieldPrice,
-                          hint: l10n.taskCreatePriceHint,
-                          controller: _priceCtrl,
-                          keyboardType: TextInputType.number,
-                          textAlign: TextAlign.right,
-                          inputFormatters: [_ThousandsFormatter()],
-                        ),
-                        _InputField(
-                          label: l10n.taskCreateFieldPenalty,
-                          hint: l10n.taskCreatePenaltyHint,
-                          controller: _penaltyCtrl,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [_MaxValueFormatter(100)],
-                        ),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _SelectField(
-                                label: l10n.taskCreateFieldDeadline,
-                                value: _fmtDate(_deadlineDate),
-                                placeholder: l10n.taskCreateFieldDeadline,
-                                icon: Assets.icons.icCalendar,
-                                onTap: _pickDate,
-                              ),
-                            ),
-                            SizedBox(width: 16.w),
-                            Expanded(
-                              child: _SelectField(
-                                label: l10n.taskCreateFieldTime,
-                                value: _fmtTime(_deadlineTime),
-                                placeholder: '00:00',
-                                icon: Assets.icons.icTuilconTime,
-                                onTap: () => _pickTime(true),
-                              ),
-                            ),
-                          ],
-                        ),
-                        _SelectField(
-                          label: l10n.taskCreateFieldEstimated,
-                          value: _fmtTime(_estimated),
-                          placeholder: '00:00',
-                          icon: Assets.icons.icTuilconTime,
-                          onTap: () => _pickTime(false),
-                        ),
-                        _FilesRow(
-                          label: l10n.taskCreateFieldFiles,
-                          files: _files,
-                          onPick: _pickFiles,
-                          onRemove: (f) => setState(() => _files.remove(f)),
-                        ),
-                      ],
-                    ),
-                  ),
+                _Header(
+                  title: _isEdit ? l10n.taskEditTitle : l10n.taskCreateTitle,
                 ),
-                BlocBuilder<TaskCreateBloc, TaskCreateState>(
-                  buildWhen: (p, c) => p.submitStatus != c.submitStatus,
-                  builder: (context, state) => _SubmitBar(
-                    label: l10n.taskCreateTitle,
-                    loading: state.submitStatus == TaskSubmitStatus.submitting,
-                    onTap: _submit,
-                  ),
-                ),
+                Expanded(child: _buildFormArea(l10n)),
+                _buildSubmitBar(l10n),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  /// Forma maydoni: tahrirlashda detal yuklanmaguncha spinner, yuklanmasa
+  /// xato + qayta urinish (bo'sh forma bilan PATCH yubormaslik uchun).
+  Widget _buildFormArea(AppLocalizations l10n) {
+    if (!_isEdit) return _buildForm(l10n, const []);
+    return BlocBuilder<TaskCreateBloc, TaskCreateState>(
+      buildWhen: (p, c) =>
+          p.detail != c.detail ||
+          p.detailLoading != c.detailLoading ||
+          p.attachments != c.attachments,
+      builder: (context, state) {
+        if (state.detail == null) {
+          if (state.detailLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          return _DetailErrorState(
+            onRetry: () => context.read<TaskCreateBloc>().add(
+              TaskCreateDetailRequested(widget.taskId!),
+            ),
+          );
+        }
+        return _buildForm(l10n, state.attachments);
+      },
+    );
+  }
+
+  /// Pastki tugma: yaratishda "Vazifa qo'shish", tahrirlashda "Saqlash"
+  /// (detal yuklanmaguncha ko'rinmaydi).
+  Widget _buildSubmitBar(AppLocalizations l10n) {
+    return BlocBuilder<TaskCreateBloc, TaskCreateState>(
+      buildWhen: (p, c) =>
+          p.submitStatus != c.submitStatus || p.detail != c.detail,
+      builder: (context, state) {
+        if (_isEdit && state.detail == null) return const SizedBox.shrink();
+        return _SubmitBar(
+          label: _isEdit ? l10n.taskEditSave : l10n.taskCreateTitle,
+          loading: state.submitStatus == TaskSubmitStatus.submitting,
+          onTap: _submit,
+        );
+      },
+    );
+  }
+
+  Widget _buildForm(
+    AppLocalizations l10n,
+    List<TaskAttachmentInfo> attachments,
+  ) {
+    return SingleChildScrollView(
+      padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 24.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 12.h,
+        children: [
+          _SelectField(
+            label: l10n.taskCreateFieldProject,
+            value: _project?.title ?? _projectFallbackTitle,
+            placeholder: l10n.taskCreateProjectHint,
+            link: _links[_Field.project],
+            onTap: () => _toggle(_Field.project),
+          ),
+          _InputField(
+            label: l10n.taskCreateFieldName,
+            hint: l10n.taskCreateNameHint,
+            controller: _nameCtrl,
+          ),
+          _TextAreaField(
+            label: l10n.taskCreateFieldDescription,
+            hint: l10n.taskCreateDescriptionHint,
+            controller: _descCtrl,
+          ),
+          _SelectField(
+            label: l10n.taskCreateFieldPriority,
+            value: _priority == null ? null : _priorityLabel(_priority!, l10n),
+            placeholder: l10n.taskCreatePriorityHint,
+            link: _links[_Field.priority],
+            onTap: () => _toggle(_Field.priority),
+          ),
+          _SelectField(
+            label: l10n.taskCreateFieldType,
+            value: _type == null ? null : _typeLabel(_type!, l10n),
+            placeholder: l10n.taskCreateTypeHint,
+            link: _links[_Field.type],
+            onTap: () => _toggle(_Field.type),
+          ),
+          _SelectField(
+            label: l10n.taskCreateFieldAssigner,
+            value: _assigner?.username,
+            placeholder: l10n.taskCreateFieldAssigner,
+            link: _links[_Field.assigner],
+            onTap: _onAssignerTap,
+          ),
+          _SelectField(
+            label: l10n.taskCreateFieldPositions,
+            value: _position?.name,
+            placeholder: l10n.taskCreatePositionsHint,
+            link: _links[_Field.positions],
+            onTap: () => _toggle(_Field.positions),
+          ),
+          _InputField(
+            label: l10n.taskCreateFieldSprint,
+            hint: '0',
+            controller: _sprintCtrl,
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          ),
+          _InputField(
+            label: l10n.taskCreateFieldPrice,
+            hint: l10n.taskCreatePriceHint,
+            controller: _priceCtrl,
+            keyboardType: TextInputType.number,
+            textAlign: TextAlign.right,
+            inputFormatters: [_ThousandsFormatter()],
+          ),
+          _InputField(
+            label: l10n.taskCreateFieldPenalty,
+            hint: l10n.taskCreatePenaltyHint,
+            controller: _penaltyCtrl,
+            keyboardType: TextInputType.number,
+            inputFormatters: [_MaxValueFormatter(100)],
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: _SelectField(
+                  label: l10n.taskCreateFieldDeadline,
+                  value: _fmtDate(_deadlineDate),
+                  placeholder: l10n.taskCreateFieldDeadline,
+                  icon: Assets.icons.icCalendar,
+                  onTap: _pickDate,
+                ),
+              ),
+              SizedBox(width: 16.w),
+              Expanded(
+                child: _SelectField(
+                  label: l10n.taskCreateFieldTime,
+                  value: _fmtTime(_deadlineTime),
+                  placeholder: '00:00',
+                  icon: Assets.icons.icTuilconTime,
+                  onTap: () => _pickTime(true),
+                ),
+              ),
+            ],
+          ),
+          _SelectField(
+            label: l10n.taskCreateFieldEstimated,
+            value: _fmtTime(_estimated),
+            placeholder: '00:00',
+            icon: Assets.icons.icTuilconTime,
+            onTap: () => _pickTime(false),
+          ),
+          _FilesRow(
+            label: l10n.taskCreateFieldFiles,
+            files: _files,
+            existing: [
+              for (final a in attachments)
+                if (!_removedAttachmentIds.contains(a.id)) a,
+            ],
+            onPick: _pickFiles,
+            onRemove: (f) => setState(() => _files.remove(f)),
+            onRemoveExisting: (a) =>
+                setState(() => _removedAttachmentIds.add(a.id)),
+          ),
+        ],
       ),
     );
   }
@@ -527,8 +690,9 @@ class _TaskCreateViewState extends State<_TaskCreateView> {
     final colors = AppColors.of(context);
     final isDark = colors.backgroundBase.computeLuminance() < 0.5;
     final base = isDark ? ThemeData.dark() : ThemeData.light();
-    final shape =
-        RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r));
+    final shape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(20.r),
+    );
 
     return Theme(
       data: base.copyWith(
@@ -575,24 +739,30 @@ String? _priorityApi(TaskPriority? p) => switch (p) {
   _ => null,
 };
 
+/// Domen [TaskType] (schema `Type225Enum`: bug/extra/feature/research) uchun
+/// yorliqlar — `extra` dizayndagi "Qo'shimcha" bandiga to'g'ri keladi.
 String _typeLabel(TaskType t, AppLocalizations l10n) => switch (t) {
   TaskType.bug => l10n.taskTypeBug,
   TaskType.feature => l10n.taskTypeFeature,
-  TaskType.addition => l10n.taskTypeAddition,
+  TaskType.extra => l10n.taskTypeAddition,
   TaskType.research => l10n.taskTypeResearch,
 };
 
-// ponytail: `feature/addition/research` API stringlari taxmin (response faqat
-// `bug` ni ko'rsatdi) — noto'g'ri bo'lsa shu yerda moslanadi.
-String? _typeApi(TaskType? t) => switch (t) {
-  TaskType.bug => 'bug',
-  TaskType.feature => 'feature',
-  TaskType.addition => 'addition',
-  TaskType.research => 'research',
-  null => null,
-};
-
 String _digits(String s) => s.replaceAll(RegExp('[^0-9]'), '');
+
+/// Decimal string'ning butun qismi ("150000.00" → "150000").
+String _intPart(String s) => _digits(s.split('.').first);
+
+/// Raqamlarni 3 xonadan bo'lib guruhlaydi (prefill uchun; kiritishda
+/// [_ThousandsFormatter] shu formatni saqlaydi).
+String _groupThousands(String digits) {
+  final buf = StringBuffer();
+  for (var i = 0; i < digits.length; i++) {
+    if (i > 0 && (digits.length - i) % 3 == 0) buf.write(' ');
+    buf.write(digits[i]);
+  }
+  return buf.toString();
+}
 
 String _fmtDate(DateTime? d) {
   if (d == null) return '';
@@ -684,8 +854,10 @@ class _Header extends StatelessWidget {
               child: Assets.icons.icClose.svg(
                 width: 16.w,
                 height: 16.w,
-                colorFilter:
-                    ColorFilter.mode(colors.iconStrong, BlendMode.srcIn),
+                colorFilter: ColorFilter.mode(
+                  colors.iconStrong,
+                  BlendMode.srcIn,
+                ),
               ),
             ),
           ),
@@ -911,7 +1083,12 @@ class _TextAreaFieldState extends State<_TextAreaField> {
           child: Stack(
             children: [
               Padding(
-                padding: EdgeInsets.fromLTRB(14.w, 9.h, hasText ? 34.w : 14.w, 9.h),
+                padding: EdgeInsets.fromLTRB(
+                  14.w,
+                  9.h,
+                  hasText ? 34.w : 14.w,
+                  9.h,
+                ),
                 child: SizedBox(
                   height: 60.h,
                   child: TextField(
@@ -942,8 +1119,10 @@ class _TextAreaFieldState extends State<_TextAreaField> {
                       child: Assets.icons.icClose.svg(
                         width: 16.w,
                         height: 16.w,
-                        colorFilter:
-                            ColorFilter.mode(colors.iconSub, BlendMode.srcIn),
+                        colorFilter: ColorFilter.mode(
+                          colors.iconSub,
+                          BlendMode.srcIn,
+                        ),
                       ),
                     ),
                   ),
@@ -1145,12 +1324,18 @@ class _FilesRow extends StatelessWidget {
     required this.files,
     required this.onPick,
     required this.onRemove,
+    this.existing = const [],
+    this.onRemoveExisting,
   });
 
   final String label;
   final List<PlatformFile> files;
   final VoidCallback onPick;
   final ValueChanged<PlatformFile> onRemove;
+
+  /// Vazifaga allaqachon biriktirilgan fayllar (tahrirlash rejimi).
+  final List<TaskAttachmentInfo> existing;
+  final ValueChanged<TaskAttachmentInfo>? onRemoveExisting;
 
   @override
   Widget build(BuildContext context) {
@@ -1177,8 +1362,10 @@ class _FilesRow extends StatelessWidget {
                       Assets.icons.icDocument.svg(
                         width: 16.w,
                         height: 16.w,
-                        colorFilter:
-                            ColorFilter.mode(colors.textSoft, BlendMode.srcIn),
+                        colorFilter: ColorFilter.mode(
+                          colors.textSoft,
+                          BlendMode.srcIn,
+                        ),
                       ),
                       SizedBox(width: 4.w),
                       l10n.taskCreateFileUpload
@@ -1200,21 +1387,29 @@ class _FilesRow extends StatelessWidget {
                   child: Assets.icons.icPlus.svg(
                     width: 16.w,
                     height: 16.w,
-                    colorFilter:
-                        ColorFilter.mode(colors.iconSub, BlendMode.srcIn),
+                    colorFilter: ColorFilter.mode(
+                      colors.iconSub,
+                      BlendMode.srcIn,
+                    ),
                   ),
                 ),
               ),
             ),
           ],
         ),
-        if (files.isNotEmpty) ...[
+        if (existing.isNotEmpty || files.isNotEmpty) ...[
           SizedBox(height: 8.h),
           Wrap(
             spacing: 8.w,
             runSpacing: 8.h,
             children: [
-              for (final f in files) _FileChip(file: f, onRemove: onRemove),
+              for (final a in existing)
+                _FileChip(
+                  name: a.name,
+                  onRemove: () => onRemoveExisting?.call(a),
+                ),
+              for (final f in files)
+                _FileChip(name: f.name, onRemove: () => onRemove(f)),
             ],
           ),
         ],
@@ -1223,12 +1418,13 @@ class _FilesRow extends StatelessWidget {
   }
 }
 
-/// Tanlangan fayl chipi (nom + olib tashlash).
+/// Fayl chipi (nom + olib tashlash) — yangi tanlangan ham, mavjud biriktirilgan
+/// ham shu ko'rinishda.
 class _FileChip extends StatelessWidget {
-  const _FileChip({required this.file, required this.onRemove});
+  const _FileChip({required this.name, required this.onRemove});
 
-  final PlatformFile file;
-  final ValueChanged<PlatformFile> onRemove;
+  final String name;
+  final VoidCallback onRemove;
 
   @override
   Widget build(BuildContext context) {
@@ -1245,7 +1441,7 @@ class _FileChip extends StatelessWidget {
           children: [
             ConstrainedBox(
               constraints: BoxConstraints(maxWidth: 160.w),
-              child: file.name
+              child: name
                   .s(11.sp)
                   .w(700)
                   .c(colors.textStrong)
@@ -1253,7 +1449,7 @@ class _FileChip extends StatelessWidget {
             ),
             SizedBox(width: 6.w),
             InkWell(
-              onTap: () => onRemove(file),
+              onTap: onRemove,
               borderRadius: BorderRadius.circular(8.r),
               child: Assets.icons.icClose.svg(
                 width: 14.w,
@@ -1263,6 +1459,37 @@ class _FileChip extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Tahrirlash detali yuklanmaganda ko'rsatiladigan xato + qayta urinish.
+class _DetailErrorState extends StatelessWidget {
+  const _DetailErrorState({required this.onRetry});
+
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final l10n = AppLocalizations.of(context);
+
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          l10n.commonError
+              .s(14.sp)
+              .w(500)
+              .c(colors.textSub)
+              .a(TextAlign.center),
+          SizedBox(height: 12.h),
+          TextButton(
+            onPressed: onRetry,
+            child: l10n.commonRetry.s(14.sp).w(600).c(colors.textAccent),
+          ),
+        ],
       ),
     );
   }
@@ -1278,7 +1505,10 @@ class _DashedBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomPaint(
       painter: _DashedRRectPainter(color: color, radius: 20.r),
-      child: SizedBox(height: 56.h, child: Center(child: child)),
+      child: SizedBox(
+        height: 56.h,
+        child: Center(child: child),
+      ),
     );
   }
 }

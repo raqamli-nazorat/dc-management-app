@@ -1,0 +1,1012 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../../../config/theme/app_colors.dart';
+import '../../../../core/extentions/text_extensions.dart';
+import '../../../../core/gen/assets.gen.dart';
+import '../../../../core/widgets/app_toast.dart';
+import '../../../../injection_container.dart';
+import '../../../../l10n/app_localizations.dart';
+import '../../domain/entities/task.dart';
+import '../../domain/entities/task_detail.dart';
+import '../../domain/usecases/change_task_status_usecase.dart';
+import '../bloc/task_create_bloc.dart';
+
+/// Vazifa tafsilotlari — "Batafsil" (Figma: o'qish rejimidagi forma
+/// maydonlari + biriktirilgan fayllar + rad etish sababi + holat tugmalari).
+/// Holat o'zgargach `true` bilan yopiladi (ro'yxat qayta yuklanadi).
+class TaskDetailPage extends StatelessWidget {
+  const TaskDetailPage({super.key, required this.taskId});
+
+  final int taskId;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider<TaskCreateBloc>(
+      create: (_) =>
+          getIt<TaskCreateBloc>()..add(TaskCreateDetailRequested(taskId)),
+      child: _TaskDetailView(taskId: taskId),
+    );
+  }
+}
+
+class _TaskDetailView extends StatelessWidget {
+  const _TaskDetailView({required this.taskId});
+
+  final int taskId;
+
+  /// Holat bo'yicha mavjud amallar.
+  /// ponytail: taxmin — done/production tekshiruvchi ko'radi
+  /// (Tekshirildi/Rad etildi), qolgan ochiq holatlar "Bajarilganga
+  /// o'tkazish", checked yakuniy. Rollar aniqlashsa shu yerda toraytiriladi.
+  List<_TaskAction> _actions(TaskStatus status) => switch (status) {
+    TaskStatus.done ||
+    TaskStatus.production => const [_TaskAction.checked, _TaskAction.rejected],
+    TaskStatus.todo ||
+    TaskStatus.inProgress ||
+    TaskStatus.overdue ||
+    TaskStatus.rejected => const [_TaskAction.markDone],
+    _ => const [],
+  };
+
+  Future<void> _onAction(BuildContext context, _TaskAction action) async {
+    final bloc = context.read<TaskCreateBloc>();
+    switch (action) {
+      case _TaskAction.checked:
+        bloc.add(
+          TaskCreateStatusSubmitted(
+            ChangeTaskStatusParams(id: taskId, status: TaskStatus.checked),
+          ),
+        );
+      case _TaskAction.markDone:
+        bloc.add(
+          TaskCreateStatusSubmitted(
+            ChangeTaskStatusParams(id: taskId, status: TaskStatus.done),
+          ),
+        );
+      case _TaskAction.rejected:
+        final result = await showTaskRejectSheet(context);
+        if (result != null) {
+          bloc.add(
+            TaskCreateStatusSubmitted(
+              ChangeTaskStatusParams(
+                id: taskId,
+                status: TaskStatus.rejected,
+                reason: result.reason,
+                photoPaths: result.photoPaths,
+              ),
+            ),
+          );
+        }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final l10n = AppLocalizations.of(context);
+
+    return BlocListener<TaskCreateBloc, TaskCreateState>(
+      listenWhen: (p, c) => p.submitStatus != c.submitStatus,
+      listener: (context, state) {
+        switch (state.submitStatus) {
+          case TaskSubmitStatus.success:
+            AppToast.showSuccess(context, title: l10n.taskStatusUpdated);
+            Navigator.of(context).maybePop(true);
+          case TaskSubmitStatus.failure:
+            AppToast.showError(
+              context,
+              title: l10n.commonError,
+              message: state.submitFailure?.message,
+            );
+          case TaskSubmitStatus.idle:
+          case TaskSubmitStatus.submitting:
+            break;
+        }
+      },
+      child: Scaffold(
+        backgroundColor: colors.backgroundBase,
+        body: SafeArea(
+          child: Column(
+            children: [
+              _Header(title: l10n.taskDetailTitle),
+              Expanded(
+                child: BlocBuilder<TaskCreateBloc, TaskCreateState>(
+                  buildWhen: (p, c) =>
+                      p.detail != c.detail ||
+                      p.detailLoading != c.detailLoading ||
+                      p.attachments != c.attachments ||
+                      p.submitStatus != c.submitStatus,
+                  builder: (context, state) {
+                    final detail = state.detail;
+                    if (detail == null) {
+                      if (state.detailLoading) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      return _ErrorState(
+                        onRetry: () => context.read<TaskCreateBloc>().add(
+                          TaskCreateDetailRequested(taskId),
+                        ),
+                      );
+                    }
+                    final submitting =
+                        state.submitStatus == TaskSubmitStatus.submitting;
+                    return Column(
+                      children: [
+                        Expanded(
+                          child: _DetailBody(
+                            detail: detail,
+                            attachments: state.attachments,
+                          ),
+                        ),
+                        SafeArea(
+                          top: false,
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 8.h),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                for (final action in _actions(detail.status))
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 8.h),
+                                    child: _ActionButton(
+                                      action: action,
+                                      loading: submitting,
+                                      onTap: () => _onAction(context, action),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Kontent ───────────────────────────────────────────────────────────────
+
+class _DetailBody extends StatelessWidget {
+  const _DetailBody({required this.detail, required this.attachments});
+
+  final TaskDetail detail;
+  final List<TaskAttachmentInfo> attachments;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final l10n = AppLocalizations.of(context);
+    final estimated = detail.estimatedMinutes ?? 0;
+
+    return SingleChildScrollView(
+      padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 24.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 12.h,
+        children: [
+          _ReadOnlyField(
+            label: l10n.taskCreateFieldProject,
+            value: detail.projectInfo,
+          ),
+          _ReadOnlyField(label: l10n.taskCreateFieldName, value: detail.title),
+          if (detail.description.isNotEmpty)
+            _ReadOnlyField(
+              label: l10n.taskCreateFieldDescription,
+              value: detail.description,
+              multiline: true,
+            ),
+          _ReadOnlyField(
+            label: l10n.taskCreateFieldPriority,
+            value: _priorityLabel(detail.priority, l10n),
+          ),
+          if (detail.type != null)
+            _ReadOnlyField(
+              label: l10n.taskCreateFieldType,
+              value: _typeLabel(detail.type!, l10n),
+            ),
+          _ReadOnlyField(
+            label: l10n.taskDetailCreatedBy,
+            value: detail.createdByName,
+          ),
+          if (detail.taskPrice.isNotEmpty)
+            _ReadOnlyField(
+              label: l10n.taskCreateFieldPrice,
+              value: detail.taskPrice,
+              alignEnd: true,
+            ),
+          if (detail.penaltyPercentage.isNotEmpty)
+            _ReadOnlyField(
+              label: l10n.taskCreateFieldPenalty,
+              value: detail.penaltyPercentage,
+            ),
+          Row(
+            children: [
+              Expanded(
+                child: _ReadOnlyField(
+                  label: l10n.taskCreateFieldDeadline,
+                  value: _fmtDate(detail.deadline),
+                  icon: Assets.icons.icCalendar,
+                ),
+              ),
+              SizedBox(width: 16.w),
+              Expanded(
+                child: _ReadOnlyField(
+                  label: l10n.taskCreateFieldTime,
+                  value: _fmtClock(detail.deadline),
+                  icon: Assets.icons.icTuilconTime,
+                ),
+              ),
+            ],
+          ),
+          if (estimated > 0)
+            _ReadOnlyField(
+              label: l10n.taskCreateFieldEstimated,
+              value:
+                  '${estimated ~/ 60}:'
+                  '${(estimated % 60).toString().padLeft(2, '0')}',
+              icon: Assets.icons.icTuilconTime,
+            ),
+          if (attachments.isNotEmpty) ...[
+            SizedBox(height: 4.h),
+            l10n.taskCreateFieldFiles.s(15.sp).w(800).c(colors.textStrong),
+            for (final file in attachments) _AttachmentRow(file: file),
+          ],
+          if (detail.rejectionReason.isNotEmpty ||
+              detail.rejectionFiles.isNotEmpty) ...[
+            SizedBox(height: 4.h),
+            l10n.taskDetailRejectReason.s(15.sp).w(800).c(colors.textStrong),
+            _RejectionBox(
+              reason: detail.rejectionReason,
+              fileUrls: detail.rejectionFiles,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// O'qish rejimidagi maydon: yorliq + chegarali quti ichida qiymat.
+class _ReadOnlyField extends StatelessWidget {
+  const _ReadOnlyField({
+    required this.label,
+    required this.value,
+    this.multiline = false,
+    this.alignEnd = false,
+    this.icon,
+  });
+
+  final String label;
+  final String value;
+  final bool multiline;
+  final bool alignEnd;
+  final SvgGenImage? icon;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final text = (value.isEmpty ? '—' : value)
+        .s(13.sp)
+        .w(700)
+        .h(20 / 13)
+        .c(colors.textStrong)
+        .copyWith(
+          maxLines: multiline ? null : 1,
+          overflow: multiline ? null : TextOverflow.ellipsis,
+        );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(bottom: 4.h),
+          child: label.s(11.sp).w(700).c(colors.textSub),
+        ),
+        DecoratedBox(
+          decoration: BoxDecoration(
+            color: colors.backgroundBase,
+            borderRadius: BorderRadius.circular(12.r),
+            border: Border.all(color: colors.strokeSub, width: 1.w),
+          ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+            child: SizedBox(
+              width: double.infinity,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Align(
+                      alignment: alignEnd
+                          ? Alignment.centerRight
+                          : Alignment.centerLeft,
+                      child: text,
+                    ),
+                  ),
+                  if (icon != null) ...[
+                    SizedBox(width: 4.w),
+                    icon!.svg(
+                      width: 16.w,
+                      height: 16.w,
+                      colorFilter: ColorFilter.mode(
+                        colors.iconSub,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Biriktirilgan fayl qatori: hujjat ikonkasi + fayl nomi.
+class _AttachmentRow extends StatelessWidget {
+  const _AttachmentRow({required this.file});
+
+  final TaskAttachmentInfo file;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+
+    return Row(
+      children: [
+        DecoratedBox(
+          decoration: BoxDecoration(
+            color: colors.backgroundElevation1,
+            borderRadius: BorderRadius.circular(12.r),
+          ),
+          child: SizedBox(
+            width: 40.w,
+            height: 40.w,
+            child: Center(
+              child: Assets.icons.icDocument.svg(
+                width: 20.w,
+                height: 20.w,
+                colorFilter: ColorFilter.mode(
+                  colors.iconStrong,
+                  BlendMode.srcIn,
+                ),
+              ),
+            ),
+          ),
+        ),
+        SizedBox(width: 12.w),
+        Expanded(
+          child: file.name
+              .s(13.sp)
+              .w(700)
+              .c(colors.textStrong)
+              .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+        ),
+      ],
+    );
+  }
+}
+
+/// Rad etish sababi qutisi: skrinshotlar + matn.
+class _RejectionBox extends StatelessWidget {
+  const _RejectionBox({required this.reason, required this.fileUrls});
+
+  final String reason;
+  final List<String> fileUrls;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: colors.backgroundBase,
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: colors.strokeSub, width: 1.w),
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(12.w),
+        child: SizedBox(
+          width: double.infinity,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (fileUrls.isNotEmpty) ...[
+                Wrap(
+                  spacing: 8.w,
+                  runSpacing: 8.h,
+                  children: [
+                    for (final url in fileUrls)
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8.r),
+                        child: Image.network(
+                          url,
+                          width: 64.w,
+                          height: 64.w,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, _, _) => DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: colors.backgroundElevation1,
+                            ),
+                            child: SizedBox(width: 64.w, height: 64.w),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+                SizedBox(height: 8.h),
+              ],
+              if (reason.isNotEmpty)
+                reason.s(13.sp).w(500).h(20 / 13).c(colors.textStrong),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Holat tugmalari ──────────────────────────────────────────────────────
+
+enum _TaskAction { checked, rejected, markDone }
+
+/// Holat tugmasi (Figma: kulrang pill + rangli dumaloq ikonka).
+/// ponytail: dizayndagi "slide" imo-ishorasi oddiy bosish bilan almashtirilgan
+/// — talab qat'iylashsa Dismissible/drag bilan boyitiladi.
+class _ActionButton extends StatelessWidget {
+  const _ActionButton({
+    required this.action,
+    required this.loading,
+    required this.onTap,
+  });
+
+  final _TaskAction action;
+  final bool loading;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final l10n = AppLocalizations.of(context);
+
+    final (label, circleColor, leftSide) = switch (action) {
+      _TaskAction.checked => (l10n.taskActionChecked, colors.chartTeal, true),
+      _TaskAction.rejected => (
+        l10n.taskActionRejected,
+        colors.errorStrong,
+        false,
+      ),
+      _TaskAction.markDone => (
+        l10n.taskActionMarkDone,
+        colors.accentStrong,
+        true,
+      ),
+    };
+
+    final circle = DecoratedBox(
+      decoration: BoxDecoration(color: circleColor, shape: BoxShape.circle),
+      child: SizedBox(
+        width: 44.w,
+        height: 44.w,
+        child: Center(
+          child: CustomPaint(
+            size: Size(18.w, 14.w),
+            painter: _DoubleCaretPainter(
+              color: colors.textWhite,
+              pointLeft: !leftSide,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    return InkWell(
+      onTap: loading ? null : onTap,
+      borderRadius: BorderRadius.circular(26.r),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: colors.backgroundElevation1,
+          borderRadius: BorderRadius.circular(26.r),
+        ),
+        child: SizedBox(
+          height: 52.h,
+          child: Padding(
+            padding: EdgeInsets.all(4.w),
+            child: Row(
+              children: [
+                if (leftSide) circle else SizedBox(width: 44.w),
+                Expanded(
+                  child: Center(
+                    child: label
+                        .s(15.sp)
+                        .w(800)
+                        .c(colors.textSub)
+                        .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+                  ),
+                ),
+                if (!leftSide) circle else SizedBox(width: 44.w),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Ikki qavat chevron (» / «) — assetlarda yo'q, shu bois chizib qo'yilgan.
+class _DoubleCaretPainter extends CustomPainter {
+  _DoubleCaretPainter({required this.color, required this.pointLeft});
+
+  final Color color;
+  final bool pointLeft;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.2
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+
+    final h = size.height;
+    final half = size.width / 2;
+
+    void caret(double startX) {
+      final path = Path();
+      if (pointLeft) {
+        path
+          ..moveTo(startX + half * 0.7, 0)
+          ..lineTo(startX, h / 2)
+          ..lineTo(startX + half * 0.7, h);
+      } else {
+        path
+          ..moveTo(startX, 0)
+          ..lineTo(startX + half * 0.7, h / 2)
+          ..lineTo(startX, h);
+      }
+      canvas.drawPath(path, paint);
+    }
+
+    caret(0);
+    caret(half);
+  }
+
+  @override
+  bool shouldRepaint(_DoubleCaretPainter old) =>
+      old.color != color || old.pointLeft != pointLeft;
+}
+
+// ── Rad etish varag'i ────────────────────────────────────────────────────
+
+typedef TaskRejectResult = ({String reason, List<String> photoPaths});
+
+/// "Vazifani rad etish" varag'i: sabab + ixtiyoriy skrinshotlar.
+/// `null` — bekor qilindi.
+Future<TaskRejectResult?> showTaskRejectSheet(BuildContext context) {
+  final colors = AppColors.of(context);
+  return showModalBottomSheet<TaskRejectResult>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: colors.backgroundBase,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+    ),
+    builder: (_) => const _RejectSheet(),
+  );
+}
+
+class _RejectSheet extends StatefulWidget {
+  const _RejectSheet();
+
+  @override
+  State<_RejectSheet> createState() => _RejectSheetState();
+}
+
+class _RejectSheetState extends State<_RejectSheet> {
+  final _reasonCtrl = TextEditingController();
+  final List<PlatformFile> _photos = [];
+
+  @override
+  void dispose() {
+    _reasonCtrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pickPhotos() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        allowMultiple: true,
+        type: FileType.image,
+      );
+      if (result == null) return;
+      setState(() {
+        for (final f in result.files) {
+          if (f.path != null) _photos.add(f);
+        }
+      });
+    } catch (_) {
+      if (!mounted) return;
+      AppToast.showError(
+        context,
+        title: AppLocalizations.of(context).commonError,
+      );
+    }
+  }
+
+  void _confirm() {
+    final reason = _reasonCtrl.text.trim();
+    if (reason.isEmpty) {
+      AppToast.showError(
+        context,
+        title: AppLocalizations.of(context).taskRejectSubtitle,
+      );
+      return;
+    }
+    Navigator.of(
+      context,
+    ).pop((reason: reason, photoPaths: [for (final f in _photos) f.path!]));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final l10n = AppLocalizations.of(context);
+    final style = TextStyle(
+      fontSize: 13.sp,
+      fontWeight: FontWeight.w500,
+      color: colors.textStrong,
+      height: 20 / 13,
+    );
+
+    return Padding(
+      padding: EdgeInsets.only(
+        left: 20.w,
+        right: 20.w,
+        top: 24.h,
+        bottom: MediaQuery.viewInsetsOf(context).bottom + 24.h,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: l10n.taskRejectTitle
+                .s(19.sp)
+                .w(800)
+                .h(28 / 19)
+                .c(colors.textStrong),
+          ),
+          SizedBox(height: 4.h),
+          Center(
+            child: l10n.taskRejectSubtitle
+                .s(15.sp)
+                .w(500)
+                .h(24 / 15)
+                .c(colors.textSub),
+          ),
+          SizedBox(height: 16.h),
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color: colors.backgroundBase,
+              borderRadius: BorderRadius.circular(12.r),
+              border: Border.all(color: colors.strokeSub, width: 1.w),
+            ),
+            child: Padding(
+              padding: EdgeInsets.all(12.w),
+              child: SizedBox(
+                width: double.infinity,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Wrap(
+                      spacing: 8.w,
+                      runSpacing: 8.h,
+                      children: [
+                        for (final photo in _photos)
+                          _PhotoThumb(
+                            photo: photo,
+                            onRemove: () =>
+                                setState(() => _photos.remove(photo)),
+                          ),
+                        _AddPhotoTile(onTap: _pickPhotos),
+                      ],
+                    ),
+                    SizedBox(height: 8.h),
+                    TextField(
+                      controller: _reasonCtrl,
+                      maxLines: 4,
+                      minLines: 2,
+                      style: style,
+                      cursorColor: colors.accentSub,
+                      decoration: InputDecoration.collapsed(
+                        hintText: l10n.taskRejectHint,
+                        hintStyle: style.copyWith(color: colors.textSub),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 24.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              InkWell(
+                onTap: () => Navigator.of(context).pop(),
+                borderRadius: BorderRadius.circular(12.r),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  child: SizedBox(
+                    height: 52.h,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Assets.icons.icClose.svg(
+                          width: 16.w,
+                          height: 16.w,
+                          colorFilter: ColorFilter.mode(
+                            colors.textStrong,
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                        SizedBox(width: 8.w),
+                        l10n.taskDeleteCancel
+                            .s(15.sp)
+                            .w(800)
+                            .c(colors.textStrong),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(width: 12.w),
+              InkWell(
+                onTap: _confirm,
+                borderRadius: BorderRadius.circular(16.r),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: colors.errorStrong,
+                    borderRadius: BorderRadius.circular(16.r),
+                  ),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24.w),
+                    child: SizedBox(
+                      height: 52.h,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Assets.icons.icTrash.svg(
+                            width: 16.w,
+                            height: 16.w,
+                            colorFilter: ColorFilter.mode(
+                              colors.textWhite,
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                          SizedBox(width: 8.w),
+                          l10n.taskRejectConfirm
+                              .s(15.sp)
+                              .w(800)
+                              .c(colors.textWhite),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PhotoThumb extends StatelessWidget {
+  const _PhotoThumb({required this.photo, required this.onRemove});
+
+  final PlatformFile photo;
+  final VoidCallback onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(8.r),
+          child: Image.file(
+            File(photo.path!),
+            width: 56.w,
+            height: 56.w,
+            fit: BoxFit.cover,
+          ),
+        ),
+        Positioned(
+          top: -6.h,
+          right: -6.w,
+          child: InkWell(
+            onTap: onRemove,
+            borderRadius: BorderRadius.circular(10.r),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: colors.backgroundElevation1,
+                shape: BoxShape.circle,
+                border: Border.all(color: colors.strokeSub, width: 1.w),
+              ),
+              child: SizedBox(
+                width: 20.w,
+                height: 20.w,
+                child: Center(
+                  child: Assets.icons.icClose.svg(
+                    width: 10.w,
+                    height: 10.w,
+                    colorFilter: ColorFilter.mode(
+                      colors.iconStrong,
+                      BlendMode.srcIn,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _AddPhotoTile extends StatelessWidget {
+  const _AddPhotoTile({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8.r),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: colors.backgroundElevation1,
+          borderRadius: BorderRadius.circular(8.r),
+        ),
+        child: SizedBox(
+          width: 56.w,
+          height: 56.w,
+          child: Center(
+            child: Assets.icons.icPlus.svg(
+              width: 16.w,
+              height: 16.w,
+              colorFilter: ColorFilter.mode(colors.iconSub, BlendMode.srcIn),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Yordamchilar ─────────────────────────────────────────────────────────
+
+class _Header extends StatelessWidget {
+  const _Header({required this.title});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+      child: Row(
+        children: [
+          InkWell(
+            onTap: () => Navigator.of(context).maybePop(),
+            borderRadius: BorderRadius.circular(12.r),
+            child: Padding(
+              padding: EdgeInsets.all(4.w),
+              child: Assets.icons.icArrowLeftLarge.svg(
+                width: 24.w,
+                height: 24.w,
+                colorFilter: ColorFilter.mode(
+                  colors.iconStrong,
+                  BlendMode.srcIn,
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: title
+                .s(17.sp)
+                .w(800)
+                .c(colors.textStrong)
+                .a(TextAlign.center)
+                .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+          ),
+          SizedBox(width: 32.w),
+        ],
+      ),
+    );
+  }
+}
+
+class _ErrorState extends StatelessWidget {
+  const _ErrorState({required this.onRetry});
+
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final l10n = AppLocalizations.of(context);
+
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          l10n.commonError
+              .s(14.sp)
+              .w(500)
+              .c(colors.textSub)
+              .a(TextAlign.center),
+          SizedBox(height: 12.h),
+          TextButton(
+            onPressed: onRetry,
+            child: l10n.commonRetry.s(14.sp).w(600).c(colors.textAccent),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+String _priorityLabel(TaskPriority p, AppLocalizations l10n) => switch (p) {
+  TaskPriority.low => l10n.taskPriorityLow,
+  TaskPriority.medium => l10n.taskPriorityMedium,
+  TaskPriority.high => l10n.taskPriorityHigh,
+  TaskPriority.critical => l10n.taskPriorityCritical,
+  TaskPriority.unknown => '',
+};
+
+String _typeLabel(TaskType t, AppLocalizations l10n) => switch (t) {
+  TaskType.bug => l10n.taskTypeBug,
+  TaskType.feature => l10n.taskTypeFeature,
+  TaskType.extra => l10n.taskTypeAddition,
+  TaskType.research => l10n.taskTypeResearch,
+};
+
+String _fmtDate(DateTime? d) {
+  if (d == null) return '';
+  String two(int v) => v.toString().padLeft(2, '0');
+  return '${two(d.day)}.${two(d.month)}.${d.year}';
+}
+
+String _fmtClock(DateTime? d) {
+  if (d == null) return '';
+  String two(int v) => v.toString().padLeft(2, '0');
+  return '${two(d.hour)}:${two(d.minute)}';
+}

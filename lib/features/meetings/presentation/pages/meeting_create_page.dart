@@ -15,13 +15,19 @@ import '../../../../injection_container.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../tasks/domain/entities/task_form_options.dart';
 import '../../../tasks/presentation/pages/task_multi_select_page.dart';
+import '../../domain/entities/meeting.dart';
 import '../../domain/entities/meeting_form.dart';
 import '../bloc/meeting_create_bloc.dart';
 
 enum _Field { none, project }
 
+/// Yig'ilish qo'shish/tahrirlash formasi. [initial] berilsa tahrirlash
+/// rejimi: maydonlar ro'yxatdagi [Meeting]dan to'ldiriladi, saqlash `PUT`
+/// yuboradi (toggle yoqilsa va yig'ilish ochiq bo'lsa keyin yopiladi).
 class MeetingCreatePage extends StatelessWidget {
-  const MeetingCreatePage({super.key});
+  const MeetingCreatePage({super.key, this.initial});
+
+  final Meeting? initial;
 
   @override
   Widget build(BuildContext context) {
@@ -29,13 +35,15 @@ class MeetingCreatePage extends StatelessWidget {
       create: (_) =>
           getIt<MeetingCreateBloc>()
             ..add(const MeetingCreateOptionsRequested()),
-      child: const _MeetingCreateView(),
+      child: _MeetingCreateView(initial: initial),
     );
   }
 }
 
 class _MeetingCreateView extends StatefulWidget {
-  const _MeetingCreateView();
+  const _MeetingCreateView({this.initial});
+
+  final Meeting? initial;
 
   @override
   State<_MeetingCreateView> createState() => _MeetingCreateViewState();
@@ -56,6 +64,47 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
   TimeOfDay? _time;
   bool _completed = false;
   final Set<int> _participantIds = {};
+
+  bool get _isEdit => widget.initial != null;
+
+  @override
+  void initState() {
+    super.initState();
+    final m = widget.initial;
+    if (m == null) return;
+    // Tahrirlash: ro'yxatdagi Meeting'da forma maydonlari to'liq bor —
+    // alohida detal so'rovi shart emas. Loyiha (ProjectShort) esa options
+    // yuklangach id bo'yicha moslanadi (build'dagi BlocListener).
+    _nameCtrl.text = m.title;
+    _linkCtrl.text = m.link;
+    _descCtrl.text = m.description;
+    _penaltyCtrl.text = _intPart(m.penaltyPercentage ?? '');
+    _durationCtrl.text = m.durationMinutes?.toString() ?? '';
+    _completed = m.isCompleted;
+    _participantIds.addAll(m.participantIds);
+    final start = m.startDate;
+    if (start != null) {
+      _date = start;
+      _time = TimeOfDay.fromDateTime(start);
+    }
+  }
+
+  /// Tanlanmagan loyihani tahrirlanayotgan yig'ilishning `projectId`si
+  /// bo'yicha `project-shorts` ro'yxatidan topadi (ishtirokchilar ro'yxati
+  /// ham yuklanadi, tanlovlar tozalanmaydi).
+  void _syncProjectFromInitial(List<ProjectShort> projects) {
+    final m = widget.initial;
+    if (_project != null || m == null || m.projectId == null) return;
+    for (final p in projects) {
+      if (p.id == m.projectId) {
+        _project = p;
+        context.read<MeetingCreateBloc>().add(
+          MeetingCreateProjectSelected(p.id),
+        );
+        return;
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -145,7 +194,9 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
   void _submit() {
     final l10n = AppLocalizations.of(context);
     final duration = int.tryParse(_durationCtrl.text.trim());
-    if (_project == null ||
+    // Tahrirlashda loyiha ixtiyoriy (schema: project nullable) — moslanmagan
+    // bo'lsa null ketadi.
+    if ((_project == null && !_isEdit) ||
         _nameCtrl.text.trim().isEmpty ||
         _linkCtrl.text.trim().isEmpty ||
         _descCtrl.text.trim().isEmpty ||
@@ -166,20 +217,27 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
     );
     final penalty = _penaltyCtrl.text.trim();
 
+    final form = MeetingForm(
+      project: _project?.id,
+      title: _nameCtrl.text.trim(),
+      description: _descCtrl.text.trim(),
+      link: _linkCtrl.text.trim(),
+      penaltyPercentage: penalty.isEmpty ? null : penalty,
+      startTime: startTime,
+      durationMinutes: duration,
+      participants: _participantIds.toList(),
+    );
+
+    final initial = widget.initial;
     context.read<MeetingCreateBloc>().add(
-      MeetingCreateSubmitted(
-        form: MeetingForm(
-          project: _project!.id,
-          title: _nameCtrl.text.trim(),
-          description: _descCtrl.text.trim(),
-          link: _linkCtrl.text.trim(),
-          penaltyPercentage: penalty.isEmpty ? null : penalty,
-          startTime: startTime,
-          durationMinutes: duration,
-          participants: _participantIds.toList(),
-        ),
-        closeAfterCreate: _completed,
-      ),
+      initial == null
+          ? MeetingCreateSubmitted(form: form, closeAfterCreate: _completed)
+          : MeetingUpdateSubmitted(
+              id: initial.id,
+              form: form,
+              // Yopishni faqat endi yoqilgan bo'lsa chaqiramiz (ochish API'si yo'q).
+              closeAfterUpdate: _completed && !initial.isCompleted,
+            ),
     );
   }
 
@@ -188,24 +246,39 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
     final colors = AppColors.of(context);
     final l10n = AppLocalizations.of(context);
 
-    return BlocListener<MeetingCreateBloc, MeetingCreateState>(
-      listenWhen: (p, c) => p.submitStatus != c.submitStatus,
-      listener: (context, state) {
-        switch (state.submitStatus) {
-          case MeetingCreateSubmitStatus.success:
-            AppToast.showSuccess(context, title: l10n.meetingCreateSuccess);
-            Navigator.of(context).maybePop(true);
-          case MeetingCreateSubmitStatus.failure:
-            AppToast.showError(
-              context,
-              title: l10n.commonError,
-              message: state.submitFailure?.message,
-            );
-          case MeetingCreateSubmitStatus.idle:
-          case MeetingCreateSubmitStatus.submitting:
-            break;
-        }
-      },
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<MeetingCreateBloc, MeetingCreateState>(
+          listenWhen: (p, c) => p.submitStatus != c.submitStatus,
+          listener: (context, state) {
+            switch (state.submitStatus) {
+              case MeetingCreateSubmitStatus.success:
+                AppToast.showSuccess(
+                  context,
+                  title: _isEdit
+                      ? l10n.meetingUpdateSuccess
+                      : l10n.meetingCreateSuccess,
+                );
+                Navigator.of(context).maybePop(true);
+              case MeetingCreateSubmitStatus.failure:
+                AppToast.showError(
+                  context,
+                  title: l10n.commonError,
+                  message: state.submitFailure?.message,
+                );
+              case MeetingCreateSubmitStatus.idle:
+              case MeetingCreateSubmitStatus.submitting:
+                break;
+            }
+          },
+        ),
+        // Tahrirlash: loyihalar ro'yxati kelganda loyihani moslashtiramiz.
+        BlocListener<MeetingCreateBloc, MeetingCreateState>(
+          listenWhen: (p, c) => p.projects != c.projects,
+          listener: (context, state) =>
+              setState(() => _syncProjectFromInitial(state.projects)),
+        ),
+      ],
       child: Scaffold(
         backgroundColor: colors.backgroundBase,
         body: SafeArea(
@@ -214,7 +287,9 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
             overlayChildBuilder: _buildOverlay,
             child: Column(
               children: [
-                _Header(title: l10n.meetingAdd),
+                _Header(
+                  title: _isEdit ? l10n.meetingEditTitle : l10n.meetingAdd,
+                ),
                 Expanded(
                   child: BlocBuilder<MeetingCreateBloc, MeetingCreateState>(
                     builder: (context, state) => SingleChildScrollView(
@@ -306,6 +381,7 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
                 BlocBuilder<MeetingCreateBloc, MeetingCreateState>(
                   buildWhen: (p, c) => p.submitStatus != c.submitStatus,
                   builder: (context, state) => _SubmitBar(
+                    label: _isEdit ? l10n.taskEditSave : l10n.meetingAdd,
                     completed: _completed,
                     loading:
                         state.submitStatus ==
@@ -785,12 +861,14 @@ class _ParticipantChip extends StatelessWidget {
 
 class _SubmitBar extends StatelessWidget {
   const _SubmitBar({
+    required this.label,
     required this.completed,
     required this.loading,
     required this.onCompletedChanged,
     required this.onSubmit,
   });
 
+  final String label;
   final bool completed;
   final bool loading;
   final ValueChanged<bool> onCompletedChanged;
@@ -859,7 +937,7 @@ class _SubmitBar extends StatelessWidget {
                                   ),
                                 ),
                                 SizedBox(width: 8.w),
-                                l10n.meetingAdd
+                                label
                                     .s(15.sp)
                                     .w(800)
                                     .h(24 / 15)
@@ -943,6 +1021,10 @@ String _fmtDate(DateTime? d) {
   String two(int v) => v.toString().padLeft(2, '0');
   return '${two(d.day)}.${two(d.month)}.${d.year}';
 }
+
+/// Decimal string'ning butun qismi ("20.00" → "20") — prefill uchun.
+String _intPart(String s) =>
+    s.split('.').first.replaceAll(RegExp('[^0-9]'), '');
 
 String _fmtTime(TimeOfDay? t) {
   if (t == null) return '';

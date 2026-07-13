@@ -662,6 +662,126 @@ abstract class AppLocalizations {
   /// **'Vazifa qo‘shildi'**
   String get taskCreateSuccess;
 
+  /// No description provided for @taskEditTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Vazifani tahrirlash'**
+  String get taskEditTitle;
+
+  /// No description provided for @taskEditSave.
+  ///
+  /// In uz, this message translates to:
+  /// **'Saqlash'**
+  String get taskEditSave;
+
+  /// No description provided for @taskUpdateSuccess.
+  ///
+  /// In uz, this message translates to:
+  /// **'Vazifa yangilandi'**
+  String get taskUpdateSuccess;
+
+  /// No description provided for @taskDetailTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Batafsil'**
+  String get taskDetailTitle;
+
+  /// No description provided for @taskDetailCreatedBy.
+  ///
+  /// In uz, this message translates to:
+  /// **'Topshiruvchi'**
+  String get taskDetailCreatedBy;
+
+  /// No description provided for @taskDetailRejectReason.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rad etilish sababi'**
+  String get taskDetailRejectReason;
+
+  /// No description provided for @taskActionChecked.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tekshirildi'**
+  String get taskActionChecked;
+
+  /// No description provided for @taskActionRejected.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rad etildi'**
+  String get taskActionRejected;
+
+  /// No description provided for @taskActionMarkDone.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bajarilganga o‘tkazish'**
+  String get taskActionMarkDone;
+
+  /// No description provided for @taskRejectTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Vazifani rad etish'**
+  String get taskRejectTitle;
+
+  /// No description provided for @taskRejectSubtitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rad etish sababini kiriting'**
+  String get taskRejectSubtitle;
+
+  /// No description provided for @taskRejectHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sababini yozing...'**
+  String get taskRejectHint;
+
+  /// No description provided for @taskRejectConfirm.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rad etish'**
+  String get taskRejectConfirm;
+
+  /// No description provided for @taskStatusUpdated.
+  ///
+  /// In uz, this message translates to:
+  /// **'Holat yangilandi'**
+  String get taskStatusUpdated;
+
+  /// No description provided for @meetingEditTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yig‘ilishni tahrirlash'**
+  String get meetingEditTitle;
+
+  /// No description provided for @meetingUpdateSuccess.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yig‘ilish yangilandi'**
+  String get meetingUpdateSuccess;
+
+  /// No description provided for @meetingDeleteTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yig‘ilishni o‘chirish'**
+  String get meetingDeleteTitle;
+
+  /// No description provided for @meetingDeleteSubtitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yig‘ilish chiqindi qutisiga yuboriladi va keyinchalik tiklash mumkin.'**
+  String get meetingDeleteSubtitle;
+
+  /// No description provided for @projectCreateFilesLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Fayl qo‘shish'**
+  String get projectCreateFilesLabel;
+
+  /// No description provided for @projectCreateDocsFailed.
+  ///
+  /// In uz, this message translates to:
+  /// **'Loyiha yaratildi, lekin ba\'zi fayllar yuklanmadi'**
+  String get projectCreateDocsFailed;
+
   /// No description provided for @taskMenuDetails.
   ///
   /// In uz, this message translates to:

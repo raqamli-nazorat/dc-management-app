@@ -82,8 +82,26 @@ class _MeetingsView extends StatelessWidget {
                           padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 24.h),
                           itemCount: state.items.length,
                           separatorBuilder: (_, _) => SizedBox(height: 12.h),
-                          itemBuilder: (_, i) =>
-                              MeetingCard(meeting: state.items[i]),
+                          itemBuilder: (_, i) {
+                            final meeting = state.items[i];
+                            return MeetingCard(
+                              meeting: meeting,
+                              onEdit: () async {
+                                final bloc = context.read<MeetingsBloc>();
+                                final updated = await context.pushNamed<bool>(
+                                  Routes.meetingEdit.name,
+                                  pathParameters: {'id': '${meeting.id}'},
+                                  extra: meeting,
+                                );
+                                if (updated == true) {
+                                  bloc.add(const MeetingsRequested());
+                                }
+                              },
+                              onDelete: () => context.read<MeetingsBloc>().add(
+                                MeetingsMeetingDeleted(meeting.id),
+                              ),
+                            );
+                          },
                         );
                     }
                   },

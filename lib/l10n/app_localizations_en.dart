@@ -302,6 +302,68 @@ class AppLocalizationsEn extends AppLocalizations {
   String get taskCreateSuccess => 'Task created';
 
   @override
+  String get taskEditTitle => 'Edit task';
+
+  @override
+  String get taskEditSave => 'Save';
+
+  @override
+  String get taskUpdateSuccess => 'Task updated';
+
+  @override
+  String get taskDetailTitle => 'Details';
+
+  @override
+  String get taskDetailCreatedBy => 'Assigner';
+
+  @override
+  String get taskDetailRejectReason => 'Rejection reason';
+
+  @override
+  String get taskActionChecked => 'Checked';
+
+  @override
+  String get taskActionRejected => 'Rejected';
+
+  @override
+  String get taskActionMarkDone => 'Mark as done';
+
+  @override
+  String get taskRejectTitle => 'Reject task';
+
+  @override
+  String get taskRejectSubtitle => 'Enter the rejection reason';
+
+  @override
+  String get taskRejectHint => 'Write the reason...';
+
+  @override
+  String get taskRejectConfirm => 'Reject';
+
+  @override
+  String get taskStatusUpdated => 'Status updated';
+
+  @override
+  String get meetingEditTitle => 'Edit meeting';
+
+  @override
+  String get meetingUpdateSuccess => 'Meeting updated';
+
+  @override
+  String get meetingDeleteTitle => 'Delete meeting';
+
+  @override
+  String get meetingDeleteSubtitle =>
+      'The meeting will be moved to the trash and can be restored later.';
+
+  @override
+  String get projectCreateFilesLabel => 'Add files';
+
+  @override
+  String get projectCreateDocsFailed =>
+      'Project created, but some files failed to upload';
+
+  @override
   String get taskMenuDetails => 'Details';
 
   @override

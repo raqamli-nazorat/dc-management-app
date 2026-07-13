@@ -13,6 +13,9 @@ class TaskCreateState extends Equatable {
     this.membersLoading = false,
     this.submitStatus = TaskSubmitStatus.idle,
     this.submitFailure,
+    this.detail,
+    this.detailLoading = false,
+    this.attachments = const [],
   });
 
   final List<Position> positions;
@@ -27,6 +30,13 @@ class TaskCreateState extends Equatable {
   final TaskSubmitStatus submitStatus;
   final Failure? submitFailure;
 
+  /// Tahrirlanayotgan vazifa detali (faqat edit rejimida, prefill uchun).
+  final TaskDetail? detail;
+  final bool detailLoading;
+
+  /// Vazifaga allaqachon biriktirilgan fayllar (edit rejimida).
+  final List<TaskAttachmentInfo> attachments;
+
   TaskCreateState copyWith({
     List<Position>? positions,
     List<ProjectShort>? projects,
@@ -34,6 +44,9 @@ class TaskCreateState extends Equatable {
     bool? membersLoading,
     TaskSubmitStatus? submitStatus,
     Failure? submitFailure,
+    TaskDetail? detail,
+    bool? detailLoading,
+    List<TaskAttachmentInfo>? attachments,
   }) => TaskCreateState(
     positions: positions ?? this.positions,
     projects: projects ?? this.projects,
@@ -41,6 +54,9 @@ class TaskCreateState extends Equatable {
     membersLoading: membersLoading ?? this.membersLoading,
     submitStatus: submitStatus ?? this.submitStatus,
     submitFailure: submitFailure ?? this.submitFailure,
+    detail: detail ?? this.detail,
+    detailLoading: detailLoading ?? this.detailLoading,
+    attachments: attachments ?? this.attachments,
   );
 
   @override
@@ -51,5 +67,8 @@ class TaskCreateState extends Equatable {
     membersLoading,
     submitStatus,
     submitFailure,
+    detail,
+    detailLoading,
+    attachments,
   ];
 }

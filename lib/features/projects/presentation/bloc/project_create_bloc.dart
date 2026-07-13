@@ -18,10 +18,12 @@ class ProjectCreateBloc extends Bloc<ProjectCreateEvent, ProjectCreateState> {
     required GetUsersUseCase getUsers,
     required CreateProjectUseCase createProject,
     required UpdateProjectUseCase updateProject,
+    required UploadProjectDocumentUseCase uploadDocument,
   }) : _getManagers = getManagers,
        _getUsers = getUsers,
        _createProject = createProject,
        _updateProject = updateProject,
+       _uploadDocument = uploadDocument,
        super(const ProjectCreateState()) {
     on<ProjectCreateOptionsRequested>(_onRequested);
     on<ProjectCreateSubmitted>(_onSubmitted);
@@ -32,6 +34,7 @@ class ProjectCreateBloc extends Bloc<ProjectCreateEvent, ProjectCreateState> {
   final GetUsersUseCase _getUsers;
   final CreateProjectUseCase _createProject;
   final UpdateProjectUseCase _updateProject;
+  final UploadProjectDocumentUseCase _uploadDocument;
 
   Future<void> _onRequested(
     ProjectCreateOptionsRequested event,
@@ -59,10 +62,22 @@ class ProjectCreateBloc extends Bloc<ProjectCreateEvent, ProjectCreateState> {
     emit(state.copyWith(submitStatus: ProjectCreateSubmitStatus.submitting));
     try {
       final project = await _createProject(event.form);
+      // Loyiha yaratildi — hujjat yuklashdagi xato yaratishni bekor qilmaydi
+      // (aks holda qayta urinish loyihani ikkilantiradi); xato alohida
+      // bayroq bilan sahifaga yetkaziladi.
+      var documentsFailed = false;
+      for (final path in event.filePaths) {
+        try {
+          await _uploadDocument((projectId: project.id, filePath: path));
+        } on Failure catch (_) {
+          documentsFailed = true;
+        }
+      }
       emit(
         state.copyWith(
           submitStatus: ProjectCreateSubmitStatus.success,
           project: project,
+          documentsFailed: documentsFailed,
         ),
       );
     } on Failure catch (failure) {

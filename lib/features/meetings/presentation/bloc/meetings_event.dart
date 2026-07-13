@@ -31,3 +31,14 @@ class MeetingsSearchChanged extends MeetingsEvent {
   @override
   List<Object?> get props => [query];
 }
+
+/// Yig'ilishni o'chirish (`DELETE /meetings/{id}/`) — optimistik: ro'yxatdan
+/// darhol olib tashlanadi, xatoda qaytariladi.
+class MeetingsMeetingDeleted extends MeetingsEvent {
+  const MeetingsMeetingDeleted(this.id);
+
+  final int id;
+
+  @override
+  List<Object?> get props => [id];
+}

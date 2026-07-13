@@ -1,10 +1,12 @@
-/// Yangi vazifa yaratish uchun forma yuki (`POST /tasks/`).
+/// Vazifa forma yuki (`POST /tasks/` / `PATCH /tasks/{id}/`).
 ///
 /// Ixtiyoriy maydonlar `null` bo'lsa so'rovga qo'shilmaydi (data qatlamida).
 /// [priority]/[type] — API stringlari (`low`/`bug`/...), enum emas.
+/// [project] tahrirlashda `null` bo'lishi mumkin (o'zgartirilmagan — PATCH'da
+/// yuborilmaydi); yaratishda sahifa uni majburiy tekshiradi.
 class NewTask {
   const NewTask({
-    required this.project,
+    this.project,
     required this.title,
     required this.description,
     required this.deadline,
@@ -18,7 +20,7 @@ class NewTask {
     this.estimatedMinutes,
   });
 
-  final int project;
+  final int? project;
   final String title;
   final String description;
   final DateTime deadline;

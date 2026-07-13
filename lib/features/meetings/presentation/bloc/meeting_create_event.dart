@@ -32,3 +32,23 @@ class MeetingCreateSubmitted extends MeetingCreateEvent {
   @override
   List<Object?> get props => [form, closeAfterCreate];
 }
+
+/// Tahrirlashni yuborish (`PUT /meetings/{id}/`; kerak bo'lsa keyin yopish).
+class MeetingUpdateSubmitted extends MeetingCreateEvent {
+  const MeetingUpdateSubmitted({
+    required this.id,
+    required this.form,
+    required this.closeAfterUpdate,
+  });
+
+  final int id;
+  final MeetingForm form;
+
+  /// Toggle yoqildi, lekin yig'ilish hali yopilmagan — saqlashdan so'ng
+  /// `POST /meetings/{id}/close/` chaqiriladi (schema'da `is_completed`
+  /// readOnly, uni PUT bilan o'zgartirib bo'lmaydi).
+  final bool closeAfterUpdate;
+
+  @override
+  List<Object?> get props => [id, form, closeAfterUpdate];
+}

@@ -73,6 +73,16 @@ class _TasksViewState extends State<_TasksView> {
     return bloc.stream.firstWhere((s) => s.status != TasksStatus.loading);
   }
 
+  /// Batafsil sahifasi — holat o'zgargan bo'lsa (`true`) ro'yxat yangilanadi.
+  Future<void> _openDetails(BuildContext context, int taskId) async {
+    final bloc = context.read<TasksBloc>();
+    final changed = await context.pushNamed<bool>(
+      Routes.taskDetail.name,
+      pathParameters: {'id': '$taskId'},
+    );
+    if (changed == true) bloc.add(const TasksRequested());
+  }
+
   bool _hasActiveCountdown(Iterable<Task> items, DateTime now) {
     return items.any((task) => shouldShowTaskCountdown(task.deadline, now));
   }
@@ -178,6 +188,19 @@ class _TasksViewState extends State<_TasksView> {
                             return TaskCard(
                               task: task,
                               countdownTicker: _countdownNow,
+                              onTap: () => _openDetails(context, task.id),
+                              onDetails: () => _openDetails(context, task.id),
+                              onEdit: () async {
+                                final bloc = context.read<TasksBloc>();
+                                final updated = await context.pushNamed<bool>(
+                                  Routes.taskEdit.name,
+                                  pathParameters: {'id': '${task.id}'},
+                                );
+                                // O'zgartirilgan bo'lsa ro'yxatni qayta yuklaymiz.
+                                if (updated == true) {
+                                  bloc.add(const TasksRequested());
+                                }
+                              },
                               onDelete: () => context.read<TasksBloc>().add(
                                 TasksTaskDeleted(task.id),
                               ),

@@ -8,6 +8,7 @@ import '../../../tasks/domain/usecases/get_task_form_options_usecase.dart';
 import '../../domain/entities/meeting_form.dart';
 import '../../domain/usecases/close_meeting_usecase.dart';
 import '../../domain/usecases/create_meeting_usecase.dart';
+import '../../domain/usecases/update_meeting_usecase.dart';
 
 part 'meeting_create_event.dart';
 part 'meeting_create_state.dart';
@@ -17,20 +18,24 @@ class MeetingCreateBloc extends Bloc<MeetingCreateEvent, MeetingCreateState> {
     required GetTaskFormOptionsUseCase getOptions,
     required GetProjectMembersUseCase getMembers,
     required CreateMeetingUseCase createMeeting,
+    required UpdateMeetingUseCase updateMeeting,
     required CloseMeetingUseCase closeMeeting,
   }) : _getOptions = getOptions,
        _getMembers = getMembers,
        _createMeeting = createMeeting,
+       _updateMeeting = updateMeeting,
        _closeMeeting = closeMeeting,
        super(const MeetingCreateState()) {
     on<MeetingCreateOptionsRequested>(_onRequested);
     on<MeetingCreateProjectSelected>(_onProjectSelected);
     on<MeetingCreateSubmitted>(_onSubmitted);
+    on<MeetingUpdateSubmitted>(_onUpdateSubmitted);
   }
 
   final GetTaskFormOptionsUseCase _getOptions;
   final GetProjectMembersUseCase _getMembers;
   final CreateMeetingUseCase _createMeeting;
+  final UpdateMeetingUseCase _updateMeeting;
   final CloseMeetingUseCase _closeMeeting;
 
   Future<void> _onRequested(
@@ -68,6 +73,25 @@ class MeetingCreateBloc extends Bloc<MeetingCreateEvent, MeetingCreateState> {
       if (event.closeAfterCreate && meeting.id > 0) {
         await _closeMeeting(meeting.id);
       }
+      emit(state.copyWith(submitStatus: MeetingCreateSubmitStatus.success));
+    } on Failure catch (failure) {
+      emit(
+        state.copyWith(
+          submitStatus: MeetingCreateSubmitStatus.failure,
+          submitFailure: failure,
+        ),
+      );
+    }
+  }
+
+  Future<void> _onUpdateSubmitted(
+    MeetingUpdateSubmitted event,
+    Emitter<MeetingCreateState> emit,
+  ) async {
+    emit(state.copyWith(submitStatus: MeetingCreateSubmitStatus.submitting));
+    try {
+      await _updateMeeting(UpdateMeetingParams(id: event.id, form: event.form));
+      if (event.closeAfterUpdate) await _closeMeeting(event.id);
       emit(state.copyWith(submitStatus: MeetingCreateSubmitStatus.success));
     } on Failure catch (failure) {
       emit(

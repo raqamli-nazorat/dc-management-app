@@ -97,7 +97,10 @@ class _ReasonViewState extends State<_ReasonView> {
               _ReasonHeader(title: l10n.meetingReasonTitle),
               Expanded(
                 child: SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20.w,
+                    vertical: 12.h,
+                  ),
                   child: BlocBuilder<MeetingReasonBloc, MeetingReasonState>(
                     buildWhen: (a, b) =>
                         a.title != b.title || a.startDate != b.startDate,
@@ -163,8 +166,10 @@ class _ReasonHeader extends StatelessWidget {
               child: Assets.icons.icArrowLeftLarge.svg(
                 width: 24.w,
                 height: 24.w,
-                colorFilter:
-                    ColorFilter.mode(colors.iconStrong, BlendMode.srcIn),
+                colorFilter: ColorFilter.mode(
+                  colors.iconStrong,
+                  BlendMode.srcIn,
+                ),
               ),
             ),
           ),
@@ -328,8 +333,9 @@ class _SubmitBar extends StatelessWidget {
               valueListenable: controller,
               builder: (context, value, _) {
                 final enabled = value.text.trim().isNotEmpty && !submitting;
-                final bg =
-                    enabled ? colors.accentStrong : colors.backgroundElevation1;
+                final bg = enabled
+                    ? colors.accentStrong
+                    : colors.backgroundElevation1;
                 final fg = enabled ? colors.textWhite : colors.textStrong;
 
                 return InkWell(

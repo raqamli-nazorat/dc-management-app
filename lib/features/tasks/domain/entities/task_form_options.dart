@@ -70,5 +70,7 @@ class UserShort extends Equatable {
 
 /// Formani to‘ldirish uchun bir martada (parallel) yuklanadigan tanlov
 /// ro‘yxatlari: lavozimlar + qisqa loyihalar.
-typedef TaskFormOptions =
-    ({List<Position> positions, List<ProjectShort> projects});
+typedef TaskFormOptions = ({
+  List<Position> positions,
+  List<ProjectShort> projects,
+});

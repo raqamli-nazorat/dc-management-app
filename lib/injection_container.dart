@@ -45,13 +45,16 @@ import 'features/meetings/presentation/bloc/meetings_bloc.dart';
 import 'features/tasks/data/data_sources/task_remote_data_source.dart';
 import 'features/tasks/data/repository/task_repository_impl.dart';
 import 'features/tasks/domain/repository/task_repository.dart';
+import 'features/tasks/domain/usecases/change_task_status_usecase.dart';
 import 'features/tasks/domain/usecases/delete_task_usecase.dart';
 import 'features/tasks/domain/usecases/get_project_members_usecase.dart';
+import 'features/tasks/domain/usecases/get_task_edit_data_usecase.dart';
 import 'features/tasks/domain/usecases/get_task_form_options_usecase.dart';
 import 'features/tasks/domain/usecases/get_tasks_usecase.dart';
 import 'features/tasks/domain/usecases/get_managers_usecase.dart';
 import 'features/tasks/domain/usecases/get_users_usecase.dart';
 import 'features/tasks/domain/usecases/submit_task_usecase.dart';
+import 'features/tasks/domain/usecases/update_task_usecase.dart';
 import 'features/tasks/presentation/bloc/task_create_bloc.dart';
 import 'features/tasks/presentation/bloc/task_filter_bloc.dart';
 import 'features/tasks/presentation/bloc/tasks_bloc.dart';
@@ -217,13 +220,16 @@ Future<void> configureDependencies() async {
     )
     ..registerFactory<MeetingCreateBloc>(
       () => MeetingCreateBloc(
+        updateMeeting: getIt(),
         getOptions: getIt(),
         getMembers: getIt(),
         createMeeting: getIt(),
         closeMeeting: getIt(),
       ),
     )
-    ..registerFactory<MeetingsBloc>(() => MeetingsBloc(getMeetings: getIt()))
+    ..registerFactory<MeetingsBloc>(
+      () => MeetingsBloc(getMeetings: getIt(), deleteMeeting: getIt()),
+    )
     ..registerFactory<MeetingReasonBloc>(
       () => MeetingReasonBloc(
         getMeeting: getIt(),
@@ -250,6 +256,13 @@ Future<void> configureDependencies() async {
       () => GetManagersUseCase(getIt()),
     )
     ..registerLazySingleton<SubmitTaskUseCase>(() => SubmitTaskUseCase(getIt()))
+    ..registerLazySingleton<UpdateTaskUseCase>(() => UpdateTaskUseCase(getIt()))
+    ..registerLazySingleton<GetTaskEditDataUseCase>(
+      () => GetTaskEditDataUseCase(getIt()),
+    )
+    ..registerLazySingleton<ChangeTaskStatusUseCase>(
+      () => ChangeTaskStatusUseCase(getIt()),
+    )
     ..registerLazySingleton<DeleteTaskUseCase>(() => DeleteTaskUseCase(getIt()))
     ..registerFactory<TasksBloc>(
       () => TasksBloc(getTasks: getIt(), deleteTask: getIt()),
@@ -259,6 +272,9 @@ Future<void> configureDependencies() async {
         getOptions: getIt(),
         getMembers: getIt(),
         submitTask: getIt(),
+        getEditData: getIt(),
+        updateTask: getIt(),
+        changeStatus: getIt(),
       ),
     )
     ..registerFactory<TaskFilterBloc>(
@@ -277,6 +293,9 @@ Future<void> configureDependencies() async {
     )
     ..registerLazySingleton<CreateProjectUseCase>(
       () => CreateProjectUseCase(getIt()),
+    )
+    ..registerLazySingleton<UploadProjectDocumentUseCase>(
+      () => UploadProjectDocumentUseCase(getIt()),
     )
     ..registerLazySingleton<GetProjectUseCase>(() => GetProjectUseCase(getIt()))
     ..registerLazySingleton<UpdateProjectUseCase>(
@@ -330,6 +349,7 @@ Future<void> configureDependencies() async {
         getManagers: getIt(),
         createProject: getIt(),
         updateProject: getIt(),
+        uploadDocument: getIt(),
       ),
     )
     ..registerFactory<ProjectDetailsBloc>(
