@@ -525,18 +525,22 @@ class _RejectionBox extends StatelessWidget {
                   runSpacing: 8.h,
                   children: [
                     for (final url in fileUrls)
-                      ClipRRect(
+                      InkWell(
+                        onTap: () => _showRejectionImage(context, url),
                         borderRadius: BorderRadius.circular(8.r),
-                        child: Image.network(
-                          url,
-                          width: 64.w,
-                          height: 64.w,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, _, _) => DecoratedBox(
-                            decoration: BoxDecoration(
-                              color: colors.backgroundElevation1,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8.r),
+                          child: Image.network(
+                            url,
+                            width: 64.w,
+                            height: 64.w,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, _, _) => DecoratedBox(
+                              decoration: BoxDecoration(
+                                color: colors.backgroundElevation1,
+                              ),
+                              child: SizedBox(width: 64.w, height: 64.w),
                             ),
-                            child: SizedBox(width: 64.w, height: 64.w),
                           ),
                         ),
                       ),
@@ -552,6 +556,29 @@ class _RejectionBox extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<void> _showRejectionImage(BuildContext context, String url) {
+  final colors = AppColors.of(context);
+  return showDialog<void>(
+    context: context,
+    builder: (_) => Dialog(
+      backgroundColor: colors.backgroundBase,
+      insetPadding: EdgeInsets.all(16.w),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: 0.9.sw, maxHeight: 0.8.sh),
+        child: InteractiveViewer(
+          minScale: 1,
+          maxScale: 4,
+          child: Image.network(
+            url,
+            fit: BoxFit.contain,
+            errorBuilder: (_, _, _) => SizedBox(width: 64.w, height: 64.w),
+          ),
+        ),
+      ),
+    ),
+  );
 }
 
 // ── Holat tugmalari ──────────────────────────────────────────────────────
