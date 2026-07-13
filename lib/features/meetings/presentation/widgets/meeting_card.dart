@@ -121,7 +121,11 @@ class MeetingCard extends StatelessWidget {
               SizedBox(height: 8.h),
               Row(
                 children: [
-                  TuiAvatar(initial: participantName, size: 24),
+                  TuiAvatar(
+                    initial: participantName,
+                    avatarUrl: meeting.participantAvatar,
+                    size: 24,
+                  ),
                   SizedBox(width: 8.w),
                   Expanded(
                     child: Column(

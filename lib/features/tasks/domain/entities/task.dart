@@ -139,6 +139,7 @@ class Task extends Equatable {
     required this.assigneeName,
     required this.assigneePosition,
     required this.assigneeAvatar,
+    this.createdByAvatar = '',
   });
 
   final int id;
@@ -166,6 +167,9 @@ class Task extends Equatable {
   final String assigneePosition;
   final String assigneeAvatar;
 
+  /// Muallif (`created_by_info.avatar`) — ijrochi avatari bo'lmasa fallback.
+  final String createdByAvatar;
+
   @override
   List<Object?> get props => [
     id,
@@ -180,5 +184,6 @@ class Task extends Equatable {
     assigneeName,
     assigneePosition,
     assigneeAvatar,
+    createdByAvatar,
   ];
 }

@@ -851,15 +851,10 @@ class _Header extends StatelessWidget {
           InkWell(
             onTap: () => Navigator.of(context).maybePop(),
             borderRadius: BorderRadius.circular(12.r),
-            child: Padding(
-              padding: EdgeInsets.all(4.w),
-              child: Assets.icons.icClose.svg(
-                width: 16.w,
-                height: 16.w,
-                colorFilter: ColorFilter.mode(
-                  colors.iconStrong,
-                  BlendMode.srcIn,
-                ),
+            child: Assets.icons.icClose.svg(
+              colorFilter: ColorFilter.mode(
+                colors.iconStrong,
+                BlendMode.srcIn,
               ),
             ),
           ),
@@ -1173,6 +1168,7 @@ class _DropdownBox extends StatelessWidget {
                   ),
                   child: SingleChildScrollView(
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       mainAxisSize: MainAxisSize.min,
                       spacing: 2.h,
                       children: children,
@@ -1202,15 +1198,15 @@ class _DropdownItem extends StatelessWidget {
     final colors = AppColors.of(context);
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(10.r),
+      borderRadius: BorderRadius.circular(8.r),
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: selected ? colors.backgroundElevation1Alt : Colors.transparent,
-          borderRadius: BorderRadius.circular(10.r),
+          borderRadius: BorderRadius.circular(8.r),
         ),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
-          child: child,
+          padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 6.h),
+          child: Align(alignment: Alignment.centerLeft, child: child),
         ),
       ),
     );
@@ -1269,7 +1265,7 @@ class _MemberRowContent extends StatelessWidget {
     final colors = AppColors.of(context);
     return Row(
       children: [
-        TuiAvatar(initial: member.username, size: 32),
+        TuiAvatar(initial: member.username, avatarUrl: member.avatar, size: 32),
         SizedBox(width: 8.w),
         Expanded(
           child: Column(

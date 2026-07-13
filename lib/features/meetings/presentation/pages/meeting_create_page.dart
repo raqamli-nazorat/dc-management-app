@@ -11,6 +11,7 @@ import '../../../../core/gen/assets.gen.dart';
 import '../../../../core/widgets/app_date_picker.dart';
 import '../../../../core/widgets/app_filter_components.dart';
 import '../../../../core/widgets/app_toast.dart';
+import '../../../../core/widgets/tui_avatar.dart';
 import '../../../../injection_container.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../tasks/domain/entities/task_form_options.dart';
@@ -179,6 +180,7 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
               initial: member.username,
               title: member.username,
               subtitle: member.position,
+              avatarUrl: member.avatar,
             ),
         ],
         selected: _participantIds,
@@ -835,6 +837,12 @@ class _ParticipantChip extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            TuiAvatar(
+              initial: member.username,
+              avatarUrl: member.avatar,
+              size: 20,
+            ),
+            SizedBox(width: 4.w),
             ConstrainedBox(
               constraints: BoxConstraints(maxWidth: 285.w),
               child: label

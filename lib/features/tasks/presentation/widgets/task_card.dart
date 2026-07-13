@@ -174,7 +174,13 @@ class TaskCard extends StatelessWidget {
               // ── Ijrochi qatori ───────────────────────────────────────────
               Row(
                 children: [
-                  TuiAvatar(initial: task.assigneeName, size: 24),
+                  TuiAvatar(
+                    initial: task.assigneeName,
+                    avatarUrl: task.assigneeAvatar.isNotEmpty
+                        ? task.assigneeAvatar
+                        : task.createdByAvatar,
+                    size: 24,
+                  ),
                   SizedBox(width: 8.w),
                   Expanded(
                     child: Column(

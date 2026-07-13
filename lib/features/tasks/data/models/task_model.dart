@@ -18,6 +18,7 @@ class TaskModel extends Task {
     required super.assigneeName,
     required super.assigneePosition,
     required super.assigneeAvatar,
+    super.createdByAvatar,
   });
 
   factory TaskModel.fromJson(Map<String, dynamic> json) {
@@ -43,6 +44,10 @@ class TaskModel extends Task {
     final aMap = assignee is Map
         ? assignee.cast<String, dynamic>()
         : const <String, dynamic>{};
+    final createdBy = json['created_by_info'];
+    final cMap = createdBy is Map
+        ? createdBy.cast<String, dynamic>()
+        : const <String, dynamic>{};
 
     final estimated = json['estimated_minutes'];
 
@@ -59,6 +64,7 @@ class TaskModel extends Task {
       assigneeName: pick(aMap, ['username', 'full_name', 'name']),
       assigneePosition: pick(aMap, ['position']),
       assigneeAvatar: pick(aMap, ['avatar']),
+      createdByAvatar: pick(cMap, ['avatar']),
     );
   }
 }

@@ -22,6 +22,7 @@ class Meeting extends Equatable {
     this.participantIds = const [],
     required this.participantName,
     required this.participantPosition,
+    this.participantAvatar = '',
     required this.isCompleted,
     required this.reason,
     required this.attended,
@@ -56,6 +57,7 @@ class Meeting extends Equatable {
   final List<int> participantIds;
   final String participantName;
   final String participantPosition;
+  final String participantAvatar;
 
   final bool isCompleted;
 
@@ -83,6 +85,7 @@ class Meeting extends Equatable {
     participantIds,
     participantName,
     participantPosition,
+    participantAvatar,
     isCompleted,
     reason,
     attended,
