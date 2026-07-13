@@ -57,7 +57,12 @@ class AppFilterFieldLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(right: 8.w, bottom: 4.h),
-      child: text.s(11.sp).w(500).h(16 / 11).c(AppColors.of(context).textSub),
+      child: text
+          .s(11.sp)
+          .w(500)
+          .h(16 / 11)
+          .c(AppColors.of(context).textSub)
+          .a(TextAlign.start),
     );
   }
 }
@@ -254,6 +259,7 @@ class AppFilterDropdownBox extends StatelessWidget {
                   ),
                   child: SingleChildScrollView(
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       mainAxisSize: MainAxisSize.min,
                       children: children,
                     ),
@@ -293,18 +299,18 @@ class AppFilterDropdownItem extends StatelessWidget {
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(10.r),
+      borderRadius: BorderRadius.circular(8.r),
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: selected ? colors.backgroundElevation1Alt : Colors.transparent,
-          borderRadius: BorderRadius.circular(10.r),
+          borderRadius: BorderRadius.circular(8.r),
         ),
         child: Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: 8.w,
+            horizontal: 6.w,
             vertical: (verticalPadding ?? 0).h,
           ),
-          child: content,
+          child: Align(alignment: Alignment.centerLeft, child: content),
         ),
       ),
     );

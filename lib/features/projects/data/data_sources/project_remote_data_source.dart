@@ -373,7 +373,7 @@ class ProjectRemoteDataSourceImpl implements ProjectRemoteDataSource {
     if (form.penaltyPercentage != null)
       'penalty_percentage': form.penaltyPercentage,
     if (form.status?.apiValue != null) 'status': form.status!.apiValue,
-    if (form.isHidden != null) 'is_hidden': form.isHidden,
+    // if (form.isHidden != null) 'is_hidden': form.isHidden,
   };
 
   Map<String, dynamic> _projectPatchData(ProjectPatch patch) => {
@@ -388,7 +388,7 @@ class ProjectRemoteDataSourceImpl implements ProjectRemoteDataSource {
     if (patch.penaltyPercentage != null)
       'penalty_percentage': patch.penaltyPercentage,
     if (patch.status?.apiValue != null) 'status': patch.status!.apiValue,
-    if (patch.isHidden != null) 'is_hidden': patch.isHidden,
+    // if (patch.isHidden != null) 'is_hidden': patch.isHidden,
   };
 
   Map<String, dynamic> _documentData(ProjectDocument document) => {

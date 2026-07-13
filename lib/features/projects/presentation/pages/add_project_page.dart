@@ -1078,23 +1078,23 @@ class _SubmitBar extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: l10n.projectCreateActive
-                        .s(15.sp)
-                        .w(800)
-                        .h(24 / 15)
-                        .c(colors.textStrong),
-                  ),
-                  _SmallSwitch(
-                    value: active,
-                    enabled: !loading,
-                    onChanged: onActiveChanged,
-                  ),
-                ],
-              ),
-              SizedBox(height: 12.h),
+              // Row(
+              //   children: [
+              //     Expanded(
+              //       child: l10n.projectCreateActive
+              //           .s(15.sp)
+              //           .w(800)
+              //           .h(24 / 15)
+              //           .c(colors.textStrong),
+              //     ),
+              //     _SmallSwitch(
+              //       value: active,
+              //       enabled: !loading,
+              //       onChanged: onActiveChanged,
+              //     ),
+              //   ],
+              // ),
+              // SizedBox(height: 12.h),
               InkWell(
                 onTap: loading ? null : onSubmit,
                 borderRadius: BorderRadius.circular(16.r),
