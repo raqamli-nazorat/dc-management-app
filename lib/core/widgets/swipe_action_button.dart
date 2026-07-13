@@ -20,6 +20,7 @@ class SwipeActionButton extends StatefulWidget {
     this.height = 52,
     this.handleSize = 48,
     this.handleInset = 2,
+    this.handleOnRight = false,
     this.completeThreshold = .85,
   });
 
@@ -34,6 +35,7 @@ class SwipeActionButton extends StatefulWidget {
   final double height;
   final double handleSize;
   final double handleInset;
+  final bool handleOnRight;
   final double completeThreshold;
 
   @override
@@ -72,7 +74,8 @@ class _SwipeActionButtonState extends State<SwipeActionButton>
 
   void _onDragUpdate(DragUpdateDetails details) {
     if (!widget.enabled || _completed) return;
-    _controller.value += (details.primaryDelta ?? 0) / _maxDrag;
+    final delta = (details.primaryDelta ?? 0) / _maxDrag;
+    _controller.value += widget.handleOnRight ? -delta : delta;
   }
 
   Future<void> _onDragEnd(DragEndDetails details) async {
@@ -125,12 +128,18 @@ class _SwipeActionButtonState extends State<SwipeActionButton>
           builder: (context, _) {
             final progress = _controller.value;
             final fillWidth = progress * _maxDrag;
-            final handleLeft = inset + fillWidth;
+            final handleLeft = widget.handleOnRight
+                ? inset + _maxDrag - fillWidth
+                : inset + fillWidth;
             final fill = widget.fillGradient == null
                 ? BoxDecoration(
                     color: widget.handleColor.withValues(alpha: .18),
+                    borderRadius: radius,
                   )
-                : BoxDecoration(gradient: widget.fillGradient);
+                : BoxDecoration(
+                    gradient: widget.fillGradient,
+                    borderRadius: radius,
+                  );
 
             return DecoratedBox(
               decoration: BoxDecoration(
@@ -151,7 +160,8 @@ class _SwipeActionButtonState extends State<SwipeActionButton>
                   child: Stack(
                     children: [
                       Positioned(
-                        left: 0,
+                        left: widget.handleOnRight ? null : 0,
+                        right: widget.handleOnRight ? 0 : null,
                         top: 0,
                         bottom: 0,
                         width: fillWidth.clamp(0.0, constraints.maxWidth),

@@ -153,7 +153,6 @@ class AppRouter {
           path: Routes.taskEdit.path,
           builder: (context, state) => TaskCreatePage(
             taskId: int.tryParse(state.pathParameters['id'] ?? ''),
-            requireDeadlineChange: state.extra == true,
           ),
         ),
         GoRoute(

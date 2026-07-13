@@ -18,6 +18,7 @@ class NewTask {
     this.penaltyPercentage,
     this.sprint,
     this.estimatedMinutes,
+    this.deadlineOnly = false,
   });
 
   final int? project;
@@ -32,4 +33,7 @@ class NewTask {
   final String? penaltyPercentage;
   final int? sprint;
   final int? estimatedMinutes;
+
+  /// Manager overdue taskda faqat shu PATCH tanasi yuboriladi.
+  final bool deadlineOnly;
 }

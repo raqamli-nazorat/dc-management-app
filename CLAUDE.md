@@ -68,6 +68,14 @@ Two channels deliver the **same notification shape** — `{id, title, message, t
 ### Tasks list
 `features/tasks/` follows the three-layer split (mirrors `features/meetings/` — copy that when adding a similar list feature). `GET /tasks/` is **paginated** (`{count, next, previous, results}`), so the data source relies on `ResponseMapper.asList` unwrapping `results` (it already does — don't hand-roll pagination). `TaskModel.fromJson` is null-tolerant: `project_info` may be a string or nested object, assignee comes from `assignee_info`. `priority`/`status` parse into `TaskPriority`/`TaskStatus` enums (`.fromApi`, unknown → `unknown`); the widget layer maps enum → color/label (blocs stay context-free). `TaskCard` priority pills + status dot use dedicated `AppColors` tokens (`taskPriorityLow/Medium/High/Critical`, `taskStatusTodo`) — `high` has no design swatch (picked `#E2571F`). The deadline countdown chip is computed once at build (no per-second `Timer`). Entry point: the "Vazifalar" tile in `projects_page.dart` pushes `Routes.tasks`. Header add/search/filter buttons are stubs (no flow/endpoint yet), same as meetings.
 
+### Task detail status, edit, and attachments
+- `TaskDetailModel` parses `assignee_info` including avatar; display it with `TuiAvatar` fallback, never create another avatar implementation.
+- Keep status authorization in `features/tasks/domain/task_status_policy.dart` and enforce it again in `TaskCreateBloc`. Only the assignee may swipe `todo → in_progress → done → production`; a tester may swipe `production → checked` or `rejected`. Assignee precedence applies when one user is both tester and assignee. Admin and manager do **not** receive status transitions. The backend remains final authorization source.
+- Status UI uses shared `core/widgets/swipe_action_button.dart`; API calls occur only after the drag threshold and drag end. Rejected action starts on the right and requires a left swipe.
+- Task edits are separate from status transitions: admin has full edit access; the project manager may open only an overdue task and may PATCH only its changed deadline. Use `TaskEditPolicy` plus `NewTask.deadlineOnly`, so the data source sends `{deadline}` only. Do not send a deadline to `/change-status/`.
+- Rejection UI is the Figma bottom dialog: a reason is mandatory and `FilePicker` must use `FileType.image`; upload rejection images only after the status PATCH flow succeeds.
+- Project/task attachment sections are shown in details only when files exist and use `AppFileActions` for open/download. Project edit submit labels must distinguish create from edit.
+
 ### Meetings + absence-reason flow
 `features/meetings/` follows the three-layer split. Two related backend resources, distinct on purpose:
 - `GET /meetings/` + `GET /meetings/{id}/` — meeting records (`Meeting` entity).

@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../config/theme/app_colors.dart';
 import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
+import '../../../../core/util/formatters.dart';
 import '../../../../core/widgets/app_date_picker.dart';
 import '../../../../core/widgets/app_file_actions.dart';
 import '../../../../core/widgets/app_toast.dart';
@@ -17,6 +18,7 @@ import '../../domain/entities/new_task.dart';
 import '../../domain/entities/task.dart';
 import '../../domain/entities/task_detail.dart';
 import '../../domain/entities/task_form_options.dart';
+import '../../domain/task_status_policy.dart';
 import '../../domain/usecases/submit_task_usecase.dart';
 import '../../domain/usecases/update_task_usecase.dart';
 import '../bloc/task_create_bloc.dart';
@@ -28,14 +30,9 @@ enum _Field { none, project, priority, type, assigner, positions }
 /// [taskId] berilsa forma tahrirlash rejimida ochiladi: detal + fayllar
 /// yuklanib maydonlar oldindan to'ldiriladi, saqlash `PATCH` yuboradi.
 class TaskCreatePage extends StatelessWidget {
-  const TaskCreatePage({
-    super.key,
-    this.taskId,
-    this.requireDeadlineChange = false,
-  });
+  const TaskCreatePage({super.key, this.taskId});
 
   final int? taskId;
-  final bool requireDeadlineChange;
 
   @override
   Widget build(BuildContext context) {
@@ -46,19 +43,15 @@ class TaskCreatePage extends StatelessWidget {
         if (taskId != null) bloc.add(TaskCreateDetailRequested(taskId!));
         return bloc;
       },
-      child: _TaskCreateView(
-        taskId: taskId,
-        requireDeadlineChange: requireDeadlineChange,
-      ),
+      child: _TaskCreateView(taskId: taskId),
     );
   }
 }
 
 class _TaskCreateView extends StatefulWidget {
-  const _TaskCreateView({this.taskId, this.requireDeadlineChange = false});
+  const _TaskCreateView({this.taskId});
 
   final int? taskId;
-  final bool requireDeadlineChange;
 
   @override
   State<_TaskCreateView> createState() => _TaskCreateViewState();
@@ -93,6 +86,16 @@ class _TaskCreateViewState extends State<_TaskCreateView> {
   final List<PlatformFile> _files = [];
 
   bool get _isEdit => widget.taskId != null;
+
+  TaskEditScope _editScope(TaskCreateState state) {
+    if (!_isEdit) return TaskEditScope.full;
+    final detail = state.detail;
+    if (detail == null) return TaskEditScope.none;
+    return TaskEditPolicy.scope(
+      status: detail.status,
+      context: state.permissionContext,
+    );
+  }
 
   /// Detal maydonlari bir marta to'ldirildi (keyingi emitlarda qayta yozilmaydi).
   bool _prefilled = false;
@@ -253,7 +256,7 @@ class _TaskCreateViewState extends State<_TaskCreateView> {
     _prefilled = true;
     _nameCtrl.text = d.title;
     _descCtrl.text = d.description;
-    _priceCtrl.text = _groupThousands(_intPart(d.taskPrice));
+    _priceCtrl.text = Formatters.formatAmount(_intPart(d.taskPrice));
     _penaltyCtrl.text = _intPart(d.penaltyPercentage);
     _sprintCtrl.text = d.sprint?.toString() ?? '';
     _priority = d.priority == TaskPriority.unknown ? null : d.priority;
@@ -304,9 +307,15 @@ class _TaskCreateViewState extends State<_TaskCreateView> {
 
   void _submit() {
     final l10n = AppLocalizations.of(context);
+    final scope = _editScope(context.read<TaskCreateBloc>().state);
+    if (_isEdit && scope == TaskEditScope.none) {
+      AppToast.showError(context, title: l10n.commonError);
+      return;
+    }
     // Tahrirlashda loyiha allaqachon mavjud (id topilmasa PATCH'da yuborilmaydi).
-    if ((_project == null && !_isEdit) ||
-        _nameCtrl.text.trim().isEmpty ||
+    if ((scope != TaskEditScope.deadlineOnly &&
+            ((_project == null && !_isEdit) ||
+                _nameCtrl.text.trim().isEmpty)) ||
         _deadlineDate == null) {
       AppToast.showError(context, title: l10n.taskCreateRequiredError);
       return;
@@ -322,7 +331,7 @@ class _TaskCreateViewState extends State<_TaskCreateView> {
       time.minute,
     );
 
-    if (widget.requireDeadlineChange &&
+    if (scope == TaskEditScope.deadlineOnly &&
         _originalDeadline != null &&
         _sameMinute(deadline, _originalDeadline!)) {
       AppToast.showError(context, title: l10n.taskDeadlineChangeRequired);
@@ -348,6 +357,7 @@ class _TaskCreateViewState extends State<_TaskCreateView> {
       penaltyPercentage: penalty.isEmpty ? null : penalty,
       sprint: int.tryParse(_sprintCtrl.text),
       estimatedMinutes: estimated,
+      deadlineOnly: scope == TaskEditScope.deadlineOnly,
     );
     final filePaths = [for (final f in _files) f.path!];
 
@@ -446,12 +456,13 @@ class _TaskCreateViewState extends State<_TaskCreateView> {
   /// Forma maydoni: tahrirlashda detal yuklanmaguncha spinner, yuklanmasa
   /// xato + qayta urinish (bo'sh forma bilan PATCH yubormaslik uchun).
   Widget _buildFormArea(AppLocalizations l10n) {
-    if (!_isEdit) return _buildForm(l10n, const []);
+    if (!_isEdit) return _buildForm(l10n, const [], TaskEditScope.full);
     return BlocBuilder<TaskCreateBloc, TaskCreateState>(
       buildWhen: (p, c) =>
           p.detail != c.detail ||
           p.detailLoading != c.detailLoading ||
-          p.attachments != c.attachments,
+          p.attachments != c.attachments ||
+          p.permissionContext != c.permissionContext,
       builder: (context, state) {
         if (state.detail == null) {
           if (state.detailLoading) {
@@ -463,7 +474,13 @@ class _TaskCreateViewState extends State<_TaskCreateView> {
             ),
           );
         }
-        return _buildForm(l10n, state.attachments);
+        final scope = _editScope(state);
+        if (scope == TaskEditScope.none) {
+          return _DetailErrorState(
+            onRetry: () => Navigator.of(context).maybePop(),
+          );
+        }
+        return _buildForm(l10n, state.attachments, scope);
       },
     );
   }
@@ -476,6 +493,8 @@ class _TaskCreateViewState extends State<_TaskCreateView> {
           p.submitStatus != c.submitStatus || p.detail != c.detail,
       builder: (context, state) {
         if (_isEdit && state.detail == null) return const SizedBox.shrink();
+        final scope = _editScope(state);
+        if (scope == TaskEditScope.none) return const SizedBox.shrink();
         return _SubmitBar(
           label: _isEdit ? l10n.taskEditSave : l10n.taskCreateTitle,
           loading: state.submitStatus == TaskSubmitStatus.submitting,
@@ -488,7 +507,36 @@ class _TaskCreateViewState extends State<_TaskCreateView> {
   Widget _buildForm(
     AppLocalizations l10n,
     List<TaskAttachmentInfo> attachments,
+    TaskEditScope scope,
   ) {
+    if (scope == TaskEditScope.deadlineOnly) {
+      return SingleChildScrollView(
+        padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 24.h),
+        child: Row(
+          children: [
+            Expanded(
+              child: _SelectField(
+                label: l10n.taskCreateFieldDeadline,
+                value: _fmtDate(_deadlineDate),
+                placeholder: l10n.taskCreateFieldDeadline,
+                icon: Assets.icons.icCalendar,
+                onTap: _pickDate,
+              ),
+            ),
+            SizedBox(width: 16.w),
+            Expanded(
+              child: _SelectField(
+                label: l10n.taskCreateFieldTime,
+                value: _fmtTime(_deadlineTime),
+                placeholder: '00:00',
+                icon: Assets.icons.icTuilconTime,
+                onTap: () => _pickTime(true),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 24.h),
       child: Column(
@@ -781,17 +829,6 @@ String _digits(String s) => s.replaceAll(RegExp('[^0-9]'), '');
 /// Decimal string'ning butun qismi ("150000.00" → "150000").
 String _intPart(String s) => _digits(s.split('.').first);
 
-/// Raqamlarni 3 xonadan bo'lib guruhlaydi (prefill uchun; kiritishda
-/// [_ThousandsFormatter] shu formatni saqlaydi).
-String _groupThousands(String digits) {
-  final buf = StringBuffer();
-  for (var i = 0; i < digits.length; i++) {
-    if (i > 0 && (digits.length - i) % 3 == 0) buf.write(' ');
-    buf.write(digits[i]);
-  }
-  return buf.toString();
-}
-
 String _fmtDate(DateTime? d) {
   if (d == null) return '';
   String two(int v) => v.toString().padLeft(2, '0');
@@ -815,12 +852,7 @@ class _ThousandsFormatter extends TextInputFormatter {
   ) {
     final digits = newValue.text.replaceAll(RegExp('[^0-9]'), '');
     if (digits.isEmpty) return const TextEditingValue();
-    final buf = StringBuffer();
-    for (var i = 0; i < digits.length; i++) {
-      if (i > 0 && (digits.length - i) % 3 == 0) buf.write(' ');
-      buf.write(digits[i]);
-    }
-    final text = buf.toString();
+    final text = Formatters.formatAmount(digits);
     return TextEditingValue(
       text: text,
       selection: TextSelection.collapsed(offset: text.length),

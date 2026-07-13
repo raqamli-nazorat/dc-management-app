@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../config/theme/app_colors.dart';
 import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
+import '../../../../core/util/formatters.dart';
 import '../../../../core/widgets/app_toast.dart';
 import '../../../../core/widgets/app_file_actions.dart';
 import '../../../../core/widgets/swipe_action_button.dart';
@@ -45,10 +46,6 @@ class _TaskDetailView extends StatelessWidget {
 
   final int taskId;
 
-  /// Holat bo'yicha mavjud amallar.
-  /// ponytail: taxmin — done/production tekshiruvchi ko'radi
-  /// (Tekshirildi/Rad etildi), qolgan ochiq holatlar "Bajarilganga
-  /// o'tkazish", checked yakuniy. Rollar aniqlashsa shu yerda toraytiriladi.
   List<TaskStatusAction> _actions(
     TaskDetail detail,
     TaskStatusPermissionContext? permissionContext,
@@ -61,7 +58,7 @@ class _TaskDetailView extends StatelessWidget {
   Future<void> _onAction(BuildContext context, TaskStatusAction action) async {
     final bloc = context.read<TaskCreateBloc>();
     if (action == TaskStatusAction.rejected) {
-      final result = await showTaskRejectSheet(context);
+      final result = await showTaskRejectDialog(context);
       if (result != null) {
         bloc.add(
           TaskCreateStatusSubmitted(
@@ -87,11 +84,10 @@ class _TaskDetailView extends StatelessWidget {
     );
   }
 
-  Future<void> _editOverdueTask(BuildContext context) async {
+  Future<void> _editTask(BuildContext context) async {
     final updated = await context.pushNamed<bool>(
       Routes.taskEdit.name,
       pathParameters: {'id': '$taskId'},
-      extra: true,
     );
     if (updated == true && context.mounted) {
       context.read<TaskCreateBloc>().add(TaskCreateDetailRequested(taskId));
@@ -150,10 +146,10 @@ class _TaskDetailView extends StatelessWidget {
                     final submitting =
                         state.submitStatus == TaskSubmitStatus.submitting;
                     final actions = _actions(detail, state.permissionContext);
-                    final canEditOverdue =
-                        detail.status == TaskStatus.overdue &&
-                        state.permissionContext?.activeRole.toLowerCase() ==
-                            'admin';
+                    final editScope = TaskEditPolicy.scope(
+                      status: detail.status,
+                      context: state.permissionContext,
+                    );
                     return Column(
                       children: [
                         Expanded(
@@ -169,10 +165,14 @@ class _TaskDetailView extends StatelessWidget {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                if (canEditOverdue)
-                                  _DeadlineEditButton(
+                                if (editScope != TaskEditScope.none)
+                                  _TaskEditButton(
+                                    label:
+                                        editScope == TaskEditScope.deadlineOnly
+                                        ? l10n.taskActionEditDeadline
+                                        : l10n.taskEditTitle,
                                     loading: submitting,
-                                    onTap: () => _editOverdueTask(context),
+                                    onTap: () => _editTask(context),
                                   ),
                                 for (final action in actions)
                                   Padding(
@@ -245,7 +245,7 @@ class _DetailBody extends StatelessWidget {
           if (detail.taskPrice.isNotEmpty)
             _ReadOnlyField(
               label: l10n.taskCreateFieldPrice,
-              value: detail.taskPrice,
+              value: Formatters.formatAmount(detail.taskPrice),
               alignEnd: true,
             ),
           if (detail.penaltyPercentage.isNotEmpty)
@@ -525,18 +525,22 @@ class _RejectionBox extends StatelessWidget {
                   runSpacing: 8.h,
                   children: [
                     for (final url in fileUrls)
-                      ClipRRect(
+                      InkWell(
+                        onTap: () => _showRejectionImage(context, url),
                         borderRadius: BorderRadius.circular(8.r),
-                        child: Image.network(
-                          url,
-                          width: 64.w,
-                          height: 64.w,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, _, _) => DecoratedBox(
-                            decoration: BoxDecoration(
-                              color: colors.backgroundElevation1,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8.r),
+                          child: Image.network(
+                            url,
+                            width: 64.w,
+                            height: 64.w,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, _, _) => DecoratedBox(
+                              decoration: BoxDecoration(
+                                color: colors.backgroundElevation1,
+                              ),
+                              child: SizedBox(width: 64.w, height: 64.w),
                             ),
-                            child: SizedBox(width: 64.w, height: 64.w),
                           ),
                         ),
                       ),
@@ -552,6 +556,29 @@ class _RejectionBox extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<void> _showRejectionImage(BuildContext context, String url) {
+  final colors = AppColors.of(context);
+  return showDialog<void>(
+    context: context,
+    builder: (_) => Dialog(
+      backgroundColor: colors.backgroundBase,
+      insetPadding: EdgeInsets.all(16.w),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: 0.9.sw, maxHeight: 0.8.sh),
+        child: InteractiveViewer(
+          minScale: 1,
+          maxScale: 4,
+          child: Image.network(
+            url,
+            fit: BoxFit.contain,
+            errorBuilder: (_, _, _) => SizedBox(width: 64.w, height: 64.w),
+          ),
+        ),
+      ),
+    ),
+  );
 }
 
 // ── Holat tugmalari ──────────────────────────────────────────────────────
@@ -597,17 +624,26 @@ class _TaskSwipeAction extends StatelessWidget {
       enabled: enabled,
       trackColor: colors.backgroundElevation1Alt,
       handleColor: handleColor,
+      handleOnRight: action == TaskStatusAction.rejected,
       icon: CustomPaint(
         size: Size(18.w, 14.w),
-        painter: _DoubleCaretPainter(color: colors.textWhite, pointLeft: false),
+        painter: _DoubleCaretPainter(
+          color: colors.textWhite,
+          pointLeft: action == TaskStatusAction.rejected,
+        ),
       ),
     );
   }
 }
 
-class _DeadlineEditButton extends StatelessWidget {
-  const _DeadlineEditButton({required this.loading, required this.onTap});
+class _TaskEditButton extends StatelessWidget {
+  const _TaskEditButton({
+    required this.label,
+    required this.loading,
+    required this.onTap,
+  });
 
+  final String label;
   final bool loading;
   final VoidCallback onTap;
 
@@ -623,96 +659,7 @@ class _DeadlineEditButton extends StatelessWidget {
           height: 16.w,
           colorFilter: ColorFilter.mode(colors.iconAccent, BlendMode.srcIn),
         ),
-        label: AppLocalizations.of(
-          context,
-        ).taskActionEditDeadline.s(15.sp).w(800).c(colors.textAccent),
-      ),
-    );
-  }
-}
-
-enum _TaskAction { checked, rejected, markDone }
-
-/// Holat tugmasi (Figma: kulrang pill + rangli dumaloq ikonka).
-/// ponytail: dizayndagi "slide" imo-ishorasi oddiy bosish bilan almashtirilgan
-/// — talab qat'iylashsa Dismissible/drag bilan boyitiladi.
-// ignore: unused_element
-class _ActionButton extends StatelessWidget {
-  const _ActionButton({
-    required this.action,
-    required this.loading,
-    required this.onTap,
-  });
-
-  final _TaskAction action;
-  final bool loading;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = AppColors.of(context);
-    final l10n = AppLocalizations.of(context);
-
-    final (label, circleColor, leftSide) = switch (action) {
-      _TaskAction.checked => (l10n.taskActionChecked, colors.chartTeal, true),
-      _TaskAction.rejected => (
-        l10n.taskActionRejected,
-        colors.errorStrong,
-        false,
-      ),
-      _TaskAction.markDone => (
-        l10n.taskActionMarkDone,
-        colors.accentStrong,
-        true,
-      ),
-    };
-
-    final circle = DecoratedBox(
-      decoration: BoxDecoration(color: circleColor, shape: BoxShape.circle),
-      child: SizedBox(
-        width: 44.w,
-        height: 44.w,
-        child: Center(
-          child: CustomPaint(
-            size: Size(18.w, 14.w),
-            painter: _DoubleCaretPainter(
-              color: colors.textWhite,
-              pointLeft: !leftSide,
-            ),
-          ),
-        ),
-      ),
-    );
-
-    return InkWell(
-      onTap: loading ? null : onTap,
-      borderRadius: BorderRadius.circular(26.r),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: colors.backgroundElevation1,
-          borderRadius: BorderRadius.circular(26.r),
-        ),
-        child: SizedBox(
-          height: 52.h,
-          child: Padding(
-            padding: EdgeInsets.all(4.w),
-            child: Row(
-              children: [
-                if (leftSide) circle else SizedBox(width: 44.w),
-                Expanded(
-                  child: Center(
-                    child: label
-                        .s(15.sp)
-                        .w(800)
-                        .c(colors.textSub)
-                        .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
-                  ),
-                ),
-                if (!leftSide) circle else SizedBox(width: 44.w),
-              ],
-            ),
-          ),
-        ),
+        label: label.s(15.sp).w(800).c(colors.textAccent),
       ),
     );
   }
@@ -766,9 +713,9 @@ class _DoubleCaretPainter extends CustomPainter {
 
 typedef TaskRejectResult = ({String reason, List<String> photoPaths});
 
-/// "Vazifani rad etish" varag'i: sabab + ixtiyoriy skrinshotlar.
+/// Figma reject dialogi: majburiy sabab + ixtiyoriy rasmlar.
 /// `null` — bekor qilindi.
-Future<TaskRejectResult?> showTaskRejectSheet(BuildContext context) {
+Future<TaskRejectResult?> showTaskRejectDialog(BuildContext context) {
   final colors = AppColors.of(context);
   return showModalBottomSheet<TaskRejectResult>(
     context: context,
@@ -848,13 +795,23 @@ class _RejectSheetState extends State<_RejectSheet> {
       padding: EdgeInsets.only(
         left: 20.w,
         right: 20.w,
-        top: 24.h,
+        top: 8.h,
         bottom: MediaQuery.viewInsetsOf(context).bottom + 24.h,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Center(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: colors.strokeSoft,
+                borderRadius: BorderRadius.circular(1.r),
+              ),
+              child: SizedBox(width: 24.w, height: 3.h),
+            ),
+          ),
+          SizedBox(height: 16.h),
           Center(
             child: l10n.taskRejectTitle
                 .s(19.sp)
@@ -873,7 +830,7 @@ class _RejectSheetState extends State<_RejectSheet> {
           SizedBox(height: 16.h),
           DecoratedBox(
             decoration: BoxDecoration(
-              color: colors.backgroundBase,
+              color: colors.backgroundElevation1,
               borderRadius: BorderRadius.circular(12.r),
               border: Border.all(color: colors.strokeSub, width: 1.w),
             ),
@@ -881,43 +838,51 @@ class _RejectSheetState extends State<_RejectSheet> {
               padding: EdgeInsets.all(12.w),
               child: SizedBox(
                 width: double.infinity,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Wrap(
-                      spacing: 8.w,
-                      runSpacing: 8.h,
-                      children: [
-                        for (final photo in _photos)
-                          _PhotoThumb(
-                            photo: photo,
-                            onRemove: () =>
-                                setState(() => _photos.remove(photo)),
-                          ),
-                        _AddPhotoTile(onTap: _pickPhotos),
-                      ],
-                    ),
-                    SizedBox(height: 8.h),
-                    TextField(
-                      controller: _reasonCtrl,
-                      maxLines: 4,
-                      minLines: 2,
-                      style: style,
-                      cursorColor: colors.accentSub,
-                      decoration: InputDecoration.collapsed(
-                        hintText: l10n.taskRejectHint,
-                        hintStyle: style.copyWith(color: colors.textSub),
+                child: SizedBox(
+                  height: 94.h,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            for (final photo in _photos) ...[
+                              _PhotoThumb(
+                                photo: photo,
+                                onRemove: () =>
+                                    setState(() => _photos.remove(photo)),
+                              ),
+                              SizedBox(width: 8.w),
+                            ],
+                            _AddPhotoTile(onTap: _pickPhotos),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                      SizedBox(height: 8.h),
+                      Expanded(
+                        child: TextField(
+                          controller: _reasonCtrl,
+                          expands: true,
+                          maxLines: null,
+                          minLines: null,
+                          style: style,
+                          cursorColor: colors.accentSub,
+                          textAlignVertical: TextAlignVertical.top,
+                          decoration: InputDecoration.collapsed(
+                            hintText: l10n.taskRejectHint,
+                            hintStyle: style.copyWith(color: colors.textSub),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
           SizedBox(height: 24.h),
           Row(
-            mainAxisAlignment: MainAxisAlignment.end,
             children: [
               InkWell(
                 onTap: () => Navigator.of(context).pop(),
@@ -948,20 +913,19 @@ class _RejectSheetState extends State<_RejectSheet> {
                 ),
               ),
               SizedBox(width: 12.w),
-              InkWell(
-                onTap: _confirm,
-                borderRadius: BorderRadius.circular(16.r),
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: colors.errorStrong,
-                    borderRadius: BorderRadius.circular(16.r),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24.w),
+              Expanded(
+                child: InkWell(
+                  onTap: _confirm,
+                  borderRadius: BorderRadius.circular(16.r),
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: colors.errorStrong,
+                      borderRadius: BorderRadius.circular(16.r),
+                    ),
                     child: SizedBox(
                       height: 52.h,
                       child: Row(
-                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Assets.icons.icTrash.svg(
                             width: 16.w,
@@ -1007,8 +971,8 @@ class _PhotoThumb extends StatelessWidget {
           borderRadius: BorderRadius.circular(8.r),
           child: Image.file(
             File(photo.path!),
-            width: 56.w,
-            height: 56.w,
+            width: 40.w,
+            height: 40.w,
             fit: BoxFit.cover,
           ),
         ),
@@ -1064,8 +1028,8 @@ class _AddPhotoTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(8.r),
         ),
         child: SizedBox(
-          width: 56.w,
-          height: 56.w,
+          width: 40.w,
+          height: 40.w,
           child: Center(
             child: Assets.icons.icPlus.svg(
               width: 16.w,

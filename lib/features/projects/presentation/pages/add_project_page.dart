@@ -9,6 +9,7 @@ import '../../../../config/routes/entity/routes.dart';
 import '../../../../config/theme/app_colors.dart';
 import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
+import '../../../../core/util/formatters.dart';
 import '../../../../core/widgets/app_date_picker.dart';
 import '../../../../core/widgets/app_filter_components.dart';
 import '../../../../core/widgets/app_toast.dart';
@@ -113,7 +114,7 @@ class _AddProjectViewState extends State<_AddProjectView> {
     _nameCtrl.text = project.title;
     _descCtrl.text = project.description;
     _prefixCtrl.text = project.prefix;
-    _priceCtrl.text = project.projectPrice;
+    _priceCtrl.text = Formatters.formatAmount(project.projectPrice);
     _penaltyCtrl.text = project.penaltyPercentage;
     _status = project.status == ProjectStatus.unknown ? null : project.status;
     _manager = project.manager == null
@@ -1503,9 +1504,14 @@ class _DecimalInputFormatter extends TextInputFormatter {
     TextEditingValue oldValue,
     TextEditingValue newValue,
   ) {
-    final text = newValue.text.replaceAll(',', '.');
-    if (text.isEmpty || RegExp(r'^\d{0,10}(\.\d{0,2})?$').hasMatch(text)) {
-      return newValue;
+    final text = newValue.text.replaceAll(' ', '').replaceAll(',', '.');
+    if (text.isEmpty) return const TextEditingValue();
+    if (RegExp(r'^\d{0,10}(\.\d{0,2})?$').hasMatch(text)) {
+      final formatted = Formatters.formatAmount(text);
+      return TextEditingValue(
+        text: formatted,
+        selection: TextSelection.collapsed(offset: formatted.length),
+      );
     }
     return oldValue;
   }
@@ -1548,7 +1554,8 @@ String _fmtTime(TimeOfDay? time) {
   return '${two(time.hour)}:${two(time.minute)}';
 }
 
-String _decimalText(String text) => text.trim().replaceAll(',', '.');
+String _decimalText(String text) =>
+    text.trim().replaceAll(' ', '').replaceAll(',', '.');
 
 String? _emptyToNull(String text) {
   final value = text.trim();

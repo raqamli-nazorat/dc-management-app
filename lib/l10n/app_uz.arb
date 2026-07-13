@@ -139,7 +139,7 @@
   "taskRejectTitle": "Vazifani rad etish",
   "taskRejectSubtitle": "Rad etish sababini kiriting",
   "taskRejectHint": "Sababini yozing...",
-  "taskRejectConfirm": "Rad etish",
+  "taskRejectConfirm": "O‘chirish",
   "taskStatusUpdated": "Holat yangilandi",
   "meetingEditTitle": "Yig‘ilishni tahrirlash",
   "meetingUpdateSuccess": "Yig‘ilish yangilandi",
