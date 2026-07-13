@@ -21,6 +21,10 @@ class $AssetsIconsGen {
   SvgGenImage get cTuilconLoginLarge =>
       const SvgGenImage('assets/icons/c_tuilcon_login_large.svg');
 
+  /// File path: assets/icons/ic_add_file.svg
+  SvgGenImage get icAddFile =>
+      const SvgGenImage('assets/icons/ic_add_file.svg');
+
   /// File path: assets/icons/ic_alert_circle.svg
   SvgGenImage get icAlertCircle =>
       const SvgGenImage('assets/icons/ic_alert_circle.svg');
@@ -194,6 +198,7 @@ class $AssetsIconsGen {
   /// List of all assets
   List<SvgGenImage> get values => [
     cTuilconLoginLarge,
+    icAddFile,
     icAlertCircle,
     icAnalytics,
     icArrowLeftBold,

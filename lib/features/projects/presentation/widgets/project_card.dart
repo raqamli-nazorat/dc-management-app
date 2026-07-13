@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -44,125 +45,136 @@ class ProjectCard extends StatelessWidget {
         : project.prefix;
     final period = formatProjectDateRange(project.createdAt, project.deadline);
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: colors.backgroundElevation1,
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: colors.strokeSub, width: 1.w),
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(12.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      project.title
+    // Karta bosilganda ham menyudagi "Batafsil" bilan bir xil sahifa ochiladi.
+    return InkWell(
+      onTap: onDetails,
+      borderRadius: BorderRadius.circular(16.r),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: colors.backgroundElevation1,
+          borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(color: colors.strokeSub, width: 1.w),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(12.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        project.title
+                            .s(13.sp)
+                            .w(800)
+                            .h(20 / 13)
+                            .c(colors.textStrong)
+                            .copyWith(
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                        if (project.prefix.isNotEmpty)
+                          project.prefix
+                              .s(13.sp)
+                              .w(500)
+                              .h(20 / 13)
+                              .c(colors.textStrong)
+                              .copyWith(
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 8.w),
+                  _StatusPill(status: project.status),
+                ],
+              ),
+              if (project.description.isNotEmpty) ...[
+                SizedBox(height: 2.h),
+                project.description
+                    .s(11.sp)
+                    .w(500)
+                    .h(16 / 11)
+                    .c(colors.textSub)
+                    .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+              ],
+              if (period.isNotEmpty) ...[
+                SizedBox(height: 12.h),
+                Row(
+                  children: [
+                    Assets.icons.icCalendar.svg(
+                      width: 16.w,
+                      height: 16.w,
+                      colorFilter: ColorFilter.mode(
+                        colors.iconSub,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                    SizedBox(width: 4.w),
+                    Expanded(
+                      child: period
                           .s(13.sp)
-                          .w(800)
+                          .w(500)
                           .h(20 / 13)
                           .c(colors.textStrong)
                           .copyWith(
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
-                      if (project.prefix.isNotEmpty)
-                        project.prefix
-                            .s(13.sp)
-                            .w(500)
-                            .h(20 / 13)
-                            .c(colors.textStrong)
-                            .copyWith(
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                SizedBox(width: 8.w),
-                _StatusPill(status: project.status),
               ],
-            ),
-            if (project.description.isNotEmpty) ...[
-              SizedBox(height: 2.h),
-              project.description
-                  .s(11.sp)
-                  .w(500)
-                  .h(16 / 11)
-                  .c(colors.textSub)
-                  .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
-            ],
-            if (period.isNotEmpty) ...[
-              SizedBox(height: 12.h),
+              SizedBox(height: 8.h),
               Row(
                 children: [
-                  Assets.icons.icCalendar.svg(
-                    width: 16.w,
-                    height: 16.w,
-                    colorFilter: ColorFilter.mode(
-                      colors.iconSub,
-                      BlendMode.srcIn,
+                  _InitialAvatar(
+                    initials: initials,
+                    avatarUrl: manager?.avatar ?? '',
+                  ),
+                  SizedBox(width: 8.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (manager?.username.isNotEmpty == true)
+                          manager!.username
+                              .s(13.sp)
+                              .w(500)
+                              .h(20 / 13)
+                              .c(colors.textStrong)
+                              .copyWith(
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                        if (manager?.position.isNotEmpty == true)
+                          manager!.position
+                              .s(11.sp)
+                              .w(500)
+                              .h(16 / 11)
+                              .c(colors.textSoft)
+                              .copyWith(
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                      ],
                     ),
                   ),
-                  SizedBox(width: 4.w),
-                  Expanded(
-                    child: period
-                        .s(13.sp)
-                        .w(500)
-                        .h(20 / 13)
-                        .c(colors.textStrong)
-                        .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+                  SizedBox(width: 8.w),
+                  _MoreMenu(
+                    canManage: NavPermissions.canManageProject(role),
+                    onDetails: onDetails,
+                    onEdit: onEdit,
+                    onDelete: onDelete,
                   ),
                 ],
               ),
             ],
-            SizedBox(height: 8.h),
-            Row(
-              children: [
-                _InitialAvatar(initials: initials),
-                SizedBox(width: 8.w),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (manager?.username.isNotEmpty == true)
-                        manager!.username
-                            .s(13.sp)
-                            .w(500)
-                            .h(20 / 13)
-                            .c(colors.textStrong)
-                            .copyWith(
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                      if (manager?.position.isNotEmpty == true)
-                        manager!.position
-                            .s(11.sp)
-                            .w(500)
-                            .h(16 / 11)
-                            .c(colors.textSoft)
-                            .copyWith(
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                    ],
-                  ),
-                ),
-                SizedBox(width: 8.w),
-                _MoreMenu(
-                  canManage: NavPermissions.canManageProject(role),
-                  onDetails: onDetails,
-                  onEdit: onEdit,
-                  onDelete: onDelete,
-                ),
-              ],
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -170,27 +182,44 @@ class ProjectCard extends StatelessWidget {
 }
 
 class _InitialAvatar extends StatelessWidget {
-  const _InitialAvatar({required this.initials});
+  const _InitialAvatar({required this.initials, this.avatarUrl = ''});
 
   final String initials;
+
+  /// Bo'sh bo'lmasa rasm ko'rsatiladi (kesh bilan); yuklanmasa/yo'q bo'lsa
+  /// bosh harflar qoladi.
+  final String avatarUrl;
 
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
+
+    final fallback = Center(
+      child: initials
+          .toUpperCase()
+          .s(11.sp)
+          .w(800)
+          .h(16 / 11)
+          .c(colors.textWhite)
+          .a(TextAlign.center),
+    );
+
     return DecoratedBox(
       decoration: BoxDecoration(color: colors.iconSoft, shape: BoxShape.circle),
       child: SizedBox(
         width: 24.w,
         height: 24.w,
-        child: Center(
-          child: initials
-              .toUpperCase()
-              .s(11.sp)
-              .w(800)
-              .h(16 / 11)
-              .c(colors.textWhite)
-              .a(TextAlign.center),
-        ),
+        child: avatarUrl.isEmpty
+            ? fallback
+            : ClipOval(
+                child: CachedNetworkImage(
+                  imageUrl: avatarUrl,
+                  width: 24.w,
+                  height: 24.w,
+                  fit: BoxFit.cover,
+                  errorWidget: (_, _, _) => fallback,
+                ),
+              ),
       ),
     );
   }

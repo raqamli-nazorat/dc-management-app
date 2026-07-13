@@ -5,6 +5,7 @@ class ProjectParticipantModel extends ProjectParticipant {
     required super.id,
     required super.username,
     required super.position,
+    required super.avatar,
   });
 
   factory ProjectParticipantModel.fromJson(Map<String, dynamic> json) {
@@ -23,6 +24,7 @@ class ProjectParticipantModel extends ProjectParticipant {
       id: (json['id'] as num?)?.toInt() ?? 0,
       username: pick(['full_name', 'username', 'name']),
       position: str(json['position']),
+      avatar: str(json['avatar']),
     );
   }
 }

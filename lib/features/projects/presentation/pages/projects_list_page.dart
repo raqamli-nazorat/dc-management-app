@@ -485,7 +485,7 @@ class _AddProjectButton extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Assets.icons.icPlus.svg(
+                Assets.icons.icAddFile.svg(
                   width: 20.w,
                   height: 20.w,
                   colorFilter: ColorFilter.mode(
