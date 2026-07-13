@@ -357,7 +357,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get taskRejectHint => 'Sababini yozing...';
 
   @override
-  String get taskRejectConfirm => 'Rad etish';
+  String get taskRejectConfirm => 'O‘chirish';
 
   @override
   String get taskStatusUpdated => 'Holat yangilandi';

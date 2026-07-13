@@ -356,7 +356,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get taskRejectHint => 'Write the reason...';
 
   @override
-  String get taskRejectConfirm => 'Reject';
+  String get taskRejectConfirm => 'Delete';
 
   @override
   String get taskStatusUpdated => 'Status updated';

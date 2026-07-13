@@ -45,6 +45,7 @@ void main() {
     expect(model.assigneeAvatar, 'https://x/avatar.png');
     expect(model.positionId, 5);
     expect(model.taskPrice, '150000.00');
+    expect(model.penaltyPercentage, '10.00');
     expect(model.sprint, 2);
     expect(model.estimatedMinutes, 90);
     expect(model.status, TaskStatus.done);

@@ -136,7 +136,7 @@
   "taskRejectTitle": "Reject task",
   "taskRejectSubtitle": "Enter the rejection reason",
   "taskRejectHint": "Write the reason...",
-  "taskRejectConfirm": "Reject",
+  "taskRejectConfirm": "Delete",
   "taskStatusUpdated": "Status updated",
   "meetingEditTitle": "Edit meeting",
   "meetingUpdateSuccess": "Meeting updated",

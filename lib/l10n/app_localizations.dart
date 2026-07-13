@@ -773,7 +773,7 @@ abstract class AppLocalizations {
   /// No description provided for @taskRejectConfirm.
   ///
   /// In uz, this message translates to:
-  /// **'Rad etish'**
+  /// **'O‘chirish'**
   String get taskRejectConfirm;
 
   /// No description provided for @taskStatusUpdated.

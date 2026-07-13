@@ -10,7 +10,7 @@ void main() {
     testerIds: [9],
   );
 
-  test('assignee follows todo to in-progress to done chain', () {
+  test('assignee follows todo to in-progress to done to production chain', () {
     expect(
       TaskStatusPolicy.actions(
         status: TaskStatus.todo,
@@ -27,17 +27,17 @@ void main() {
       ),
       [TaskStatusAction.done],
     );
-  });
-
-  test('assignee cannot use manager or tester transitions', () {
     expect(
       TaskStatusPolicy.actions(
         status: TaskStatus.done,
         assigneeId: 7,
         context: employee,
       ),
-      isEmpty,
+      [TaskStatusAction.production],
     );
+  });
+
+  test('assignee cannot use tester transitions', () {
     expect(
       TaskStatusPolicy.actions(
         status: TaskStatus.production,
@@ -48,7 +48,7 @@ void main() {
     );
   });
 
-  test('manager can move done task to production only', () {
+  test('manager has no status transition', () {
     expect(
       TaskStatusPolicy.actions(
         status: TaskStatus.done,
@@ -59,7 +59,7 @@ void main() {
           managerId: 8,
         ),
       ),
-      [TaskStatusAction.production],
+      isEmpty,
     );
   });
 
@@ -78,6 +78,22 @@ void main() {
     );
   });
 
+  test('tester assigned to task keeps assignee transition precedence', () {
+    const tester = TaskStatusPermissionContext(
+      currentUserId: 9,
+      activeRole: 'employee',
+      testerIds: [9],
+    );
+    expect(
+      TaskStatusPolicy.actions(
+        status: TaskStatus.done,
+        assigneeId: 9,
+        context: tester,
+      ),
+      [TaskStatusAction.production],
+    );
+  });
+
   test('overdue task has no status action', () {
     expect(
       TaskStatusPolicy.actions(
@@ -89,6 +105,31 @@ void main() {
         ),
       ),
       isEmpty,
+    );
+  });
+
+  test('only admin edits all tasks and manager edits overdue deadline', () {
+    const admin = TaskStatusPermissionContext(
+      currentUserId: 1,
+      activeRole: 'admin',
+    );
+    const manager = TaskStatusPermissionContext(
+      currentUserId: 8,
+      activeRole: 'manager',
+      managerId: 8,
+    );
+
+    expect(
+      TaskEditPolicy.scope(status: TaskStatus.todo, context: admin),
+      TaskEditScope.full,
+    );
+    expect(
+      TaskEditPolicy.scope(status: TaskStatus.overdue, context: manager),
+      TaskEditScope.deadlineOnly,
+    );
+    expect(
+      TaskEditPolicy.scope(status: TaskStatus.done, context: manager),
+      TaskEditScope.none,
     );
   });
 }

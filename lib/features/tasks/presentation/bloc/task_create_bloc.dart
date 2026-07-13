@@ -191,6 +191,23 @@ class TaskCreateBloc extends Bloc<TaskCreateEvent, TaskCreateState> {
     TaskCreateUpdateSubmitted event,
     Emitter<TaskCreateState> emit,
   ) async {
+    final detail = state.detail;
+    final isAllowed =
+        detail != null &&
+        TaskEditPolicy.canUpdate(
+          status: detail.status,
+          context: state.permissionContext,
+          deadlineOnly: event.params.task.deadlineOnly,
+        );
+    if (!isAllowed) {
+      emit(
+        state.copyWith(
+          submitStatus: TaskSubmitStatus.failure,
+          submitFailure: const ServerFailure(),
+        ),
+      );
+      return;
+    }
     emit(state.copyWith(submitStatus: TaskSubmitStatus.submitting));
     try {
       await _updateTask(event.params);

@@ -195,24 +195,29 @@ class TaskRemoteDataSourceImpl implements TaskRemoteDataSource {
   /// `type` — API stringlari; `deadline` — ISO-8601. Taxminiy vaqt schema
   /// bo'yicha `estimated_input_hours`/`estimated_input_minutes` orqali yoziladi
   /// (`estimated_minutes` readOnly).
-  Map<String, dynamic> _taskBody(NewTask task) => {
-    if (task.project != null) 'project': task.project,
-    'title': task.title,
-    'description': task.description,
-    'deadline': task.deadline.toIso8601String(),
-    if (task.priority != null) 'priority': task.priority,
-    if (task.type != null) 'type': task.type,
-    if (task.assignee != null) 'assignee': task.assignee,
-    if (task.position != null) 'position': task.position,
-    if (task.taskPrice != null) 'task_price': task.taskPrice,
-    if (task.penaltyPercentage != null)
-      'penalty_percentage': task.penaltyPercentage,
-    if (task.sprint != null) 'sprint': task.sprint,
-    if (task.estimatedMinutes != null) ...{
-      'estimated_input_hours': task.estimatedMinutes! ~/ 60,
-      'estimated_input_minutes': task.estimatedMinutes! % 60,
-    },
-  };
+  Map<String, dynamic> _taskBody(NewTask task) {
+    if (task.deadlineOnly) {
+      return {'deadline': task.deadline.toIso8601String()};
+    }
+    return {
+      if (task.project != null) 'project': task.project,
+      'title': task.title,
+      'description': task.description,
+      'deadline': task.deadline.toIso8601String(),
+      if (task.priority != null) 'priority': task.priority,
+      if (task.type != null) 'type': task.type,
+      if (task.assignee != null) 'assignee': task.assignee,
+      if (task.position != null) 'position': task.position,
+      if (task.taskPrice != null) 'task_price': task.taskPrice,
+      if (task.penaltyPercentage != null)
+        'penalty_percentage': task.penaltyPercentage,
+      if (task.sprint != null) 'sprint': task.sprint,
+      if (task.estimatedMinutes != null) ...{
+        'estimated_input_hours': task.estimatedMinutes! ~/ 60,
+        'estimated_input_minutes': task.estimatedMinutes! % 60,
+      },
+    };
+  }
 
   @override
   Future<int> createTask(NewTask task) async {
