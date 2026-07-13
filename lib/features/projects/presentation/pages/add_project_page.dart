@@ -129,16 +129,6 @@ class _AddProjectViewState extends State<_AddProjectView> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (_project == null && _prefixCtrl.text.isEmpty) {
-      final l10n = AppLocalizations.of(context);
-      _prefixCtrl.text = l10n.projectCreateDefaultPrefix;
-      _penaltyCtrl.text = l10n.projectCreateDefaultPenalty;
-    }
-  }
-
-  @override
   void dispose() {
     _nameCtrl.dispose();
     _descCtrl.dispose();
@@ -190,6 +180,8 @@ class _AddProjectViewState extends State<_AddProjectView> {
     final picked = await showTimePicker(
       context: context,
       initialTime: _deadlineTime ?? const TimeOfDay(hour: 23, minute: 59),
+      // Faqat qo'lda kiritish — soat (clock) rejimi va unga o'tkazgich yo'q.
+      initialEntryMode: TimePickerEntryMode.inputOnly,
       builder: (ctx, child) => _themedPicker(ctx, child!),
     );
     if (picked != null) setState(() => _deadlineTime = picked);
@@ -674,15 +666,10 @@ class _Header extends StatelessWidget {
           InkWell(
             onTap: () => Navigator.of(context).maybePop(),
             borderRadius: BorderRadius.circular(12.r),
-            child: Padding(
-              padding: EdgeInsets.all(4.w),
-              child: Assets.icons.icClose.svg(
-                width: 16.w,
-                height: 16.w,
-                colorFilter: ColorFilter.mode(
-                  colors.iconStrong,
-                  BlendMode.srcIn,
-                ),
+            child: Assets.icons.icClose.svg(
+              colorFilter: ColorFilter.mode(
+                colors.iconStrong,
+                BlendMode.srcIn,
               ),
             ),
           ),

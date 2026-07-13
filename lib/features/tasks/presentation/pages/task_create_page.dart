@@ -203,6 +203,8 @@ class _TaskCreateViewState extends State<_TaskCreateView> {
       initialTime:
           (deadline ? _deadlineTime : _estimated) ??
           const TimeOfDay(hour: 0, minute: 0),
+      // Faqat qo'lda kiritish — soat (clock) rejimi va unga o'tkazgich yo'q.
+      initialEntryMode: TimePickerEntryMode.inputOnly,
       builder: (ctx, child) => _themedPicker(ctx, child!),
     );
     if (picked != null) {
