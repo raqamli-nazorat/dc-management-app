@@ -24,6 +24,7 @@ class MeetingModel extends Meeting {
     super.participantIds,
     required super.participantName,
     required super.participantPosition,
+    super.participantAvatar,
     required super.isCompleted,
     required super.reason,
     required super.attended,
@@ -114,6 +115,9 @@ class MeetingModel extends Meeting {
     final participantPosition = participantMap.isNotEmpty
         ? pick(['position'], participantMap)
         : pick(['participant_position']);
+    final participantAvatar = participantMap.isNotEmpty
+        ? pick(['avatar'], participantMap)
+        : pick(['participant_avatar']);
 
     // ── Attendance: joriy foydalanuvchining yozuvi ─────────────────────────
     bool? attended() {
@@ -155,6 +159,7 @@ class MeetingModel extends Meeting {
       participantIds: participantIds(),
       participantName: participantName,
       participantPosition: participantPosition,
+      participantAvatar: participantAvatar,
       isCompleted:
           (json['is_completed'] as bool?) ??
           (json['is_complate'] as bool?) ??

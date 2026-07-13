@@ -11,6 +11,8 @@ class ProjectCreateState extends Equatable {
     this.submitFailure,
     this.project,
     this.documentsFailed = false,
+    this.documents = const [],
+    this.documentsLoading = false,
   });
 
   final bool optionsLoading;
@@ -22,6 +24,8 @@ class ProjectCreateState extends Equatable {
 
   /// Loyiha yaratildi, lekin ba'zi hujjatlar yuklanmadi.
   final bool documentsFailed;
+  final List<ProjectDocument> documents;
+  final bool documentsLoading;
 
   ProjectCreateState copyWith({
     bool? optionsLoading,
@@ -31,6 +35,8 @@ class ProjectCreateState extends Equatable {
     Failure? submitFailure,
     Project? project,
     bool? documentsFailed,
+    List<ProjectDocument>? documents,
+    bool? documentsLoading,
   }) => ProjectCreateState(
     optionsLoading: optionsLoading ?? this.optionsLoading,
     users: users ?? this.users,
@@ -39,6 +45,8 @@ class ProjectCreateState extends Equatable {
     submitFailure: submitFailure,
     project: project ?? this.project,
     documentsFailed: documentsFailed ?? this.documentsFailed,
+    documents: documents ?? this.documents,
+    documentsLoading: documentsLoading ?? this.documentsLoading,
   );
 
   @override
@@ -50,5 +58,7 @@ class ProjectCreateState extends Equatable {
     submitFailure,
     project,
     documentsFailed,
+    documents,
+    documentsLoading,
   ];
 }

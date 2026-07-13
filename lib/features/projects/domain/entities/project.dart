@@ -34,11 +34,13 @@ class ProjectParticipant extends Equatable {
     required this.id,
     required this.username,
     required this.position,
+    required this.avatar,
   });
 
   final int id;
   final String username;
   final String position;
+  final String avatar;
 
   String get initials {
     final words = username

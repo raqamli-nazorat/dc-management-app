@@ -19,6 +19,7 @@ class TaskDetailModel extends TaskDetail {
     required super.assigneeId,
     required super.assigneeName,
     required super.assigneePosition,
+    required super.assigneeAvatar,
     required super.positionId,
     required super.positionName,
     required super.createdByName,
@@ -69,6 +70,7 @@ class TaskDetailModel extends TaskDetail {
       assigneePosition: aPosition is Map
           ? str(aPosition['name'])
           : str(aPosition),
+      assigneeAvatar: str(aMap['avatar']),
       positionId: asInt(posMap['id']),
       positionName: str(posMap['name']),
       createdByName: str(cMap['username'] ?? cMap['full_name'] ?? cMap['name']),

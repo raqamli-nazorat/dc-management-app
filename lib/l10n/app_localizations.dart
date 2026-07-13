@@ -212,6 +212,18 @@ abstract class AppLocalizations {
   /// **'Qayta urinish'**
   String get commonRetry;
 
+  /// No description provided for @commonOpenFile.
+  ///
+  /// In uz, this message translates to:
+  /// **'Faylni ochish'**
+  String get commonOpenFile;
+
+  /// No description provided for @commonDownloadFile.
+  ///
+  /// In uz, this message translates to:
+  /// **'Faylni yuklab olish'**
+  String get commonDownloadFile;
+
   /// No description provided for @navHome.
   ///
   /// In uz, this message translates to:
@@ -656,6 +668,12 @@ abstract class AppLocalizations {
   /// **'Loyiha, nomi va muddat majburiy'**
   String get taskCreateRequiredError;
 
+  /// No description provided for @taskDeadlineChangeRequired.
+  ///
+  /// In uz, this message translates to:
+  /// **'Muddatni o‘zgartiring'**
+  String get taskDeadlineChangeRequired;
+
   /// No description provided for @taskCreateSuccess.
   ///
   /// In uz, this message translates to:
@@ -710,11 +728,29 @@ abstract class AppLocalizations {
   /// **'Rad etildi'**
   String get taskActionRejected;
 
+  /// No description provided for @taskActionInProgress.
+  ///
+  /// In uz, this message translates to:
+  /// **'Jarayonga o‘tkazish'**
+  String get taskActionInProgress;
+
   /// No description provided for @taskActionMarkDone.
   ///
   /// In uz, this message translates to:
   /// **'Bajarilganga o‘tkazish'**
   String get taskActionMarkDone;
+
+  /// No description provided for @taskActionProduction.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ishga tushurildi'**
+  String get taskActionProduction;
+
+  /// No description provided for @taskActionEditDeadline.
+  ///
+  /// In uz, this message translates to:
+  /// **'Muddatni o‘zgartirish'**
+  String get taskActionEditDeadline;
 
   /// No description provided for @taskRejectTitle.
   ///
@@ -776,11 +812,23 @@ abstract class AppLocalizations {
   /// **'Fayl qo‘shish'**
   String get projectCreateFilesLabel;
 
+  /// No description provided for @projectExistingFilesLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mavjud fayllar'**
+  String get projectExistingFilesLabel;
+
   /// No description provided for @projectCreateDocsFailed.
   ///
   /// In uz, this message translates to:
   /// **'Loyiha yaratildi, lekin ba\'zi fayllar yuklanmadi'**
   String get projectCreateDocsFailed;
+
+  /// No description provided for @projectUpdateDocsFailed.
+  ///
+  /// In uz, this message translates to:
+  /// **'Loyiha saqlandi, lekin ba\'zi fayllar yuklanmadi'**
+  String get projectUpdateDocsFailed;
 
   /// No description provided for @taskMenuDetails.
   ///

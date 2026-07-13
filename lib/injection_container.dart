@@ -275,6 +275,8 @@ Future<void> configureDependencies() async {
         getEditData: getIt(),
         updateTask: getIt(),
         changeStatus: getIt(),
+        getMe: getIt(),
+        getProject: getIt(),
       ),
     )
     ..registerFactory<TaskFilterBloc>(
@@ -350,6 +352,8 @@ Future<void> configureDependencies() async {
         createProject: getIt(),
         updateProject: getIt(),
         uploadDocument: getIt(),
+        getDocuments: getIt(),
+        deleteDocument: getIt(),
       ),
     )
     ..registerFactory<ProjectDetailsBloc>(

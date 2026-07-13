@@ -39,14 +39,16 @@ class ProjectMember extends Equatable {
     required this.id,
     required this.username,
     required this.position,
+    this.avatar = '',
   });
 
   final int id;
   final String username;
   final String position;
+  final String avatar;
 
   @override
-  List<Object?> get props => [id, username, position];
+  List<Object?> get props => [id, username, position, avatar];
 }
 
 /// Foydalanuvchi (qisqa) — filtrda "Muallif" (`created_by`) va "Xodim"

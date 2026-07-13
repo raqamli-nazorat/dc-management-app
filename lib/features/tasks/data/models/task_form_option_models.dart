@@ -69,6 +69,7 @@ class ProjectMemberModel extends ProjectMember {
     required super.id,
     required super.username,
     required super.position,
+    super.avatar,
   });
 
   factory ProjectMemberModel.fromJson(Map<String, dynamic> json) {
@@ -77,6 +78,7 @@ class ProjectMemberModel extends ProjectMember {
       id: (json['id'] as num?)?.toInt() ?? 0,
       username: str(json['username']),
       position: str(json['position']),
+      avatar: str(json['avatar']),
     );
   }
 

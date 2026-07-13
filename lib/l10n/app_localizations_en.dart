@@ -68,6 +68,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonRetry => 'Retry';
 
   @override
+  String get commonOpenFile => 'Open file';
+
+  @override
+  String get commonDownloadFile => 'Download file';
+
+  @override
   String get navHome => 'Home';
 
   @override
@@ -299,6 +305,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Project, name and deadline are required';
 
   @override
+  String get taskDeadlineChangeRequired => 'Change the deadline';
+
+  @override
   String get taskCreateSuccess => 'Task created';
 
   @override
@@ -326,7 +335,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get taskActionRejected => 'Rejected';
 
   @override
+  String get taskActionInProgress => 'Move to in progress';
+
+  @override
   String get taskActionMarkDone => 'Mark as done';
+
+  @override
+  String get taskActionProduction => 'Move to production';
+
+  @override
+  String get taskActionEditDeadline => 'Change deadline';
 
   @override
   String get taskRejectTitle => 'Reject task';
@@ -360,8 +378,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get projectCreateFilesLabel => 'Add files';
 
   @override
+  String get projectExistingFilesLabel => 'Existing files';
+
+  @override
   String get projectCreateDocsFailed =>
       'Project created, but some files failed to upload';
+
+  @override
+  String get projectUpdateDocsFailed =>
+      'Project saved, but some files failed to upload';
 
   @override
   String get taskMenuDetails => 'Details';

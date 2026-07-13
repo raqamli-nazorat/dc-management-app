@@ -2,8 +2,12 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/error/failures.dart';
+import '../../../projects/domain/entities/project.dart';
+import '../../../profile/domain/usecases/get_me_usecase.dart';
+import '../../../projects/domain/usecases/project_usecases.dart';
 import '../../domain/entities/task_detail.dart';
 import '../../domain/entities/task_form_options.dart';
+import '../../domain/task_status_policy.dart';
 import '../../domain/usecases/change_task_status_usecase.dart';
 import '../../domain/usecases/get_project_members_usecase.dart';
 import '../../domain/usecases/get_task_edit_data_usecase.dart';
@@ -26,12 +30,16 @@ class TaskCreateBloc extends Bloc<TaskCreateEvent, TaskCreateState> {
     required GetTaskEditDataUseCase getEditData,
     required UpdateTaskUseCase updateTask,
     required ChangeTaskStatusUseCase changeStatus,
+    required GetMeUseCase getMe,
+    required GetProjectUseCase getProject,
   }) : _getOptions = getOptions,
        _getMembers = getMembers,
        _submitTask = submitTask,
        _getEditData = getEditData,
        _updateTask = updateTask,
        _changeStatus = changeStatus,
+       _getMe = getMe,
+       _getProject = getProject,
        super(const TaskCreateState()) {
     on<TaskCreateOptionsRequested>(_onRequested);
     on<TaskCreateProjectSelected>(_onProjectSelected);
@@ -47,6 +55,8 @@ class TaskCreateBloc extends Bloc<TaskCreateEvent, TaskCreateState> {
   final GetTaskEditDataUseCase _getEditData;
   final UpdateTaskUseCase _updateTask;
   final ChangeTaskStatusUseCase _changeStatus;
+  final GetMeUseCase _getMe;
+  final GetProjectUseCase _getProject;
 
   Future<void> _onRequested(
     TaskCreateOptionsRequested event,
@@ -104,11 +114,34 @@ class TaskCreateBloc extends Bloc<TaskCreateEvent, TaskCreateState> {
     emit(state.copyWith(detailLoading: true));
     try {
       final data = await _getEditData(event.taskId);
+      TaskStatusPermissionContext? permissionContext;
+      try {
+        final profile = await _getMe(null);
+        Project? project;
+        if (data.detail.projectId != null) {
+          try {
+            project = await _getProject(data.detail.projectId!);
+          } on Failure catch (_) {
+            // Assignee actionlari project relation yuklanmasa ham ishlaydi.
+          }
+        }
+        permissionContext = TaskStatusPermissionContext(
+          currentUserId: profile.id,
+          activeRole: profile.activeRole,
+          managerId: project?.manager?.id,
+          testerIds: [
+            for (final tester in project?.testers ?? const []) tester.id,
+          ],
+        );
+      } on Failure catch (_) {
+        // Detail permission ma'lumotlarisiz ham o'qilishi mumkin.
+      }
       emit(
         state.copyWith(
           detailLoading: false,
           detail: data.detail,
           attachments: data.attachments,
+          permissionContext: permissionContext,
         ),
       );
     } on Failure catch (_) {
@@ -122,6 +155,24 @@ class TaskCreateBloc extends Bloc<TaskCreateEvent, TaskCreateState> {
     TaskCreateStatusSubmitted event,
     Emitter<TaskCreateState> emit,
   ) async {
+    final detail = state.detail;
+    final isAllowed =
+        detail != null &&
+        TaskStatusPolicy.canChange(
+          currentStatus: detail.status,
+          targetStatus: event.params.status,
+          assigneeId: detail.assigneeId,
+          context: state.permissionContext,
+        );
+    if (!isAllowed) {
+      emit(
+        state.copyWith(
+          submitStatus: TaskSubmitStatus.failure,
+          submitFailure: const ServerFailure(),
+        ),
+      );
+      return;
+    }
     emit(state.copyWith(submitStatus: TaskSubmitStatus.submitting));
     try {
       await _changeStatus(event.params);
