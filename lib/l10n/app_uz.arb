@@ -142,6 +142,8 @@
   "taskRejectConfirm": "O‘chirish",
   "taskStatusUpdated": "Holat yangilandi",
   "meetingEditTitle": "Yig‘ilishni tahrirlash",
+  "meetingDetailTitle": "Yig‘ilish tafsilotlari",
+  "meetingDetailParticipantsLabel": "Yig‘ilish qatnashchilari",
   "meetingUpdateSuccess": "Yig‘ilish yangilandi",
   "meetingDeleteTitle": "Yig‘ilishni o‘chirish",
   "meetingDeleteSubtitle": "Yig‘ilish chiqindi qutisiga yuboriladi va keyinchalik tiklash mumkin.",

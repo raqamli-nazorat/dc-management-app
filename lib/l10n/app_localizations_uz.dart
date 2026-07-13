@@ -366,6 +366,12 @@ class AppLocalizationsUz extends AppLocalizations {
   String get meetingEditTitle => 'Yig‘ilishni tahrirlash';
 
   @override
+  String get meetingDetailTitle => 'Yig‘ilish tafsilotlari';
+
+  @override
+  String get meetingDetailParticipantsLabel => 'Yig‘ilish qatnashchilari';
+
+  @override
   String get meetingUpdateSuccess => 'Yig‘ilish yangilandi';
 
   @override

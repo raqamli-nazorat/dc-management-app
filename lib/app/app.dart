@@ -53,19 +53,28 @@ class _AppState extends State<App> with WidgetsBindingObserver {
     }
   }*/
 
+  // Ilova haqiqatda background (paused/detached) holatiga o'tganini kuzatish uchun flag
+  bool _wasPaused = false;
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // Faqat `paused` (haqiqiy background) va `detached` (kill) da vaqt belgilanadi.
-    // `hidden`/`inactive` ikki yo‘nalishda ham (chiqish VA qaytish) fire bo‘ladi —
-    // ularni stamp qilish resume’da `lastActiveAt`ni qayta yozib, timeout’ni buzadi.
     switch (state) {
       case AppLifecycleState.paused || AppLifecycleState.detached:
+        _wasPaused = true; // Haqiqiy backgroundga o'tdi deb belgilaymiz
         _session.add(const SessionBackgrounded());
+        break;
+
       case AppLifecycleState.resumed:
-        _session.add(const SessionResumed());
-        // Event-loop nudge: bloc async event navbatdan o‘tgach (microtask) guard
-        // qayta ishga tushadi — `pinRequired` holati allaqachon emit qilingan.
-        Future.delayed(Duration.zero, () => getIt<AppRouter>().router.refresh());
+      // Faqatgina ilova avval paused bo'lgan bo'lsagina resume eventini yuboramiz
+        if (_wasPaused) {
+          _wasPaused = false; // Flagni qayta tiklaymiz
+          _session.add(const SessionResumed());
+
+          // Event-loop nudge
+          Future.delayed(Duration.zero, () => getIt<AppRouter>().router.refresh());
+        }
+        break;
+
       case AppLifecycleState.inactive || AppLifecycleState.hidden:
         break;
     }

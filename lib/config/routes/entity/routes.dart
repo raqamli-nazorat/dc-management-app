@@ -114,6 +114,12 @@ class Routes implements Coordinate {
     path: '/meetings/filter',
   );
 
+  /// Yig'ilish tafsilotlari (kartaga bosilganda, faqat o'qish).
+  static const meetingDetail = Routes._(
+    name: 'meeting_detail',
+    path: '/meetings/:id',
+  );
+
   /// "Yig‘ilishga qatnashmadingiz" — sabab yozish (meeting id path param).
   static const meetingReason = Routes._(
     name: 'meeting_reason',

@@ -365,6 +365,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get meetingEditTitle => 'Edit meeting';
 
   @override
+  String get meetingDetailTitle => 'Meeting details';
+
+  @override
+  String get meetingDetailParticipantsLabel => 'Meeting participants';
+
+  @override
   String get meetingUpdateSuccess => 'Meeting updated';
 
   @override
