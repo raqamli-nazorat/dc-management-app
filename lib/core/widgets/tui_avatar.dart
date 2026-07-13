@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -26,6 +27,7 @@ class TuiAvatar extends StatelessWidget {
   const TuiAvatar({
     super.key,
     required this.initial,
+    this.avatarUrl = '',
     this.badge = TuiAvatarBadge.none,
     this.count = 0,
     this.size = 32,
@@ -33,6 +35,9 @@ class TuiAvatar extends StatelessWidget {
 
   /// Ko‘rsatiladigan bosh harf (masalan ism/username birinchi harfi).
   final String initial;
+
+  /// Bo'sh bo'lmasa avatar rasmi ko'rsatiladi; yuklanmasa bosh harf qoladi.
+  final String avatarUrl;
   final TuiAvatarBadge badge;
 
   /// `unread` nishoni ustidagi son (0 bo‘lsa nuqta ko‘rsatiladi).
@@ -46,22 +51,33 @@ class TuiAvatar extends StatelessWidget {
     final colors = AppColors.of(context);
     final dimension = size.w;
 
+    final fallback = CustomPaint(
+      painter: _TuiAvatarPainter(
+        initial: initial.isNotEmpty ? initial.characters.first.toUpperCase() : '?',
+        badge: badge,
+        count: count,
+        circleColor: colors.avatarPlaceholder,
+        letterColor: colors.textSub,
+        badgeReadColor: colors.badgeRead,
+        badgeUnreadColor: colors.badgeUnread,
+        ringColor: colors.backgroundBase,
+        badgeTextColor: colors.textWhite,
+      ),
+    );
+
     return SizedBox(
       width: dimension,
       height: dimension,
-      child: CustomPaint(
-        painter: _TuiAvatarPainter(
-          initial: initial.isNotEmpty ? initial.characters.first.toUpperCase() : '?',
-          badge: badge,
-          count: count,
-          circleColor: colors.avatarPlaceholder,
-          letterColor: colors.textSub,
-          badgeReadColor: colors.badgeRead,
-          badgeUnreadColor: colors.badgeUnread,
-          ringColor: colors.backgroundBase,
-          badgeTextColor: colors.textWhite,
-        ),
-      ),
+      child: avatarUrl.isEmpty
+          ? fallback
+          : ClipOval(
+              child: CachedNetworkImage(
+                imageUrl: avatarUrl,
+                fit: BoxFit.cover,
+                placeholder: (_, _) => fallback,
+                errorWidget: (_, _, _) => fallback,
+              ),
+            ),
     );
   }
 }

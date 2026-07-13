@@ -117,7 +117,7 @@ class _AddProjectViewState extends State<_AddProjectView> {
             id: project.manager!.id,
             username: project.manager!.username,
             position: project.manager!.position,
-            avatar: '',
+            avatar: project.manager!.avatar,
           );
     _employeeIds.addAll(project.employees.map((user) => user.id));
     _testerIds.addAll(project.testers.map((user) => user.id));
@@ -205,6 +205,7 @@ class _AddProjectViewState extends State<_AddProjectView> {
               initial: user.username,
               title: user.username,
               subtitle: user.position,
+              avatarUrl: user.avatar,
             ),
         ],
         selected: selected,
@@ -523,7 +524,7 @@ class _AddProjectViewState extends State<_AddProjectView> {
         id: user.id,
         username: user.username,
         position: user.position,
-        avatar: '',
+        avatar: user.avatar,
       ),
   ];
 
@@ -948,6 +949,12 @@ class _UserChip extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
+              TuiAvatar(
+                initial: user.username,
+                avatarUrl: user.avatar,
+                size: 20,
+              ),
+              SizedBox(width: 4.w),
               Flexible(
                 child: label
                     .s(13.sp)
@@ -989,7 +996,7 @@ class _UserOption extends StatelessWidget {
     final colors = AppColors.of(context);
     return Row(
       children: [
-        TuiAvatar(initial: user.username, size: 32),
+        TuiAvatar(initial: user.username, avatarUrl: user.avatar, size: 32),
         SizedBox(width: 8.w),
         Expanded(
           child: Column(

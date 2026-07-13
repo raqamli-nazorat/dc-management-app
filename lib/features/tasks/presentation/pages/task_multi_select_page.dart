@@ -15,6 +15,7 @@ class MultiSelectItem {
     required this.title,
     this.subtitle = '',
     this.trailing = '',
+    this.avatarUrl = '',
   });
 
   final int id;
@@ -26,6 +27,7 @@ class MultiSelectItem {
 
   /// O'ngdagi qo'shimcha yozuv (loyiha muddati) — bo'sh bo'lsa ko'rsatilmaydi.
   final String trailing;
+  final String avatarUrl;
 }
 
 /// [TaskMultiSelectPage] argumentlari (`extra` orqali uzatiladi).
@@ -186,7 +188,11 @@ class _SelectableRow extends StatelessWidget {
             children: [
               _Checkbox(checked: selected),
               SizedBox(width: 12.w),
-              TuiAvatar(initial: item.initial, size: 24),
+              TuiAvatar(
+                initial: item.initial,
+                avatarUrl: item.avatarUrl,
+                size: 24,
+              ),
               SizedBox(width: 8.w),
               Expanded(
                 child: Column(
