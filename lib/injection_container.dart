@@ -296,9 +296,6 @@ Future<void> configureDependencies() async {
     ..registerLazySingleton<CreateProjectUseCase>(
       () => CreateProjectUseCase(getIt()),
     )
-    ..registerLazySingleton<UploadProjectDocumentUseCase>(
-      () => UploadProjectDocumentUseCase(getIt()),
-    )
     ..registerLazySingleton<GetProjectUseCase>(() => GetProjectUseCase(getIt()))
     ..registerLazySingleton<UpdateProjectUseCase>(
       () => UpdateProjectUseCase(getIt()),
@@ -351,7 +348,7 @@ Future<void> configureDependencies() async {
         getManagers: getIt(),
         createProject: getIt(),
         updateProject: getIt(),
-        uploadDocument: getIt(),
+        createDocument: getIt(),
         getDocuments: getIt(),
         deleteDocument: getIt(),
       ),

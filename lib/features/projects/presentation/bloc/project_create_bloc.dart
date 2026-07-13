@@ -19,14 +19,14 @@ class ProjectCreateBloc extends Bloc<ProjectCreateEvent, ProjectCreateState> {
     required GetUsersUseCase getUsers,
     required CreateProjectUseCase createProject,
     required UpdateProjectUseCase updateProject,
-    required UploadProjectDocumentUseCase uploadDocument,
+    required CreateProjectDocumentUseCase createDocument,
     required GetProjectDocumentsUseCase getDocuments,
     required DeleteProjectDocumentUseCase deleteDocument,
   }) : _getManagers = getManagers,
        _getUsers = getUsers,
        _createProject = createProject,
        _updateProject = updateProject,
-       _uploadDocument = uploadDocument,
+       _createDocument = createDocument,
        _getDocuments = getDocuments,
        _deleteDocument = deleteDocument,
        super(const ProjectCreateState()) {
@@ -40,7 +40,7 @@ class ProjectCreateBloc extends Bloc<ProjectCreateEvent, ProjectCreateState> {
   final GetUsersUseCase _getUsers;
   final CreateProjectUseCase _createProject;
   final UpdateProjectUseCase _updateProject;
-  final UploadProjectDocumentUseCase _uploadDocument;
+  final CreateProjectDocumentUseCase _createDocument;
   final GetProjectDocumentsUseCase _getDocuments;
   final DeleteProjectDocumentUseCase _deleteDocument;
 
@@ -70,13 +70,21 @@ class ProjectCreateBloc extends Bloc<ProjectCreateEvent, ProjectCreateState> {
     emit(state.copyWith(submitStatus: ProjectCreateSubmitStatus.submitting));
     try {
       final project = await _createProject(event.form);
-      // Loyiha yaratildi — hujjat yuklashdagi xato yaratishni bekor qilmaydi
+      // Loyiha yaratildi — hujjat qo'shishdagi xato yaratishni bekor qilmaydi
       // (aks holda qayta urinish loyihani ikkilantiradi); xato alohida
       // bayroq bilan sahifaga yetkaziladi.
       var documentsFailed = false;
-      for (final path in event.filePaths) {
+      for (final doc in event.documents) {
         try {
-          await _uploadDocument((projectId: project.id, filePath: path));
+          await _createDocument(
+            ProjectDocument(
+              id: 0,
+              project: project.id,
+              name: doc.name,
+              value: doc.value,
+              createdAt: null,
+            ),
+          );
         } on Failure catch (_) {
           documentsFailed = true;
         }
@@ -126,9 +134,17 @@ class ProjectCreateBloc extends Bloc<ProjectCreateEvent, ProjectCreateState> {
           documentsFailed = true;
         }
       }
-      for (final path in event.filePaths) {
+      for (final doc in event.documents) {
         try {
-          await _uploadDocument((projectId: event.id, filePath: path));
+          await _createDocument(
+            ProjectDocument(
+              id: 0,
+              project: event.id,
+              name: doc.name,
+              value: doc.value,
+              createdAt: null,
+            ),
+          );
         } on Failure catch (_) {
           documentsFailed = true;
         }

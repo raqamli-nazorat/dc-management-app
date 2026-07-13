@@ -809,26 +809,50 @@ abstract class AppLocalizations {
   /// No description provided for @projectCreateFilesLabel.
   ///
   /// In uz, this message translates to:
-  /// **'Fayl qo‘shish'**
+  /// **'Loyiha hujjatlari'**
   String get projectCreateFilesLabel;
 
   /// No description provided for @projectExistingFilesLabel.
   ///
   /// In uz, this message translates to:
-  /// **'Mavjud fayllar'**
+  /// **'Mavjud hujjatlar'**
   String get projectExistingFilesLabel;
 
   /// No description provided for @projectCreateDocsFailed.
   ///
   /// In uz, this message translates to:
-  /// **'Loyiha yaratildi, lekin ba\'zi fayllar yuklanmadi'**
+  /// **'Loyiha yaratildi, lekin ba\'zi hujjatlar qo‘shilmadi'**
   String get projectCreateDocsFailed;
 
   /// No description provided for @projectUpdateDocsFailed.
   ///
   /// In uz, this message translates to:
-  /// **'Loyiha saqlandi, lekin ba\'zi fayllar yuklanmadi'**
+  /// **'Loyiha saqlandi, lekin ba\'zi hujjatlar qo‘shilmadi'**
   String get projectUpdateDocsFailed;
+
+  /// No description provided for @projectDocumentNameHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Nomini kiriting'**
+  String get projectDocumentNameHint;
+
+  /// No description provided for @projectDocumentLinkHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Havolasi'**
+  String get projectDocumentLinkHint;
+
+  /// No description provided for @projectDocumentAddButton.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hujjat qo‘shish'**
+  String get projectDocumentAddButton;
+
+  /// No description provided for @projectDocumentLinkCopied.
+  ///
+  /// In uz, this message translates to:
+  /// **'Havola nusxalandi'**
+  String get projectDocumentLinkCopied;
 
   /// No description provided for @taskMenuDetails.
   ///

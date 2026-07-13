@@ -6,6 +6,9 @@ typedef ProjectDocumentPage = ({
   bool hasMore,
 });
 
+/// Submitdan oldingi mahalliy hujjat havolasi (nomi + link).
+typedef ProjectDocumentDraft = ({String name, String value});
+
 class ProjectDocument extends Equatable {
   const ProjectDocument({
     required this.id,
