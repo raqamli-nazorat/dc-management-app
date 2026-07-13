@@ -47,9 +47,6 @@ abstract interface class ProjectRemoteDataSource {
 
   Future<void> deleteProjectDocument(int id);
 
-  /// Loyihaga fayl biriktiradi (multipart `POST /project-documents/`).
-  Future<void> uploadProjectDocument(int projectId, String filePath);
-
   Future<ProjectPage> getProjectShorts({
     int page,
     String search,
@@ -245,26 +242,6 @@ class ProjectRemoteDataSourceImpl implements ProjectRemoteDataSource {
   Future<void> deleteProjectDocument(int id) async {
     try {
       await _client.delete(ApiConstants.projectDocumentById(id));
-    } on DioException catch (e) {
-      throw ResponseMapper.mapDioException(e);
-    }
-  }
-
-  @override
-  Future<void> uploadProjectDocument(int projectId, String filePath) async {
-    try {
-      // Schema'da ProjectDocument faqat {project, name, value} (string) —
-      // fayl maydoni hujjatlashtirilmagan. `file` binariy sifatida qo'shib
-      // yuboriladi (backend qabul qilsa saqlaydi, aks holda e'tiborsiz
-      // qoladi); `name`/`value` — fayl nomi. Kontrakt aniqlashsa moslanadi.
-      final fileName = filePath.split(RegExp(r'[\\/]')).last;
-      final formData = FormData.fromMap({
-        'project': projectId,
-        'name': fileName,
-        'value': fileName,
-        'file': await MultipartFile.fromFile(filePath, filename: fileName),
-      });
-      await _client.post(ApiConstants.projectDocuments, data: formData);
     } on DioException catch (e) {
       throw ResponseMapper.mapDioException(e);
     }

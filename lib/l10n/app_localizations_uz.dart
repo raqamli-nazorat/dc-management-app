@@ -376,18 +376,30 @@ class AppLocalizationsUz extends AppLocalizations {
       'Yig‘ilish chiqindi qutisiga yuboriladi va keyinchalik tiklash mumkin.';
 
   @override
-  String get projectCreateFilesLabel => 'Fayl qo‘shish';
+  String get projectCreateFilesLabel => 'Loyiha hujjatlari';
 
   @override
-  String get projectExistingFilesLabel => 'Mavjud fayllar';
+  String get projectExistingFilesLabel => 'Mavjud hujjatlar';
 
   @override
   String get projectCreateDocsFailed =>
-      'Loyiha yaratildi, lekin ba\'zi fayllar yuklanmadi';
+      'Loyiha yaratildi, lekin ba\'zi hujjatlar qo‘shilmadi';
 
   @override
   String get projectUpdateDocsFailed =>
-      'Loyiha saqlandi, lekin ba\'zi fayllar yuklanmadi';
+      'Loyiha saqlandi, lekin ba\'zi hujjatlar qo‘shilmadi';
+
+  @override
+  String get projectDocumentNameHint => 'Nomini kiriting';
+
+  @override
+  String get projectDocumentLinkHint => 'Havolasi';
+
+  @override
+  String get projectDocumentAddButton => 'Hujjat qo‘shish';
+
+  @override
+  String get projectDocumentLinkCopied => 'Havola nusxalandi';
 
   @override
   String get taskMenuDetails => 'Batafsil';

@@ -1,9 +1,9 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../config/routes/entity/routes.dart';
 import '../../../../config/theme/app_colors.dart';
@@ -11,7 +11,6 @@ import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
 import '../../../../core/widgets/app_date_picker.dart';
 import '../../../../core/widgets/app_filter_components.dart';
-import '../../../../core/widgets/app_file_actions.dart';
 import '../../../../core/widgets/app_toast.dart';
 import '../../../../core/widgets/tui_avatar.dart';
 import '../../../../injection_container.dart';
@@ -76,6 +75,8 @@ class _AddProjectViewState extends State<_AddProjectView> {
   final _priceCtrl = TextEditingController();
   final _prefixCtrl = TextEditingController();
   final _penaltyCtrl = TextEditingController();
+  final _docNameCtrl = TextEditingController();
+  final _docLinkCtrl = TextEditingController();
   final _portalCtrl = OverlayPortalController();
   final _statusLink = LayerLink();
   final _managerLink = LayerLink();
@@ -89,8 +90,8 @@ class _AddProjectViewState extends State<_AddProjectView> {
   final Set<int> _employeeIds = {};
   final Set<int> _testerIds = {};
 
-  /// Loyihaga biriktiriladigan yangi hujjatlar.
-  final List<PlatformFile> _files = [];
+  /// Loyihaga biriktiriladigan yangi hujjat havolalari.
+  final List<ProjectDocumentDraft> _newDocs = [];
   final Set<int> _removedDocumentIds = {};
 
   Project? get _project => widget.project;
@@ -139,6 +140,8 @@ class _AddProjectViewState extends State<_AddProjectView> {
     _priceCtrl.dispose();
     _prefixCtrl.dispose();
     _penaltyCtrl.dispose();
+    _docNameCtrl.dispose();
+    _docLinkCtrl.dispose();
     super.dispose();
   }
 
@@ -224,28 +227,15 @@ class _AddProjectViewState extends State<_AddProjectView> {
     }
   }
 
-  Future<void> _pickFiles() async {
-    // Dizayn talabi: faqat doc/pdf/excel formatlari. Tanlagich platforma
-    // xatolarini otishi mumkin — ilovani yiqitmaymiz.
-    try {
-      final result = await FilePicker.platform.pickFiles(
-        allowMultiple: true,
-        type: FileType.custom,
-        allowedExtensions: const ['doc', 'docx', 'pdf', 'xls', 'xlsx'],
-      );
-      if (result == null) return;
-      setState(() {
-        for (final f in result.files) {
-          if (f.path != null) _files.add(f);
-        }
-      });
-    } catch (_) {
-      if (!mounted) return;
-      AppToast.showError(
-        context,
-        title: AppLocalizations.of(context).commonError,
-      );
-    }
+  void _addDocument() {
+    final name = _docNameCtrl.text.trim();
+    final link = _docLinkCtrl.text.trim();
+    if (name.isEmpty && link.isEmpty) return;
+    setState(() {
+      _newDocs.add((name: name, value: link));
+      _docNameCtrl.clear();
+      _docLinkCtrl.clear();
+    });
   }
 
   void _submit() {
@@ -285,14 +275,11 @@ class _AddProjectViewState extends State<_AddProjectView> {
     );
     context.read<ProjectCreateBloc>().add(
       _project == null
-          ? ProjectCreateSubmitted(
-              form,
-              filePaths: [for (final f in _files) f.path!],
-            )
+          ? ProjectCreateSubmitted(form, documents: _newDocs)
           : ProjectUpdated(
               _project!.id,
               form,
-              filePaths: [for (final f in _files) f.path!],
+              documents: _newDocs,
               removedDocumentIds: _removedDocumentIds.toList(),
             ),
     );
@@ -492,16 +479,18 @@ class _AddProjectViewState extends State<_AddProjectView> {
                             left: l10n.taskCreateFieldDeadline,
                             right: l10n.taskCreateFieldTime,
                           ),
-                          // Yaratish/tahrirlash/detail uchun umumiy fayl oqimi.
+                          // Yaratish/tahrirlash/detail uchun umumiy hujjat oqimi.
                           if (!widget.readOnly ||
                               state.documentsLoading ||
                               state.documents.isNotEmpty ||
-                              _files.isNotEmpty)
+                              _newDocs.isNotEmpty)
                             _FilesSection(
                               label: widget.readOnly
                                   ? l10n.projectExistingFilesLabel
                                   : l10n.projectCreateFilesLabel,
-                              files: _files,
+                              nameCtrl: _docNameCtrl,
+                              linkCtrl: _docLinkCtrl,
+                              newDocs: _newDocs,
                               existing: [
                                 for (final document in state.documents)
                                   if (!_removedDocumentIds.contains(
@@ -511,8 +500,9 @@ class _AddProjectViewState extends State<_AddProjectView> {
                               ],
                               loading: state.documentsLoading,
                               readOnly: widget.readOnly,
-                              onPick: _pickFiles,
-                              onRemove: (f) => setState(() => _files.remove(f)),
+                              onAdd: _addDocument,
+                              onRemoveNew: (i) =>
+                                  setState(() => _newDocs.removeAt(i)),
                               onRemoveExisting: (document) => setState(
                                 () => _removedDocumentIds.add(document.id),
                               ),
@@ -1185,28 +1175,32 @@ class _SubmitBar extends StatelessWidget {
   }
 }
 
-/// "Fayl qo'shish" bo'limi (dizayn 469:275292): ikkita shtrixli quti —
-/// "Fayl yuklash" (accent) va "+" — pastida tanlangan fayl chiplari.
-/// Vazifa qo'shish sahifasidagi naqsh bilan bir xil.
+/// "Loyiha hujjatlari" bo'limi: qo'shilgan har bir hujjat nom+havola
+/// qatori (o'chirish X bilan) sifatida, pastida bo'sh kiritish qatori va
+/// "+ Hujjat qo'shish" tugmasi — hujjat fayl emas, havola (majburiy emas).
 class _FilesSection extends StatelessWidget {
   const _FilesSection({
     required this.label,
-    required this.files,
+    required this.nameCtrl,
+    required this.linkCtrl,
+    required this.newDocs,
     required this.existing,
     required this.loading,
     required this.readOnly,
-    required this.onPick,
-    required this.onRemove,
+    required this.onAdd,
+    required this.onRemoveNew,
     required this.onRemoveExisting,
   });
 
   final String label;
-  final List<PlatformFile> files;
+  final TextEditingController nameCtrl;
+  final TextEditingController linkCtrl;
+  final List<ProjectDocumentDraft> newDocs;
   final List<ProjectDocument> existing;
   final bool loading;
   final bool readOnly;
-  final VoidCallback onPick;
-  final ValueChanged<PlatformFile> onRemove;
+  final VoidCallback onAdd;
+  final ValueChanged<int> onRemoveNew;
   final ValueChanged<ProjectDocument> onRemoveExisting;
 
   @override
@@ -1217,47 +1211,50 @@ class _FilesSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
+      spacing: 8.h,
       children: [
         label.s(15.sp).w(800).c(colors.textStrong),
-        SizedBox(height: 8.h),
-        if (!readOnly)
+        for (final document in existing)
+          _DocRow(
+            name: document.fileName,
+            value: document.fileUrl,
+            onRemove: readOnly ? null : () => onRemoveExisting(document),
+          ),
+        for (var i = 0; i < newDocs.length; i++)
+          _DocRow(
+            name: newDocs[i].name,
+            value: newDocs[i].value,
+            onRemove: () => onRemoveNew(i),
+          ),
+        if (!readOnly) ...[
           Row(
             children: [
               Expanded(
-                child: InkWell(
-                  onTap: onPick,
-                  borderRadius: BorderRadius.circular(20.r),
-                  child: _DashedBox(
-                    color: colors.strokeAccent,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Assets.icons.icDocument.svg(
-                          width: 16.w,
-                          height: 16.w,
-                          colorFilter: ColorFilter.mode(
-                            colors.textSoft,
-                            BlendMode.srcIn,
-                          ),
-                        ),
-                        SizedBox(width: 4.w),
-                        l10n.taskCreateFileUpload
-                            .s(11.sp)
-                            .w(700)
-                            .c(colors.textSoft),
-                      ],
-                    ),
-                  ),
+                child: _DocFieldBox(
+                  controller: nameCtrl,
+                  hint: l10n.projectDocumentNameHint,
                 ),
               ),
-              SizedBox(width: 16.w),
+              SizedBox(width: 12.w),
               Expanded(
-                child: InkWell(
-                  onTap: onPick,
-                  borderRadius: BorderRadius.circular(20.r),
-                  child: _DashedBox(
-                    color: colors.strokeStrong,
-                    child: Assets.icons.icPlus.svg(
+                child: _DocFieldBox(
+                  controller: linkCtrl,
+                  hint: l10n.projectDocumentLinkHint,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            width: double.infinity,
+            child: InkWell(
+              onTap: onAdd,
+              borderRadius: BorderRadius.circular(20.r),
+              child: _DashedBox(
+                color: colors.strokeStrong,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Assets.icons.icPlus.svg(
                       width: 16.w,
                       height: 16.w,
                       colorFilter: ColorFilter.mode(
@@ -1265,102 +1262,187 @@ class _FilesSection extends StatelessWidget {
                         BlendMode.srcIn,
                       ),
                     ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        if (loading)
-          Padding(
-            padding: EdgeInsets.only(top: 12.h),
-            child: Center(
-              child: SizedBox(
-                width: 18.w,
-                height: 18.w,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2.w,
-                  color: colors.accentSub,
+                    SizedBox(width: 4.w),
+                    l10n.projectDocumentAddButton
+                        .s(13.sp)
+                        .w(700)
+                        .c(colors.textSoft),
+                  ],
                 ),
               ),
             ),
           ),
-        if (existing.isNotEmpty || files.isNotEmpty) ...[
-          SizedBox(height: 8.h),
-          Wrap(
-            spacing: 8.w,
-            runSpacing: 8.h,
-            children: [
-              for (final document in existing)
-                _FileChip(
-                  name: document.fileName,
-                  url: document.fileUrl,
-                  onRemove: readOnly ? null : () => onRemoveExisting(document),
-                ),
-              for (final f in files)
-                _FileChip(name: f.name, onRemove: () => onRemove(f)),
-            ],
-          ),
         ],
+        if (loading)
+          Center(
+            child: SizedBox(
+              width: 18.w,
+              height: 18.w,
+              child: CircularProgressIndicator(
+                strokeWidth: 2.w,
+                color: colors.accentSub,
+              ),
+            ),
+          ),
       ],
     );
   }
 }
 
-class _FileChip extends StatelessWidget {
-  const _FileChip({required this.name, this.url = '', this.onRemove});
+/// Qo'shilgan hujjatning nom+havola qatori — X faqat havola qutisida.
+class _DocRow extends StatelessWidget {
+  const _DocRow({required this.name, required this.value, this.onRemove});
 
   final String name;
-  final String url;
+  final String value;
+  final VoidCallback? onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Row(
+      children: [
+        Expanded(
+          child: _DocFieldBox(text: name, hint: l10n.projectDocumentNameHint),
+        ),
+        SizedBox(width: 12.w),
+        Expanded(
+          child: _DocFieldBox(
+            text: value,
+            hint: l10n.projectDocumentLinkHint,
+            onRemove: onRemove,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Label'siz maydon qutisi — `controller` bilan tahrirlanadigan kirish yoki
+/// `text` bilan qo'shilgan hujjatni ko'rsatuvchi (ixtiyoriy X bilan).
+class _DocFieldBox extends StatelessWidget {
+  const _DocFieldBox({
+    this.controller,
+    this.text,
+    required this.hint,
+    this.onRemove,
+  });
+
+  final TextEditingController? controller;
+  final String? text;
+  final String hint;
   final VoidCallback? onRemove;
 
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
+    final style = TextStyle(
+      fontSize: 13.sp,
+      fontWeight: FontWeight.w500,
+      height: 20 / 13,
+      color: colors.textStrong,
+    );
+
     return DecoratedBox(
-      decoration: BoxDecoration(
-        color: colors.backgroundElevation1Alt,
-        borderRadius: BorderRadius.circular(8.r),
-      ),
+      decoration: appFilterFieldDecoration(colors),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: 132.w),
-              child: name
-                  .s(11.sp)
-                  .w(700)
-                  .c(colors.textStrong)
-                  .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
-            ),
-            if (url.isNotEmpty) ...[
-              SizedBox(width: 4.w),
-              AppFileActions(
-                url: url,
-                openLabel: AppLocalizations.of(context).commonOpenFile,
-                downloadLabel: AppLocalizations.of(context).commonDownloadFile,
-                errorTitle: AppLocalizations.of(context).commonError,
+        padding: EdgeInsets.only(
+          left: 16.w,
+          right: onRemove != null ? 8.w : 16.w,
+        ),
+        child: SizedBox(
+          height: 44.h,
+          child: Row(
+            children: [
+              Expanded(
+                child: controller != null
+                    ? TextField(
+                        controller: controller,
+                        style: style,
+                        cursorColor: colors.accentSub,
+                        decoration: InputDecoration.collapsed(
+                          hintText: hint,
+                          hintStyle: style.copyWith(color: colors.textSub),
+                        ),
+                      )
+                    : _DocValueText(text: text ?? '', colors: colors),
               ),
-            ],
-            if (onRemove != null) ...[
-              SizedBox(width: 2.w),
-              InkWell(
-                onTap: onRemove,
-                borderRadius: BorderRadius.circular(8.r),
-                child: Assets.icons.icClose.svg(
-                  width: 14.w,
-                  height: 14.w,
-                  colorFilter: ColorFilter.mode(
-                    colors.iconSub,
-                    BlendMode.srcIn,
+              if (onRemove != null) ...[
+                SizedBox(width: 8.w),
+                InkWell(
+                  onTap: onRemove,
+                  borderRadius: BorderRadius.circular(8.r),
+                  child: Assets.icons.icClose.svg(
+                    width: 16.w,
+                    height: 16.w,
+                    colorFilter: ColorFilter.mode(
+                      colors.iconSub,
+                      BlendMode.srcIn,
+                    ),
                   ),
                 ),
-              ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
+    );
+  }
+}
+
+/// Havola bo'lsa — bosilganda webda ochadi, bosib turilsa nusxalaydi.
+class _DocValueText extends StatelessWidget {
+  const _DocValueText({required this.text, required this.colors});
+
+  final String text;
+  final AppColors colors;
+
+  bool get _isLink {
+    final uri = Uri.tryParse(text);
+    return uri != null && const ['http', 'https'].contains(uri.scheme);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final label = text
+        .s(13.sp)
+        .w(500)
+        .h(20 / 13)
+        .c(_isLink ? colors.accentSub : colors.textStrong)
+        .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis);
+    if (!_isLink) return label;
+    return GestureDetector(
+      onTap: () => _openDocLink(context, text),
+      onLongPress: () => _copyDocLink(context, text),
+      child: label,
+    );
+  }
+}
+
+Future<void> _openDocLink(BuildContext context, String url) async {
+  var launched = false;
+  try {
+    launched = await launchUrl(
+      Uri.parse(url),
+      mode: LaunchMode.externalApplication,
+    );
+  } on Object {
+    launched = false;
+  }
+  if (!launched && context.mounted) {
+    AppToast.showError(
+      context,
+      title: AppLocalizations.of(context).commonError,
+    );
+  }
+}
+
+Future<void> _copyDocLink(BuildContext context, String url) async {
+  await Clipboard.setData(ClipboardData(text: url));
+  if (context.mounted) {
+    AppToast.showSuccess(
+      context,
+      title: AppLocalizations.of(context).projectDocumentLinkCopied,
     );
   }
 }

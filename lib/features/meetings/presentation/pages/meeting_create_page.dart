@@ -33,9 +33,7 @@ class MeetingCreatePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<MeetingCreateBloc>(
-      create: (_) =>
-          getIt<MeetingCreateBloc>()
-            ..add(const MeetingCreateOptionsRequested()),
+      create: (_) => getIt<MeetingCreateBloc>()..add(const MeetingCreateOptionsRequested()),
       child: _MeetingCreateView(initial: initial),
     );
   }
@@ -99,9 +97,7 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
     for (final p in projects) {
       if (p.id == m.projectId) {
         _project = p;
-        context.read<MeetingCreateBloc>().add(
-          MeetingCreateProjectSelected(p.id),
-        );
+        context.read<MeetingCreateBloc>().add(MeetingCreateProjectSelected(p.id));
         return;
       }
     }
@@ -135,19 +131,12 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
       _open = _Field.none;
     });
     _portalCtrl.hide();
-    context.read<MeetingCreateBloc>().add(
-      MeetingCreateProjectSelected(project.id),
-    );
+    context.read<MeetingCreateBloc>().add(MeetingCreateProjectSelected(project.id));
   }
 
   Future<void> _pickDate() async {
     final now = DateTime.now();
-    final picked = await showAppDatePicker(
-      context,
-      initialDate: _date ?? now,
-      firstDate: DateTime(now.year - 1),
-      lastDate: DateTime(now.year + 5),
-    );
+    final picked = await showAppDatePicker(context, initialDate: _date ?? now, firstDate: DateTime(now.year - 1), lastDate: DateTime(now.year + 5));
     if (picked != null) setState(() => _date = picked);
   }
 
@@ -175,13 +164,7 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
         title: l10n.meetingCreateParticipantsTitle,
         items: [
           for (final member in state.members)
-            MultiSelectItem(
-              id: member.id,
-              initial: member.username,
-              title: member.username,
-              subtitle: member.position,
-              avatarUrl: member.avatar,
-            ),
+            MultiSelectItem(id: member.id, initial: member.username, title: member.username, subtitle: member.position, avatarUrl: member.avatar),
         ],
         selected: _participantIds,
       ),
@@ -212,13 +195,7 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
 
     final time = _time ?? const TimeOfDay(hour: 0, minute: 0);
     final date = _date!;
-    final startTime = DateTime(
-      date.year,
-      date.month,
-      date.day,
-      time.hour,
-      time.minute,
-    );
+    final startTime = DateTime(date.year, date.month, date.day, time.hour, time.minute);
     final penalty = _penaltyCtrl.text.trim();
 
     final form = MeetingForm(
@@ -257,19 +234,10 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
           listener: (context, state) {
             switch (state.submitStatus) {
               case MeetingCreateSubmitStatus.success:
-                AppToast.showSuccess(
-                  context,
-                  title: _isEdit
-                      ? l10n.meetingUpdateSuccess
-                      : l10n.meetingCreateSuccess,
-                );
+                AppToast.showSuccess(context, title: _isEdit ? l10n.meetingUpdateSuccess : l10n.meetingCreateSuccess);
                 Navigator.of(context).maybePop(true);
               case MeetingCreateSubmitStatus.failure:
-                AppToast.showError(
-                  context,
-                  title: l10n.commonError,
-                  message: state.submitFailure?.message,
-                );
+                AppToast.showError(context, title: l10n.commonError, message: state.submitFailure?.message);
               case MeetingCreateSubmitStatus.idle:
               case MeetingCreateSubmitStatus.submitting:
                 break;
@@ -279,8 +247,7 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
         // Tahrirlash: loyihalar ro'yxati kelganda loyihani moslashtiramiz.
         BlocListener<MeetingCreateBloc, MeetingCreateState>(
           listenWhen: (p, c) => p.projects != c.projects,
-          listener: (context, state) =>
-              setState(() => _syncProjectFromInitial(state.projects)),
+          listener: (context, state) => setState(() => _syncProjectFromInitial(state.projects)),
         ),
       ],
       child: Scaffold(
@@ -291,9 +258,7 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
             overlayChildBuilder: _buildOverlay,
             child: Column(
               children: [
-                _Header(
-                  title: _isEdit ? l10n.meetingEditTitle : l10n.meetingAdd,
-                ),
+                _Header(title: _isEdit ? l10n.meetingEditTitle : l10n.meetingAdd),
                 Expanded(
                   child: BlocBuilder<MeetingCreateBloc, MeetingCreateState>(
                     builder: (context, state) => SingleChildScrollView(
@@ -313,11 +278,7 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
                               _participantIds.clear();
                             }),
                           ),
-                          _InputField(
-                            label: l10n.taskCreateFieldName,
-                            hint: l10n.meetingCreateNameHint,
-                            controller: _nameCtrl,
-                          ),
+                          _InputField(label: l10n.taskCreateFieldName, hint: l10n.meetingCreateNameHint, controller: _nameCtrl),
                           _InputField(
                             label: l10n.taskCreateFieldPenalty,
                             hint: l10n.meetingCreatePenaltyHint,
@@ -331,11 +292,7 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
                             controller: _linkCtrl,
                             keyboardType: TextInputType.url,
                           ),
-                          _TextAreaField(
-                            label: l10n.taskCreateFieldDescription,
-                            hint: l10n.meetingCreateDescriptionHint,
-                            controller: _descCtrl,
-                          ),
+                          _TextAreaField(label: l10n.taskCreateFieldDescription, hint: l10n.meetingCreateDescriptionHint, controller: _descCtrl),
                           Row(
                             children: [
                               Expanded(
@@ -356,26 +313,19 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
                                 ),
                               ),
                             ],
-                          ).withLabels(
-                            context,
-                            left: l10n.meetingCreateStartDate,
-                            right: l10n.taskCreateFieldTime,
-                          ),
+                          ).withLabels(context, left: l10n.meetingCreateStartDate, right: l10n.taskCreateFieldTime),
                           _InputField(
                             label: l10n.meetingCreateDuration,
                             hint: l10n.meetingCreateDurationHint,
                             controller: _durationCtrl,
                             keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly,
-                            ],
+                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                           ),
                           _ParticipantsField(
                             selected: _selectedMembers(state.members),
                             loading: state.membersLoading,
                             onPick: () => _openParticipants(state),
-                            onRemove: (id) =>
-                                setState(() => _participantIds.remove(id)),
+                            onRemove: (id) => setState(() => _participantIds.remove(id)),
                           ),
                         ],
                       ),
@@ -387,11 +337,8 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
                   builder: (context, state) => _SubmitBar(
                     label: _isEdit ? l10n.taskEditSave : l10n.meetingAdd,
                     completed: _completed,
-                    loading:
-                        state.submitStatus ==
-                        MeetingCreateSubmitStatus.submitting,
-                    onCompletedChanged: (value) =>
-                        setState(() => _completed = value),
+                    loading: state.submitStatus == MeetingCreateSubmitStatus.submitting,
+                    onCompletedChanged: (value) => setState(() => _completed = value),
                     onSubmit: _submit,
                   ),
                 ),
@@ -413,10 +360,7 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
     return Stack(
       children: [
         Positioned.fill(
-          child: GestureDetector(
-            behavior: HitTestBehavior.translucent,
-            onTap: _close,
-          ),
+          child: GestureDetector(behavior: HitTestBehavior.translucent, onTap: _close),
         ),
         CompositedTransformFollower(
           link: _projectLink,
@@ -450,9 +394,7 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
     final colors = AppColors.of(context);
     final isDark = colors.backgroundBase.computeLuminance() < 0.5;
     final base = isDark ? ThemeData.dark() : ThemeData.light();
-    final shape = RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(20.r),
-    );
+    final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r));
 
     return Theme(
       data: base.copyWith(
@@ -462,13 +404,8 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
           surface: colors.backgroundBase,
           onSurface: colors.textStrong,
         ),
-        timePickerTheme: TimePickerThemeData(
-          backgroundColor: colors.backgroundBase,
-          shape: shape,
-        ),
-        textButtonTheme: TextButtonThemeData(
-          style: TextButton.styleFrom(foregroundColor: colors.accentSub),
-        ),
+        timePickerTheme: TimePickerThemeData(backgroundColor: colors.backgroundBase, shape: shape),
+        textButtonTheme: TextButtonThemeData(style: TextButton.styleFrom(foregroundColor: colors.accentSub)),
       ),
       child: child,
     );
@@ -476,11 +413,7 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
 }
 
 extension _LabelRow on Widget {
-  Widget withLabels(
-    BuildContext context, {
-    required String left,
-    required String right,
-  }) {
+  Widget withLabels(BuildContext context, {required String left, required String right}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -512,28 +445,12 @@ class _Header extends StatelessWidget {
         children: [
           SizedBox(width: 24.w),
           Expanded(
-            child: title
-                .s(17.sp)
-                .w(800)
-                .h(28 / 17)
-                .c(colors.textStrong)
-                .a(TextAlign.center)
-                .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+            child: title.s(17.sp).w(800).h(28 / 17).c(colors.textStrong).a(TextAlign.center).copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
           ),
           InkWell(
             onTap: () => Navigator.of(context).maybePop(),
             borderRadius: BorderRadius.circular(12.r),
-            child: Padding(
-              padding: EdgeInsets.all(4.w),
-              child: Assets.icons.icClose.svg(
-                width: 16.w,
-                height: 16.w,
-                colorFilter: ColorFilter.mode(
-                  colors.iconStrong,
-                  BlendMode.srcIn,
-                ),
-              ),
-            ),
+            child: Assets.icons.icClose.svg(colorFilter: ColorFilter.mode(colors.iconStrong, BlendMode.srcIn)),
           ),
         ],
       ),
@@ -542,13 +459,7 @@ class _Header extends StatelessWidget {
 }
 
 class _InputField extends StatelessWidget {
-  const _InputField({
-    required this.label,
-    required this.hint,
-    required this.controller,
-    this.keyboardType,
-    this.inputFormatters,
-  });
+  const _InputField({required this.label, required this.hint, required this.controller, this.keyboardType, this.inputFormatters});
 
   final String label;
   final String hint;
@@ -559,12 +470,7 @@ class _InputField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
-    final style = TextStyle(
-      fontSize: 13.sp,
-      fontWeight: FontWeight.w500,
-      color: colors.textStrong,
-      height: 20 / 13,
-    );
+    final style = TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w500, color: colors.textStrong, height: 20 / 13);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -599,11 +505,7 @@ class _InputField extends StatelessWidget {
 }
 
 class _TextAreaField extends StatelessWidget {
-  const _TextAreaField({
-    required this.label,
-    required this.hint,
-    required this.controller,
-  });
+  const _TextAreaField({required this.label, required this.hint, required this.controller});
 
   final String label;
   final String hint;
@@ -612,12 +514,7 @@ class _TextAreaField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
-    final style = TextStyle(
-      fontSize: 13.sp,
-      fontWeight: FontWeight.w500,
-      color: colors.textStrong,
-      height: 20 / 13,
-    );
+    final style = TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w500, color: colors.textStrong, height: 20 / 13);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -666,40 +563,20 @@ class _ProjectOption extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              project.title
-                  .s(13.sp)
-                  .w(700)
-                  .h(20 / 13)
-                  .c(colors.textStrong)
-                  .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+              project.title.s(13.sp).w(700).h(20 / 13).c(colors.textStrong).copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
               if (project.description.isNotEmpty)
-                project.description
-                    .s(11.sp)
-                    .w(500)
-                    .h(16 / 11)
-                    .c(colors.textSub)
-                    .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+                project.description.s(11.sp).w(500).h(16 / 11).c(colors.textSub).copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
             ],
           ),
         ),
-        if (project.deadline != null) ...[
-          SizedBox(width: 12.w),
-          _fmtDate(
-            project.deadline,
-          ).s(11.sp).w(500).h(16 / 11).c(colors.iconSub),
-        ],
+        if (project.deadline != null) ...[SizedBox(width: 12.w), _fmtDate(project.deadline).s(11.sp).w(500).h(16 / 11).c(colors.iconSub)],
       ],
     );
   }
 }
 
 class _ParticipantsField extends StatelessWidget {
-  const _ParticipantsField({
-    required this.selected,
-    required this.loading,
-    required this.onPick,
-    required this.onRemove,
-  });
+  const _ParticipantsField({required this.selected, required this.loading, required this.onPick, required this.onRemove});
 
   final List<ProjectMember> selected;
   final bool loading;
@@ -725,10 +602,7 @@ class _ParticipantsField extends StatelessWidget {
                 ? SizedBox(
                     width: double.infinity,
                     child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                        vertical: 16.h,
-                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
                       child: Column(
                         children: [
                           l10n.meetingCreateParticipantsHelp
@@ -736,25 +610,16 @@ class _ParticipantsField extends StatelessWidget {
                               .w(500)
                               .h(16 / 11)
                               .c(colors.textSub)
-                              .copyWith(
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                              .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
                           SizedBox(height: 8.h),
                           DecoratedBox(
                             decoration: BoxDecoration(
                               color: colors.backgroundElevation3,
                               borderRadius: BorderRadius.circular(12.r),
-                              border: Border.all(
-                                color: colors.strokeSub,
-                                width: 1.w,
-                              ),
+                              border: Border.all(color: colors.strokeSub, width: 1.w),
                             ),
                             child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 8.w,
-                                vertical: 6.h,
-                              ),
+                              padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -762,26 +627,16 @@ class _ParticipantsField extends StatelessWidget {
                                     SizedBox(
                                       width: 12.w,
                                       height: 12.w,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 1.5.w,
-                                        color: colors.iconStrong,
-                                      ),
+                                      child: CircularProgressIndicator(strokeWidth: 1.5.w, color: colors.iconStrong),
                                     )
                                   else
                                     Assets.icons.icPlus.svg(
                                       width: 11.w,
                                       height: 16.w,
-                                      colorFilter: ColorFilter.mode(
-                                        colors.iconStrong,
-                                        BlendMode.srcIn,
-                                      ),
+                                      colorFilter: ColorFilter.mode(colors.iconStrong, BlendMode.srcIn),
                                     ),
                                   SizedBox(width: 2.w),
-                                  l10n.meetingCreateParticipantsAdd
-                                      .s(11.sp)
-                                      .w(500)
-                                      .h(16 / 11)
-                                      .c(colors.textStrong),
+                                  l10n.meetingCreateParticipantsAdd.s(11.sp).w(500).h(16 / 11).c(colors.textStrong),
                                 ],
                               ),
                             ),
@@ -797,13 +652,7 @@ class _ParticipantsField extends StatelessWidget {
                       child: Wrap(
                         spacing: 4.w,
                         runSpacing: 4.h,
-                        children: [
-                          for (final member in selected)
-                            _ParticipantChip(
-                              member: member,
-                              onRemove: () => onRemove(member.id),
-                            ),
-                        ],
+                        children: [for (final member in selected) _ParticipantChip(member: member, onRemove: () => onRemove(member.id))],
                       ),
                     ),
                   ),
@@ -823,44 +672,26 @@ class _ParticipantChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
-    final label = member.position.isEmpty
-        ? member.username
-        : '${member.username} | ${member.position}';
+    final label = member.position.isEmpty ? member.username : '${member.username} | ${member.position}';
 
     return DecoratedBox(
-      decoration: BoxDecoration(
-        color: colors.backgroundElevation1Alt,
-        borderRadius: BorderRadius.circular(8.r),
-      ),
+      decoration: BoxDecoration(color: colors.backgroundElevation1Alt, borderRadius: BorderRadius.circular(8.r)),
       child: Padding(
         padding: EdgeInsets.only(left: 8.w, right: 4.w, top: 4.h, bottom: 4.h),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TuiAvatar(
-              initial: member.username,
-              avatarUrl: member.avatar,
-              size: 20,
-            ),
+            TuiAvatar(initial: member.username, avatarUrl: member.avatar, size: 20),
             SizedBox(width: 4.w),
             ConstrainedBox(
               constraints: BoxConstraints(maxWidth: 285.w),
-              child: label
-                  .s(13.sp)
-                  .w(500)
-                  .h(16 / 13)
-                  .c(colors.iconSub)
-                  .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+              child: label.s(13.sp).w(500).h(16 / 13).c(colors.iconSub).copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
             ),
             SizedBox(width: 4.w),
             InkWell(
               onTap: onRemove,
               borderRadius: BorderRadius.circular(8.r),
-              child: Assets.icons.icClose.svg(
-                width: 16.w,
-                height: 16.w,
-                colorFilter: ColorFilter.mode(colors.iconSub, BlendMode.srcIn),
-              ),
+              child: Assets.icons.icClose.svg(width: 16.w, height: 16.w, colorFilter: ColorFilter.mode(colors.iconSub, BlendMode.srcIn)),
             ),
           ],
         ),
@@ -870,13 +701,7 @@ class _ParticipantChip extends StatelessWidget {
 }
 
 class _SubmitBar extends StatelessWidget {
-  const _SubmitBar({
-    required this.label,
-    required this.completed,
-    required this.loading,
-    required this.onCompletedChanged,
-    required this.onSubmit,
-  });
+  const _SubmitBar({required this.label, required this.completed, required this.loading, required this.onCompletedChanged, required this.onSubmit});
 
   final String label;
   final bool completed;
@@ -900,18 +725,8 @@ class _SubmitBar extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Expanded(
-                    child: l10n.meetingCreateCompleted
-                        .s(15.sp)
-                        .w(800)
-                        .h(24 / 15)
-                        .c(colors.textStrong),
-                  ),
-                  _SmallSwitch(
-                    value: completed,
-                    enabled: !loading,
-                    onChanged: onCompletedChanged,
-                  ),
+                  Expanded(child: l10n.meetingCreateCompleted.s(15.sp).w(800).h(24 / 15).c(colors.textStrong)),
+                  _SmallSwitch(value: completed, enabled: !loading, onChanged: onCompletedChanged),
                 ],
               ),
               SizedBox(height: 12.h),
@@ -919,10 +734,7 @@ class _SubmitBar extends StatelessWidget {
                 onTap: loading ? null : onSubmit,
                 borderRadius: BorderRadius.circular(16.r),
                 child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: colors.accentStrong,
-                    borderRadius: BorderRadius.circular(16.r),
-                  ),
+                  decoration: BoxDecoration(color: colors.accentStrong, borderRadius: BorderRadius.circular(16.r)),
                   child: SizedBox(
                     height: 52.h,
                     child: Center(
@@ -930,10 +742,7 @@ class _SubmitBar extends StatelessWidget {
                           ? SizedBox(
                               width: 22.w,
                               height: 22.w,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.w,
-                                color: colors.textWhite,
-                              ),
+                              child: CircularProgressIndicator(strokeWidth: 2.w, color: colors.textWhite),
                             )
                           : Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -941,17 +750,10 @@ class _SubmitBar extends StatelessWidget {
                                 Assets.icons.icTuilconCheck.svg(
                                   width: 16.w,
                                   height: 16.w,
-                                  colorFilter: ColorFilter.mode(
-                                    colors.textWhite,
-                                    BlendMode.srcIn,
-                                  ),
+                                  colorFilter: ColorFilter.mode(colors.textWhite, BlendMode.srcIn),
                                 ),
                                 SizedBox(width: 8.w),
-                                label
-                                    .s(15.sp)
-                                    .w(800)
-                                    .h(24 / 15)
-                                    .c(colors.textWhite),
+                                label.s(15.sp).w(800).h(24 / 15).c(colors.textWhite),
                               ],
                             ),
                     ),
@@ -967,11 +769,7 @@ class _SubmitBar extends StatelessWidget {
 }
 
 class _SmallSwitch extends StatelessWidget {
-  const _SmallSwitch({
-    required this.value,
-    required this.enabled,
-    required this.onChanged,
-  });
+  const _SmallSwitch({required this.value, required this.enabled, required this.onChanged});
 
   final bool value;
   final bool enabled;
@@ -990,17 +788,11 @@ class _SmallSwitch extends StatelessWidget {
         width: 40.w,
         height: 21.h,
         padding: EdgeInsets.all(2.w),
-        decoration: BoxDecoration(
-          color: value ? colors.accentStrong : colors.backgroundElevation3,
-          borderRadius: BorderRadius.circular(999.r),
-        ),
+        decoration: BoxDecoration(color: value ? colors.accentStrong : colors.backgroundElevation3, borderRadius: BorderRadius.circular(999.r)),
         child: Align(
           alignment: value ? Alignment.centerRight : Alignment.centerLeft,
           child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: colors.textWhite,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: colors.textWhite, shape: BoxShape.circle),
             child: SizedBox(width: 17.w, height: 17.w),
           ),
         ),
@@ -1015,10 +807,7 @@ class _MaxValueFormatter extends TextInputFormatter {
   final int max;
 
   @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
+  TextEditingValue formatEditUpdate(TextEditingValue oldValue, TextEditingValue newValue) {
     if (newValue.text.isEmpty) return newValue;
     final parsed = int.tryParse(newValue.text);
     if (parsed == null || parsed > max) return oldValue;
@@ -1033,8 +822,7 @@ String _fmtDate(DateTime? d) {
 }
 
 /// Decimal string'ning butun qismi ("20.00" → "20") — prefill uchun.
-String _intPart(String s) =>
-    s.split('.').first.replaceAll(RegExp('[^0-9]'), '');
+String _intPart(String s) => s.split('.').first.replaceAll(RegExp('[^0-9]'), '');
 
 String _fmtTime(TimeOfDay? t) {
   if (t == null) return '';

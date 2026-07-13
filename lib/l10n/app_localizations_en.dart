@@ -375,18 +375,30 @@ class AppLocalizationsEn extends AppLocalizations {
       'The meeting will be moved to the trash and can be restored later.';
 
   @override
-  String get projectCreateFilesLabel => 'Add files';
+  String get projectCreateFilesLabel => 'Project documents';
 
   @override
-  String get projectExistingFilesLabel => 'Existing files';
+  String get projectExistingFilesLabel => 'Existing documents';
 
   @override
   String get projectCreateDocsFailed =>
-      'Project created, but some files failed to upload';
+      'Project created, but some documents failed to save';
 
   @override
   String get projectUpdateDocsFailed =>
-      'Project saved, but some files failed to upload';
+      'Project saved, but some documents failed to save';
+
+  @override
+  String get projectDocumentNameHint => 'Enter name';
+
+  @override
+  String get projectDocumentLinkHint => 'Link';
+
+  @override
+  String get projectDocumentAddButton => 'Add document';
+
+  @override
+  String get projectDocumentLinkCopied => 'Link copied';
 
   @override
   String get taskMenuDetails => 'Details';

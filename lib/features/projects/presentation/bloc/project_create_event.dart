@@ -21,30 +21,30 @@ class ProjectDocumentsRequested extends ProjectCreateEvent {
 }
 
 class ProjectCreateSubmitted extends ProjectCreateEvent {
-  const ProjectCreateSubmitted(this.form, {this.filePaths = const []});
+  const ProjectCreateSubmitted(this.form, {this.documents = const []});
 
   final ProjectForm form;
 
-  /// Loyiha yaratilgach biriktiriladigan hujjatlar (doc/pdf/excel).
-  final List<String> filePaths;
+  /// Loyiha yaratilgach biriktiriladigan hujjat havolalari.
+  final List<ProjectDocumentDraft> documents;
 
   @override
-  List<Object?> get props => [form, filePaths];
+  List<Object?> get props => [form, documents];
 }
 
 class ProjectUpdated extends ProjectCreateEvent {
   const ProjectUpdated(
     this.id,
     this.form, {
-    this.filePaths = const [],
+    this.documents = const [],
     this.removedDocumentIds = const [],
   });
 
   final int id;
   final ProjectForm form;
-  final List<String> filePaths;
+  final List<ProjectDocumentDraft> documents;
   final List<int> removedDocumentIds;
 
   @override
-  List<Object?> get props => [id, form, filePaths, removedDocumentIds];
+  List<Object?> get props => [id, form, documents, removedDocumentIds];
 }

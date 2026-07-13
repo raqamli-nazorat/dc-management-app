@@ -40,9 +40,6 @@ abstract interface class ProjectRepository {
 
   Future<void> deleteProjectDocument(int id);
 
-  /// Loyihaga fayl biriktiradi (multipart `POST /project-documents/`).
-  Future<void> uploadProjectDocument(int projectId, String filePath);
-
   Future<ProjectPage> getProjectShorts({
     int page,
     String search,

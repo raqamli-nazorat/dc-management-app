@@ -169,20 +169,6 @@ class DeleteProjectDocumentUseCase implements UseCase<void, int> {
   Future<void> call(int params) => _repository.deleteProjectDocument(params);
 }
 
-/// Loyihaga fayl biriktiradi (multipart `POST /project-documents/`).
-class UploadProjectDocumentUseCase
-    implements UseCase<void, UploadProjectDocumentParams> {
-  const UploadProjectDocumentUseCase(this._repository);
-
-  final ProjectRepository _repository;
-
-  @override
-  Future<void> call(UploadProjectDocumentParams params) =>
-      _repository.uploadProjectDocument(params.projectId, params.filePath);
-}
-
-typedef UploadProjectDocumentParams = ({int projectId, String filePath});
-
 class GetProjectShortsUseCase
     implements UseCase<ProjectPage, GetProjectShortsParams> {
   const GetProjectShortsUseCase(this._repository);
