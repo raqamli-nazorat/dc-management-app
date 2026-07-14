@@ -257,6 +257,8 @@ class _UserReportsFilterViewState extends State<_UserReportsFilterView> {
       initialTime:
           (from ? _joinedFromTime : _joinedToTime) ??
           const TimeOfDay(hour: 0, minute: 0),
+      // Faqat qo'lda kiritish — soat (clock) rejimi va unga o'tkazgich yo'q.
+      initialEntryMode: TimePickerEntryMode.inputOnly,
       builder: (ctx, child) => _themedPicker(ctx, child!),
     );
     if (picked != null) {

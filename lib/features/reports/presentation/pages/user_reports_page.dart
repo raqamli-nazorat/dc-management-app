@@ -147,56 +147,17 @@ class _UserReportsViewState extends State<_UserReportsView> {
 
 /// Sarlavha: orqaga + "Xodim bo'yicha" + qidiruv + filtr (filtr — stub,
 /// hozircha sahifasi yo'q).
-class _ReportsHeader extends StatelessWidget {
+/// Sarlavha qatori: orqaga + "Xodim bo'yicha" + qidiruv + filtr. Qidiruv
+/// ikonkasi bosilganda butun qator to'liq kenglikdagi qidiruv maydoniga
+/// almashadi (vazifalar sahifasidagi naqsh bilan bir xil).
+class _ReportsHeader extends StatefulWidget {
   const _ReportsHeader();
 
   @override
-  Widget build(BuildContext context) {
-    final colors = AppColors.of(context);
-    final l10n = AppLocalizations.of(context);
-
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
-      child: Row(
-        children: [
-          InkWell(
-            onTap: () => Navigator.of(context).maybePop(),
-            borderRadius: BorderRadius.circular(12.r),
-            child: Padding(
-              padding: EdgeInsets.all(4.w),
-              child: Assets.icons.icArrowLeftLarge.svg(
-                width: 24.w,
-                height: 24.w,
-                colorFilter: ColorFilter.mode(colors.iconStrong, BlendMode.srcIn),
-              ),
-            ),
-          ),
-          SizedBox(width: 8.w),
-          Expanded(
-            child: l10n.reportEmployee
-                .s(17.sp)
-                .w(800)
-                .c(colors.textStrong)
-                .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
-          ),
-          SizedBox(width: 12.w),
-          _SearchFilterIcons(),
-        ],
-      ),
-    );
-  }
+  State<_ReportsHeader> createState() => _ReportsHeaderState();
 }
 
-/// Qidiruv ikonkasi bosilganda to'liq kenglikdagi maydon ochiladi (vazifalar
-/// sahifasidagi naqsh bilan bir xil, oddiylashtirilgan: status/filtr yo'q).
-class _SearchFilterIcons extends StatefulWidget {
-  const _SearchFilterIcons();
-
-  @override
-  State<_SearchFilterIcons> createState() => _SearchFilterIconsState();
-}
-
-class _SearchFilterIconsState extends State<_SearchFilterIcons> {
+class _ReportsHeaderState extends State<_ReportsHeader> {
   final _controller = TextEditingController();
   final _focus = FocusNode();
   Timer? _debounce;
@@ -212,6 +173,7 @@ class _SearchFilterIconsState extends State<_SearchFilterIcons> {
 
   void _openSearch() {
     setState(() => _searching = true);
+    // Maydon animatsiyada quriladi — keyingi kadrda fokus so'raymiz.
     WidgetsBinding.instance.addPostFrameCallback((_) => _focus.requestFocus());
   }
 
@@ -250,90 +212,189 @@ class _SearchFilterIconsState extends State<_SearchFilterIcons> {
 
   @override
   Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 250),
+        switchInCurve: Curves.easeOut,
+        switchOutCurve: Curves.easeIn,
+        transitionBuilder: (child, animation) =>
+            FadeTransition(opacity: animation, child: child),
+        child: _searching
+            ? _SearchBar(
+                key: const ValueKey('search'),
+                controller: _controller,
+                focus: _focus,
+                onChanged: _onChanged,
+                onClose: _closeSearch,
+              )
+            : _TitleBar(
+                key: const ValueKey('title'),
+                onSearch: _openSearch,
+                onFilter: _openFilter,
+              ),
+      ),
+    );
+  }
+}
+
+/// Qidiruv yopiq holati: orqaga + sarlavha + qidiruv + filtr (nuqtali).
+class _TitleBar extends StatelessWidget {
+  const _TitleBar({
+    required this.onSearch,
+    required this.onFilter,
+    super.key,
+  });
+
+  final VoidCallback onSearch;
+  final VoidCallback onFilter;
+
+  @override
+  Widget build(BuildContext context) {
     final colors = AppColors.of(context);
     final l10n = AppLocalizations.of(context);
 
-    if (!_searching) {
-      return Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _SquareIconButton(icon: Assets.icons.icSearch, onTap: _openSearch),
-          SizedBox(width: 12.w),
-          BlocBuilder<UserReportsBloc, UserReportsState>(
-            buildWhen: (p, c) =>
-                p.filter.hasActiveFilters != c.filter.hasActiveFilters,
-            builder: (context, state) => _SquareIconButton(
-              icon: Assets.icons.icFilter,
-              showDot: state.filter.hasActiveFilters,
-              onTap: _openFilter,
+    return Row(
+      children: [
+        InkWell(
+          onTap: () => Navigator.of(context).maybePop(),
+          borderRadius: BorderRadius.circular(12.r),
+          child: Padding(
+            padding: EdgeInsets.all(4.w),
+            child: Assets.icons.icArrowLeftLarge.svg(
+              width: 24.w,
+              height: 24.w,
+              colorFilter: ColorFilter.mode(colors.iconStrong, BlendMode.srcIn),
             ),
           ),
-        ],
-      );
-    }
+        ),
+        SizedBox(width: 8.w),
+        Expanded(
+          child: l10n.reportEmployee
+              .s(17.sp)
+              .w(800)
+              .c(colors.textStrong)
+              .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+        ),
+        SizedBox(width: 12.w),
+        _SquareIconButton(icon: Assets.icons.icSearch, onTap: onSearch),
+        SizedBox(width: 12.w),
+        BlocBuilder<UserReportsBloc, UserReportsState>(
+          buildWhen: (p, c) =>
+              p.filter.hasActiveFilters != c.filter.hasActiveFilters,
+          builder: (context, state) => _SquareIconButton(
+            icon: Assets.icons.icFilter,
+            showDot: state.filter.hasActiveFilters,
+            onTap: onFilter,
+          ),
+        ),
+      ],
+    );
+  }
+}
 
+/// Qidiruv ochiq holati: to'liq kenglikdagi qidiruv maydoni + "Yopish".
+class _SearchBar extends StatelessWidget {
+  const _SearchBar({
+    required this.controller,
+    required this.focus,
+    required this.onChanged,
+    required this.onClose,
+    super.key,
+  });
+
+  final TextEditingController controller;
+  final FocusNode focus;
+  final ValueChanged<String> onChanged;
+  final VoidCallback onClose;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final l10n = AppLocalizations.of(context);
     final style = TextStyle(
       fontSize: 13.sp,
       fontWeight: FontWeight.w700,
       color: colors.textStrong,
     );
-    return SizedBox(
-      width: 200.w,
-      child: Row(
-        children: [
-          Expanded(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: colors.backgroundElevation1,
-                borderRadius: BorderRadius.circular(12.r),
-                border: Border.all(color: colors.strokeSoft, width: 1.w),
-              ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 12.w),
-                child: SizedBox(
-                  height: 40.h,
-                  child: Row(
-                    children: [
-                      Assets.icons.icSearch.svg(
-                        width: 16.w,
-                        height: 16.w,
-                        colorFilter: ColorFilter.mode(
-                          colors.iconSub,
-                          BlendMode.srcIn,
+
+    return Row(
+      children: [
+        Expanded(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: colors.backgroundElevation1,
+              borderRadius: BorderRadius.circular(12.r),
+              border: Border.all(color: colors.strokeSub, width: 1.w),
+            ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12.w),
+              child: SizedBox(
+                height: 40.h,
+                child: Row(
+                  children: [
+                    Assets.icons.icSearch.svg(
+                      width: 16.w,
+                      height: 16.w,
+                      colorFilter: ColorFilter.mode(
+                        colors.iconSub,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                    SizedBox(width: 8.w),
+                    Expanded(
+                      child: TextField(
+                        controller: controller,
+                        focusNode: focus,
+                        onChanged: onChanged,
+                        textInputAction: TextInputAction.search,
+                        style: style,
+                        cursorColor: colors.accentSub,
+                        decoration: InputDecoration.collapsed(
+                          hintText: l10n.taskSearchHint,
+                          hintStyle: style.copyWith(color: colors.textSub),
                         ),
                       ),
-                      SizedBox(width: 8.w),
-                      Expanded(
-                        child: TextField(
-                          controller: _controller,
-                          focusNode: _focus,
-                          onChanged: _onChanged,
-                          textInputAction: TextInputAction.search,
-                          style: style,
-                          cursorColor: colors.accentSub,
-                          decoration: InputDecoration.collapsed(
-                            hintText: l10n.taskSearchHint,
-                            hintStyle: style.copyWith(color: colors.textSub),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                    ValueListenableBuilder<TextEditingValue>(
+                      valueListenable: controller,
+                      builder: (context, value, _) => value.text.isEmpty
+                          ? const SizedBox.shrink()
+                          : InkWell(
+                              onTap: () {
+                                controller.clear();
+                                onChanged('');
+                              },
+                              borderRadius: BorderRadius.circular(8.r),
+                              child: Padding(
+                                padding: EdgeInsets.all(4.w),
+                                child: Assets.icons.icClose.svg(
+                                  width: 14.w,
+                                  height: 14.w,
+                                  colorFilter: ColorFilter.mode(
+                                    colors.iconSub,
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                              ),
+                            ),
+                    ),
+                  ],
                 ),
               ),
             ),
           ),
-          SizedBox(width: 8.w),
-          InkWell(
-            onTap: _closeSearch,
-            borderRadius: BorderRadius.circular(8.r),
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 8.h),
-              child: l10n.taskSearchClose.s(13.sp).w(700).c(colors.textSub),
-            ),
+        ),
+        SizedBox(width: 12.w),
+        InkWell(
+          onTap: onClose,
+          borderRadius: BorderRadius.circular(8.r),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 8.h),
+            child: l10n.taskSearchClose.s(13.sp).w(700).c(colors.textSub),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

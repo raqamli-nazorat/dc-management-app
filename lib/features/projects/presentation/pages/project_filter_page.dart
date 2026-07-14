@@ -7,6 +7,7 @@ import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
 import '../../../../core/widgets/app_date_picker.dart';
 import '../../../../core/widgets/app_filter_components.dart';
+import '../../../../core/widgets/tui_avatar.dart';
 import '../../../../injection_container.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../tasks/domain/entities/task_form_options.dart';
@@ -152,6 +153,8 @@ class _ProjectFilterViewState extends State<_ProjectFilterView> {
             _DateTarget.deadlineTo => _deadlineToTime,
           } ??
           const TimeOfDay(hour: 0, minute: 0),
+      // Faqat qo'lda kiritish — soat (clock) rejimi va unga o'tkazgich yo'q.
+      initialEntryMode: TimePickerEntryMode.inputOnly,
       builder: (ctx, child) => _themedPicker(ctx, child!),
     );
     if (picked == null) return;
@@ -633,23 +636,31 @@ class _OptionText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
+    return Row(
       children: [
-        user.username
-            .s(13.sp)
-            .w(500)
-            .h(20 / 13)
-            .c(colors.textStrong)
-            .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
-        if (user.position.isNotEmpty)
-          user.position
-              .s(11.sp)
-              .w(500)
-              .h(16 / 11)
-              .c(colors.textSub)
-              .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+        TuiAvatar(initial: user.username, avatarUrl: user.avatar, size: 32),
+        SizedBox(width: 8.w),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              user.username
+                  .s(13.sp)
+                  .w(500)
+                  .h(20 / 13)
+                  .c(colors.textStrong)
+                  .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+              if (user.position.isNotEmpty)
+                user.position
+                    .s(11.sp)
+                    .w(500)
+                    .h(16 / 11)
+                    .c(colors.textSub)
+                    .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+            ],
+          ),
+        ),
       ],
     );
   }
