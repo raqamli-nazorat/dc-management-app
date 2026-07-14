@@ -65,6 +65,13 @@ import 'features/notification/domain/repository/notification_repository.dart';
 import 'features/notification/domain/usecases/notification_usecases.dart';
 import 'features/notification/presentation/bloc/notification_bloc.dart';
 import 'features/profile/data/data_sources/profile_remote_data_source.dart';
+import 'features/reports/data/data_sources/reports_remote_data_source.dart';
+import 'features/reports/data/repository/reports_repository_impl.dart';
+import 'features/reports/domain/repository/reports_repository.dart';
+import 'features/reports/domain/usecases/get_regions_usecase.dart';
+import 'features/reports/domain/usecases/get_user_reports_usecase.dart';
+import 'features/reports/presentation/bloc/reports_filter_bloc.dart';
+import 'features/reports/presentation/bloc/user_reports_bloc.dart';
 import 'features/profile/data/repository/profile_repository_impl.dart';
 import 'features/profile/domain/repository/profile_repository.dart';
 import 'features/profile/domain/usecases/change_password_usecase.dart';
@@ -359,6 +366,29 @@ Future<void> configureDependencies() async {
     )
     ..registerFactory<ProjectsBloc>(
       () => ProjectsBloc(getProjects: getIt(), deleteProject: getIt()),
+    );
+
+  // ── Reports feature ───────────────────────────────────────────────────
+  getIt
+    ..registerLazySingleton<ReportsRemoteDataSource>(
+      () => ReportsRemoteDataSourceImpl(getIt()),
+    )
+    ..registerLazySingleton<ReportsRepository>(
+      () => ReportsRepositoryImpl(getIt()),
+    )
+    ..registerLazySingleton<GetUserReportsUseCase>(
+      () => GetUserReportsUseCase(getIt()),
+    )
+    ..registerLazySingleton<GetRegionsUseCase>(() => GetRegionsUseCase(getIt()))
+    ..registerFactory<UserReportsBloc>(
+      () => UserReportsBloc(getUserReports: getIt()),
+    )
+    ..registerFactory<ReportsFilterBloc>(
+      () => ReportsFilterBloc(
+        getOptions: getIt(),
+        getUsers: getIt(),
+        getRegions: getIt(),
+      ),
     );
 
   // ── Statistics feature ────────────────────────────────────────────────

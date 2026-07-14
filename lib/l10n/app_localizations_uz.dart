@@ -91,6 +91,115 @@ class AppLocalizationsUz extends AppLocalizations {
   String get navReports => 'Hisobotlar';
 
   @override
+  String get reportEmployee => 'Xodim bo\'yicha';
+
+  @override
+  String get reportProject => 'Loyiha bo\'yicha';
+
+  @override
+  String get reportSpendingRequests => 'Xarajat so\'rovlari bo\'yicha';
+
+  @override
+  String get reportWages => 'Ish haqi bo\'yicha';
+
+  @override
+  String get reportTasks => 'Vazifalar bo\'yicha';
+
+  @override
+  String get reportsEmployeeEmpty => 'Hozircha xodimlar yo\'q';
+
+  @override
+  String get reportFixedSalary => 'Oylik maoshi (UZS):';
+
+  @override
+  String get reportBalance => 'Balansi (UZS):';
+
+  @override
+  String get reportProjects => 'Loyihalar';
+
+  @override
+  String get reportCompleted => 'Tugatilgan';
+
+  @override
+  String get reportTasksCount => 'Vazifalar';
+
+  @override
+  String get reportTodo => 'Qilish kerak';
+
+  @override
+  String get reportMeetings => 'Yig\'ilishlar';
+
+  @override
+  String get reportExpenseRequests => 'Xarajat so\'rovi (UZS):';
+
+  @override
+  String get reportPaid => 'To\'landi';
+
+  @override
+  String get reportPayroll => 'Ish haqi (UZS):';
+
+  @override
+  String get reportKpiBonus => 'KPI bonisi';
+
+  @override
+  String get reportFilterDateRange => 'Muddati';
+
+  @override
+  String get reportFilterPosition => 'Lavozimi';
+
+  @override
+  String get reportFilterPositionHint => 'Lavozim tanlang';
+
+  @override
+  String get reportFilterRegion => 'Viloyat';
+
+  @override
+  String get reportFilterRegionHint => 'Viloyat tanlang';
+
+  @override
+  String get reportFilterEmployees => 'Xodimlar';
+
+  @override
+  String get reportFilterEmployeesHint => 'Xodimlar tanlang';
+
+  @override
+  String get reportFilterSalary => 'Oylik maoshi (UZS)';
+
+  @override
+  String get reportFilterBalance => 'Balansi (UZS)';
+
+  @override
+  String get reportFilterExpense => 'Xarajat so\'rovi (UZS)';
+
+  @override
+  String get reportFilterPayroll => 'Ish haqi (UZS)';
+
+  @override
+  String get reportFilterFrom => 'dan';
+
+  @override
+  String get reportFilterTo => 'gacha';
+
+  @override
+  String get reportFilterStatusAll => 'Jami';
+
+  @override
+  String get reportFilterGenerate => 'Shakllantirish';
+
+  @override
+  String get reportExpenseStatusPending => 'Kutilmoqda';
+
+  @override
+  String get reportExpenseStatusConfirmed => 'To\'langan';
+
+  @override
+  String get reportExpenseStatusPaidUnconfirmed =>
+      'To\'langan (tasdiqlanmagan)';
+
+  @override
+  String get reportPayrollTypePenalty => 'Jarima miqdori';
+
+  @override
   String get statPeriodSelect => 'Davrni tanlang';
 
   @override

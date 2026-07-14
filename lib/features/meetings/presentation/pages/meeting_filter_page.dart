@@ -7,6 +7,7 @@ import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
 import '../../../../core/widgets/app_date_picker.dart';
 import '../../../../core/widgets/app_filter_components.dart';
+import '../../../../core/widgets/tui_avatar.dart';
 import '../../../../injection_container.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../tasks/domain/entities/task_form_options.dart';
@@ -249,7 +250,7 @@ class _MeetingFilterViewState extends State<_MeetingFilterView> {
               height: 48,
               selected: user.id == _organizerId,
               onTap: () => _selectOrganizer(user.id),
-              child: _OptionText(title: user.username, subtitle: user.position),
+              child: _UserRow(user: user),
             ),
         ],
         _Field.project => [
@@ -333,6 +334,26 @@ class _DateRange extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ],
+    );
+  }
+}
+
+/// Tashkilotchi qatori — chapda avatar, o'ngda ism + lavozim.
+class _UserRow extends StatelessWidget {
+  const _UserRow({required this.user});
+
+  final UserShort user;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        TuiAvatar(initial: user.username, avatarUrl: user.avatar, size: 32),
+        SizedBox(width: 8.w),
+        Expanded(
+          child: _OptionText(title: user.username, subtitle: user.position),
         ),
       ],
     );

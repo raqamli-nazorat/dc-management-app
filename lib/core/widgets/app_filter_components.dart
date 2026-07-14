@@ -323,6 +323,7 @@ class AppFilterActionBar extends StatelessWidget {
     required this.applyLabel,
     required this.onReset,
     required this.onApply,
+    this.applyIcon,
     super.key,
   });
 
@@ -330,6 +331,10 @@ class AppFilterActionBar extends StatelessWidget {
   final String applyLabel;
   final VoidCallback onReset;
   final VoidCallback onApply;
+
+  /// Standart holatda qidiruv ikonkasi — boshqa maqsad (masalan hisobot
+  /// "Shakllantirish") uchun boshqacha ikonka berish mumkin.
+  final SvgGenImage? applyIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -390,7 +395,7 @@ class AppFilterActionBar extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Assets.icons.icSearch.svg(
+                        (applyIcon ?? Assets.icons.icSearch).svg(
                           width: 16.w,
                           height: 16.w,
                           colorFilter: ColorFilter.mode(

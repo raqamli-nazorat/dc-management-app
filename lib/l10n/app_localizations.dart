@@ -254,6 +254,222 @@ abstract class AppLocalizations {
   /// **'Hisobotlar'**
   String get navReports;
 
+  /// No description provided for @reportEmployee.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xodim bo\'yicha'**
+  String get reportEmployee;
+
+  /// No description provided for @reportProject.
+  ///
+  /// In uz, this message translates to:
+  /// **'Loyiha bo\'yicha'**
+  String get reportProject;
+
+  /// No description provided for @reportSpendingRequests.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xarajat so\'rovlari bo\'yicha'**
+  String get reportSpendingRequests;
+
+  /// No description provided for @reportWages.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ish haqi bo\'yicha'**
+  String get reportWages;
+
+  /// No description provided for @reportTasks.
+  ///
+  /// In uz, this message translates to:
+  /// **'Vazifalar bo\'yicha'**
+  String get reportTasks;
+
+  /// No description provided for @reportsEmployeeEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hozircha xodimlar yo\'q'**
+  String get reportsEmployeeEmpty;
+
+  /// No description provided for @reportFixedSalary.
+  ///
+  /// In uz, this message translates to:
+  /// **'Oylik maoshi (UZS):'**
+  String get reportFixedSalary;
+
+  /// No description provided for @reportBalance.
+  ///
+  /// In uz, this message translates to:
+  /// **'Balansi (UZS):'**
+  String get reportBalance;
+
+  /// No description provided for @reportProjects.
+  ///
+  /// In uz, this message translates to:
+  /// **'Loyihalar'**
+  String get reportProjects;
+
+  /// No description provided for @reportCompleted.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tugatilgan'**
+  String get reportCompleted;
+
+  /// No description provided for @reportTasksCount.
+  ///
+  /// In uz, this message translates to:
+  /// **'Vazifalar'**
+  String get reportTasksCount;
+
+  /// No description provided for @reportTodo.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qilish kerak'**
+  String get reportTodo;
+
+  /// No description provided for @reportMeetings.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yig\'ilishlar'**
+  String get reportMeetings;
+
+  /// No description provided for @reportExpenseRequests.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xarajat so\'rovi (UZS):'**
+  String get reportExpenseRequests;
+
+  /// No description provided for @reportPaid.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'landi'**
+  String get reportPaid;
+
+  /// No description provided for @reportPayroll.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ish haqi (UZS):'**
+  String get reportPayroll;
+
+  /// No description provided for @reportKpiBonus.
+  ///
+  /// In uz, this message translates to:
+  /// **'KPI bonisi'**
+  String get reportKpiBonus;
+
+  /// No description provided for @reportFilterDateRange.
+  ///
+  /// In uz, this message translates to:
+  /// **'Muddati'**
+  String get reportFilterDateRange;
+
+  /// No description provided for @reportFilterPosition.
+  ///
+  /// In uz, this message translates to:
+  /// **'Lavozimi'**
+  String get reportFilterPosition;
+
+  /// No description provided for @reportFilterPositionHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Lavozim tanlang'**
+  String get reportFilterPositionHint;
+
+  /// No description provided for @reportFilterRegion.
+  ///
+  /// In uz, this message translates to:
+  /// **'Viloyat'**
+  String get reportFilterRegion;
+
+  /// No description provided for @reportFilterRegionHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Viloyat tanlang'**
+  String get reportFilterRegionHint;
+
+  /// No description provided for @reportFilterEmployees.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xodimlar'**
+  String get reportFilterEmployees;
+
+  /// No description provided for @reportFilterEmployeesHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xodimlar tanlang'**
+  String get reportFilterEmployeesHint;
+
+  /// No description provided for @reportFilterSalary.
+  ///
+  /// In uz, this message translates to:
+  /// **'Oylik maoshi (UZS)'**
+  String get reportFilterSalary;
+
+  /// No description provided for @reportFilterBalance.
+  ///
+  /// In uz, this message translates to:
+  /// **'Balansi (UZS)'**
+  String get reportFilterBalance;
+
+  /// No description provided for @reportFilterExpense.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xarajat so\'rovi (UZS)'**
+  String get reportFilterExpense;
+
+  /// No description provided for @reportFilterPayroll.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ish haqi (UZS)'**
+  String get reportFilterPayroll;
+
+  /// No description provided for @reportFilterFrom.
+  ///
+  /// In uz, this message translates to:
+  /// **'dan'**
+  String get reportFilterFrom;
+
+  /// No description provided for @reportFilterTo.
+  ///
+  /// In uz, this message translates to:
+  /// **'gacha'**
+  String get reportFilterTo;
+
+  /// No description provided for @reportFilterStatusAll.
+  ///
+  /// In uz, this message translates to:
+  /// **'Jami'**
+  String get reportFilterStatusAll;
+
+  /// No description provided for @reportFilterGenerate.
+  ///
+  /// In uz, this message translates to:
+  /// **'Shakllantirish'**
+  String get reportFilterGenerate;
+
+  /// No description provided for @reportExpenseStatusPending.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kutilmoqda'**
+  String get reportExpenseStatusPending;
+
+  /// No description provided for @reportExpenseStatusConfirmed.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'langan'**
+  String get reportExpenseStatusConfirmed;
+
+  /// No description provided for @reportExpenseStatusPaidUnconfirmed.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'langan (tasdiqlanmagan)'**
+  String get reportExpenseStatusPaidUnconfirmed;
+
+  /// No description provided for @reportPayrollTypePenalty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Jarima miqdori'**
+  String get reportPayrollTypePenalty;
+
   /// No description provided for @statPeriodSelect.
   ///
   /// In uz, this message translates to:
