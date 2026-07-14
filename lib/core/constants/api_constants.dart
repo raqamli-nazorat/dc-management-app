@@ -33,6 +33,12 @@ abstract final class ApiConstants {
   /// Qurilmani FCM token bilan ro‘yxatdan o‘tkazish (`POST`).
   static const devicesRegister = '/devices/register/';
 
+  // ── User Reports ──────────────────────────────────────────────────────
+  static const reportsUsers = '/reports/users/';
+
+  /// Viloyatlar — hisobot filtri "Viloyat" tanlovi (`GET /applications/regions/`).
+  static const applicationsRegions = '/applications/regions/';
+
   // ── Tasks ─────────────────────────────────────────────────────────────
   static const tasks = '/tasks/';
 

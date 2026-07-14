@@ -256,9 +256,17 @@ class $AssetsIconsGen {
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
+  /// File path: assets/images/according_to_the_project.png
+  AssetGenImage get accordingToTheProject =>
+      const AssetGenImage('assets/images/according_to_the_project.png');
+
   /// File path: assets/images/app_logo.png
   AssetGenImage get appLogo =>
       const AssetGenImage('assets/images/app_logo.png');
+
+  /// File path: assets/images/by_tasks.png
+  AssetGenImage get byTasks =>
+      const AssetGenImage('assets/images/by_tasks.png');
 
   /// File path: assets/images/cardboard_texture.jpg
   AssetGenImage get cardboardTexture =>
@@ -268,19 +276,36 @@ class $AssetsImagesGen {
   AssetGenImage get meetings =>
       const AssetGenImage('assets/images/meetings.png');
 
+  /// File path: assets/images/on_spending_requests.png
+  AssetGenImage get onSpendingRequests =>
+      const AssetGenImage('assets/images/on_spending_requests.png');
+
+  /// File path: assets/images/per_employee.png
+  AssetGenImage get perEmployee =>
+      const AssetGenImage('assets/images/per_employee.png');
+
   /// File path: assets/images/projects.png
   AssetGenImage get projects =>
       const AssetGenImage('assets/images/projects.png');
+
+  /// File path: assets/images/regarding_wages.png
+  AssetGenImage get regardingWages =>
+      const AssetGenImage('assets/images/regarding_wages.png');
 
   /// File path: assets/images/tasks.png
   AssetGenImage get tasks => const AssetGenImage('assets/images/tasks.png');
 
   /// List of all assets
   List<AssetGenImage> get values => [
+    accordingToTheProject,
     appLogo,
+    byTasks,
     cardboardTexture,
     meetings,
+    onSpendingRequests,
+    perEmployee,
     projects,
+    regardingWages,
     tasks,
   ];
 }

@@ -89,6 +89,114 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navReports => 'Reports';
 
   @override
+  String get reportEmployee => 'By employee';
+
+  @override
+  String get reportProject => 'By project';
+
+  @override
+  String get reportSpendingRequests => 'By spending requests';
+
+  @override
+  String get reportWages => 'By wages';
+
+  @override
+  String get reportTasks => 'By tasks';
+
+  @override
+  String get reportsEmployeeEmpty => 'No employees yet';
+
+  @override
+  String get reportFixedSalary => 'Fixed salary (UZS):';
+
+  @override
+  String get reportBalance => 'Balance (UZS):';
+
+  @override
+  String get reportProjects => 'Projects';
+
+  @override
+  String get reportCompleted => 'Completed';
+
+  @override
+  String get reportTasksCount => 'Tasks';
+
+  @override
+  String get reportTodo => 'Todo';
+
+  @override
+  String get reportMeetings => 'Meetings';
+
+  @override
+  String get reportExpenseRequests => 'Expense request (UZS):';
+
+  @override
+  String get reportPaid => 'Paid';
+
+  @override
+  String get reportPayroll => 'Payroll (UZS):';
+
+  @override
+  String get reportKpiBonus => 'KPI bonus';
+
+  @override
+  String get reportFilterDateRange => 'Joined date';
+
+  @override
+  String get reportFilterPosition => 'Position';
+
+  @override
+  String get reportFilterPositionHint => 'Select position';
+
+  @override
+  String get reportFilterRegion => 'Region';
+
+  @override
+  String get reportFilterRegionHint => 'Select region';
+
+  @override
+  String get reportFilterEmployees => 'Employees';
+
+  @override
+  String get reportFilterEmployeesHint => 'Select employees';
+
+  @override
+  String get reportFilterSalary => 'Fixed salary (UZS)';
+
+  @override
+  String get reportFilterBalance => 'Balance (UZS)';
+
+  @override
+  String get reportFilterExpense => 'Expense request (UZS)';
+
+  @override
+  String get reportFilterPayroll => 'Payroll (UZS)';
+
+  @override
+  String get reportFilterFrom => 'from';
+
+  @override
+  String get reportFilterTo => 'to';
+
+  @override
+  String get reportFilterStatusAll => 'All';
+
+  @override
+  String get reportFilterGenerate => 'Generate';
+
+  @override
+  String get reportExpenseStatusPending => 'Pending';
+
+  @override
+  String get reportExpenseStatusConfirmed => 'Confirmed';
+
+  @override
+  String get reportExpenseStatusPaidUnconfirmed => 'Paid (unconfirmed)';
+
+  @override
+  String get reportPayrollTypePenalty => 'Penalty amount';
+
+  @override
   String get statPeriodSelect => 'Select period';
 
   @override

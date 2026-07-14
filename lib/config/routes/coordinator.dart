@@ -17,6 +17,9 @@ import '../../features/meetings/presentation/pages/meeting_create_page.dart';
 import '../../features/meetings/presentation/pages/meeting_filter_page.dart';
 import '../../features/meetings/presentation/pages/meeting_reason_page.dart';
 import '../../features/meetings/presentation/pages/meetings_page.dart';
+import '../../features/reports/domain/entities/user_report_filter.dart';
+import '../../features/reports/presentation/pages/user_reports_filter_page.dart';
+import '../../features/reports/presentation/pages/user_reports_page.dart';
 import '../../features/notification/presentation/pages/notification_page.dart';
 import '../../features/projects/domain/entities/project_filter.dart';
 import '../../features/projects/presentation/pages/add_project_page.dart';
@@ -183,6 +186,20 @@ class AppRouter {
           name: Routes.meetings.name,
           path: Routes.meetings.path,
           builder: (context, state) => const MeetingsPage(),
+        ),
+        GoRoute(
+          name: Routes.userReports.name,
+          path: Routes.userReports.path,
+          builder: (context, state) => const UserReportsPage(),
+        ),
+        GoRoute(
+          name: Routes.userReportsFilter.name,
+          path: Routes.userReportsFilter.path,
+          builder: (context, state) => UserReportsFilterPage(
+            initial: state.extra is UserReportFilter
+                ? state.extra! as UserReportFilter
+                : UserReportFilter.empty,
+          ),
         ),
         GoRoute(
           name: Routes.meetingCreate.name,
