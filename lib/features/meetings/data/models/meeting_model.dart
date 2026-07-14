@@ -1,3 +1,4 @@
+import '../../../tasks/domain/entities/task_form_options.dart';
 import '../../domain/entities/meeting.dart';
 
 /// [Meeting] JSON serializatsiyasi (`/meetings/`).
@@ -22,6 +23,7 @@ class MeetingModel extends Meeting {
     required super.organizerName,
     required super.organizerRole,
     super.participantIds,
+    super.participantsInfo,
     required super.participantName,
     required super.participantPosition,
     super.participantAvatar,
@@ -64,10 +66,30 @@ class MeetingModel extends Meeting {
       return intValue(p);
     }
 
-    List<int> participantIds() {
+    // Sxemada `participants` writeOnly (javobda kelmaydi) — qatnashchilar
+    // `participants_info`dan (UserShort ro'yxati) o'qiladi.
+    List<ProjectMember> participantsInfo() {
+      final list = json['participants_info'];
+      if (list is! List) return const [];
+      return [
+        for (final e in list)
+          if (e is Map)
+            ProjectMember(
+              id: intValue(e['id']) ?? 0,
+              username: pick(['username', 'full_name', 'name'], e.cast<String, dynamic>()),
+              position: pick(['position'], e.cast<String, dynamic>()),
+              avatar: pick(['avatar'], e.cast<String, dynamic>()),
+            ),
+      ];
+    }
+
+    List<int> participantIds(List<ProjectMember> info) {
       final participants = json['participants'];
-      if (participants is! List) return const [];
-      return participants.map(intValue).whereType<int>().toList();
+      if (participants is List) {
+        final ids = participants.map(intValue).whereType<int>().toList();
+        if (ids.isNotEmpty) return ids;
+      }
+      return [for (final m in info) m.id];
     }
 
     // ── Organizer: nested {full_name/username, role/position} ──────────────
@@ -141,6 +163,8 @@ class MeetingModel extends Meeting {
       return null;
     }
 
+    final info = participantsInfo();
+
     return MeetingModel(
       id: (json['id'] as num?)?.toInt() ?? 0,
       title: pick(['title', 'name']),
@@ -156,7 +180,8 @@ class MeetingModel extends Meeting {
       durationMinutes: intValue(json['duration_minutes']),
       organizerName: organizerName,
       organizerRole: organizerRole,
-      participantIds: participantIds(),
+      participantIds: participantIds(info),
+      participantsInfo: info,
       participantName: participantName,
       participantPosition: participantPosition,
       participantAvatar: participantAvatar,

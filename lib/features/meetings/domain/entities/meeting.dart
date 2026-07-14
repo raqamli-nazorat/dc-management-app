@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import '../../../tasks/domain/entities/task_form_options.dart';
+
 /// Bitta yig‘ilish (`/meetings/`).
 ///
 /// Backend kontrakti to‘liq tasdiqlanmagan (loyiha hujjatlari bilan farq
@@ -20,6 +22,7 @@ class Meeting extends Equatable {
     required this.organizerName,
     required this.organizerRole,
     this.participantIds = const [],
+    this.participantsInfo = const [],
     required this.participantName,
     required this.participantPosition,
     this.participantAvatar = '',
@@ -55,6 +58,11 @@ class Meeting extends Equatable {
   final String organizerRole;
 
   final List<int> participantIds;
+
+  /// Qatnashchilar ro'yxati (`participants_info`, UserShort) — `participants`
+  /// writeOnly, javobda kelmaydi; ko'rsatish uchun shu ishlatiladi.
+  final List<ProjectMember> participantsInfo;
+
   final String participantName;
   final String participantPosition;
   final String participantAvatar;
@@ -83,6 +91,7 @@ class Meeting extends Equatable {
     organizerName,
     organizerRole,
     participantIds,
+    participantsInfo,
     participantName,
     participantPosition,
     participantAvatar,

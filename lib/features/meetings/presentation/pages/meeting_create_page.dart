@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../config/routes/entity/routes.dart';
 import '../../../../config/theme/app_colors.dart';
@@ -25,24 +26,38 @@ enum _Field { none, project }
 /// Yig'ilish qo'shish/tahrirlash formasi. [initial] berilsa tahrirlash
 /// rejimi: maydonlar ro'yxatdagi [Meeting]dan to'ldiriladi, saqlash `PUT`
 /// yuboradi (toggle yoqilsa va yig'ilish ochiq bo'lsa keyin yopiladi).
+/// [readOnly] — tafsilotlar rejimi: forma o'zgartirib bo'lmaydi, saqlash
+/// paneli yashirin, havola bosilganda tashqi brauzerda ochiladi.
 class MeetingCreatePage extends StatelessWidget {
-  const MeetingCreatePage({super.key, this.initial});
+  const MeetingCreatePage({super.key, this.initial, this.meetingId, this.readOnly = false});
 
   final Meeting? initial;
+
+  /// Detail rejimida `GET /meetings/{id}/` uchun (path param; extra bo'lmasa
+  /// ham ishlaydi).
+  final int? meetingId;
+
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<MeetingCreateBloc>(
-      create: (_) => getIt<MeetingCreateBloc>()..add(const MeetingCreateOptionsRequested()),
-      child: _MeetingCreateView(initial: initial),
+      create: (_) {
+        final bloc = getIt<MeetingCreateBloc>()..add(const MeetingCreateOptionsRequested());
+        final id = meetingId ?? initial?.id;
+        if (readOnly && id != null) bloc.add(MeetingDetailRequested(id));
+        return bloc;
+      },
+      child: _MeetingCreateView(initial: initial, readOnly: readOnly),
     );
   }
 }
 
 class _MeetingCreateView extends StatefulWidget {
-  const _MeetingCreateView({this.initial});
+  const _MeetingCreateView({this.initial, this.readOnly = false});
 
   final Meeting? initial;
+  final bool readOnly;
 
   @override
   State<_MeetingCreateView> createState() => _MeetingCreateViewState();
@@ -66,21 +81,31 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
 
   bool get _isEdit => widget.initial != null;
 
+  /// Forma to'ldiriladigan manba: avval ro'yxatdan kelgan extra, detail
+  /// rejimida `GET /meetings/{id}/` javobi bilan yangilanadi.
+  Meeting? _meeting;
+
   @override
   void initState() {
     super.initState();
-    final m = widget.initial;
-    if (m == null) return;
     // Tahrirlash: ro'yxatdagi Meeting'da forma maydonlari to'liq bor —
     // alohida detal so'rovi shart emas. Loyiha (ProjectShort) esa options
     // yuklangach id bo'yicha moslanadi (build'dagi BlocListener).
+    _meeting = widget.initial;
+    final m = _meeting;
+    if (m != null) _applyMeeting(m);
+  }
+
+  void _applyMeeting(Meeting m) {
     _nameCtrl.text = m.title;
     _linkCtrl.text = m.link;
     _descCtrl.text = m.description;
     _penaltyCtrl.text = _intPart(m.penaltyPercentage ?? '');
     _durationCtrl.text = m.durationMinutes?.toString() ?? '';
     _completed = m.isCompleted;
-    _participantIds.addAll(m.participantIds);
+    _participantIds
+      ..clear()
+      ..addAll(m.participantIds);
     final start = m.startDate;
     if (start != null) {
       _date = start;
@@ -88,11 +113,11 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
     }
   }
 
-  /// Tanlanmagan loyihani tahrirlanayotgan yig'ilishning `projectId`si
-  /// bo'yicha `project-shorts` ro'yxatidan topadi (ishtirokchilar ro'yxati
+  /// Tanlanmagan loyihani yig'ilishning `projectId`si bo'yicha
+  /// `project-shorts` ro'yxatidan topadi (ishtirokchilar ro'yxati
   /// ham yuklanadi, tanlovlar tozalanmaydi).
   void _syncProjectFromInitial(List<ProjectShort> projects) {
-    final m = widget.initial;
+    final m = _meeting;
     if (_project != null || m == null || m.projectId == null) return;
     for (final p in projects) {
       if (p.id == m.projectId) {
@@ -178,6 +203,28 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
     }
   }
 
+  /// Tafsilotlar rejimida maydonni o'zgartirishdan to'sadi.
+  Widget _ro(Widget child) => widget.readOnly ? AbsorbPointer(child: child) : child;
+
+  /// Havolani tashqi brauzerda ochadi (sxema yo'q bo'lsa `https://` qo'shiladi).
+  Future<void> _openLink() async {
+    var url = _linkCtrl.text.trim();
+    if (url.isEmpty) return;
+    if (!url.startsWith('http://') && !url.startsWith('https://')) url = 'https://$url';
+    final uri = Uri.tryParse(url);
+    var launched = false;
+    if (uri != null) {
+      try {
+        launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } on Object {
+        launched = false;
+      }
+    }
+    if (!launched && mounted) {
+      AppToast.showError(context, title: AppLocalizations.of(context).commonError);
+    }
+  }
+
   void _submit() {
     final l10n = AppLocalizations.of(context);
     final duration = int.tryParse(_durationCtrl.text.trim());
@@ -249,6 +296,15 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
           listenWhen: (p, c) => p.projects != c.projects,
           listener: (context, state) => setState(() => _syncProjectFromInitial(state.projects)),
         ),
+        // Detail: `GET /meetings/{id}/` javobi kelganda forma yangilanadi.
+        BlocListener<MeetingCreateBloc, MeetingCreateState>(
+          listenWhen: (p, c) => p.detail != c.detail && c.detail != null,
+          listener: (context, state) => setState(() {
+            _meeting = state.detail;
+            _applyMeeting(state.detail!);
+            _syncProjectFromInitial(state.projects);
+          }),
+        ),
       ],
       child: Scaffold(
         backgroundColor: colors.backgroundBase,
@@ -258,7 +314,13 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
             overlayChildBuilder: _buildOverlay,
             child: Column(
               children: [
-                _Header(title: _isEdit ? l10n.meetingEditTitle : l10n.meetingAdd),
+                _Header(
+                  title: widget.readOnly
+                      ? l10n.meetingDetailTitle
+                      : _isEdit
+                      ? l10n.meetingEditTitle
+                      : l10n.meetingAdd,
+                ),
                 Expanded(
                   child: BlocBuilder<MeetingCreateBloc, MeetingCreateState>(
                     builder: (context, state) => SingleChildScrollView(
@@ -267,81 +329,108 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         spacing: 12.h,
                         children: [
-                          AppFilterFieldBox(
-                            label: l10n.taskCreateFieldProject,
-                            value: _project?.title,
-                            placeholder: l10n.taskCreateProjectHint,
-                            link: _projectLink,
-                            onTap: () => _toggle(_Field.project),
-                            onClear: () => setState(() {
-                              _project = null;
-                              _participantIds.clear();
-                            }),
+                          _ro(
+                            AppFilterFieldBox(
+                              label: l10n.taskCreateFieldProject,
+                              value: _project?.title,
+                              placeholder: l10n.taskCreateProjectHint,
+                              link: _projectLink,
+                              showClear: !widget.readOnly,
+                              onTap: () => _toggle(_Field.project),
+                              onClear: () => setState(() {
+                                _project = null;
+                                _participantIds.clear();
+                              }),
+                            ),
                           ),
-                          _InputField(label: l10n.taskCreateFieldName, hint: l10n.meetingCreateNameHint, controller: _nameCtrl),
-                          _InputField(
-                            label: l10n.taskCreateFieldPenalty,
-                            hint: l10n.meetingCreatePenaltyHint,
-                            controller: _penaltyCtrl,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [_MaxValueFormatter(100)],
+                          _ro(_InputField(label: l10n.taskCreateFieldName, hint: l10n.meetingCreateNameHint, controller: _nameCtrl)),
+                          _ro(
+                            _InputField(
+                              label: l10n.taskCreateFieldPenalty,
+                              hint: l10n.meetingCreatePenaltyHint,
+                              controller: _penaltyCtrl,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [_MaxValueFormatter(100)],
+                            ),
                           ),
-                          _InputField(
-                            label: l10n.meetingCreateLink,
-                            hint: l10n.meetingCreateLinkHint,
-                            controller: _linkCtrl,
-                            keyboardType: TextInputType.url,
-                          ),
-                          _TextAreaField(label: l10n.taskCreateFieldDescription, hint: l10n.meetingCreateDescriptionHint, controller: _descCtrl),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: AppFilterPickerBox(
-                                  value: _fmtDate(_date),
-                                  placeholder: l10n.taskFilterDateHint,
-                                  icon: Assets.icons.icCalendar,
-                                  onTap: _pickDate,
-                                ),
+                          // Tafsilotlar rejimida havola bosilganda ochiladi.
+                          GestureDetector(
+                            onTap: widget.readOnly ? _openLink : null,
+                            child: AbsorbPointer(
+                              absorbing: widget.readOnly,
+                              child: _InputField(
+                                label: l10n.meetingCreateLink,
+                                hint: l10n.meetingCreateLinkHint,
+                                controller: _linkCtrl,
+                                keyboardType: TextInputType.url,
                               ),
-                              SizedBox(width: 16.w),
-                              Expanded(
-                                child: AppFilterPickerBox(
-                                  value: _fmtTime(_time),
-                                  placeholder: '00:00',
-                                  icon: Assets.icons.icTuilconTime,
-                                  onTap: _pickTime,
-                                ),
-                              ),
-                            ],
-                          ).withLabels(context, left: l10n.meetingCreateStartDate, right: l10n.taskCreateFieldTime),
-                          _InputField(
-                            label: l10n.meetingCreateDuration,
-                            hint: l10n.meetingCreateDurationHint,
-                            controller: _durationCtrl,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                            ),
                           ),
-                          _ParticipantsField(
-                            selected: _selectedMembers(state.members),
-                            loading: state.membersLoading,
-                            onPick: () => _openParticipants(state),
-                            onRemove: (id) => setState(() => _participantIds.remove(id)),
+                          _ro(_TextAreaField(label: l10n.taskCreateFieldDescription, hint: l10n.meetingCreateDescriptionHint, controller: _descCtrl)),
+                          _ro(
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: AppFilterPickerBox(
+                                    value: _fmtDate(_date),
+                                    placeholder: l10n.taskFilterDateHint,
+                                    icon: Assets.icons.icCalendar,
+                                    onTap: _pickDate,
+                                  ),
+                                ),
+                                SizedBox(width: 16.w),
+                                Expanded(
+                                  child: AppFilterPickerBox(
+                                    value: _fmtTime(_time),
+                                    placeholder: '00:00',
+                                    icon: Assets.icons.icTuilconTime,
+                                    onTap: _pickTime,
+                                  ),
+                                ),
+                              ],
+                            ).withLabels(context, left: l10n.meetingCreateStartDate, right: l10n.taskCreateFieldTime),
+                          ),
+                          _ro(
+                            _InputField(
+                              label: l10n.meetingCreateDuration,
+                              hint: l10n.meetingCreateDurationHint,
+                              controller: _durationCtrl,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                            ),
+                          ),
+                          _ro(
+                            _ParticipantsField(
+                              label: widget.readOnly
+                                  ? l10n.meetingDetailParticipantsLabel
+                                  : l10n.meetingCreateParticipantsLabel,
+                              readOnly: widget.readOnly,
+                              // Detail: qatnashchilar javobdagi participants_info'dan
+                              // (loyiha a'zolari yuklanishiga bog'liq emas).
+                              selected: widget.readOnly
+                                  ? (_meeting?.participantsInfo ?? const [])
+                                  : _selectedMembers(state.members),
+                              loading: state.membersLoading,
+                              onPick: () => _openParticipants(state),
+                              onRemove: (id) => setState(() => _participantIds.remove(id)),
+                            ),
                           ),
                         ],
                       ),
                     ),
                   ),
                 ),
-                BlocBuilder<MeetingCreateBloc, MeetingCreateState>(
-                  buildWhen: (p, c) => p.submitStatus != c.submitStatus,
-                  builder: (context, state) => _SubmitBar(
-                    label: _isEdit ? l10n.taskEditSave : l10n.meetingAdd,
-                    completed: _completed,
-                    loading: state.submitStatus == MeetingCreateSubmitStatus.submitting,
-                    onCompletedChanged: (value) => setState(() => _completed = value),
-                    onSubmit: _submit,
+                if (!widget.readOnly)
+                  BlocBuilder<MeetingCreateBloc, MeetingCreateState>(
+                    buildWhen: (p, c) => p.submitStatus != c.submitStatus,
+                    builder: (context, state) => _SubmitBar(
+                      label: _isEdit ? l10n.taskEditSave : l10n.meetingAdd,
+                      completed: _completed,
+                      loading: state.submitStatus == MeetingCreateSubmitStatus.submitting,
+                      onCompletedChanged: (value) => setState(() => _completed = value),
+                      onSubmit: _submit,
+                    ),
                   ),
-                ),
               ],
             ),
           ),
@@ -576,23 +665,54 @@ class _ProjectOption extends StatelessWidget {
 }
 
 class _ParticipantsField extends StatelessWidget {
-  const _ParticipantsField({required this.selected, required this.loading, required this.onPick, required this.onRemove});
+  const _ParticipantsField({
+    required this.label,
+    required this.selected,
+    required this.loading,
+    required this.onPick,
+    required this.onRemove,
+    this.readOnly = false,
+  });
 
+  final String label;
   final List<ProjectMember> selected;
   final bool loading;
   final VoidCallback onPick;
   final ValueChanged<int> onRemove;
+
+  /// Detail rejimi: bo'sh holatda "qo'shish" tugmasi o'rniga chiziqcha.
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
     final l10n = AppLocalizations.of(context);
 
+    if (readOnly && selected.isEmpty) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AppFilterFieldLabel(label),
+          DecoratedBox(
+            decoration: appFilterFieldDecoration(colors),
+            child: SizedBox(
+              width: double.infinity,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                child: '—'.s(13.sp).w(500).h(20 / 13).c(colors.textSub),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        AppFilterFieldLabel(l10n.meetingCreateParticipantsLabel),
+        AppFilterFieldLabel(label),
         InkWell(
           onTap: onPick,
           borderRadius: BorderRadius.circular(12.r),
@@ -652,7 +772,10 @@ class _ParticipantsField extends StatelessWidget {
                       child: Wrap(
                         spacing: 4.w,
                         runSpacing: 4.h,
-                        children: [for (final member in selected) _ParticipantChip(member: member, onRemove: () => onRemove(member.id))],
+                        children: [
+                          for (final member in selected)
+                            _ParticipantChip(member: member, onRemove: readOnly ? null : () => onRemove(member.id)),
+                        ],
                       ),
                     ),
                   ),
@@ -664,10 +787,10 @@ class _ParticipantsField extends StatelessWidget {
 }
 
 class _ParticipantChip extends StatelessWidget {
-  const _ParticipantChip({required this.member, required this.onRemove});
+  const _ParticipantChip({required this.member, this.onRemove});
 
   final ProjectMember member;
-  final VoidCallback onRemove;
+  final VoidCallback? onRemove;
 
   @override
   Widget build(BuildContext context) {
@@ -687,12 +810,14 @@ class _ParticipantChip extends StatelessWidget {
               constraints: BoxConstraints(maxWidth: 285.w),
               child: label.s(13.sp).w(500).h(16 / 13).c(colors.iconSub).copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
             ),
-            SizedBox(width: 4.w),
-            InkWell(
-              onTap: onRemove,
-              borderRadius: BorderRadius.circular(8.r),
-              child: Assets.icons.icClose.svg(width: 16.w, height: 16.w, colorFilter: ColorFilter.mode(colors.iconSub, BlendMode.srcIn)),
-            ),
+            if (onRemove != null) ...[
+              SizedBox(width: 4.w),
+              InkWell(
+                onTap: onRemove,
+                borderRadius: BorderRadius.circular(8.r),
+                child: Assets.icons.icClose.svg(width: 16.w, height: 16.w, colorFilter: ColorFilter.mode(colors.iconSub, BlendMode.srcIn)),
+              ),
+            ],
           ],
         ),
       ),

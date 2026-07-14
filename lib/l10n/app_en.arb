@@ -139,6 +139,8 @@
   "taskRejectConfirm": "Delete",
   "taskStatusUpdated": "Status updated",
   "meetingEditTitle": "Edit meeting",
+  "meetingDetailTitle": "Meeting details",
+  "meetingDetailParticipantsLabel": "Meeting participants",
   "meetingUpdateSuccess": "Meeting updated",
   "meetingDeleteTitle": "Delete meeting",
   "meetingDeleteSubtitle": "The meeting will be moved to the trash and can be restored later.",

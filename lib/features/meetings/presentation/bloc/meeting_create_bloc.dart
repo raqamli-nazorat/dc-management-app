@@ -5,9 +5,11 @@ import '../../../../core/error/failures.dart';
 import '../../../tasks/domain/entities/task_form_options.dart';
 import '../../../tasks/domain/usecases/get_project_members_usecase.dart';
 import '../../../tasks/domain/usecases/get_task_form_options_usecase.dart';
+import '../../domain/entities/meeting.dart';
 import '../../domain/entities/meeting_form.dart';
 import '../../domain/usecases/close_meeting_usecase.dart';
 import '../../domain/usecases/create_meeting_usecase.dart';
+import '../../domain/usecases/get_meeting_usecase.dart';
 import '../../domain/usecases/update_meeting_usecase.dart';
 
 part 'meeting_create_event.dart';
@@ -17,26 +19,42 @@ class MeetingCreateBloc extends Bloc<MeetingCreateEvent, MeetingCreateState> {
   MeetingCreateBloc({
     required GetTaskFormOptionsUseCase getOptions,
     required GetProjectMembersUseCase getMembers,
+    required GetMeetingUseCase getMeeting,
     required CreateMeetingUseCase createMeeting,
     required UpdateMeetingUseCase updateMeeting,
     required CloseMeetingUseCase closeMeeting,
   }) : _getOptions = getOptions,
        _getMembers = getMembers,
+       _getMeeting = getMeeting,
        _createMeeting = createMeeting,
        _updateMeeting = updateMeeting,
        _closeMeeting = closeMeeting,
        super(const MeetingCreateState()) {
     on<MeetingCreateOptionsRequested>(_onRequested);
     on<MeetingCreateProjectSelected>(_onProjectSelected);
+    on<MeetingDetailRequested>(_onDetailRequested);
     on<MeetingCreateSubmitted>(_onSubmitted);
     on<MeetingUpdateSubmitted>(_onUpdateSubmitted);
   }
 
   final GetTaskFormOptionsUseCase _getOptions;
   final GetProjectMembersUseCase _getMembers;
+  final GetMeetingUseCase _getMeeting;
   final CreateMeetingUseCase _createMeeting;
   final UpdateMeetingUseCase _updateMeeting;
   final CloseMeetingUseCase _closeMeeting;
+
+  Future<void> _onDetailRequested(
+    MeetingDetailRequested event,
+    Emitter<MeetingCreateState> emit,
+  ) async {
+    try {
+      final meeting = await _getMeeting(event.id);
+      emit(state.copyWith(detail: meeting));
+    } on Failure catch (_) {
+      // Yuklanmasa forma ro'yxatdan kelgan (extra) ma'lumotda qoladi.
+    }
+  }
 
   Future<void> _onRequested(
     MeetingCreateOptionsRequested event,

@@ -788,6 +788,18 @@ abstract class AppLocalizations {
   /// **'Yig‘ilishni tahrirlash'**
   String get meetingEditTitle;
 
+  /// No description provided for @meetingDetailTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yig‘ilish tafsilotlari'**
+  String get meetingDetailTitle;
+
+  /// No description provided for @meetingDetailParticipantsLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yig‘ilish qatnashchilari'**
+  String get meetingDetailParticipantsLabel;
+
   /// No description provided for @meetingUpdateSuccess.
   ///
   /// In uz, this message translates to:

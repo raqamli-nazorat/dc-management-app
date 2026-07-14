@@ -223,6 +223,7 @@ Future<void> configureDependencies() async {
         updateMeeting: getIt(),
         getOptions: getIt(),
         getMembers: getIt(),
+        getMeeting: getIt(),
         createMeeting: getIt(),
         closeMeeting: getIt(),
       ),

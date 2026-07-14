@@ -206,6 +206,15 @@ class AppRouter {
           ),
         ),
         GoRoute(
+          name: Routes.meetingDetail.name,
+          path: Routes.meetingDetail.path,
+          builder: (context, state) => MeetingCreatePage(
+            initial: state.extra is Meeting ? state.extra! as Meeting : null,
+            meetingId: int.tryParse(state.pathParameters['id'] ?? ''),
+            readOnly: true,
+          ),
+        ),
+        GoRoute(
           name: Routes.meetingReason.name,
           path: Routes.meetingReason.path,
           builder: (context, state) {

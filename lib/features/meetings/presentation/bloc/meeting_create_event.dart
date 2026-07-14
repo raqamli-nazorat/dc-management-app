@@ -20,6 +20,18 @@ class MeetingCreateProjectSelected extends MeetingCreateEvent {
   List<Object?> get props => [projectId];
 }
 
+/// Tafsilotlarni yuklash (`GET /meetings/{id}/`) — detail rejimida forma
+/// to'liq ma'lumot bilan yangilanadi (ro'yxat payload'i to'liq bo'lmasligi
+/// mumkin).
+class MeetingDetailRequested extends MeetingCreateEvent {
+  const MeetingDetailRequested(this.id);
+
+  final int id;
+
+  @override
+  List<Object?> get props => [id];
+}
+
 class MeetingCreateSubmitted extends MeetingCreateEvent {
   const MeetingCreateSubmitted({
     required this.form,
