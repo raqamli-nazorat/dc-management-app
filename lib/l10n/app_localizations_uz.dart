@@ -679,6 +679,27 @@ class AppLocalizationsUz extends AppLocalizations {
   String get meetingCloseSuccess => 'Yig‘ilish yakunlandi';
 
   @override
+  String get meetingExcuseListTitle => 'Qatnashmaganlar sabablari';
+
+  @override
+  String get meetingExcuseNoReason => 'Sabab hali yozilmagan';
+
+  @override
+  String get meetingExcuseAccepted => 'Sabab qabul qilindi';
+
+  @override
+  String get meetingMyAttended => 'Siz yig‘ilishda qatnashgansiz';
+
+  @override
+  String get meetingMyNotAttended => 'Siz yig‘ilishda qatnashmagansiz';
+
+  @override
+  String get meetingSendReason => 'Sabab yuborish';
+
+  @override
+  String get meetingReasonSentLabel => 'Sabab yuborilgan';
+
+  @override
   String get meetingDeleteTitle => 'Yig‘ilishni o‘chirish';
 
   @override

@@ -10,8 +10,10 @@ import '../../../../core/error/failures.dart';
 import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
 import '../../../../core/widgets/app_toast.dart';
+import '../../../../core/widgets/tui_avatar.dart';
 import '../../../../injection_container.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../domain/entities/meeting_attendance.dart';
 import '../bloc/meeting_reason_bloc.dart';
 import '../widgets/meeting_card.dart';
 
@@ -92,53 +94,250 @@ class _ReasonViewState extends State<_ReasonView> {
                 );
             }
           },
-          child: Column(
-            children: [
-              _ReasonHeader(title: l10n.meetingReasonTitle),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 20.w,
-                    vertical: 12.h,
-                  ),
-                  child: BlocBuilder<MeetingReasonBloc, MeetingReasonState>(
-                    buildWhen: (a, b) =>
-                        a.title != b.title || a.startDate != b.startDate,
-                    builder: (context, state) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
+          child: BlocBuilder<MeetingReasonBloc, MeetingReasonState>(
+            buildWhen: (a, b) =>
+                a.loadStatus != b.loadStatus || a.isOrganizer != b.isOrganizer,
+            builder: (context, state) {
+              // Tashkilotchi: sabab yozish o'rniga sabablarni tasdiqlash.
+              if (state.isOrganizer) return const _OrganizerView();
+
+              return Column(
+                children: [
+                  _ReasonHeader(title: l10n.meetingReasonTitle),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 12.h,
+                      ),
+                      child: BlocBuilder<MeetingReasonBloc, MeetingReasonState>(
+                        buildWhen: (a, b) =>
+                            a.title != b.title || a.startDate != b.startDate,
+                        builder: (context, state) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(
-                                child: l10n.meetingReasonPrompt
-                                    .s(13.sp)
-                                    .w(800)
-                                    .c(colors.textStrong)
-                                    .copyWith(maxLines: 2),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Expanded(
+                                    child: l10n.meetingReasonPrompt
+                                        .s(13.sp)
+                                        .w(800)
+                                        .c(colors.textStrong)
+                                        .copyWith(maxLines: 2),
+                                  ),
+                                  SizedBox(width: 12.w),
+                                  _MeetingSummary(
+                                    title: state.title,
+                                    date: formatMeetingDate(state.startDate),
+                                  ),
+                                ],
                               ),
-                              SizedBox(width: 12.w),
-                              _MeetingSummary(
-                                title: state.title,
-                                date: formatMeetingDate(state.startDate),
+                              SizedBox(height: 8.h),
+                              _ReasonField(
+                                controller: _controller,
+                                hint: l10n.meetingReasonHint,
                               ),
                             ],
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  _SubmitBar(controller: _controller, onSubmit: _submit),
+                ],
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Tashkilotchi ko'rinishi: qatnashmaganlar ro'yxati — har birida sabab va
+/// "Tasdiqlash" tugmasi (`is_excused=true`).
+class _OrganizerView extends StatelessWidget {
+  const _OrganizerView();
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final l10n = AppLocalizations.of(context);
+
+    return BlocConsumer<MeetingReasonBloc, MeetingReasonState>(
+      listenWhen: (a, b) => b.approveFailed,
+      listener: (context, state) =>
+          AppToast.showError(context, title: l10n.commonError),
+      builder: (context, state) {
+        return Column(
+          children: [
+            _ReasonHeader(title: l10n.meetingExcuseListTitle),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: state.title
+                        .s(13.sp)
+                        .w(700)
+                        .c(colors.textStrong)
+                        .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+                  ),
+                  SizedBox(width: 8.w),
+                  formatMeetingDate(state.startDate)
+                      .s(11.sp)
+                      .w(500)
+                      .c(colors.textSub),
+                ],
+              ),
+            ),
+            Expanded(
+              child: state.rows.isEmpty
+                  ? Center(
+                      child: l10n.statEmpty.s(14.sp).w(500).c(colors.textSub),
+                    )
+                  : ListView.separated(
+                      padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 24.h),
+                      itemCount: state.rows.length,
+                      separatorBuilder: (_, _) => SizedBox(height: 8.h),
+                      itemBuilder: (_, i) => _ExcuseRow(
+                        row: state.rows[i],
+                        approving: state.approvingId == state.rows[i].id,
+                        onApprove: () => context
+                            .read<MeetingReasonBloc>()
+                            .add(MeetingExcuseApproved(state.rows[i].id)),
+                      ),
+                    ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+/// Bitta qatnashmagan xodim kartasi: avatar + ism + sabab + holat/tugma.
+class _ExcuseRow extends StatelessWidget {
+  const _ExcuseRow({
+    required this.row,
+    required this.approving,
+    required this.onApprove,
+  });
+
+  final MeetingAttendance row;
+  final bool approving;
+  final VoidCallback onApprove;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final l10n = AppLocalizations.of(context);
+    final hasReason = row.absenceReason.trim().isNotEmpty;
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: colors.backgroundElevation1,
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: colors.strokeSub, width: 1.w),
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(12.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                TuiAvatar(
+                  initial: row.userName,
+                  avatarUrl: row.userAvatar,
+                  size: 24,
+                ),
+                SizedBox(width: 8.w),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      row.userName
+                          .s(13.sp)
+                          .w(700)
+                          .c(colors.textStrong)
+                          .copyWith(
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          SizedBox(height: 8.h),
-                          _ReasonField(
-                            controller: _controller,
-                            hint: l10n.meetingReasonHint,
-                          ),
-                        ],
-                      );
-                    },
+                      if (row.userPosition.isNotEmpty)
+                        row.userPosition
+                            .s(11.sp)
+                            .w(500)
+                            .c(colors.textSoft)
+                            .copyWith(
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 8.h),
+            (hasReason ? row.absenceReason : l10n.meetingExcuseNoReason)
+                .s(13.sp)
+                .w(500)
+                .h(20 / 13)
+                .c(hasReason ? colors.textSub : colors.textSoft)
+                .copyWith(maxLines: 4, overflow: TextOverflow.ellipsis),
+            SizedBox(height: 12.h),
+            if (row.isExcused)
+              Row(
+                children: [
+                  _CheckMark(color: colors.successStrong, size: 16.w),
+                  SizedBox(width: 6.w),
+                  l10n.meetingExcuseAccepted
+                      .s(13.sp)
+                      .w(700)
+                      .c(colors.successStrong),
+                ],
+              )
+            else
+              InkWell(
+                onTap: approving || !hasReason ? null : onApprove,
+                borderRadius: BorderRadius.circular(12.r),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: hasReason
+                        ? colors.accentStrong
+                        : colors.backgroundElevation3,
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  child: SizedBox(
+                    height: 40.h,
+                    width: double.infinity,
+                    child: Center(
+                      child: approving
+                          ? SizedBox(
+                              width: 18.w,
+                              height: 18.w,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.w,
+                                color: colors.textWhite,
+                              ),
+                            )
+                          : l10n.meetingCloseConfirm
+                              .s(13.sp)
+                              .w(800)
+                              .c(
+                                hasReason
+                                    ? colors.textWhite
+                                    : colors.textSoft,
+                              ),
+                    ),
                   ),
                 ),
               ),
-              _SubmitBar(controller: _controller, onSubmit: _submit),
-            ],
-          ),
+          ],
         ),
       ),
     );

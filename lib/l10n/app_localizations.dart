@@ -1412,6 +1412,48 @@ abstract class AppLocalizations {
   /// **'Yig‘ilish yakunlandi'**
   String get meetingCloseSuccess;
 
+  /// No description provided for @meetingExcuseListTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qatnashmaganlar sabablari'**
+  String get meetingExcuseListTitle;
+
+  /// No description provided for @meetingExcuseNoReason.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sabab hali yozilmagan'**
+  String get meetingExcuseNoReason;
+
+  /// No description provided for @meetingExcuseAccepted.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sabab qabul qilindi'**
+  String get meetingExcuseAccepted;
+
+  /// No description provided for @meetingMyAttended.
+  ///
+  /// In uz, this message translates to:
+  /// **'Siz yig‘ilishda qatnashgansiz'**
+  String get meetingMyAttended;
+
+  /// No description provided for @meetingMyNotAttended.
+  ///
+  /// In uz, this message translates to:
+  /// **'Siz yig‘ilishda qatnashmagansiz'**
+  String get meetingMyNotAttended;
+
+  /// No description provided for @meetingSendReason.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sabab yuborish'**
+  String get meetingSendReason;
+
+  /// No description provided for @meetingReasonSentLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sabab yuborilgan'**
+  String get meetingReasonSentLabel;
+
   /// No description provided for @meetingDeleteTitle.
   ///
   /// In uz, this message translates to:

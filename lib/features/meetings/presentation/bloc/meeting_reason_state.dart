@@ -11,6 +11,10 @@ class MeetingReasonState extends Equatable {
     this.title = '',
     this.startDate,
     this.attendanceId,
+    this.isOrganizer = false,
+    this.rows = const [],
+    this.approvingId = 0,
+    this.approveFailed = false,
     this.failure,
   });
 
@@ -24,6 +28,19 @@ class MeetingReasonState extends Equatable {
   /// Sabab yoziladigan qatnashuv yozuvi id’si (`null` — topilmadi).
   final int? attendanceId;
 
+  /// Joriy foydalanuvchi yig‘ilish tashkilotchisi — sabab yozish o‘rniga
+  /// qatnashmaganlar sabablarini tasdiqlash ro‘yxati ko‘rsatiladi.
+  final bool isOrganizer;
+
+  /// Tashkilotchi rejimi: qatnashmaganlarning attendance yozuvlari.
+  final List<MeetingAttendance> rows;
+
+  /// Hozir tasdiqlanayotgan yozuv id'si (0 — yo‘q).
+  final int approvingId;
+
+  /// Oxirgi approve urinishi xato bilan tugadi (toast trigger).
+  final bool approveFailed;
+
   final Failure? failure;
 
   bool get isSubmitting => submitStatus == MeetingReasonSubmit.loading;
@@ -34,6 +51,10 @@ class MeetingReasonState extends Equatable {
     String? title,
     DateTime? startDate,
     int? attendanceId,
+    bool? isOrganizer,
+    List<MeetingAttendance>? rows,
+    int? approvingId,
+    bool? approveFailed,
     Failure? failure,
   }) => MeetingReasonState(
     loadStatus: loadStatus ?? this.loadStatus,
@@ -41,6 +62,10 @@ class MeetingReasonState extends Equatable {
     title: title ?? this.title,
     startDate: startDate ?? this.startDate,
     attendanceId: attendanceId ?? this.attendanceId,
+    isOrganizer: isOrganizer ?? this.isOrganizer,
+    rows: rows ?? this.rows,
+    approvingId: approvingId ?? this.approvingId,
+    approveFailed: approveFailed ?? false,
     failure: failure,
   );
 
@@ -51,6 +76,10 @@ class MeetingReasonState extends Equatable {
     title,
     startDate,
     attendanceId,
+    isOrganizer,
+    rows,
+    approvingId,
+    approveFailed,
     failure,
   ];
 }

@@ -11,6 +11,7 @@ class MeetingCreateState extends Equatable {
     this.submitStatus = MeetingCreateSubmitStatus.idle,
     this.submitFailure,
     this.closeStatus = MeetingCreateSubmitStatus.idle,
+    this.myAttendance,
   });
 
   final List<ProjectShort> projects;
@@ -27,6 +28,10 @@ class MeetingCreateState extends Equatable {
   /// alohida, chunki detail rejimida forma submit'i yo'q.
   final MeetingCreateSubmitStatus closeStatus;
 
+  /// Joriy foydalanuvchining shu yig'ilishdagi qatnashuv yozuvi
+  /// (detail rejimida ko'rsatiladi; `null` — yuklanmagan/topilmadi).
+  final MeetingAttendance? myAttendance;
+
   MeetingCreateState copyWith({
     List<ProjectShort>? projects,
     List<ProjectMember>? members,
@@ -35,6 +40,7 @@ class MeetingCreateState extends Equatable {
     MeetingCreateSubmitStatus? submitStatus,
     Failure? submitFailure,
     MeetingCreateSubmitStatus? closeStatus,
+    MeetingAttendance? myAttendance,
   }) => MeetingCreateState(
     projects: projects ?? this.projects,
     members: members ?? this.members,
@@ -43,6 +49,7 @@ class MeetingCreateState extends Equatable {
     submitStatus: submitStatus ?? this.submitStatus,
     submitFailure: submitFailure ?? this.submitFailure,
     closeStatus: closeStatus ?? this.closeStatus,
+    myAttendance: myAttendance ?? this.myAttendance,
   );
 
   @override
@@ -54,5 +61,6 @@ class MeetingCreateState extends Equatable {
     submitStatus,
     submitFailure,
     closeStatus,
+    myAttendance,
   ];
 }

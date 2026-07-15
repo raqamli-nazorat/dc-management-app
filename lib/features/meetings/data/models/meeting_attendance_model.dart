@@ -10,13 +10,27 @@ class MeetingAttendanceModel extends MeetingAttendance {
     required super.isExcused,
     required super.absenceReason,
     required super.userId,
+    super.userName,
+    super.userPosition,
+    super.userAvatar,
   });
 
   factory MeetingAttendanceModel.fromJson(Map<String, dynamic> json) {
     final userInfo = json['user_info'];
-    final userId = userInfo is Map
-        ? (userInfo['id'] as num?)?.toInt()
+    final userMap = userInfo is Map
+        ? userInfo.cast<String, dynamic>()
+        : const <String, dynamic>{};
+    final userId = userMap.isNotEmpty
+        ? (userMap['id'] as num?)?.toInt()
         : (json['user'] as num?)?.toInt();
+
+    String pick(List<String> keys) {
+      for (final k in keys) {
+        final v = userMap[k];
+        if (v != null && v.toString().isNotEmpty) return v.toString();
+      }
+      return '';
+    }
 
     return MeetingAttendanceModel(
       id: (json['id'] as num?)?.toInt() ?? 0,
@@ -26,6 +40,9 @@ class MeetingAttendanceModel extends MeetingAttendance {
       isExcused: (json['is_excused'] as bool?) ?? false,
       absenceReason: json['absence_reason']?.toString() ?? '',
       userId: userId,
+      userName: pick(['username', 'full_name', 'name']),
+      userPosition: pick(['position']),
+      userAvatar: pick(['avatar']),
     );
   }
 }

@@ -11,6 +11,9 @@ class MeetingAttendance extends Equatable {
     required this.isExcused,
     required this.absenceReason,
     required this.userId,
+    this.userName = '',
+    this.userPosition = '',
+    this.userAvatar = '',
   });
 
   final int id;
@@ -23,6 +26,12 @@ class MeetingAttendance extends Equatable {
   /// Qatnashuvchi (user_info.id) — o‘z yozuvimni ajratishda ishlatiladi.
   final int? userId;
 
+  /// Qatnashuvchi ma'lumotlari (`user_info`) — tashkilotchining sabab
+  /// tasdiqlash ro'yxatida ko'rsatiladi.
+  final String userName;
+  final String userPosition;
+  final String userAvatar;
+
   @override
   List<Object?> get props => [
     id,
@@ -32,5 +41,8 @@ class MeetingAttendance extends Equatable {
     isExcused,
     absenceReason,
     userId,
+    userName,
+    userPosition,
+    userAvatar,
   ];
 }

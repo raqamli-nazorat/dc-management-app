@@ -45,6 +45,21 @@ class MeetingCreateSubmitted extends MeetingCreateEvent {
   List<Object?> get props => [form, closeAfterCreate];
 }
 
+/// Joriy foydalanuvchining qatnashuv yozuvini yuklash (detail rejimi) —
+/// `GET /meeting-attendance/?meeting=` ichidan `user_info.id` bo'yicha.
+class MeetingMyAttendanceRequested extends MeetingCreateEvent {
+  const MeetingMyAttendanceRequested({
+    required this.meetingId,
+    required this.userId,
+  });
+
+  final int meetingId;
+  final int userId;
+
+  @override
+  List<Object?> get props => [meetingId, userId];
+}
+
 /// Tashkilotchi yig'ilishni yakunlaydi: avval qatnashuv yozuvlari
 /// (`GET /meeting-attendance/?meeting=`) tanlovga moslab PATCH qilinadi,
 /// so'ng `POST /meetings/{id}/close/`.

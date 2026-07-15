@@ -677,6 +677,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get meetingCloseSuccess => 'Meeting completed';
 
   @override
+  String get meetingExcuseListTitle => 'Absence reasons';
+
+  @override
+  String get meetingExcuseNoReason => 'No reason submitted yet';
+
+  @override
+  String get meetingExcuseAccepted => 'Excuse accepted';
+
+  @override
+  String get meetingMyAttended => 'You attended this meeting';
+
+  @override
+  String get meetingMyNotAttended => 'You did not attend this meeting';
+
+  @override
+  String get meetingSendReason => 'Send reason';
+
+  @override
+  String get meetingReasonSentLabel => 'Reason sent';
+
+  @override
   String get meetingDeleteTitle => 'Delete meeting';
 
   @override

@@ -6,6 +6,7 @@ import '../../../tasks/domain/entities/task_form_options.dart';
 import '../../../tasks/domain/usecases/get_project_members_usecase.dart';
 import '../../../tasks/domain/usecases/get_task_form_options_usecase.dart';
 import '../../domain/entities/meeting.dart';
+import '../../domain/entities/meeting_attendance.dart';
 import '../../domain/entities/meeting_attendance_update.dart';
 import '../../domain/entities/meeting_form.dart';
 import '../../domain/usecases/close_meeting_usecase.dart';
@@ -43,6 +44,7 @@ class MeetingCreateBloc extends Bloc<MeetingCreateEvent, MeetingCreateState> {
     on<MeetingCreateSubmitted>(_onSubmitted);
     on<MeetingUpdateSubmitted>(_onUpdateSubmitted);
     on<MeetingCloseWithAttendanceSubmitted>(_onCloseWithAttendance);
+    on<MeetingMyAttendanceRequested>(_onMyAttendanceRequested);
   }
 
   final GetTaskFormOptionsUseCase _getOptions;
@@ -109,6 +111,25 @@ class MeetingCreateBloc extends Bloc<MeetingCreateEvent, MeetingCreateState> {
           submitFailure: failure,
         ),
       );
+    }
+  }
+
+  Future<void> _onMyAttendanceRequested(
+    MeetingMyAttendanceRequested event,
+    Emitter<MeetingCreateState> emit,
+  ) async {
+    try {
+      final rows = await _getAttendance(event.meetingId);
+      MeetingAttendance? mine;
+      for (final row in rows) {
+        if (row.userId == event.userId) {
+          mine = row;
+          break;
+        }
+      }
+      if (mine != null) emit(state.copyWith(myAttendance: mine));
+    } on Failure catch (_) {
+      // Yuklanmasa holat bo'limi ko'rsatilmaydi.
     }
   }
 

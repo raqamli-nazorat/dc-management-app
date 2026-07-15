@@ -22,6 +22,7 @@ import '../../../../l10n/app_localizations.dart';
 import '../../../tasks/domain/entities/task_form_options.dart';
 import '../../../tasks/presentation/pages/task_multi_select_page.dart';
 import '../../domain/entities/meeting.dart';
+import '../../domain/entities/meeting_attendance.dart';
 import '../../domain/entities/meeting_form.dart';
 import '../bloc/meeting_create_bloc.dart';
 
@@ -49,7 +50,16 @@ class MeetingCreatePage extends StatelessWidget {
       create: (_) {
         final bloc = getIt<MeetingCreateBloc>()..add(const MeetingCreateOptionsRequested());
         final id = meetingId ?? initial?.id;
-        if (readOnly && id != null) bloc.add(MeetingDetailRequested(id));
+        if (readOnly && id != null) {
+          bloc.add(MeetingDetailRequested(id));
+          // Detail: joriy foydalanuvchining qatnashuv holati.
+          final userId = _cachedUserId();
+          if (userId != null) {
+            bloc.add(
+              MeetingMyAttendanceRequested(meetingId: id, userId: userId),
+            );
+          }
+        }
         return bloc;
       },
       child: _MeetingCreateView(initial: initial, readOnly: readOnly),
@@ -90,19 +100,7 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
   Meeting? _meeting;
 
   /// Keshlangan login javobidagi (`cached_user`) joriy foydalanuvchi id'si.
-  late final int? _currentUserId = _readCurrentUserId();
-
-  static int? _readCurrentUserId() {
-    final raw = getIt<StorageService>().getString(StorageKeys.cachedUser);
-    if (raw == null || raw.isEmpty) return null;
-    try {
-      final map = jsonDecode(raw);
-      if (map is Map) return (map['id'] as num?)?.toInt();
-    } on Object {
-      // Buzuq kesh — tugma ko'rsatilmaydi.
-    }
-    return null;
-  }
+  late final int? _currentUserId = _cachedUserId();
 
   /// Yakunlash faqat detail rejimida, ochiq yig'ilishda va joriy foydalanuvchi
   /// tashkilotchi bo'lib `participants_info`da ham bor bo'lsa ko'rinadi.
@@ -488,6 +486,23 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
                               onRemove: (id) => setState(() => _participantIds.remove(id)),
                             ),
                           ),
+                          // Detail: joriy foydalanuvchining qatnashuv holati
+                          // (yakunlangan yig'ilishda).
+                          if (widget.readOnly &&
+                              (_meeting?.isCompleted ?? false) &&
+                              state.myAttendance != null)
+                            _MyAttendanceSection(
+                              attendance: state.myAttendance!,
+                              onSendReason: () {
+                                final id = _meeting?.id;
+                                if (id != null) {
+                                  context.pushNamed(
+                                    Routes.meetingReason.name,
+                                    pathParameters: {'id': '$id'},
+                                  );
+                                }
+                              },
+                            ),
                         ],
                       ),
                     ),
@@ -890,8 +905,9 @@ class _ParticipantChip extends StatelessWidget {
           children: [
             TuiAvatar(initial: member.username, avatarUrl: member.avatar, size: 20),
             SizedBox(width: 4.w),
-            ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: 285.w),
+            // Wrap chip'ga o'z maxWidth'ini beradi — Flexible matnni avatar/X
+            // egallagan joydan qolganiga siqadi (qat'iy maxWidth toshib ketardi).
+            Flexible(
               child: label.s(13.sp).w(500).h(16 / 13).c(colors.iconSub).copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
             ),
             if (onRemove != null) ...[
@@ -969,6 +985,77 @@ class _SubmitBar extends StatelessWidget {
                   ),
                 ),
               ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Detail: joriy foydalanuvchining qatnashuv holati — qatnashgan/qatnashmagan,
+/// qatnashmagan bo'lsa sabab yuborish tugmasi yoki yuborilgan sabab holati.
+class _MyAttendanceSection extends StatelessWidget {
+  const _MyAttendanceSection({required this.attendance, required this.onSendReason});
+
+  final MeetingAttendance attendance;
+  final VoidCallback onSendReason;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final l10n = AppLocalizations.of(context);
+    final hasReason = attendance.absenceReason.trim().isNotEmpty;
+
+    return DecoratedBox(
+      decoration: appFilterFieldDecoration(colors),
+      child: SizedBox(
+        width: double.infinity,
+        child: Padding(
+          padding: EdgeInsets.all(12.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              (attendance.isAttended ? l10n.meetingMyAttended : l10n.meetingMyNotAttended)
+                  .s(13.sp)
+                  .w(700)
+                  .h(20 / 13)
+                  .c(attendance.isAttended ? colors.successStrong : colors.errorStrong),
+              if (!attendance.isAttended) ...[
+                if (hasReason) ...[
+                  SizedBox(height: 4.h),
+                  attendance.absenceReason
+                      .s(13.sp)
+                      .w(500)
+                      .h(20 / 13)
+                      .c(colors.textSub)
+                      .copyWith(maxLines: 4, overflow: TextOverflow.ellipsis),
+                  SizedBox(height: 4.h),
+                  (attendance.isExcused ? l10n.meetingExcuseAccepted : l10n.meetingReasonSentLabel)
+                      .s(11.sp)
+                      .w(700)
+                      .c(attendance.isExcused ? colors.successStrong : colors.textSoft),
+                ] else ...[
+                  SizedBox(height: 8.h),
+                  InkWell(
+                    onTap: onSendReason,
+                    borderRadius: BorderRadius.circular(12.r),
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: colors.accentStrong,
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                      child: SizedBox(
+                        height: 40.h,
+                        width: double.infinity,
+                        child: Center(
+                          child: l10n.meetingSendReason.s(13.sp).w(800).c(colors.textWhite),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
             ],
           ),
         ),
@@ -1265,6 +1352,19 @@ class _MaxValueFormatter extends TextInputFormatter {
     if (parsed == null || parsed > max) return oldValue;
     return newValue;
   }
+}
+
+/// Keshlangan login javobidagi (`cached_user`) joriy foydalanuvchi id'si.
+int? _cachedUserId() {
+  final raw = getIt<StorageService>().getString(StorageKeys.cachedUser);
+  if (raw == null || raw.isEmpty) return null;
+  try {
+    final map = jsonDecode(raw);
+    if (map is Map) return (map['id'] as num?)?.toInt();
+  } on Object {
+    // Buzuq kesh — foydalanuvchiga bog'liq bo'limlar ko'rsatilmaydi.
+  }
+  return null;
 }
 
 String _fmtDate(DateTime? d) {

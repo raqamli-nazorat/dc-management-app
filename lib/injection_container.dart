@@ -257,6 +257,8 @@ Future<void> configureDependencies() async {
         getMeeting: getIt(),
         getAttendance: getIt(),
         submitReason: getIt(),
+        updateAttendance: getIt(),
+        storage: getIt(),
       ),
     );
 
