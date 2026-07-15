@@ -31,6 +31,7 @@ class ReportsPage extends StatelessWidget {
               label: l10n.reportProject,
               image: Assets.images.accordingToTheProject,
               imageSize: 82.w,
+              onTap: () => context.pushNamed(Routes.projectReports.name),
             ),
             AppNavTile(
               label: l10n.reportSpendingRequests,

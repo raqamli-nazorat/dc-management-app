@@ -1,5 +1,7 @@
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
+import '../../domain/entities/project_report.dart';
+import '../../domain/entities/project_report_filter.dart';
 import '../../domain/entities/user_report.dart';
 import '../../domain/entities/user_report_filter.dart';
 import '../../domain/repository/reports_repository.dart';
@@ -20,6 +22,12 @@ class ReportsRepositoryImpl implements ReportsRepository {
 
   @override
   Future<List<Region>> getRegions() => _guard(_remote.getRegions);
+
+  @override
+  Future<ProjectReportPage> getProjectReports({
+    int page = 1,
+    ProjectReportFilter filter = ProjectReportFilter.empty,
+  }) => _guard(() => _remote.getProjectReports(page: page, filter: filter));
 
   Future<T> _guard<T>(Future<T> Function() action) async {
     try {

@@ -73,6 +73,22 @@
   "reportExpenseStatusPaidUnconfirmed": "To'langan (tasdiqlanmagan)",
   "reportPayrollTypePenalty": "Jarima miqdori",
 
+  "reportsProjectEmpty": "Hozircha loyihalar yo'q",
+  "reportAuthor": "Muallif:",
+  "reportManager": "Boshqaruvchi:",
+  "reportEmployeesLabel": "Xodimlar:",
+  "reportTestersLabel": "Sinovchilar:",
+  "reportManagerBonus": "Boshqaruvchi bonusi (UZS):",
+  "reportStatusLabel": "Holati:",
+
+  "reportFilterManagerBonus": "Boshqaruvchi bonusi",
+  "reportFilterAuthor": "Muallifi",
+  "reportFilterAuthorHint": "Muallifi tanlang",
+  "reportFilterManager": "Boshqaruvchi",
+  "reportFilterManagerHint": "Boshqaruvchi tanlang",
+  "reportFilterTesters": "Sinovchilar",
+  "reportFilterTestersHint": "Sinovchilar tanlang",
+
   "statPeriodSelect": "Davrni tanlang",
   "statPeriod1Month": "1 oy",
   "statPeriod3Months": "3 oy",

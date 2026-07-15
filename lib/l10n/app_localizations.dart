@@ -470,6 +470,90 @@ abstract class AppLocalizations {
   /// **'Jarima miqdori'**
   String get reportPayrollTypePenalty;
 
+  /// No description provided for @reportsProjectEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hozircha loyihalar yo\'q'**
+  String get reportsProjectEmpty;
+
+  /// No description provided for @reportAuthor.
+  ///
+  /// In uz, this message translates to:
+  /// **'Muallif:'**
+  String get reportAuthor;
+
+  /// No description provided for @reportManager.
+  ///
+  /// In uz, this message translates to:
+  /// **'Boshqaruvchi:'**
+  String get reportManager;
+
+  /// No description provided for @reportEmployeesLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xodimlar:'**
+  String get reportEmployeesLabel;
+
+  /// No description provided for @reportTestersLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sinovchilar:'**
+  String get reportTestersLabel;
+
+  /// No description provided for @reportManagerBonus.
+  ///
+  /// In uz, this message translates to:
+  /// **'Boshqaruvchi bonusi (UZS):'**
+  String get reportManagerBonus;
+
+  /// No description provided for @reportStatusLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Holati:'**
+  String get reportStatusLabel;
+
+  /// No description provided for @reportFilterManagerBonus.
+  ///
+  /// In uz, this message translates to:
+  /// **'Boshqaruvchi bonusi'**
+  String get reportFilterManagerBonus;
+
+  /// No description provided for @reportFilterAuthor.
+  ///
+  /// In uz, this message translates to:
+  /// **'Muallifi'**
+  String get reportFilterAuthor;
+
+  /// No description provided for @reportFilterAuthorHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Muallifi tanlang'**
+  String get reportFilterAuthorHint;
+
+  /// No description provided for @reportFilterManager.
+  ///
+  /// In uz, this message translates to:
+  /// **'Boshqaruvchi'**
+  String get reportFilterManager;
+
+  /// No description provided for @reportFilterManagerHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Boshqaruvchi tanlang'**
+  String get reportFilterManagerHint;
+
+  /// No description provided for @reportFilterTesters.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sinovchilar'**
+  String get reportFilterTesters;
+
+  /// No description provided for @reportFilterTestersHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sinovchilar tanlang'**
+  String get reportFilterTestersHint;
+
   /// No description provided for @statPeriodSelect.
   ///
   /// In uz, this message translates to:

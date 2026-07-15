@@ -3,18 +3,28 @@ import 'package:dio/dio.dart';
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/network/response_mapper.dart';
+import '../../domain/entities/project_report.dart';
+import '../../domain/entities/project_report_filter.dart';
 import '../../domain/entities/user_report.dart';
 import '../../domain/entities/user_report_filter.dart';
+import '../models/project_report_model.dart';
 import '../models/region_model.dart';
 import '../models/user_report_model.dart';
 
-/// Xodimlar bo'yicha hisobot backend bilan to'g'ridan-to'g'ri muloqot.
+/// Xodimlar/loyihalar bo'yicha hisobot backend bilan to'g'ridan-to'g'ri
+/// muloqot.
 abstract interface class ReportsRemoteDataSource {
   /// Bitta sahifa (`GET /reports/users/?page=` + filtr paramlari).
   Future<UserReportPage> getUserReports({int page, UserReportFilter filter});
 
   /// Viloyatlar ro'yxati — filtr "Viloyat" tanlovi (`GET /applications/regions/`).
   Future<List<Region>> getRegions();
+
+  /// Loyihalar bo'yicha hisobot sahifasi (`GET /reports/projects/?page=` + filtr).
+  Future<ProjectReportPage> getProjectReports({
+    int page,
+    ProjectReportFilter filter,
+  });
 }
 
 class ReportsRemoteDataSourceImpl implements ReportsRemoteDataSource {
@@ -95,4 +105,44 @@ class ReportsRemoteDataSourceImpl implements ReportsRemoteDataSource {
       throw ResponseMapper.mapDioException(e);
     }
   }
+
+  @override
+  Future<ProjectReportPage> getProjectReports({
+    int page = 1,
+    ProjectReportFilter filter = ProjectReportFilter.empty,
+  }) async {
+    try {
+      final response = await _client.get(
+        ApiConstants.reportsProjects,
+        queryParameters: {
+          'page': page,
+          'page_size': _pageSize,
+          ..._projectFilterParams(filter),
+        },
+      );
+      final body = ResponseMapper.asMap(response.data);
+      final items = ResponseMapper.asList(response.data)
+          .whereType<Map>()
+          .map((e) => ProjectReportModel.fromJson(e.cast<String, dynamic>()))
+          .toList();
+      return (items: items, hasMore: body['next'] != null);
+    } on DioException catch (e) {
+      throw ResponseMapper.mapDioException(e);
+    }
+  }
+
+  /// [ProjectReportFilter] → `GET /reports/projects/` query paramlari (faqat
+  /// to'ldirilganlari).
+  Map<String, dynamic> _projectFilterParams(ProjectReportFilter f) => {
+    if (f.search.trim().isNotEmpty) 'search': f.search.trim(),
+    if (f.deadlineFrom != null)
+      'deadline_min': f.deadlineFrom!.toIso8601String(),
+    if (f.deadlineTo != null) 'deadline_max': f.deadlineTo!.toIso8601String(),
+    if (f.priceFrom != null) 'price_min': f.priceFrom,
+    if (f.priceTo != null) 'price_max': f.priceTo,
+    if (f.authorIds.isNotEmpty) 'created_by': f.authorIds.join(','),
+    if (f.managerIds.isNotEmpty) 'manager': f.managerIds.join(','),
+    if (f.employeeIds.isNotEmpty) 'employees': f.employeeIds.join(','),
+    if (f.testerIds.isNotEmpty) 'testers': f.testerIds.join(','),
+  };
 }

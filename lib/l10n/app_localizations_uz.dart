@@ -200,6 +200,48 @@ class AppLocalizationsUz extends AppLocalizations {
   String get reportPayrollTypePenalty => 'Jarima miqdori';
 
   @override
+  String get reportsProjectEmpty => 'Hozircha loyihalar yo\'q';
+
+  @override
+  String get reportAuthor => 'Muallif:';
+
+  @override
+  String get reportManager => 'Boshqaruvchi:';
+
+  @override
+  String get reportEmployeesLabel => 'Xodimlar:';
+
+  @override
+  String get reportTestersLabel => 'Sinovchilar:';
+
+  @override
+  String get reportManagerBonus => 'Boshqaruvchi bonusi (UZS):';
+
+  @override
+  String get reportStatusLabel => 'Holati:';
+
+  @override
+  String get reportFilterManagerBonus => 'Boshqaruvchi bonusi';
+
+  @override
+  String get reportFilterAuthor => 'Muallifi';
+
+  @override
+  String get reportFilterAuthorHint => 'Muallifi tanlang';
+
+  @override
+  String get reportFilterManager => 'Boshqaruvchi';
+
+  @override
+  String get reportFilterManagerHint => 'Boshqaruvchi tanlang';
+
+  @override
+  String get reportFilterTesters => 'Sinovchilar';
+
+  @override
+  String get reportFilterTestersHint => 'Sinovchilar tanlang';
+
+  @override
   String get statPeriodSelect => 'Davrni tanlang';
 
   @override

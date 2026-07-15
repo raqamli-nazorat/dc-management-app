@@ -138,6 +138,18 @@ class Routes implements Coordinate {
     path: '/reports/users/filter',
   );
 
+  /// Loyiha bo'yicha hisobot ro'yxati (Hisobotlar tabidan).
+  static const projectReports = Routes._(
+    name: 'project_reports',
+    path: '/reports/projects',
+  );
+
+  /// Loyiha bo'yicha hisobotni filtrlash sahifasi.
+  static const projectReportsFilter = Routes._(
+    name: 'project_reports_filter',
+    path: '/reports/projects/filter',
+  );
+
   @override
   String toString() => 'name=$name, path=$path';
 }

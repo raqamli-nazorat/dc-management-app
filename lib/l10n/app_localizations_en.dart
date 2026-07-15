@@ -197,6 +197,48 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reportPayrollTypePenalty => 'Penalty amount';
 
   @override
+  String get reportsProjectEmpty => 'No projects yet';
+
+  @override
+  String get reportAuthor => 'Author:';
+
+  @override
+  String get reportManager => 'Manager:';
+
+  @override
+  String get reportEmployeesLabel => 'Employees:';
+
+  @override
+  String get reportTestersLabel => 'Testers:';
+
+  @override
+  String get reportManagerBonus => 'Manager bonus (UZS):';
+
+  @override
+  String get reportStatusLabel => 'Status:';
+
+  @override
+  String get reportFilterManagerBonus => 'Manager bonus';
+
+  @override
+  String get reportFilterAuthor => 'Author';
+
+  @override
+  String get reportFilterAuthorHint => 'Select author';
+
+  @override
+  String get reportFilterManager => 'Manager';
+
+  @override
+  String get reportFilterManagerHint => 'Select manager';
+
+  @override
+  String get reportFilterTesters => 'Testers';
+
+  @override
+  String get reportFilterTestersHint => 'Select testers';
+
+  @override
   String get statPeriodSelect => 'Select period';
 
   @override

@@ -291,7 +291,7 @@ class AppColors extends ThemeExtension<AppColors> {
     backgroundBase: Color(0xFF000000),
     backgroundBase2: Color(0xFF111111),
     backgroundElevation1: Color(0xFF161B22),
-    backgroundElevation1Alt: Color(0xFF222323),
+    backgroundElevation1Alt: Color(0xFF1C2128),
     backgroundElevation2: Color(0xFFE9ECF5),
     backgroundElevation2Alt: Color(0xFF303131),
     backgroundElevation3: Color(0xFF3A3B3B),
