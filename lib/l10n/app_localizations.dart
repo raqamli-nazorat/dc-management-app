@@ -506,6 +506,24 @@ abstract class AppLocalizations {
   /// **'Hisoblangan vaqti'**
   String get payrollCreatedAt;
 
+  /// No description provided for @payrollMonth.
+  ///
+  /// In uz, this message translates to:
+  /// **'Oy uchun'**
+  String get payrollMonth;
+
+  /// No description provided for @payrollStatusCalculated.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hisoblangan'**
+  String get payrollStatusCalculated;
+
+  /// No description provided for @payrollStatusConfirmed.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tasdiqlangan'**
+  String get payrollStatusConfirmed;
+
   /// No description provided for @taskReportAssignees.
   ///
   /// In uz, this message translates to:

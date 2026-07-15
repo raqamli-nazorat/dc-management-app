@@ -26,6 +26,8 @@ import '../../features/reports/presentation/pages/expense_reports_filter_page.da
 import '../../features/reports/presentation/pages/expense_reports_page.dart';
 import '../../features/reports/domain/entities/task_report_filter.dart';
 import '../../features/reports/presentation/pages/task_reports_filter_page.dart';
+import '../../features/reports/domain/entities/payroll_report_filter.dart';
+import '../../features/reports/presentation/pages/payroll_reports_filter_page.dart';
 import '../../features/reports/presentation/pages/payroll_reports_page.dart';
 import '../../features/reports/presentation/pages/task_reports_page.dart';
 import '../../features/reports/presentation/pages/user_reports_filter_page.dart';
@@ -257,6 +259,15 @@ class AppRouter {
           name: Routes.payrollReports.name,
           path: Routes.payrollReports.path,
           builder: (context, state) => const PayrollReportsPage(),
+        ),
+        GoRoute(
+          name: Routes.payrollReportsFilter.name,
+          path: Routes.payrollReportsFilter.path,
+          builder: (context, state) => PayrollReportsFilterPage(
+            initial: state.extra is PayrollReportFilter
+                ? state.extra! as PayrollReportFilter
+                : PayrollReportFilter.empty,
+          ),
         ),
         GoRoute(
           name: Routes.meetingCreate.name,

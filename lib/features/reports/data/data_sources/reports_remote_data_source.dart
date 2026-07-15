@@ -10,6 +10,7 @@ import '../../domain/entities/expense_report_filter.dart';
 import '../../domain/entities/user_report.dart';
 import '../../domain/entities/user_report_filter.dart';
 import '../../domain/entities/payroll_report.dart';
+import '../../domain/entities/payroll_report_filter.dart';
 import '../../domain/entities/task_report.dart';
 import '../../domain/entities/task_report_filter.dart';
 import '../models/payroll_report_model.dart';
@@ -44,9 +45,11 @@ abstract interface class ReportsRemoteDataSource {
   /// Vazifalar bo'yicha hisobot sahifasi (`GET /reports/tasks/?page=` + filtr).
   Future<TaskReportPage> getTaskReports({int page, TaskReportFilter filter});
 
-  /// Ish haqi bo'yicha hisobot sahifasi (`GET /reports/payrolls/?page=` +
-  /// ixtiyoriy `search`).
-  Future<PayrollReportPage> getPayrollReports({int page, String search});
+  /// Ish haqi bo'yicha hisobot sahifasi (`GET /reports/payrolls/?page=` + filtr).
+  Future<PayrollReportPage> getPayrollReports({
+    int page,
+    PayrollReportFilter filter,
+  });
 }
 
 class ReportsRemoteDataSourceImpl implements ReportsRemoteDataSource {
@@ -257,7 +260,7 @@ class ReportsRemoteDataSourceImpl implements ReportsRemoteDataSource {
   @override
   Future<PayrollReportPage> getPayrollReports({
     int page = 1,
-    String search = '',
+    PayrollReportFilter filter = PayrollReportFilter.empty,
   }) async {
     try {
       final response = await _client.get(
@@ -265,7 +268,7 @@ class ReportsRemoteDataSourceImpl implements ReportsRemoteDataSource {
         queryParameters: {
           'page': page,
           'page_size': _pageSize,
-          if (search.trim().isNotEmpty) 'search': search.trim(),
+          ..._payrollFilterParams(filter),
         },
       );
       final body = ResponseMapper.asMap(response.data);
@@ -278,6 +281,34 @@ class ReportsRemoteDataSourceImpl implements ReportsRemoteDataSource {
       throw ResponseMapper.mapDioException(e);
     }
   }
+
+  /// [PayrollReportFilter] → `GET /reports/payrolls/` query paramlari (faqat
+  /// to'ldirilganlari). `month_year` — `YYYY-MM`, yil sifatida joriy yil
+  /// (dizaynda faqat oy tanlanadi).
+  Map<String, dynamic> _payrollFilterParams(PayrollReportFilter f) => {
+    if (f.search.trim().isNotEmpty) 'search': f.search.trim(),
+    if (f.createdFrom != null)
+      'created_at_min': f.createdFrom!.toIso8601String(),
+    if (f.createdTo != null) 'created_at_max': f.createdTo!.toIso8601String(),
+    if (f.confirmedFrom != null)
+      'confirmed_at_min': f.confirmedFrom!.toIso8601String(),
+    if (f.confirmedTo != null)
+      'confirmed_at_max': f.confirmedTo!.toIso8601String(),
+    if (f.userIds.isNotEmpty) 'user': f.userIds.join(','),
+    if (f.accountantIds.isNotEmpty) 'accountant': f.accountantIds.join(','),
+    if (f.month != null)
+      'month_year':
+          '${DateTime.now().year}-${f.month!.toString().padLeft(2, '0')}',
+    if (f.isConfirmed != null) 'is_confirmed': f.isConfirmed,
+    if (f.totalFrom != null) 'total_amount_min': f.totalFrom,
+    if (f.totalTo != null) 'total_amount_max': f.totalTo,
+    if (f.salaryFrom != null) 'salary_min': f.salaryFrom,
+    if (f.salaryTo != null) 'salary_max': f.salaryTo,
+    if (f.kpiFrom != null) 'kpi_min': f.kpiFrom,
+    if (f.kpiTo != null) 'kpi_max': f.kpiTo,
+    if (f.penaltyFrom != null) 'penalty_min': f.penaltyFrom,
+    if (f.penaltyTo != null) 'penalty_max': f.penaltyTo,
+  };
 
   /// [TaskReportFilter] → `GET /reports/tasks/` query paramlari (faqat
   /// to'ldirilganlari).

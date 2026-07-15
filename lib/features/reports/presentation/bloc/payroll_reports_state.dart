@@ -10,7 +10,7 @@ class PayrollReportsState extends Equatable {
     this.page = 1,
     this.hasReachedMax = false,
     this.isLoadingMore = false,
-    this.search = '',
+    this.filter = PayrollReportFilter.empty,
   });
 
   final PayrollReportsStatus status;
@@ -19,7 +19,7 @@ class PayrollReportsState extends Equatable {
   final int page;
   final bool hasReachedMax;
   final bool isLoadingMore;
-  final String search;
+  final PayrollReportFilter filter;
 
   PayrollReportsState copyWith({
     PayrollReportsStatus? status,
@@ -28,7 +28,7 @@ class PayrollReportsState extends Equatable {
     int? page,
     bool? hasReachedMax,
     bool? isLoadingMore,
-    String? search,
+    PayrollReportFilter? filter,
   }) => PayrollReportsState(
     status: status ?? this.status,
     items: items ?? this.items,
@@ -36,7 +36,7 @@ class PayrollReportsState extends Equatable {
     page: page ?? this.page,
     hasReachedMax: hasReachedMax ?? this.hasReachedMax,
     isLoadingMore: isLoadingMore ?? this.isLoadingMore,
-    search: search ?? this.search,
+    filter: filter ?? this.filter,
   );
 
   @override
@@ -47,6 +47,6 @@ class PayrollReportsState extends Equatable {
     page,
     hasReachedMax,
     isLoadingMore,
-    search,
+    filter,
   ];
 }

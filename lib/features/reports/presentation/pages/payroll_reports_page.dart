@@ -3,18 +3,21 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../config/routes/entity/routes.dart';
 import '../../../../config/theme/app_colors.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
 import '../../../../injection_container.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../domain/entities/payroll_report_filter.dart';
 import '../bloc/payroll_reports_bloc.dart';
 import '../widgets/payroll_report_card.dart';
 
 /// Ish haqi bo'yicha hisobot ro'yxati (`Routes.payrollReports`) — qidiruv +
-/// cheksiz-scroll; filtr keyingi bosqichda.
+/// filtr + cheksiz-scroll.
 class PayrollReportsPage extends StatelessWidget {
   const PayrollReportsPage({super.key});
 
@@ -182,6 +185,17 @@ class _HeaderState extends State<_Header> {
     });
   }
 
+  Future<void> _filter() async {
+    final bloc = context.read<PayrollReportsBloc>();
+    final result = await context.pushNamed<Object?>(
+      Routes.payrollReportsFilter.name,
+      extra: bloc.state.filter,
+    );
+    if (result is PayrollReportFilter) {
+      bloc.add(PayrollReportsFilterChanged(result));
+    }
+  }
+
   @override
   Widget build(BuildContext context) => Padding(
     padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
@@ -195,14 +209,19 @@ class _HeaderState extends State<_Header> {
               onChanged: _changed,
               onClose: _close,
             )
-          : _TitleBar(key: const ValueKey('title'), onSearch: _search),
+          : _TitleBar(
+              key: const ValueKey('title'),
+              onSearch: _search,
+              onFilter: _filter,
+            ),
     ),
   );
 }
 
 class _TitleBar extends StatelessWidget {
-  const _TitleBar({required this.onSearch, super.key});
+  const _TitleBar({required this.onSearch, required this.onFilter, super.key});
   final VoidCallback onSearch;
+  final VoidCallback onFilter;
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
@@ -230,6 +249,16 @@ class _TitleBar extends StatelessWidget {
         ),
         SizedBox(width: 12.w),
         _IconButton(icon: Assets.icons.icSearch, onTap: onSearch),
+        SizedBox(width: 12.w),
+        BlocBuilder<PayrollReportsBloc, PayrollReportsState>(
+          buildWhen: (a, b) =>
+              a.filter.hasActiveFilters != b.filter.hasActiveFilters,
+          builder: (_, state) => _IconButton(
+            icon: Assets.icons.icFilter,
+            onTap: onFilter,
+            dot: state.filter.hasActiveFilters,
+          ),
+        ),
       ],
     );
   }
@@ -336,33 +365,45 @@ class _SearchBar extends StatelessWidget {
 }
 
 class _IconButton extends StatelessWidget {
-  const _IconButton({required this.icon, required this.onTap});
+  const _IconButton({
+    required this.icon,
+    required this.onTap,
+    this.dot = false,
+  });
   final SvgGenImage icon;
   final VoidCallback onTap;
+  final bool dot;
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12.r),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: colors.backgroundElevation1,
-          borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: colors.strokeSoft, width: 1.w),
-        ),
-        child: SizedBox(
-          width: 40.w,
-          height: 40.w,
-          child: Center(
-            child: icon.svg(
-              width: 16.w,
-              height: 16.w,
-              colorFilter: ColorFilter.mode(colors.iconStrong, BlendMode.srcIn),
-            ),
+    final button = DecoratedBox(
+      decoration: BoxDecoration(
+        color: colors.backgroundElevation1,
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: colors.strokeSoft, width: 1.w),
+      ),
+      child: SizedBox(
+        width: 40.w,
+        height: 40.w,
+        child: Center(
+          child: icon.svg(
+            width: 16.w,
+            height: 16.w,
+            colorFilter: ColorFilter.mode(colors.iconStrong, BlendMode.srcIn),
           ),
         ),
       ),
+    );
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12.r),
+      child: dot
+          ? Badge(
+              backgroundColor: colors.accentSub,
+              smallSize: 8.w,
+              child: button,
+            )
+          : button,
     );
   }
 }

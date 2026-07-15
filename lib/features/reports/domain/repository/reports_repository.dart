@@ -3,6 +3,7 @@ import '../entities/project_report_filter.dart';
 import '../entities/expense_report.dart';
 import '../entities/expense_report_filter.dart';
 import '../entities/payroll_report.dart';
+import '../entities/payroll_report_filter.dart';
 import '../entities/task_report.dart';
 import '../entities/task_report_filter.dart';
 import '../entities/user_report.dart';
@@ -33,6 +34,9 @@ abstract interface class ReportsRepository {
   /// Vazifalar bo'yicha hisobot sahifasi (`GET /reports/tasks/?page=` + filtr).
   Future<TaskReportPage> getTaskReports({int page, TaskReportFilter filter});
 
-  /// Ish haqi bo'yicha hisobot sahifasi (`GET /reports/payrolls/?page=` + qidiruv).
-  Future<PayrollReportPage> getPayrollReports({int page, String search});
+  /// Ish haqi bo'yicha hisobot sahifasi (`GET /reports/payrolls/?page=` + filtr).
+  Future<PayrollReportPage> getPayrollReports({
+    int page,
+    PayrollReportFilter filter,
+  });
 }

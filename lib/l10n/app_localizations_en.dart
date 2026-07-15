@@ -215,6 +215,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get payrollCreatedAt => 'Calculated at';
 
   @override
+  String get payrollMonth => 'Month';
+
+  @override
+  String get payrollStatusCalculated => 'Calculated';
+
+  @override
+  String get payrollStatusConfirmed => 'Confirmed';
+
+  @override
   String get taskReportAssignees => 'Assignees';
 
   @override

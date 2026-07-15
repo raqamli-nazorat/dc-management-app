@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/error/failures.dart';
 import '../../domain/entities/payroll_report.dart';
+import '../../domain/entities/payroll_report_filter.dart';
 import '../../domain/usecases/get_payroll_reports_usecase.dart';
 
 part 'payroll_reports_event.dart';
@@ -13,19 +14,25 @@ class PayrollReportsBloc
   PayrollReportsBloc({required GetPayrollReportsUseCase getPayrollReports})
     : _getPayrollReports = getPayrollReports,
       super(const PayrollReportsState()) {
-    on<PayrollReportsRequested>((_, emit) => _reload(state.search, emit));
+    on<PayrollReportsRequested>((_, emit) => _reload(state.filter, emit));
     on<PayrollReportsSearchChanged>(
-      (event, emit) => _reload(event.query, emit),
+      (event, emit) => _reload(state.filter.copyWithSearch(event.query), emit),
+    );
+    on<PayrollReportsFilterChanged>(
+      (event, emit) => _reload(event.filter, emit),
     );
     on<PayrollReportsLoadMore>(_onLoadMore);
   }
 
   final GetPayrollReportsUseCase _getPayrollReports;
 
-  Future<void> _reload(String search, Emitter<PayrollReportsState> emit) async {
-    emit(state.copyWith(status: PayrollReportsStatus.loading, search: search));
+  Future<void> _reload(
+    PayrollReportFilter filter,
+    Emitter<PayrollReportsState> emit,
+  ) async {
+    emit(state.copyWith(status: PayrollReportsStatus.loading, filter: filter));
     try {
-      final page = await _getPayrollReports((page: 1, search: search));
+      final page = await _getPayrollReports((page: 1, filter: filter));
       emit(
         state.copyWith(
           status: PayrollReportsStatus.success,
@@ -54,7 +61,7 @@ class PayrollReportsBloc
     emit(state.copyWith(isLoadingMore: true));
     try {
       final next = state.page + 1;
-      final page = await _getPayrollReports((page: next, search: state.search));
+      final page = await _getPayrollReports((page: next, filter: state.filter));
       emit(
         state.copyWith(
           items: [...state.items, ...page.items],

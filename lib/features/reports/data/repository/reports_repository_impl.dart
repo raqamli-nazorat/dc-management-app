@@ -5,6 +5,7 @@ import '../../domain/entities/project_report_filter.dart';
 import '../../domain/entities/expense_report.dart';
 import '../../domain/entities/expense_report_filter.dart';
 import '../../domain/entities/payroll_report.dart';
+import '../../domain/entities/payroll_report_filter.dart';
 import '../../domain/entities/task_report.dart';
 import '../../domain/entities/task_report_filter.dart';
 import '../../domain/entities/user_report.dart';
@@ -53,8 +54,8 @@ class ReportsRepositoryImpl implements ReportsRepository {
   @override
   Future<PayrollReportPage> getPayrollReports({
     int page = 1,
-    String search = '',
-  }) => _guard(() => _remote.getPayrollReports(page: page, search: search));
+    PayrollReportFilter filter = PayrollReportFilter.empty,
+  }) => _guard(() => _remote.getPayrollReports(page: page, filter: filter));
 
   Future<T> _guard<T>(Future<T> Function() action) async {
     try {

@@ -20,3 +20,10 @@ class PayrollReportsSearchChanged extends PayrollReportsEvent {
   @override
   List<Object?> get props => [query];
 }
+
+class PayrollReportsFilterChanged extends PayrollReportsEvent {
+  const PayrollReportsFilterChanged(this.filter);
+  final PayrollReportFilter filter;
+  @override
+  List<Object?> get props => [filter];
+}

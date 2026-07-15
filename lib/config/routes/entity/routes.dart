@@ -178,6 +178,12 @@ class Routes implements Coordinate {
     path: '/reports/payrolls',
   );
 
+  /// Ish haqi bo'yicha hisobotni filtrlash sahifasi.
+  static const payrollReportsFilter = Routes._(
+    name: 'payroll_reports_filter',
+    path: '/reports/payrolls/filter',
+  );
+
   @override
   String toString() => 'name=$name, path=$path';
 }

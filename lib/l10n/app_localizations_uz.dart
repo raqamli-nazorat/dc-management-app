@@ -217,6 +217,15 @@ class AppLocalizationsUz extends AppLocalizations {
   String get payrollCreatedAt => 'Hisoblangan vaqti';
 
   @override
+  String get payrollMonth => 'Oy uchun';
+
+  @override
+  String get payrollStatusCalculated => 'Hisoblangan';
+
+  @override
+  String get payrollStatusConfirmed => 'Tasdiqlangan';
+
+  @override
   String get taskReportAssignees => 'Topshiruvchilar';
 
   @override
