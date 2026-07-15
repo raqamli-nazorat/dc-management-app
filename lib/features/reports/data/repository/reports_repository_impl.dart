@@ -2,6 +2,8 @@ import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
 import '../../domain/entities/project_report.dart';
 import '../../domain/entities/project_report_filter.dart';
+import '../../domain/entities/expense_report.dart';
+import '../../domain/entities/expense_report_filter.dart';
 import '../../domain/entities/user_report.dart';
 import '../../domain/entities/user_report_filter.dart';
 import '../../domain/repository/reports_repository.dart';
@@ -28,6 +30,16 @@ class ReportsRepositoryImpl implements ReportsRepository {
     int page = 1,
     ProjectReportFilter filter = ProjectReportFilter.empty,
   }) => _guard(() => _remote.getProjectReports(page: page, filter: filter));
+
+  @override
+  Future<ExpenseReportPage> getExpenseReports({
+    int page = 1,
+    ExpenseReportFilter filter = ExpenseReportFilter.empty,
+  }) => _guard(() => _remote.getExpenseReports(page: page, filter: filter));
+
+  @override
+  Future<ExpenseReportOptions> getExpenseReportOptions() =>
+      _guard(_remote.getExpenseReportOptions);
 
   Future<T> _guard<T>(Future<T> Function() action) async {
     try {

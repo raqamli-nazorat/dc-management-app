@@ -150,6 +150,16 @@ class Routes implements Coordinate {
     path: '/reports/projects/filter',
   );
 
+  static const expenseReports = Routes._(
+    name: 'expense_reports',
+    path: '/reports/expenses',
+  );
+
+  static const expenseReportsFilter = Routes._(
+    name: 'expense_reports_filter',
+    path: '/reports/expenses/filter',
+  );
+
   @override
   String toString() => 'name=$name, path=$path';
 }

@@ -1,5 +1,7 @@
 import '../entities/project_report.dart';
 import '../entities/project_report_filter.dart';
+import '../entities/expense_report.dart';
+import '../entities/expense_report_filter.dart';
 import '../entities/user_report.dart';
 import '../entities/user_report_filter.dart';
 
@@ -17,4 +19,11 @@ abstract interface class ReportsRepository {
     int page,
     ProjectReportFilter filter,
   });
+
+  Future<ExpenseReportPage> getExpenseReports({
+    int page,
+    ExpenseReportFilter filter,
+  });
+
+  Future<ExpenseReportOptions> getExpenseReportOptions();
 }

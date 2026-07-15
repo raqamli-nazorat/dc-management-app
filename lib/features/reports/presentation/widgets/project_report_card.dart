@@ -55,7 +55,10 @@ class _ProjectReportCardState extends State<ProjectReportCard> {
                           .s(13.sp)
                           .w(500)
                           .c(colors.textStrong)
-                          .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+                          .copyWith(
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                       if (report.description.isNotEmpty)
                         report.description
                             .s(11.sp)
@@ -70,10 +73,14 @@ class _ProjectReportCardState extends State<ProjectReportCard> {
                 ),
                 SizedBox(width: 8.w),
                 if (report.deadline != null)
-                  _Chip(DateFormat('dd.MM.yyyy HH:mm').format(report.deadline!)),
+                  _Chip(
+                    DateFormat('dd.MM.yyyy HH:mm').format(report.deadline!),
+                  ),
               ],
             ),
-            _Chip('${l10n.reportStatusLabel} ${_statusLabel(report.status, l10n)}'),
+            _Chip(
+              '${l10n.reportStatusLabel} ${_statusLabel(report.status, l10n)}',
+            ),
             _KeyValueRow(
               label: l10n.reportManagerBonus,
               value: Formatters.formatAmount(
@@ -276,9 +283,17 @@ class _TaskStatsBox extends StatelessWidget {
 
     final rows = [
       (l10n.reportTodo, stats.todo, colors.taskStatusTodo),
-      (l10n.taskStatusInProgress, stats.inProgress, colors.taskStatusInProgress),
+      (
+        l10n.taskStatusInProgress,
+        stats.inProgress,
+        colors.taskStatusInProgress,
+      ),
       (l10n.taskStatusDone, stats.done, colors.taskStatusDone),
-      (l10n.taskStatusProduction, stats.production, colors.taskStatusProduction),
+      (
+        l10n.taskStatusProduction,
+        stats.production,
+        colors.taskStatusProduction,
+      ),
       (l10n.taskStatusChecked, stats.checked, colors.taskStatusChecked),
       (l10n.taskStatusRejected, stats.rejected, colors.taskStatusRejected),
       (l10n.taskStatusOverdue, stats.overdue, colors.taskStatusOverdue),

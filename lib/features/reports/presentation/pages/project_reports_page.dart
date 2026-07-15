@@ -95,7 +95,8 @@ class _ProjectReportsViewState extends State<_ProjectReportsView> {
                         return _CenteredScrollable(
                           child: _ErrorState(
                             failure: state.failure,
-                            onRetry: () => context.read<ProjectReportsBloc>()
+                            onRetry: () => context
+                                .read<ProjectReportsBloc>()
                                 .add(const ProjectReportsRequested()),
                           ),
                         );
@@ -114,7 +115,8 @@ class _ProjectReportsViewState extends State<_ProjectReportsView> {
                           physics: const AlwaysScrollableScrollPhysics(),
                           padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 24.h),
                           itemCount:
-                              state.items.length + (state.hasReachedMax ? 0 : 1),
+                              state.items.length +
+                              (state.hasReachedMax ? 0 : 1),
                           separatorBuilder: (_, _) => SizedBox(height: 8.h),
                           itemBuilder: (_, i) {
                             if (i >= state.items.length) {
@@ -243,11 +245,7 @@ class _ReportsHeaderState extends State<_ReportsHeader> {
 
 /// Qidiruv yopiq holati: orqaga + sarlavha + qidiruv + filtr (nuqtali).
 class _TitleBar extends StatelessWidget {
-  const _TitleBar({
-    required this.onSearch,
-    required this.onFilter,
-    super.key,
-  });
+  const _TitleBar({required this.onSearch, required this.onFilter, super.key});
 
   final VoidCallback onSearch;
   final VoidCallback onFilter;
@@ -478,7 +476,10 @@ class _CenteredScrollable extends StatelessWidget {
       builder: (context, constraints) => ListView(
         physics: const AlwaysScrollableScrollPhysics(),
         children: [
-          SizedBox(height: constraints.maxHeight, child: Center(child: child)),
+          SizedBox(
+            height: constraints.maxHeight,
+            child: Center(child: child),
+          ),
         ],
       ),
     );

@@ -104,6 +104,96 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reportTasks => 'By tasks';
 
   @override
+  String get expenseReportsEmpty => 'No expense requests yet';
+
+  @override
+  String get expenseReportUncategorized => 'Expense request';
+
+  @override
+  String get expenseReportAmount => 'Amount (UZS)';
+
+  @override
+  String get expenseReportUser => 'Employee';
+
+  @override
+  String get expenseReportAccountant => 'Accountant';
+
+  @override
+  String get expenseReportProject => 'Project';
+
+  @override
+  String get expenseReportCategory => 'Expense category';
+
+  @override
+  String get expenseReportType => 'Expense type';
+
+  @override
+  String get expenseReportPaymentMethod => 'Payment method';
+
+  @override
+  String get expenseReportPaymentCash => 'Cash';
+
+  @override
+  String get expenseReportPaymentCard => 'By card number';
+
+  @override
+  String get expenseReportCard => 'Card number';
+
+  @override
+  String get expenseReportCreatedAt => 'Created at';
+
+  @override
+  String get expenseReportPaidAt => 'Paid at';
+
+  @override
+  String get expenseReportConfirmedAt => 'Confirmed at';
+
+  @override
+  String get expenseReportCancelledAt => 'Cancelled at';
+
+  @override
+  String get expenseReportReason => 'Request reason';
+
+  @override
+  String get expenseReportCancelReason => 'Cancellation reason';
+
+  @override
+  String get expenseReportStatusPending => 'Pending';
+
+  @override
+  String get expenseReportStatusPaid => 'Paid';
+
+  @override
+  String get expenseReportStatusConfirmed => 'Confirmed';
+
+  @override
+  String get expenseReportStatusCancelled => 'Cancelled';
+
+  @override
+  String get expenseReportTypeWithdrawal => 'Withdrawal';
+
+  @override
+  String get expenseReportTypeCompany => 'Company expenses';
+
+  @override
+  String get expenseReportTypeOther => 'Other expenses';
+
+  @override
+  String get expenseReportSelect => 'Select';
+
+  @override
+  String get expenseReportAccountantHint => 'Select accountants';
+
+  @override
+  String get expenseReportProjectHint => 'Select project';
+
+  @override
+  String get expenseReportTitle => 'Title';
+
+  @override
+  String get expenseReportTitleHint => 'Search by title';
+
+  @override
   String get reportsEmployeeEmpty => 'No employees yet';
 
   @override
