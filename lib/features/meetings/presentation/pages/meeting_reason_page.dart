@@ -14,6 +14,7 @@ import '../../../../injection_container.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../bloc/meeting_reason_bloc.dart';
 import '../widgets/meeting_card.dart';
+import '../widgets/meeting_excuse_row.dart';
 
 /// "Yig‘ilishga qatnashmadingiz" — qatnashmaslik sababini yozib yuborish
 /// ekrani. Bildirishnoma (type=meeting) bosilganda ochiladi. Sabab yuborilgach
@@ -92,55 +93,227 @@ class _ReasonViewState extends State<_ReasonView> {
                 );
             }
           },
-          child: Column(
-            children: [
-              _ReasonHeader(title: l10n.meetingReasonTitle),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 20.w,
-                    vertical: 12.h,
-                  ),
-                  child: BlocBuilder<MeetingReasonBloc, MeetingReasonState>(
-                    buildWhen: (a, b) =>
-                        a.title != b.title || a.startDate != b.startDate,
-                    builder: (context, state) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
+          child: BlocBuilder<MeetingReasonBloc, MeetingReasonState>(
+            buildWhen: (a, b) =>
+                a.loadStatus != b.loadStatus || a.isOrganizer != b.isOrganizer,
+            builder: (context, state) {
+              // Tashkilotchi: sabab yozish o'rniga sabablarni tasdiqlash.
+              if (state.isOrganizer) return const _OrganizerView();
+
+              // Sabab allaqachon yuborilgan (yoki qatnashgan) — forma emas,
+              // holat ko'rinishi. Rad etilgan bo'lsa ham qayta yozib bo'lmaydi.
+              final mine = state.myAttendance;
+              if (mine != null &&
+                  (mine.isAttended || mine.absenceReason.trim().isNotEmpty)) {
+                return _ReasonStatusView(
+                  title: state.title,
+                  date: formatMeetingDate(state.startDate),
+                );
+              }
+
+              return Column(
+                children: [
+                  _ReasonHeader(title: l10n.meetingReasonTitle),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 12.h,
+                      ),
+                      child: BlocBuilder<MeetingReasonBloc, MeetingReasonState>(
+                        buildWhen: (a, b) =>
+                            a.title != b.title || a.startDate != b.startDate,
+                        builder: (context, state) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(
-                                child: l10n.meetingReasonPrompt
-                                    .s(13.sp)
-                                    .w(800)
-                                    .c(colors.textStrong)
-                                    .copyWith(maxLines: 2),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Expanded(
+                                    child: l10n.meetingReasonPrompt
+                                        .s(13.sp)
+                                        .w(800)
+                                        .c(colors.textStrong)
+                                        .copyWith(maxLines: 2),
+                                  ),
+                                  SizedBox(width: 12.w),
+                                  _MeetingSummary(
+                                    title: state.title,
+                                    date: formatMeetingDate(state.startDate),
+                                  ),
+                                ],
                               ),
-                              SizedBox(width: 12.w),
-                              _MeetingSummary(
-                                title: state.title,
-                                date: formatMeetingDate(state.startDate),
+                              SizedBox(height: 8.h),
+                              _ReasonField(
+                                controller: _controller,
+                                hint: l10n.meetingReasonHint,
                               ),
                             ],
-                          ),
-                          SizedBox(height: 8.h),
-                          _ReasonField(
-                            controller: _controller,
-                            hint: l10n.meetingReasonHint,
-                          ),
-                        ],
-                      );
-                    },
+                          );
+                        },
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              _SubmitBar(controller: _controller, onSubmit: _submit),
-            ],
+                  _SubmitBar(controller: _controller, onSubmit: _submit),
+                ],
+              );
+            },
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Tashkilotchi ko'rinishi: qatnashmaganlar ro'yxati — har birida sabab va
+/// "Tasdiqlash" tugmasi (`is_excused=true`).
+class _OrganizerView extends StatelessWidget {
+  const _OrganizerView();
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final l10n = AppLocalizations.of(context);
+
+    return BlocConsumer<MeetingReasonBloc, MeetingReasonState>(
+      listenWhen: (a, b) => b.approveFailed,
+      listener: (context, state) =>
+          AppToast.showError(context, title: l10n.commonError),
+      builder: (context, state) {
+        return Column(
+          children: [
+            _ReasonHeader(title: l10n.meetingExcuseListTitle),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: state.title
+                        .s(13.sp)
+                        .w(700)
+                        .c(colors.textStrong)
+                        .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+                  ),
+                  SizedBox(width: 8.w),
+                  formatMeetingDate(state.startDate)
+                      .s(11.sp)
+                      .w(500)
+                      .c(colors.textSub),
+                ],
+              ),
+            ),
+            Expanded(
+              child: state.rows.isEmpty
+                  ? Center(
+                      child: l10n.statEmpty.s(14.sp).w(500).c(colors.textSub),
+                    )
+                  : ListView.separated(
+                      padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 24.h),
+                      itemCount: state.rows.length,
+                      separatorBuilder: (_, _) => SizedBox(height: 8.h),
+                      itemBuilder: (_, i) {
+                        final row = state.rows[i];
+                        return MeetingExcuseRow(
+                          row: row,
+                          busy: state.approvingId == row.id,
+                          rejected: state.rejectedIds.contains(row.id),
+                          onApprove: () => context
+                              .read<MeetingReasonBloc>()
+                              .add(MeetingExcuseDecided(
+                                attendanceId: row.id,
+                                approved: true,
+                              )),
+                          onReject: () => context
+                              .read<MeetingReasonBloc>()
+                              .add(MeetingExcuseDecided(
+                                attendanceId: row.id,
+                                approved: false,
+                              )),
+                        );
+                      },
+                    ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+/// Sabab yozish mumkin bo'lmagan holat: qatnashgan yoki sabab allaqachon
+/// yuborilgan (tasdiqlangan/rad etilgan) — faqat holat ko'rsatiladi.
+class _ReasonStatusView extends StatelessWidget {
+  const _ReasonStatusView({required this.title, required this.date});
+
+  final String title;
+  final String date;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final l10n = AppLocalizations.of(context);
+
+    return Column(
+      children: [
+        _ReasonHeader(title: l10n.meetingReasonTitle),
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+            child: BlocBuilder<MeetingReasonBloc, MeetingReasonState>(
+              builder: (context, state) {
+                final mine = state.myAttendance;
+                final String status;
+                final Color color;
+                if (mine == null || mine.isAttended) {
+                  status = l10n.meetingMyAttended;
+                  color = colors.successStrong;
+                } else if (mine.isExcused) {
+                  status = l10n.meetingExcuseAccepted;
+                  color = colors.successStrong;
+                } else {
+                  status = l10n.meetingReasonSentLabel;
+                  color = colors.textSoft;
+                }
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: title
+                              .s(13.sp)
+                              .w(700)
+                              .c(colors.textStrong)
+                              .copyWith(
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                        ),
+                        SizedBox(width: 8.w),
+                        date.s(11.sp).w(500).c(colors.textSub),
+                      ],
+                    ),
+                    SizedBox(height: 12.h),
+                    if (mine != null &&
+                        !mine.isAttended &&
+                        mine.absenceReason.trim().isNotEmpty) ...[
+                      mine.absenceReason
+                          .s(13.sp)
+                          .w(500)
+                          .h(20 / 13)
+                          .c(colors.textSub),
+                      SizedBox(height: 8.h),
+                    ],
+                    status.s(13.sp).w(700).c(color),
+                  ],
+                );
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

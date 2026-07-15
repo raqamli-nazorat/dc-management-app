@@ -245,6 +245,8 @@ Future<void> configureDependencies() async {
         getMeeting: getIt(),
         createMeeting: getIt(),
         closeMeeting: getIt(),
+        getAttendance: getIt(),
+        updateAttendance: getIt(),
       ),
     )
     ..registerFactory<MeetingsBloc>(
@@ -255,6 +257,8 @@ Future<void> configureDependencies() async {
         getMeeting: getIt(),
         getAttendance: getIt(),
         submitReason: getIt(),
+        updateAttendance: getIt(),
+        storage: getIt(),
       ),
     );
 

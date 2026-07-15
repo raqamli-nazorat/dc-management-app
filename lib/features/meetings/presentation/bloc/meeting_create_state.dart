@@ -10,6 +10,12 @@ class MeetingCreateState extends Equatable {
     this.detail,
     this.submitStatus = MeetingCreateSubmitStatus.idle,
     this.submitFailure,
+    this.closeStatus = MeetingCreateSubmitStatus.idle,
+    this.myAttendance,
+    this.attendanceRows = const [],
+    this.excuseBusyId = 0,
+    this.rejectedExcuseIds = const {},
+    this.excuseActionFailed = false,
   });
 
   final List<ProjectShort> projects;
@@ -22,6 +28,27 @@ class MeetingCreateState extends Equatable {
   final MeetingCreateSubmitStatus submitStatus;
   final Failure? submitFailure;
 
+  /// Yakunlash oqimi (davomat PATCH + close) holati — [submitStatus]dan
+  /// alohida, chunki detail rejimida forma submit'i yo'q.
+  final MeetingCreateSubmitStatus closeStatus;
+
+  /// Joriy foydalanuvchining shu yig'ilishdagi qatnashuv yozuvi
+  /// (detail rejimida ko'rsatiladi; `null` — yuklanmagan/topilmadi).
+  final MeetingAttendance? myAttendance;
+
+  /// Detail: yig'ilishning barcha qatnashuv yozuvlari — tashkilotchining
+  /// sabab tasdiqlash/rad etish ro'yxati shu yerdan.
+  final List<MeetingAttendance> attendanceRows;
+
+  /// Hozir qaror yuborilayotgan attendance id (0 — yo'q).
+  final int excuseBusyId;
+
+  /// Shu sessiyada rad etilganlar (backend'da alohida maydon yo'q).
+  final Set<int> rejectedExcuseIds;
+
+  /// Oxirgi qaror urinishi xato (toast trigger).
+  final bool excuseActionFailed;
+
   MeetingCreateState copyWith({
     List<ProjectShort>? projects,
     List<ProjectMember>? members,
@@ -29,6 +56,12 @@ class MeetingCreateState extends Equatable {
     Meeting? detail,
     MeetingCreateSubmitStatus? submitStatus,
     Failure? submitFailure,
+    MeetingCreateSubmitStatus? closeStatus,
+    MeetingAttendance? myAttendance,
+    List<MeetingAttendance>? attendanceRows,
+    int? excuseBusyId,
+    Set<int>? rejectedExcuseIds,
+    bool? excuseActionFailed,
   }) => MeetingCreateState(
     projects: projects ?? this.projects,
     members: members ?? this.members,
@@ -36,6 +69,12 @@ class MeetingCreateState extends Equatable {
     detail: detail ?? this.detail,
     submitStatus: submitStatus ?? this.submitStatus,
     submitFailure: submitFailure ?? this.submitFailure,
+    closeStatus: closeStatus ?? this.closeStatus,
+    myAttendance: myAttendance ?? this.myAttendance,
+    attendanceRows: attendanceRows ?? this.attendanceRows,
+    excuseBusyId: excuseBusyId ?? this.excuseBusyId,
+    rejectedExcuseIds: rejectedExcuseIds ?? this.rejectedExcuseIds,
+    excuseActionFailed: excuseActionFailed ?? false,
   );
 
   @override
@@ -46,5 +85,11 @@ class MeetingCreateState extends Equatable {
     detail,
     submitStatus,
     submitFailure,
+    closeStatus,
+    myAttendance,
+    attendanceRows,
+    excuseBusyId,
+    rejectedExcuseIds,
+    excuseActionFailed,
   ];
 }

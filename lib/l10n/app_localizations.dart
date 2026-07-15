@@ -1382,6 +1382,90 @@ abstract class AppLocalizations {
   /// **'Yig‘ilish yangilandi'**
   String get meetingUpdateSuccess;
 
+  /// No description provided for @meetingCloseAction.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yig‘ilishni yakunlash'**
+  String get meetingCloseAction;
+
+  /// No description provided for @meetingCloseSheetTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yig‘ilish ishtirokchilarini belgilang'**
+  String get meetingCloseSheetTitle;
+
+  /// No description provided for @meetingCloseSheetSubtitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qatnashgan xodimlarni tanlang'**
+  String get meetingCloseSheetSubtitle;
+
+  /// No description provided for @meetingCloseConfirm.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tasdiqlash'**
+  String get meetingCloseConfirm;
+
+  /// No description provided for @meetingCloseSuccess.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yig‘ilish yakunlandi'**
+  String get meetingCloseSuccess;
+
+  /// No description provided for @meetingExcuseListTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qatnashmaganlar sabablari'**
+  String get meetingExcuseListTitle;
+
+  /// No description provided for @meetingExcuseNoReason.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sabab hali yozilmagan'**
+  String get meetingExcuseNoReason;
+
+  /// No description provided for @meetingExcuseAccepted.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sabab qabul qilindi'**
+  String get meetingExcuseAccepted;
+
+  /// No description provided for @meetingExcuseReject.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rad etish'**
+  String get meetingExcuseReject;
+
+  /// No description provided for @meetingExcuseRejected.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rad etildi'**
+  String get meetingExcuseRejected;
+
+  /// No description provided for @meetingMyAttended.
+  ///
+  /// In uz, this message translates to:
+  /// **'Siz yig‘ilishda qatnashgansiz'**
+  String get meetingMyAttended;
+
+  /// No description provided for @meetingMyNotAttended.
+  ///
+  /// In uz, this message translates to:
+  /// **'Siz yig‘ilishda qatnashmagansiz'**
+  String get meetingMyNotAttended;
+
+  /// No description provided for @meetingSendReason.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sabab yuborish'**
+  String get meetingSendReason;
+
+  /// No description provided for @meetingReasonSentLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sabab yuborilgan'**
+  String get meetingReasonSentLabel;
+
   /// No description provided for @meetingDeleteTitle.
   ///
   /// In uz, this message translates to:

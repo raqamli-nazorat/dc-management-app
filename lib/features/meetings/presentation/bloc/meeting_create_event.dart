@@ -45,6 +45,54 @@ class MeetingCreateSubmitted extends MeetingCreateEvent {
   List<Object?> get props => [form, closeAfterCreate];
 }
 
+/// Joriy foydalanuvchining qatnashuv yozuvini yuklash (detail rejimi) —
+/// `GET /meeting-attendance/?meeting=` ichidan `user_info.id` bo'yicha.
+class MeetingMyAttendanceRequested extends MeetingCreateEvent {
+  const MeetingMyAttendanceRequested({
+    required this.meetingId,
+    required this.userId,
+  });
+
+  final int meetingId;
+  final int userId;
+
+  @override
+  List<Object?> get props => [meetingId, userId];
+}
+
+/// Detail: tashkilotchi qatnashmaslik sababi bo'yicha qaror qiladi
+/// (`PATCH /meeting-attendance/{id}/` -> `{is_excused: true/false}`).
+class MeetingDetailExcuseDecided extends MeetingCreateEvent {
+  const MeetingDetailExcuseDecided({
+    required this.attendanceId,
+    required this.approved,
+  });
+
+  final int attendanceId;
+  final bool approved;
+
+  @override
+  List<Object?> get props => [attendanceId, approved];
+}
+
+/// Tashkilotchi yig'ilishni yakunlaydi: avval qatnashuv yozuvlari
+/// (`GET /meeting-attendance/?meeting=`) tanlovga moslab PATCH qilinadi,
+/// so'ng `POST /meetings/{id}/close/`.
+class MeetingCloseWithAttendanceSubmitted extends MeetingCreateEvent {
+  const MeetingCloseWithAttendanceSubmitted({
+    required this.meetingId,
+    required this.attendedUserIds,
+  });
+
+  final int meetingId;
+
+  /// Sheetda belgilangan (qatnashgan) foydalanuvchi id'lari.
+  final Set<int> attendedUserIds;
+
+  @override
+  List<Object?> get props => [meetingId, attendedUserIds];
+}
+
 /// Tahrirlashni yuborish (`PUT /meetings/{id}/`; kerak bo'lsa keyin yopish).
 class MeetingUpdateSubmitted extends MeetingCreateEvent {
   const MeetingUpdateSubmitted({
