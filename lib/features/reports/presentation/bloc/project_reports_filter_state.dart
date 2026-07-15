@@ -1,7 +1,10 @@
 part of 'project_reports_filter_bloc.dart';
 
 class ProjectReportsFilterState extends Equatable {
-  const ProjectReportsFilterState({this.loading = false, this.users = const []});
+  const ProjectReportsFilterState({
+    this.loading = false,
+    this.users = const [],
+  });
 
   final bool loading;
   final List<UserShort> users;

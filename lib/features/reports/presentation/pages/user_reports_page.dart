@@ -23,7 +23,8 @@ class UserReportsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<UserReportsBloc>(
-      create: (_) => getIt<UserReportsBloc>()..add(const UserReportsRequested()),
+      create: (_) =>
+          getIt<UserReportsBloc>()..add(const UserReportsRequested()),
       child: const _UserReportsView(),
     );
   }
@@ -112,7 +113,8 @@ class _UserReportsViewState extends State<_UserReportsView> {
                           physics: const AlwaysScrollableScrollPhysics(),
                           padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 24.h),
                           itemCount:
-                              state.items.length + (state.hasReachedMax ? 0 : 1),
+                              state.items.length +
+                              (state.hasReachedMax ? 0 : 1),
                           separatorBuilder: (_, _) => SizedBox(height: 8.h),
                           itemBuilder: (_, i) {
                             if (i >= state.items.length) {
@@ -240,11 +242,7 @@ class _ReportsHeaderState extends State<_ReportsHeader> {
 
 /// Qidiruv yopiq holati: orqaga + sarlavha + qidiruv + filtr (nuqtali).
 class _TitleBar extends StatelessWidget {
-  const _TitleBar({
-    required this.onSearch,
-    required this.onFilter,
-    super.key,
-  });
+  const _TitleBar({required this.onSearch, required this.onFilter, super.key});
 
   final VoidCallback onSearch;
   final VoidCallback onFilter;
@@ -475,7 +473,10 @@ class _CenteredScrollable extends StatelessWidget {
       builder: (context, constraints) => ListView(
         physics: const AlwaysScrollableScrollPhysics(),
         children: [
-          SizedBox(height: constraints.maxHeight, child: Center(child: child)),
+          SizedBox(
+            height: constraints.maxHeight,
+            child: Center(child: child),
+          ),
         ],
       ),
     );

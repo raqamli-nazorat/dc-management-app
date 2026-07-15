@@ -46,12 +46,18 @@ class UserReportCard extends StatelessWidget {
                           .s(13.sp)
                           .w(500)
                           .c(colors.textStrong)
-                          .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+                          .copyWith(
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                       report.position
                           .s(11.sp)
                           .w(500)
                           .c(colors.textSoft)
-                          .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+                          .copyWith(
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                     ],
                   ),
                 ),
@@ -61,8 +67,11 @@ class UserReportCard extends StatelessWidget {
                   spacing: 4.h,
                   children: [
                     if (report.dateJoined != null)
-                      _Chip(DateFormat('dd.MM.yyyy').format(report.dateJoined!)),
-                    if (report.phoneNumber.isNotEmpty) _Chip(report.phoneNumber),
+                      _Chip(
+                        DateFormat('dd.MM.yyyy').format(report.dateJoined!),
+                      ),
+                    if (report.phoneNumber.isNotEmpty)
+                      _Chip(report.phoneNumber),
                   ],
                 ),
               ],
@@ -77,7 +86,9 @@ class UserReportCard extends StatelessWidget {
               ),
             _KeyValueRow(
               label: l10n.reportFixedSalary,
-              value: Formatters.formatAmount(report.fixedSalary.toStringAsFixed(2)),
+              value: Formatters.formatAmount(
+                report.fixedSalary.toStringAsFixed(2),
+              ),
             ),
             _KeyValueRow(
               label: l10n.reportBalance,
@@ -219,7 +230,10 @@ class _StatBox extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 DecoratedBox(
-                  decoration: BoxDecoration(color: dotColor, shape: BoxShape.circle),
+                  decoration: BoxDecoration(
+                    color: dotColor,
+                    shape: BoxShape.circle,
+                  ),
                   child: SizedBox(width: 8.w, height: 8.w),
                 ),
                 SizedBox(width: 4.w),

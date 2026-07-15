@@ -106,6 +106,96 @@ class AppLocalizationsUz extends AppLocalizations {
   String get reportTasks => 'Vazifalar bo\'yicha';
 
   @override
+  String get expenseReportsEmpty => 'Hozircha xarajat so\'rovlari yo\'q';
+
+  @override
+  String get expenseReportUncategorized => 'Xarajat so\'rovi';
+
+  @override
+  String get expenseReportAmount => 'Miqdori (UZS)';
+
+  @override
+  String get expenseReportUser => 'Xodim';
+
+  @override
+  String get expenseReportAccountant => 'Hisobchi';
+
+  @override
+  String get expenseReportProject => 'Loyiha';
+
+  @override
+  String get expenseReportCategory => 'Xarajat toifasi';
+
+  @override
+  String get expenseReportType => 'Xarajat turi';
+
+  @override
+  String get expenseReportPaymentMethod => 'To\'lov turi';
+
+  @override
+  String get expenseReportPaymentCash => 'Naqd pul';
+
+  @override
+  String get expenseReportPaymentCard => 'Karta raqam orqali';
+
+  @override
+  String get expenseReportCard => 'Karta raqami';
+
+  @override
+  String get expenseReportCreatedAt => 'Yaratilgan vaqti';
+
+  @override
+  String get expenseReportPaidAt => 'To\'langan vaqti';
+
+  @override
+  String get expenseReportConfirmedAt => 'Tasdiqlangan vaqti';
+
+  @override
+  String get expenseReportCancelledAt => 'Bekor qilingan vaqti';
+
+  @override
+  String get expenseReportReason => 'So\'rov sababi';
+
+  @override
+  String get expenseReportCancelReason => 'Bekor qilish sababi';
+
+  @override
+  String get expenseReportStatusPending => 'Kutilmoqda';
+
+  @override
+  String get expenseReportStatusPaid => 'To\'landi';
+
+  @override
+  String get expenseReportStatusConfirmed => 'Tasdiqlandi';
+
+  @override
+  String get expenseReportStatusCancelled => 'Bekor qilindi';
+
+  @override
+  String get expenseReportTypeWithdrawal => 'Mablag\' chiqarish';
+
+  @override
+  String get expenseReportTypeCompany => 'Kompaniya xarajatlari';
+
+  @override
+  String get expenseReportTypeOther => 'Boshqa xarajatlar';
+
+  @override
+  String get expenseReportSelect => 'Tanlang';
+
+  @override
+  String get expenseReportAccountantHint => 'Hisobchilar tanlang';
+
+  @override
+  String get expenseReportProjectHint => 'Loyiha tanlang';
+
+  @override
+  String get expenseReportTitle => 'Titul';
+
+  @override
+  String get expenseReportTitleHint => 'Nomi bo\'yicha qidirish';
+
+  @override
   String get reportsEmployeeEmpty => 'Hozircha xodimlar yo\'q';
 
   @override

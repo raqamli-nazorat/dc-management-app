@@ -28,8 +28,9 @@ class ProjectReportsFilterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ProjectReportsFilterBloc>(
-      create: (_) => getIt<ProjectReportsFilterBloc>()
-        ..add(const ProjectReportsFilterOptionsRequested()),
+      create: (_) =>
+          getIt<ProjectReportsFilterBloc>()
+            ..add(const ProjectReportsFilterOptionsRequested()),
       child: _ProjectReportsFilterView(initial: initial),
     );
   }
@@ -45,8 +46,7 @@ class _ProjectReportsFilterView extends StatefulWidget {
       _ProjectReportsFilterViewState();
 }
 
-class _ProjectReportsFilterViewState
-    extends State<_ProjectReportsFilterView> {
+class _ProjectReportsFilterViewState extends State<_ProjectReportsFilterView> {
   final Set<int> _authorIds = {};
   final Set<int> _managerIds = {};
   final Set<int> _employeeIds = {};

@@ -284,6 +284,186 @@ abstract class AppLocalizations {
   /// **'Vazifalar bo\'yicha'**
   String get reportTasks;
 
+  /// No description provided for @expenseReportsEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hozircha xarajat so\'rovlari yo\'q'**
+  String get expenseReportsEmpty;
+
+  /// No description provided for @expenseReportUncategorized.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xarajat so\'rovi'**
+  String get expenseReportUncategorized;
+
+  /// No description provided for @expenseReportAmount.
+  ///
+  /// In uz, this message translates to:
+  /// **'Miqdori (UZS)'**
+  String get expenseReportAmount;
+
+  /// No description provided for @expenseReportUser.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xodim'**
+  String get expenseReportUser;
+
+  /// No description provided for @expenseReportAccountant.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hisobchi'**
+  String get expenseReportAccountant;
+
+  /// No description provided for @expenseReportProject.
+  ///
+  /// In uz, this message translates to:
+  /// **'Loyiha'**
+  String get expenseReportProject;
+
+  /// No description provided for @expenseReportCategory.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xarajat toifasi'**
+  String get expenseReportCategory;
+
+  /// No description provided for @expenseReportType.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xarajat turi'**
+  String get expenseReportType;
+
+  /// No description provided for @expenseReportPaymentMethod.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lov turi'**
+  String get expenseReportPaymentMethod;
+
+  /// No description provided for @expenseReportPaymentCash.
+  ///
+  /// In uz, this message translates to:
+  /// **'Naqd pul'**
+  String get expenseReportPaymentCash;
+
+  /// No description provided for @expenseReportPaymentCard.
+  ///
+  /// In uz, this message translates to:
+  /// **'Karta raqam orqali'**
+  String get expenseReportPaymentCard;
+
+  /// No description provided for @expenseReportCard.
+  ///
+  /// In uz, this message translates to:
+  /// **'Karta raqami'**
+  String get expenseReportCard;
+
+  /// No description provided for @expenseReportCreatedAt.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yaratilgan vaqti'**
+  String get expenseReportCreatedAt;
+
+  /// No description provided for @expenseReportPaidAt.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'langan vaqti'**
+  String get expenseReportPaidAt;
+
+  /// No description provided for @expenseReportConfirmedAt.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tasdiqlangan vaqti'**
+  String get expenseReportConfirmedAt;
+
+  /// No description provided for @expenseReportCancelledAt.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bekor qilingan vaqti'**
+  String get expenseReportCancelledAt;
+
+  /// No description provided for @expenseReportReason.
+  ///
+  /// In uz, this message translates to:
+  /// **'So\'rov sababi'**
+  String get expenseReportReason;
+
+  /// No description provided for @expenseReportCancelReason.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bekor qilish sababi'**
+  String get expenseReportCancelReason;
+
+  /// No description provided for @expenseReportStatusPending.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kutilmoqda'**
+  String get expenseReportStatusPending;
+
+  /// No description provided for @expenseReportStatusPaid.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'landi'**
+  String get expenseReportStatusPaid;
+
+  /// No description provided for @expenseReportStatusConfirmed.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tasdiqlandi'**
+  String get expenseReportStatusConfirmed;
+
+  /// No description provided for @expenseReportStatusCancelled.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bekor qilindi'**
+  String get expenseReportStatusCancelled;
+
+  /// No description provided for @expenseReportTypeWithdrawal.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mablag\' chiqarish'**
+  String get expenseReportTypeWithdrawal;
+
+  /// No description provided for @expenseReportTypeCompany.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kompaniya xarajatlari'**
+  String get expenseReportTypeCompany;
+
+  /// No description provided for @expenseReportTypeOther.
+  ///
+  /// In uz, this message translates to:
+  /// **'Boshqa xarajatlar'**
+  String get expenseReportTypeOther;
+
+  /// No description provided for @expenseReportSelect.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tanlang'**
+  String get expenseReportSelect;
+
+  /// No description provided for @expenseReportAccountantHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hisobchilar tanlang'**
+  String get expenseReportAccountantHint;
+
+  /// No description provided for @expenseReportProjectHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Loyiha tanlang'**
+  String get expenseReportProjectHint;
+
+  /// No description provided for @expenseReportTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Titul'**
+  String get expenseReportTitle;
+
+  /// No description provided for @expenseReportTitleHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Nomi bo\'yicha qidirish'**
+  String get expenseReportTitleHint;
+
   /// No description provided for @reportsEmployeeEmpty.
   ///
   /// In uz, this message translates to:

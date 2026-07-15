@@ -18,9 +18,12 @@ import '../../features/meetings/presentation/pages/meeting_filter_page.dart';
 import '../../features/meetings/presentation/pages/meeting_reason_page.dart';
 import '../../features/meetings/presentation/pages/meetings_page.dart';
 import '../../features/reports/domain/entities/project_report_filter.dart';
+import '../../features/reports/domain/entities/expense_report_filter.dart';
 import '../../features/reports/domain/entities/user_report_filter.dart';
 import '../../features/reports/presentation/pages/project_reports_filter_page.dart';
 import '../../features/reports/presentation/pages/project_reports_page.dart';
+import '../../features/reports/presentation/pages/expense_reports_filter_page.dart';
+import '../../features/reports/presentation/pages/expense_reports_page.dart';
 import '../../features/reports/presentation/pages/user_reports_filter_page.dart';
 import '../../features/reports/presentation/pages/user_reports_page.dart';
 import '../../features/notification/presentation/pages/notification_page.dart';
@@ -216,6 +219,20 @@ class AppRouter {
             initial: state.extra is ProjectReportFilter
                 ? state.extra! as ProjectReportFilter
                 : ProjectReportFilter.empty,
+          ),
+        ),
+        GoRoute(
+          name: Routes.expenseReports.name,
+          path: Routes.expenseReports.path,
+          builder: (context, state) => const ExpenseReportsPage(),
+        ),
+        GoRoute(
+          name: Routes.expenseReportsFilter.name,
+          path: Routes.expenseReportsFilter.path,
+          builder: (context, state) => ExpenseReportsFilterPage(
+            initial: state.extra is ExpenseReportFilter
+                ? state.extra! as ExpenseReportFilter
+                : ExpenseReportFilter.empty,
           ),
         ),
         GoRoute(

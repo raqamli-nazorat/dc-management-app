@@ -5,9 +5,12 @@ import '../../../../core/network/dio_client.dart';
 import '../../../../core/network/response_mapper.dart';
 import '../../domain/entities/project_report.dart';
 import '../../domain/entities/project_report_filter.dart';
+import '../../domain/entities/expense_report.dart';
+import '../../domain/entities/expense_report_filter.dart';
 import '../../domain/entities/user_report.dart';
 import '../../domain/entities/user_report_filter.dart';
 import '../models/project_report_model.dart';
+import '../models/expense_report_model.dart';
 import '../models/region_model.dart';
 import '../models/user_report_model.dart';
 
@@ -25,6 +28,13 @@ abstract interface class ReportsRemoteDataSource {
     int page,
     ProjectReportFilter filter,
   });
+
+  Future<ExpenseReportPage> getExpenseReports({
+    int page,
+    ExpenseReportFilter filter,
+  });
+
+  Future<ExpenseReportOptions> getExpenseReportOptions();
 }
 
 class ReportsRemoteDataSourceImpl implements ReportsRemoteDataSource {
@@ -144,5 +154,98 @@ class ReportsRemoteDataSourceImpl implements ReportsRemoteDataSource {
     if (f.managerIds.isNotEmpty) 'manager': f.managerIds.join(','),
     if (f.employeeIds.isNotEmpty) 'employees': f.employeeIds.join(','),
     if (f.testerIds.isNotEmpty) 'testers': f.testerIds.join(','),
+  };
+
+  @override
+  Future<ExpenseReportPage> getExpenseReports({
+    int page = 1,
+    ExpenseReportFilter filter = ExpenseReportFilter.empty,
+  }) async {
+    try {
+      final response = await _client.get(
+        ApiConstants.reportsExpenses,
+        queryParameters: {
+          'page': page,
+          'page_size': _pageSize,
+          ..._expenseFilterParams(filter),
+        },
+      );
+      final body = ResponseMapper.asMap(response.data);
+      final items = ResponseMapper.asList(response.data)
+          .whereType<Map>()
+          .map((e) => ExpenseReportModel.fromJson(e.cast<String, dynamic>()))
+          .toList();
+      return (items: items, hasMore: body['next'] != null);
+    } on DioException catch (e) {
+      throw ResponseMapper.mapDioException(e);
+    }
+  }
+
+  @override
+  Future<ExpenseReportOptions> getExpenseReportOptions() async {
+    try {
+      final responses = await Future.wait([
+        _client.get(
+          ApiConstants.projectShorts,
+          queryParameters: {'page_size': 200},
+        ),
+        // expense_category_list — sahifalanmaydi (oddiy massiv qaytaradi),
+        // shuning uchun page_size yubormaymiz.
+        _client.get(ApiConstants.expenseCategories),
+      ]);
+      List<ExpenseFilterOption> options(Response response, List<String> keys) =>
+          ResponseMapper.asList(response.data)
+              .whereType<Map>()
+              .map((item) {
+                final map = item.cast<String, dynamic>();
+                final title = keys
+                    .map((key) => map[key]?.toString() ?? '')
+                    .firstWhere((value) => value.isNotEmpty, orElse: () => '');
+                return ExpenseFilterOption(
+                  id: (map['id'] as num?)?.toInt() ?? 0,
+                  title: title,
+                );
+              })
+              .where((option) => option.id > 0)
+              .toList();
+      return (
+        projects: options(responses[0], ['title', 'name']),
+        categories: options(responses[1], ['title', 'name']),
+      );
+    } on DioException catch (e) {
+      throw ResponseMapper.mapDioException(e);
+    }
+  }
+
+  Map<String, dynamic> _expenseFilterParams(ExpenseReportFilter f) => {
+    if (f.search.trim().isNotEmpty) 'search': f.search.trim(),
+    if (f.userIds.isNotEmpty) 'user': f.userIds.join(','),
+    if (f.accountantIds.isNotEmpty) 'accountant': f.accountantIds.join(','),
+    if (f.projectIds.isNotEmpty) 'project': f.projectIds.join(','),
+    if (f.categoryIds.isNotEmpty) 'expense_category': f.categoryIds.join(','),
+    if (f.paymentMethods.isNotEmpty)
+      'payment_method': f.paymentMethods
+          .map((e) => e.apiValue)
+          .whereType<String>()
+          .join(','),
+    if (f.statuses.isNotEmpty)
+      'status': f.statuses.map((e) => e.apiValue).whereType<String>().join(','),
+    if (f.types.isNotEmpty)
+      'type': f.types.map((e) => e.apiValue).whereType<String>().join(','),
+    if (f.amountFrom != null) 'amount_min': f.amountFrom,
+    if (f.amountTo != null) 'amount_max': f.amountTo,
+    if (f.createdFrom != null)
+      'created_at_min': f.createdFrom!.toIso8601String(),
+    if (f.createdTo != null) 'created_at_max': f.createdTo!.toIso8601String(),
+    if (f.paidFrom != null) 'paid_at_min': f.paidFrom!.toIso8601String(),
+    if (f.paidTo != null) 'paid_at_max': f.paidTo!.toIso8601String(),
+    if (f.confirmedFrom != null)
+      'confirmed_at_min': f.confirmedFrom!.toIso8601String(),
+    if (f.confirmedTo != null)
+      'confirmed_at_max': f.confirmedTo!.toIso8601String(),
+    if (f.cancelledFrom != null)
+      'cancelled_at_min': f.cancelledFrom!.toIso8601String(),
+    if (f.cancelledTo != null)
+      'cancelled_at_max': f.cancelledTo!.toIso8601String(),
   };
 }

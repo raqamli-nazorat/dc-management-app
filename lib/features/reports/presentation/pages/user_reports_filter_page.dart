@@ -42,7 +42,8 @@ class UserReportsFilterPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider<ReportsFilterBloc>(
       create: (_) =>
-          getIt<ReportsFilterBloc>()..add(const ReportsFilterOptionsRequested()),
+          getIt<ReportsFilterBloc>()
+            ..add(const ReportsFilterOptionsRequested()),
       child: _UserReportsFilterView(initial: initial),
     );
   }
@@ -54,8 +55,7 @@ class _UserReportsFilterView extends StatefulWidget {
   final UserReportFilter initial;
 
   @override
-  State<_UserReportsFilterView> createState() =>
-      _UserReportsFilterViewState();
+  State<_UserReportsFilterView> createState() => _UserReportsFilterViewState();
 }
 
 class _UserReportsFilterViewState extends State<_UserReportsFilterView> {
