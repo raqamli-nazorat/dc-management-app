@@ -19,6 +19,7 @@ class Meeting extends Equatable {
     this.penaltyPercentage,
     required this.startDate,
     this.durationMinutes,
+    this.organizerId,
     required this.organizerName,
     required this.organizerRole,
     this.participantIds = const [],
@@ -52,6 +53,10 @@ class Meeting extends Equatable {
   final DateTime? startDate;
 
   final int? durationMinutes;
+
+  /// Tashkilotchi id (`organizer`) — joriy foydalanuvchi tashkilotchi
+  /// bo'lsa detail'da "yakunlash" oqimi ochiladi.
+  final int? organizerId;
 
   /// Tashkilotchi ismi + roli (karta pastki qatori).
   final String organizerName;
@@ -88,6 +93,7 @@ class Meeting extends Equatable {
     penaltyPercentage,
     startDate,
     durationMinutes,
+    organizerId,
     organizerName,
     organizerRole,
     participantIds,

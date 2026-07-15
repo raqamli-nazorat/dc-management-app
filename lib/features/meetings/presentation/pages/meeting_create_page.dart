@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,8 +9,10 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../config/routes/entity/routes.dart';
 import '../../../../config/theme/app_colors.dart';
+import '../../../../core/constants/storage_keys.dart';
 import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
+import '../../../../core/services/storage_service.dart';
 import '../../../../core/widgets/app_date_picker.dart';
 import '../../../../core/widgets/app_filter_components.dart';
 import '../../../../core/widgets/app_toast.dart';
@@ -84,6 +88,31 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
   /// Forma to'ldiriladigan manba: avval ro'yxatdan kelgan extra, detail
   /// rejimida `GET /meetings/{id}/` javobi bilan yangilanadi.
   Meeting? _meeting;
+
+  /// Keshlangan login javobidagi (`cached_user`) joriy foydalanuvchi id'si.
+  late final int? _currentUserId = _readCurrentUserId();
+
+  static int? _readCurrentUserId() {
+    final raw = getIt<StorageService>().getString(StorageKeys.cachedUser);
+    if (raw == null || raw.isEmpty) return null;
+    try {
+      final map = jsonDecode(raw);
+      if (map is Map) return (map['id'] as num?)?.toInt();
+    } on Object {
+      // Buzuq kesh — tugma ko'rsatilmaydi.
+    }
+    return null;
+  }
+
+  /// Yakunlash faqat detail rejimida, ochiq yig'ilishda va joriy foydalanuvchi
+  /// tashkilotchi bo'lib `participants_info`da ham bor bo'lsa ko'rinadi.
+  bool get _canClose {
+    final m = _meeting;
+    if (!widget.readOnly || m == null || m.isCompleted) return false;
+    final organizerId = m.organizerId;
+    if (organizerId == null || organizerId != _currentUserId) return false;
+    return m.participantsInfo.any((p) => p.id == organizerId);
+  }
 
   @override
   void initState() {
@@ -225,6 +254,30 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
     }
   }
 
+  /// Yakunlash sheet'i: qatnashganlar belgilanadi, tasdiqda bloc'ga yuboriladi.
+  Future<void> _openCloseSheet() async {
+    final m = _meeting;
+    if (m == null) return;
+    final bloc = context.read<MeetingCreateBloc>();
+    final result = await showModalBottomSheet<Set<int>>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.of(context).backgroundBase,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+      ),
+      builder: (_) => _CloseMeetingSheet(meeting: m),
+    );
+    if (result != null && mounted) {
+      bloc.add(
+        MeetingCloseWithAttendanceSubmitted(
+          meetingId: m.id,
+          attendedUserIds: result,
+        ),
+      );
+    }
+  }
+
   void _submit() {
     final l10n = AppLocalizations.of(context);
     final duration = int.tryParse(_durationCtrl.text.trim());
@@ -304,6 +357,26 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
             _applyMeeting(state.detail!);
             _syncProjectFromInitial(state.projects);
           }),
+        ),
+        // Yakunlash oqimi natijasi (davomat PATCH + close).
+        BlocListener<MeetingCreateBloc, MeetingCreateState>(
+          listenWhen: (p, c) => p.closeStatus != c.closeStatus,
+          listener: (context, state) {
+            switch (state.closeStatus) {
+              case MeetingCreateSubmitStatus.success:
+                AppToast.showSuccess(context, title: l10n.meetingCloseSuccess);
+                Navigator.of(context).maybePop(true);
+              case MeetingCreateSubmitStatus.failure:
+                AppToast.showError(
+                  context,
+                  title: l10n.commonError,
+                  message: state.submitFailure?.message,
+                );
+              case MeetingCreateSubmitStatus.idle:
+              case MeetingCreateSubmitStatus.submitting:
+                break;
+            }
+          },
         ),
       ],
       child: Scaffold(
@@ -420,6 +493,17 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
                     ),
                   ),
                 ),
+                // Detail: tashkilotchi ochiq yig'ilishni yakunlay oladi.
+                if (widget.readOnly && _canClose)
+                  BlocBuilder<MeetingCreateBloc, MeetingCreateState>(
+                    buildWhen: (p, c) => p.closeStatus != c.closeStatus,
+                    builder: (context, state) => _CloseBar(
+                      label: l10n.meetingCloseAction,
+                      loading: state.closeStatus ==
+                          MeetingCreateSubmitStatus.submitting,
+                      onTap: _openCloseSheet,
+                    ),
+                  ),
                 if (!widget.readOnly)
                   BlocBuilder<MeetingCreateBloc, MeetingCreateState>(
                     buildWhen: (p, c) => p.submitStatus != c.submitStatus,
@@ -883,6 +967,249 @@ class _SubmitBar extends StatelessWidget {
                             ),
                     ),
                   ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Detail rejimidagi pastki "Yig'ilishni yakunlash" tugmasi.
+class _CloseBar extends StatelessWidget {
+  const _CloseBar({required this.label, required this.loading, required this.onTap});
+
+  final String label;
+  final bool loading;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(20.w, 8.h, 20.w, 8.h),
+        child: InkWell(
+          onTap: loading ? null : onTap,
+          borderRadius: BorderRadius.circular(16.r),
+          child: DecoratedBox(
+            decoration: BoxDecoration(color: colors.accentStrong, borderRadius: BorderRadius.circular(16.r)),
+            child: SizedBox(
+              height: 52.h,
+              child: Center(
+                child: loading
+                    ? SizedBox(
+                        width: 22.w,
+                        height: 22.w,
+                        child: CircularProgressIndicator(strokeWidth: 2.w, color: colors.textWhite),
+                      )
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Assets.icons.icTuilconCheck.svg(
+                            width: 16.w,
+                            height: 16.w,
+                            colorFilter: ColorFilter.mode(colors.textWhite, BlendMode.srcIn),
+                          ),
+                          SizedBox(width: 8.w),
+                          label.s(15.sp).w(800).h(24 / 15).c(colors.textWhite),
+                        ],
+                      ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Yakunlash bottom sheet'i: yig'ilish sarlavhasi + qatnashganlarni belgilash.
+/// Tasdiqda tanlangan foydalanuvchi id to'plamini `pop` bilan qaytaradi.
+class _CloseMeetingSheet extends StatefulWidget {
+  const _CloseMeetingSheet({required this.meeting});
+
+  final Meeting meeting;
+
+  @override
+  State<_CloseMeetingSheet> createState() => _CloseMeetingSheetState();
+}
+
+class _CloseMeetingSheetState extends State<_CloseMeetingSheet> {
+  // Web'dagi kabi hammasi belgilangan holda ochiladi.
+  late final Set<int> _selected = {
+    for (final p in widget.meeting.participantsInfo) p.id,
+  };
+
+  void _toggle(int id) => setState(
+    () => _selected.contains(id) ? _selected.remove(id) : _selected.add(id),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final l10n = AppLocalizations.of(context);
+    final m = widget.meeting;
+    final start = m.startDate;
+    final when = start == null ? '' : '${_fmtDate(start)} ${_fmtTime(TimeOfDay.fromDateTime(start))}';
+
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 8.h),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            l10n.meetingCloseSheetTitle
+                .s(17.sp)
+                .w(800)
+                .h(28 / 17)
+                .c(colors.textStrong)
+                .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+            SizedBox(height: 12.h),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (m.uid.isNotEmpty)
+                        m.uid.s(11.sp).w(500).h(16 / 11).c(colors.textSoft),
+                      m.title
+                          .s(13.sp)
+                          .w(700)
+                          .h(20 / 13)
+                          .c(colors.textStrong)
+                          .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+                    ],
+                  ),
+                ),
+                if (when.isNotEmpty) ...[
+                  SizedBox(width: 8.w),
+                  when.s(11.sp).w(500).h(16 / 11).c(colors.textSub),
+                ],
+              ],
+            ),
+            SizedBox(height: 12.h),
+            l10n.meetingCloseSheetSubtitle.s(13.sp).w(700).h(20 / 13).c(colors.textStrong),
+            SizedBox(height: 8.h),
+            Flexible(
+              child: ListView.separated(
+                shrinkWrap: true,
+                itemCount: m.participantsInfo.length,
+                separatorBuilder: (_, _) => SizedBox(height: 8.h),
+                itemBuilder: (_, i) {
+                  final member = m.participantsInfo[i];
+                  return _AttendanceRow(
+                    member: member,
+                    checked: _selected.contains(member.id),
+                    onTap: () => _toggle(member.id),
+                  );
+                },
+              ),
+            ),
+            SizedBox(height: 16.h),
+            InkWell(
+              onTap: () => Navigator.of(context).pop(_selected),
+              borderRadius: BorderRadius.circular(16.r),
+              child: DecoratedBox(
+                decoration: BoxDecoration(color: colors.accentStrong, borderRadius: BorderRadius.circular(16.r)),
+                child: SizedBox(
+                  height: 52.h,
+                  width: double.infinity,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Assets.icons.icTuilconCheck.svg(
+                        width: 16.w,
+                        height: 16.w,
+                        colorFilter: ColorFilter.mode(colors.textWhite, BlendMode.srcIn),
+                      ),
+                      SizedBox(width: 8.w),
+                      l10n.meetingCloseConfirm.s(15.sp).w(800).h(24 / 15).c(colors.textWhite),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Sheet'dagi bitta qatnashchi qatori: checkbox + avatar + ism/lavozim.
+class _AttendanceRow extends StatelessWidget {
+  const _AttendanceRow({required this.member, required this.checked, required this.onTap});
+
+  final ProjectMember member;
+  final bool checked;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12.r),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: colors.backgroundElevation1,
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(color: colors.strokeSub, width: 1.w),
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+          child: Row(
+            children: [
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  color: checked ? colors.accentStrong : colors.backgroundElevation3,
+                  borderRadius: BorderRadius.circular(6.r),
+                  border: checked ? null : Border.all(color: colors.strokeStrong, width: 1.w),
+                ),
+                child: SizedBox(
+                  width: 20.w,
+                  height: 20.w,
+                  child: checked
+                      ? Center(
+                          child: Assets.icons.icTuilconCheck.svg(
+                            width: 12.w,
+                            height: 12.w,
+                            colorFilter: ColorFilter.mode(colors.textWhite, BlendMode.srcIn),
+                          ),
+                        )
+                      : null,
+                ),
+              ),
+              SizedBox(width: 12.w),
+              TuiAvatar(initial: member.username, avatarUrl: member.avatar, size: 24),
+              SizedBox(width: 8.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    member.username
+                        .s(13.sp)
+                        .w(700)
+                        .c(colors.textStrong)
+                        .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+                    if (member.position.isNotEmpty)
+                      member.position
+                          .s(11.sp)
+                          .w(500)
+                          .c(colors.textSoft)
+                          .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+                  ],
                 ),
               ),
             ],

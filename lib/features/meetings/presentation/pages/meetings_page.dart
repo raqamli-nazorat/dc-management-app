@@ -86,11 +86,19 @@ class _MeetingsView extends StatelessWidget {
                             final meeting = state.items[i];
                             return MeetingCard(
                               meeting: meeting,
-                              onTap: () => context.pushNamed(
-                                Routes.meetingDetail.name,
-                                pathParameters: {'id': '${meeting.id}'},
-                                extra: meeting,
-                              ),
+                              // Detail'da yig'ilish yakunlansa pop(true)
+                              // qaytadi — ro'yxat qayta yuklanadi.
+                              onTap: () async {
+                                final bloc = context.read<MeetingsBloc>();
+                                final changed = await context.pushNamed<bool>(
+                                  Routes.meetingDetail.name,
+                                  pathParameters: {'id': '${meeting.id}'},
+                                  extra: meeting,
+                                );
+                                if (changed == true) {
+                                  bloc.add(const MeetingsRequested());
+                                }
+                              },
                               onEdit: () async {
                                 final bloc = context.read<MeetingsBloc>();
                                 final updated = await context.pushNamed<bool>(

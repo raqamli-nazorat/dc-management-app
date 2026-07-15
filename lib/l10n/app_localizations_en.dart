@@ -662,6 +662,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get meetingUpdateSuccess => 'Meeting updated';
 
   @override
+  String get meetingCloseAction => 'Finish meeting';
+
+  @override
+  String get meetingCloseSheetTitle => 'Mark meeting participants';
+
+  @override
+  String get meetingCloseSheetSubtitle => 'Select attended employees';
+
+  @override
+  String get meetingCloseConfirm => 'Confirm';
+
+  @override
+  String get meetingCloseSuccess => 'Meeting completed';
+
+  @override
   String get meetingDeleteTitle => 'Delete meeting';
 
   @override

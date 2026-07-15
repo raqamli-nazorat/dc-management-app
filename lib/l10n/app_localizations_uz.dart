@@ -664,6 +664,21 @@ class AppLocalizationsUz extends AppLocalizations {
   String get meetingUpdateSuccess => 'Yig‘ilish yangilandi';
 
   @override
+  String get meetingCloseAction => 'Yig‘ilishni yakunlash';
+
+  @override
+  String get meetingCloseSheetTitle => 'Yig‘ilish ishtirokchilarini belgilang';
+
+  @override
+  String get meetingCloseSheetSubtitle => 'Qatnashgan xodimlarni tanlang';
+
+  @override
+  String get meetingCloseConfirm => 'Tasdiqlash';
+
+  @override
+  String get meetingCloseSuccess => 'Yig‘ilish yakunlandi';
+
+  @override
   String get meetingDeleteTitle => 'Yig‘ilishni o‘chirish';
 
   @override

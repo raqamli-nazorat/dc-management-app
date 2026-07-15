@@ -6,10 +6,13 @@ import '../../../tasks/domain/entities/task_form_options.dart';
 import '../../../tasks/domain/usecases/get_project_members_usecase.dart';
 import '../../../tasks/domain/usecases/get_task_form_options_usecase.dart';
 import '../../domain/entities/meeting.dart';
+import '../../domain/entities/meeting_attendance_update.dart';
 import '../../domain/entities/meeting_form.dart';
 import '../../domain/usecases/close_meeting_usecase.dart';
 import '../../domain/usecases/create_meeting_usecase.dart';
+import '../../domain/usecases/get_meeting_attendance_usecase.dart';
 import '../../domain/usecases/get_meeting_usecase.dart';
+import '../../domain/usecases/update_meeting_attendance_usecase.dart';
 import '../../domain/usecases/update_meeting_usecase.dart';
 
 part 'meeting_create_event.dart';
@@ -23,18 +26,23 @@ class MeetingCreateBloc extends Bloc<MeetingCreateEvent, MeetingCreateState> {
     required CreateMeetingUseCase createMeeting,
     required UpdateMeetingUseCase updateMeeting,
     required CloseMeetingUseCase closeMeeting,
+    required GetMeetingAttendanceUseCase getAttendance,
+    required UpdateMeetingAttendanceUseCase updateAttendance,
   }) : _getOptions = getOptions,
        _getMembers = getMembers,
        _getMeeting = getMeeting,
        _createMeeting = createMeeting,
        _updateMeeting = updateMeeting,
        _closeMeeting = closeMeeting,
+       _getAttendance = getAttendance,
+       _updateAttendance = updateAttendance,
        super(const MeetingCreateState()) {
     on<MeetingCreateOptionsRequested>(_onRequested);
     on<MeetingCreateProjectSelected>(_onProjectSelected);
     on<MeetingDetailRequested>(_onDetailRequested);
     on<MeetingCreateSubmitted>(_onSubmitted);
     on<MeetingUpdateSubmitted>(_onUpdateSubmitted);
+    on<MeetingCloseWithAttendanceSubmitted>(_onCloseWithAttendance);
   }
 
   final GetTaskFormOptionsUseCase _getOptions;
@@ -43,6 +51,8 @@ class MeetingCreateBloc extends Bloc<MeetingCreateEvent, MeetingCreateState> {
   final CreateMeetingUseCase _createMeeting;
   final UpdateMeetingUseCase _updateMeeting;
   final CloseMeetingUseCase _closeMeeting;
+  final GetMeetingAttendanceUseCase _getAttendance;
+  final UpdateMeetingAttendanceUseCase _updateAttendance;
 
   Future<void> _onDetailRequested(
     MeetingDetailRequested event,
@@ -96,6 +106,39 @@ class MeetingCreateBloc extends Bloc<MeetingCreateEvent, MeetingCreateState> {
       emit(
         state.copyWith(
           submitStatus: MeetingCreateSubmitStatus.failure,
+          submitFailure: failure,
+        ),
+      );
+    }
+  }
+
+  Future<void> _onCloseWithAttendance(
+    MeetingCloseWithAttendanceSubmitted event,
+    Emitter<MeetingCreateState> emit,
+  ) async {
+    emit(state.copyWith(closeStatus: MeetingCreateSubmitStatus.submitting));
+    try {
+      final rows = await _getAttendance(event.meetingId);
+      for (final row in rows) {
+        final userId = row.userId;
+        if (userId == null) continue;
+        final attended = event.attendedUserIds.contains(userId);
+        // Faqat o'zgargan yozuvlar PATCH qilinadi.
+        if (row.isAttended != attended) {
+          await _updateAttendance(
+            UpdateMeetingAttendanceParams(
+              id: row.id,
+              update: MeetingAttendanceUpdate(isAttended: attended),
+            ),
+          );
+        }
+      }
+      await _closeMeeting(event.meetingId);
+      emit(state.copyWith(closeStatus: MeetingCreateSubmitStatus.success));
+    } on Failure catch (failure) {
+      emit(
+        state.copyWith(
+          closeStatus: MeetingCreateSubmitStatus.failure,
           submitFailure: failure,
         ),
       );

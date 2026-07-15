@@ -45,6 +45,24 @@ class MeetingCreateSubmitted extends MeetingCreateEvent {
   List<Object?> get props => [form, closeAfterCreate];
 }
 
+/// Tashkilotchi yig'ilishni yakunlaydi: avval qatnashuv yozuvlari
+/// (`GET /meeting-attendance/?meeting=`) tanlovga moslab PATCH qilinadi,
+/// so'ng `POST /meetings/{id}/close/`.
+class MeetingCloseWithAttendanceSubmitted extends MeetingCreateEvent {
+  const MeetingCloseWithAttendanceSubmitted({
+    required this.meetingId,
+    required this.attendedUserIds,
+  });
+
+  final int meetingId;
+
+  /// Sheetda belgilangan (qatnashgan) foydalanuvchi id'lari.
+  final Set<int> attendedUserIds;
+
+  @override
+  List<Object?> get props => [meetingId, attendedUserIds];
+}
+
 /// Tahrirlashni yuborish (`PUT /meetings/{id}/`; kerak bo'lsa keyin yopish).
 class MeetingUpdateSubmitted extends MeetingCreateEvent {
   const MeetingUpdateSubmitted({

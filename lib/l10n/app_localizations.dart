@@ -1382,6 +1382,36 @@ abstract class AppLocalizations {
   /// **'Yig‘ilish yangilandi'**
   String get meetingUpdateSuccess;
 
+  /// No description provided for @meetingCloseAction.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yig‘ilishni yakunlash'**
+  String get meetingCloseAction;
+
+  /// No description provided for @meetingCloseSheetTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yig‘ilish ishtirokchilarini belgilang'**
+  String get meetingCloseSheetTitle;
+
+  /// No description provided for @meetingCloseSheetSubtitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qatnashgan xodimlarni tanlang'**
+  String get meetingCloseSheetSubtitle;
+
+  /// No description provided for @meetingCloseConfirm.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tasdiqlash'**
+  String get meetingCloseConfirm;
+
+  /// No description provided for @meetingCloseSuccess.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yig‘ilish yakunlandi'**
+  String get meetingCloseSuccess;
+
   /// No description provided for @meetingDeleteTitle.
   ///
   /// In uz, this message translates to:
