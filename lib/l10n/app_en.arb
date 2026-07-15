@@ -253,6 +253,8 @@
   "meetingExcuseListTitle": "Absence reasons",
   "meetingExcuseNoReason": "No reason submitted yet",
   "meetingExcuseAccepted": "Excuse accepted",
+  "meetingExcuseReject": "Reject",
+  "meetingExcuseRejected": "Rejected",
   "meetingMyAttended": "You attended this meeting",
   "meetingMyNotAttended": "You did not attend this meeting",
   "meetingSendReason": "Send reason",

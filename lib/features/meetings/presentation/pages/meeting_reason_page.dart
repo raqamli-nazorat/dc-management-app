@@ -10,12 +10,11 @@ import '../../../../core/error/failures.dart';
 import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
 import '../../../../core/widgets/app_toast.dart';
-import '../../../../core/widgets/tui_avatar.dart';
 import '../../../../injection_container.dart';
 import '../../../../l10n/app_localizations.dart';
-import '../../domain/entities/meeting_attendance.dart';
 import '../bloc/meeting_reason_bloc.dart';
 import '../widgets/meeting_card.dart';
+import '../widgets/meeting_excuse_row.dart';
 
 /// "Yig‘ilishga qatnashmadingiz" — qatnashmaslik sababini yozib yuborish
 /// ekrani. Bildirishnoma (type=meeting) bosilganda ochiladi. Sabab yuborilgach
@@ -100,6 +99,17 @@ class _ReasonViewState extends State<_ReasonView> {
             builder: (context, state) {
               // Tashkilotchi: sabab yozish o'rniga sabablarni tasdiqlash.
               if (state.isOrganizer) return const _OrganizerView();
+
+              // Sabab allaqachon yuborilgan (yoki qatnashgan) — forma emas,
+              // holat ko'rinishi. Rad etilgan bo'lsa ham qayta yozib bo'lmaydi.
+              final mine = state.myAttendance;
+              if (mine != null &&
+                  (mine.isAttended || mine.absenceReason.trim().isNotEmpty)) {
+                return _ReasonStatusView(
+                  title: state.title,
+                  date: formatMeetingDate(state.startDate),
+                );
+              }
 
               return Column(
                 children: [
@@ -202,13 +212,26 @@ class _OrganizerView extends StatelessWidget {
                       padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 24.h),
                       itemCount: state.rows.length,
                       separatorBuilder: (_, _) => SizedBox(height: 8.h),
-                      itemBuilder: (_, i) => _ExcuseRow(
-                        row: state.rows[i],
-                        approving: state.approvingId == state.rows[i].id,
-                        onApprove: () => context
-                            .read<MeetingReasonBloc>()
-                            .add(MeetingExcuseApproved(state.rows[i].id)),
-                      ),
+                      itemBuilder: (_, i) {
+                        final row = state.rows[i];
+                        return MeetingExcuseRow(
+                          row: row,
+                          busy: state.approvingId == row.id,
+                          rejected: state.rejectedIds.contains(row.id),
+                          onApprove: () => context
+                              .read<MeetingReasonBloc>()
+                              .add(MeetingExcuseDecided(
+                                attendanceId: row.id,
+                                approved: true,
+                              )),
+                          onReject: () => context
+                              .read<MeetingReasonBloc>()
+                              .add(MeetingExcuseDecided(
+                                attendanceId: row.id,
+                                approved: false,
+                              )),
+                        );
+                      },
                     ),
             ),
           ],
@@ -218,128 +241,79 @@ class _OrganizerView extends StatelessWidget {
   }
 }
 
-/// Bitta qatnashmagan xodim kartasi: avatar + ism + sabab + holat/tugma.
-class _ExcuseRow extends StatelessWidget {
-  const _ExcuseRow({
-    required this.row,
-    required this.approving,
-    required this.onApprove,
-  });
+/// Sabab yozish mumkin bo'lmagan holat: qatnashgan yoki sabab allaqachon
+/// yuborilgan (tasdiqlangan/rad etilgan) — faqat holat ko'rsatiladi.
+class _ReasonStatusView extends StatelessWidget {
+  const _ReasonStatusView({required this.title, required this.date});
 
-  final MeetingAttendance row;
-  final bool approving;
-  final VoidCallback onApprove;
+  final String title;
+  final String date;
 
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
     final l10n = AppLocalizations.of(context);
-    final hasReason = row.absenceReason.trim().isNotEmpty;
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: colors.backgroundElevation1,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: colors.strokeSub, width: 1.w),
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(12.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                TuiAvatar(
-                  initial: row.userName,
-                  avatarUrl: row.userAvatar,
-                  size: 24,
-                ),
-                SizedBox(width: 8.w),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      row.userName
-                          .s(13.sp)
-                          .w(700)
-                          .c(colors.textStrong)
-                          .copyWith(
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                      if (row.userPosition.isNotEmpty)
-                        row.userPosition
-                            .s(11.sp)
-                            .w(500)
-                            .c(colors.textSoft)
-                            .copyWith(
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 8.h),
-            (hasReason ? row.absenceReason : l10n.meetingExcuseNoReason)
-                .s(13.sp)
-                .w(500)
-                .h(20 / 13)
-                .c(hasReason ? colors.textSub : colors.textSoft)
-                .copyWith(maxLines: 4, overflow: TextOverflow.ellipsis),
-            SizedBox(height: 12.h),
-            if (row.isExcused)
-              Row(
-                children: [
-                  _CheckMark(color: colors.successStrong, size: 16.w),
-                  SizedBox(width: 6.w),
-                  l10n.meetingExcuseAccepted
-                      .s(13.sp)
-                      .w(700)
-                      .c(colors.successStrong),
-                ],
-              )
-            else
-              InkWell(
-                onTap: approving || !hasReason ? null : onApprove,
-                borderRadius: BorderRadius.circular(12.r),
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: hasReason
-                        ? colors.accentStrong
-                        : colors.backgroundElevation3,
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                  child: SizedBox(
-                    height: 40.h,
-                    width: double.infinity,
-                    child: Center(
-                      child: approving
-                          ? SizedBox(
-                              width: 18.w,
-                              height: 18.w,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.w,
-                                color: colors.textWhite,
-                              ),
-                            )
-                          : l10n.meetingCloseConfirm
+    return Column(
+      children: [
+        _ReasonHeader(title: l10n.meetingReasonTitle),
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+            child: BlocBuilder<MeetingReasonBloc, MeetingReasonState>(
+              builder: (context, state) {
+                final mine = state.myAttendance;
+                final String status;
+                final Color color;
+                if (mine == null || mine.isAttended) {
+                  status = l10n.meetingMyAttended;
+                  color = colors.successStrong;
+                } else if (mine.isExcused) {
+                  status = l10n.meetingExcuseAccepted;
+                  color = colors.successStrong;
+                } else {
+                  status = l10n.meetingReasonSentLabel;
+                  color = colors.textSoft;
+                }
+
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: title
                               .s(13.sp)
-                              .w(800)
-                              .c(
-                                hasReason
-                                    ? colors.textWhite
-                                    : colors.textSoft,
+                              .w(700)
+                              .c(colors.textStrong)
+                              .copyWith(
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
+                        ),
+                        SizedBox(width: 8.w),
+                        date.s(11.sp).w(500).c(colors.textSub),
+                      ],
                     ),
-                  ),
-                ),
-              ),
-          ],
+                    SizedBox(height: 12.h),
+                    if (mine != null &&
+                        !mine.isAttended &&
+                        mine.absenceReason.trim().isNotEmpty) ...[
+                      mine.absenceReason
+                          .s(13.sp)
+                          .w(500)
+                          .h(20 / 13)
+                          .c(colors.textSub),
+                      SizedBox(height: 8.h),
+                    ],
+                    status.s(13.sp).w(700).c(color),
+                  ],
+                );
+              },
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 }

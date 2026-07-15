@@ -12,6 +12,10 @@ class MeetingCreateState extends Equatable {
     this.submitFailure,
     this.closeStatus = MeetingCreateSubmitStatus.idle,
     this.myAttendance,
+    this.attendanceRows = const [],
+    this.excuseBusyId = 0,
+    this.rejectedExcuseIds = const {},
+    this.excuseActionFailed = false,
   });
 
   final List<ProjectShort> projects;
@@ -32,6 +36,19 @@ class MeetingCreateState extends Equatable {
   /// (detail rejimida ko'rsatiladi; `null` — yuklanmagan/topilmadi).
   final MeetingAttendance? myAttendance;
 
+  /// Detail: yig'ilishning barcha qatnashuv yozuvlari — tashkilotchining
+  /// sabab tasdiqlash/rad etish ro'yxati shu yerdan.
+  final List<MeetingAttendance> attendanceRows;
+
+  /// Hozir qaror yuborilayotgan attendance id (0 — yo'q).
+  final int excuseBusyId;
+
+  /// Shu sessiyada rad etilganlar (backend'da alohida maydon yo'q).
+  final Set<int> rejectedExcuseIds;
+
+  /// Oxirgi qaror urinishi xato (toast trigger).
+  final bool excuseActionFailed;
+
   MeetingCreateState copyWith({
     List<ProjectShort>? projects,
     List<ProjectMember>? members,
@@ -41,6 +58,10 @@ class MeetingCreateState extends Equatable {
     Failure? submitFailure,
     MeetingCreateSubmitStatus? closeStatus,
     MeetingAttendance? myAttendance,
+    List<MeetingAttendance>? attendanceRows,
+    int? excuseBusyId,
+    Set<int>? rejectedExcuseIds,
+    bool? excuseActionFailed,
   }) => MeetingCreateState(
     projects: projects ?? this.projects,
     members: members ?? this.members,
@@ -50,6 +71,10 @@ class MeetingCreateState extends Equatable {
     submitFailure: submitFailure ?? this.submitFailure,
     closeStatus: closeStatus ?? this.closeStatus,
     myAttendance: myAttendance ?? this.myAttendance,
+    attendanceRows: attendanceRows ?? this.attendanceRows,
+    excuseBusyId: excuseBusyId ?? this.excuseBusyId,
+    rejectedExcuseIds: rejectedExcuseIds ?? this.rejectedExcuseIds,
+    excuseActionFailed: excuseActionFailed ?? false,
   );
 
   @override
@@ -62,5 +87,9 @@ class MeetingCreateState extends Equatable {
     submitFailure,
     closeStatus,
     myAttendance,
+    attendanceRows,
+    excuseBusyId,
+    rejectedExcuseIds,
+    excuseActionFailed,
   ];
 }

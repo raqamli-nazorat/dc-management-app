@@ -1430,6 +1430,18 @@ abstract class AppLocalizations {
   /// **'Sabab qabul qilindi'**
   String get meetingExcuseAccepted;
 
+  /// No description provided for @meetingExcuseReject.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rad etish'**
+  String get meetingExcuseReject;
+
+  /// No description provided for @meetingExcuseRejected.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rad etildi'**
+  String get meetingExcuseRejected;
+
   /// No description provided for @meetingMyAttended.
   ///
   /// In uz, this message translates to:

@@ -688,6 +688,12 @@ class AppLocalizationsUz extends AppLocalizations {
   String get meetingExcuseAccepted => 'Sabab qabul qilindi';
 
   @override
+  String get meetingExcuseReject => 'Rad etish';
+
+  @override
+  String get meetingExcuseRejected => 'Rad etildi';
+
+  @override
   String get meetingMyAttended => 'Siz yig‘ilishda qatnashgansiz';
 
   @override

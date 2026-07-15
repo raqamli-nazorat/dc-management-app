@@ -60,6 +60,21 @@ class MeetingMyAttendanceRequested extends MeetingCreateEvent {
   List<Object?> get props => [meetingId, userId];
 }
 
+/// Detail: tashkilotchi qatnashmaslik sababi bo'yicha qaror qiladi
+/// (`PATCH /meeting-attendance/{id}/` -> `{is_excused: true/false}`).
+class MeetingDetailExcuseDecided extends MeetingCreateEvent {
+  const MeetingDetailExcuseDecided({
+    required this.attendanceId,
+    required this.approved,
+  });
+
+  final int attendanceId;
+  final bool approved;
+
+  @override
+  List<Object?> get props => [attendanceId, approved];
+}
+
 /// Tashkilotchi yig'ilishni yakunlaydi: avval qatnashuv yozuvlari
 /// (`GET /meeting-attendance/?meeting=`) tanlovga moslab PATCH qilinadi,
 /// so'ng `POST /meetings/{id}/close/`.

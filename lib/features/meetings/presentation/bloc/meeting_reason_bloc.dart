@@ -37,7 +37,7 @@ class MeetingReasonBloc extends Bloc<MeetingReasonEvent, MeetingReasonState> {
        super(const MeetingReasonState()) {
     on<MeetingReasonLoaded>(_onLoaded);
     on<MeetingReasonSubmitted>(_onSubmitted);
-    on<MeetingExcuseApproved>(_onExcuseApproved);
+    on<MeetingExcuseDecided>(_onExcuseDecided);
   }
 
   final GetMeetingUseCase _getMeeting;
@@ -112,6 +112,7 @@ class MeetingReasonBloc extends Bloc<MeetingReasonEvent, MeetingReasonState> {
           title: title,
           startDate: startDate,
           attendanceId: mine?.id,
+          myAttendance: mine,
           isOrganizer: isOrganizer,
           // Tashkilotchi ro'yxati: faqat qatnashmaganlar.
           rows: isOrganizer
@@ -156,9 +157,10 @@ class MeetingReasonBloc extends Bloc<MeetingReasonEvent, MeetingReasonState> {
     }
   }
 
-  /// Tashkilotchi sababni tasdiqlaydi (`PATCH {is_excused: true}`).
-  Future<void> _onExcuseApproved(
-    MeetingExcuseApproved event,
+  /// Tashkilotchi qaror qiladi: tasdiq — `is_excused=true`; rad — `false`
+  /// (sabab saqlanadi, foydalanuvchi qayta yoza olmaydi).
+  Future<void> _onExcuseDecided(
+    MeetingExcuseDecided event,
     Emitter<MeetingReasonState> emit,
   ) async {
     emit(state.copyWith(approvingId: event.attendanceId));
@@ -166,7 +168,7 @@ class MeetingReasonBloc extends Bloc<MeetingReasonEvent, MeetingReasonState> {
       final updated = await _updateAttendance(
         UpdateMeetingAttendanceParams(
           id: event.attendanceId,
-          update: const MeetingAttendanceUpdate(isExcused: true),
+          update: MeetingAttendanceUpdate(isExcused: event.approved),
         ),
       );
       emit(
@@ -176,6 +178,9 @@ class MeetingReasonBloc extends Bloc<MeetingReasonEvent, MeetingReasonState> {
             for (final row in state.rows)
               row.id == updated.id ? updated : row,
           ],
+          rejectedIds: event.approved
+              ? state.rejectedIds
+              : {...state.rejectedIds, event.attendanceId},
         ),
       );
     } on Failure catch (f) {

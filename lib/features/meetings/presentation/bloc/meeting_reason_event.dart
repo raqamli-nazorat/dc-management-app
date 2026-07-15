@@ -17,15 +17,21 @@ class MeetingReasonLoaded extends MeetingReasonEvent {
   List<Object?> get props => [meetingId];
 }
 
-/// Tashkilotchi qatnashmaslik sababini tasdiqlaydi
-/// (`PATCH /meeting-attendance/{id}/` -> `{is_excused: true}`).
-class MeetingExcuseApproved extends MeetingReasonEvent {
-  const MeetingExcuseApproved(this.attendanceId);
+/// Tashkilotchi qatnashmaslik sababi bo'yicha qaror qiladi
+/// (`PATCH /meeting-attendance/{id}/` -> `{is_excused: true/false}`).
+/// Rad etishda sabab saqlanadi — foydalanuvchi qayta yoza olmaydi va
+/// qatnashmagan hisobida qoladi.
+class MeetingExcuseDecided extends MeetingReasonEvent {
+  const MeetingExcuseDecided({
+    required this.attendanceId,
+    required this.approved,
+  });
 
   final int attendanceId;
+  final bool approved;
 
   @override
-  List<Object?> get props => [attendanceId];
+  List<Object?> get props => [attendanceId, approved];
 }
 
 /// Qatnashmaslik sababini yuborish (attendance id state’dan olinadi).

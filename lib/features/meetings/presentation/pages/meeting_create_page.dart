@@ -25,6 +25,7 @@ import '../../domain/entities/meeting.dart';
 import '../../domain/entities/meeting_attendance.dart';
 import '../../domain/entities/meeting_form.dart';
 import '../bloc/meeting_create_bloc.dart';
+import '../widgets/meeting_excuse_row.dart';
 
 enum _Field { none, project }
 
@@ -356,6 +357,12 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
             _syncProjectFromInitial(state.projects);
           }),
         ),
+        // Sabab qarori xatosi (detail'dagi tasdiqlash/rad etish).
+        BlocListener<MeetingCreateBloc, MeetingCreateState>(
+          listenWhen: (p, c) => c.excuseActionFailed,
+          listener: (context, state) =>
+              AppToast.showError(context, title: l10n.commonError),
+        ),
         // Yakunlash oqimi natijasi (davomat PATCH + close).
         BlocListener<MeetingCreateBloc, MeetingCreateState>(
           listenWhen: (p, c) => p.closeStatus != c.closeStatus,
@@ -503,6 +510,37 @@ class _MeetingCreateViewState extends State<_MeetingCreateView> {
                                 }
                               },
                             ),
+                          // Detail: tashkilotchi qatnashmaganlar sabablarini
+                          // tasdiqlaydi/rad etadi.
+                          if (widget.readOnly &&
+                              (_meeting?.isCompleted ?? false) &&
+                              _meeting?.organizerId != null &&
+                              _meeting?.organizerId == _currentUserId &&
+                              state.attendanceRows.any((r) => !r.isAttended)) ...[
+                            AppFilterFieldLabel(l10n.meetingExcuseListTitle),
+                            for (final row in state.attendanceRows)
+                              if (!row.isAttended)
+                                MeetingExcuseRow(
+                                  row: row,
+                                  busy: state.excuseBusyId == row.id,
+                                  rejected:
+                                      state.rejectedExcuseIds.contains(row.id),
+                                  onApprove: () =>
+                                      context.read<MeetingCreateBloc>().add(
+                                            MeetingDetailExcuseDecided(
+                                              attendanceId: row.id,
+                                              approved: true,
+                                            ),
+                                          ),
+                                  onReject: () =>
+                                      context.read<MeetingCreateBloc>().add(
+                                            MeetingDetailExcuseDecided(
+                                              attendanceId: row.id,
+                                              approved: false,
+                                            ),
+                                          ),
+                                ),
+                          ],
                         ],
                       ),
                     ),

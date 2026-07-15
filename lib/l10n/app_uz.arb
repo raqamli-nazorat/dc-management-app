@@ -256,6 +256,8 @@
   "meetingExcuseListTitle": "Qatnashmaganlar sabablari",
   "meetingExcuseNoReason": "Sabab hali yozilmagan",
   "meetingExcuseAccepted": "Sabab qabul qilindi",
+  "meetingExcuseReject": "Rad etish",
+  "meetingExcuseRejected": "Rad etildi",
   "meetingMyAttended": "Siz yig‘ilishda qatnashgansiz",
   "meetingMyNotAttended": "Siz yig‘ilishda qatnashmagansiz",
   "meetingSendReason": "Sabab yuborish",

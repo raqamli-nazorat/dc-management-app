@@ -686,6 +686,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get meetingExcuseAccepted => 'Excuse accepted';
 
   @override
+  String get meetingExcuseReject => 'Reject';
+
+  @override
+  String get meetingExcuseRejected => 'Rejected';
+
+  @override
   String get meetingMyAttended => 'You attended this meeting';
 
   @override

@@ -45,6 +45,7 @@ class MeetingCreateBloc extends Bloc<MeetingCreateEvent, MeetingCreateState> {
     on<MeetingUpdateSubmitted>(_onUpdateSubmitted);
     on<MeetingCloseWithAttendanceSubmitted>(_onCloseWithAttendance);
     on<MeetingMyAttendanceRequested>(_onMyAttendanceRequested);
+    on<MeetingDetailExcuseDecided>(_onExcuseDecided);
   }
 
   final GetTaskFormOptionsUseCase _getOptions;
@@ -127,9 +128,40 @@ class MeetingCreateBloc extends Bloc<MeetingCreateEvent, MeetingCreateState> {
           break;
         }
       }
-      if (mine != null) emit(state.copyWith(myAttendance: mine));
+      emit(state.copyWith(myAttendance: mine, attendanceRows: rows));
     } on Failure catch (_) {
       // Yuklanmasa holat bo'limi ko'rsatilmaydi.
+    }
+  }
+
+  /// Detail: tashkilotchi qarori — tasdiq `is_excused=true`, rad `false`
+  /// (sabab saqlanadi, xodim qayta yoza olmaydi).
+  Future<void> _onExcuseDecided(
+    MeetingDetailExcuseDecided event,
+    Emitter<MeetingCreateState> emit,
+  ) async {
+    emit(state.copyWith(excuseBusyId: event.attendanceId));
+    try {
+      final updated = await _updateAttendance(
+        UpdateMeetingAttendanceParams(
+          id: event.attendanceId,
+          update: MeetingAttendanceUpdate(isExcused: event.approved),
+        ),
+      );
+      emit(
+        state.copyWith(
+          excuseBusyId: 0,
+          attendanceRows: [
+            for (final row in state.attendanceRows)
+              row.id == updated.id ? updated : row,
+          ],
+          rejectedExcuseIds: event.approved
+              ? state.rejectedExcuseIds
+              : {...state.rejectedExcuseIds, event.attendanceId},
+        ),
+      );
+    } on Failure catch (_) {
+      emit(state.copyWith(excuseBusyId: 0, excuseActionFailed: true));
     }
   }
 
