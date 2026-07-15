@@ -68,8 +68,11 @@ import 'features/profile/data/data_sources/profile_remote_data_source.dart';
 import 'features/reports/data/data_sources/reports_remote_data_source.dart';
 import 'features/reports/data/repository/reports_repository_impl.dart';
 import 'features/reports/domain/repository/reports_repository.dart';
+import 'features/reports/domain/usecases/get_project_reports_usecase.dart';
 import 'features/reports/domain/usecases/get_regions_usecase.dart';
 import 'features/reports/domain/usecases/get_user_reports_usecase.dart';
+import 'features/reports/presentation/bloc/project_reports_bloc.dart';
+import 'features/reports/presentation/bloc/project_reports_filter_bloc.dart';
 import 'features/reports/presentation/bloc/reports_filter_bloc.dart';
 import 'features/reports/presentation/bloc/user_reports_bloc.dart';
 import 'features/profile/data/repository/profile_repository_impl.dart';
@@ -380,6 +383,9 @@ Future<void> configureDependencies() async {
       () => GetUserReportsUseCase(getIt()),
     )
     ..registerLazySingleton<GetRegionsUseCase>(() => GetRegionsUseCase(getIt()))
+    ..registerLazySingleton<GetProjectReportsUseCase>(
+      () => GetProjectReportsUseCase(getIt()),
+    )
     ..registerFactory<UserReportsBloc>(
       () => UserReportsBloc(getUserReports: getIt()),
     )
@@ -389,6 +395,12 @@ Future<void> configureDependencies() async {
         getUsers: getIt(),
         getRegions: getIt(),
       ),
+    )
+    ..registerFactory<ProjectReportsBloc>(
+      () => ProjectReportsBloc(getProjectReports: getIt()),
+    )
+    ..registerFactory<ProjectReportsFilterBloc>(
+      () => ProjectReportsFilterBloc(getUsers: getIt()),
     );
 
   // ── Statistics feature ────────────────────────────────────────────────

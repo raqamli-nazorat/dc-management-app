@@ -1,3 +1,5 @@
+import '../entities/project_report.dart';
+import '../entities/project_report_filter.dart';
 import '../entities/user_report.dart';
 import '../entities/user_report_filter.dart';
 
@@ -9,4 +11,10 @@ abstract interface class ReportsRepository {
 
   /// Viloyatlar ro'yxati (`GET /applications/regions/`).
   Future<List<Region>> getRegions();
+
+  /// Loyihalar bo'yicha hisobot sahifasi (`GET /reports/projects/?page=` + filtr).
+  Future<ProjectReportPage> getProjectReports({
+    int page,
+    ProjectReportFilter filter,
+  });
 }

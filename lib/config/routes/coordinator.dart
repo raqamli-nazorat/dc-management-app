@@ -17,7 +17,10 @@ import '../../features/meetings/presentation/pages/meeting_create_page.dart';
 import '../../features/meetings/presentation/pages/meeting_filter_page.dart';
 import '../../features/meetings/presentation/pages/meeting_reason_page.dart';
 import '../../features/meetings/presentation/pages/meetings_page.dart';
+import '../../features/reports/domain/entities/project_report_filter.dart';
 import '../../features/reports/domain/entities/user_report_filter.dart';
+import '../../features/reports/presentation/pages/project_reports_filter_page.dart';
+import '../../features/reports/presentation/pages/project_reports_page.dart';
 import '../../features/reports/presentation/pages/user_reports_filter_page.dart';
 import '../../features/reports/presentation/pages/user_reports_page.dart';
 import '../../features/notification/presentation/pages/notification_page.dart';
@@ -199,6 +202,20 @@ class AppRouter {
             initial: state.extra is UserReportFilter
                 ? state.extra! as UserReportFilter
                 : UserReportFilter.empty,
+          ),
+        ),
+        GoRoute(
+          name: Routes.projectReports.name,
+          path: Routes.projectReports.path,
+          builder: (context, state) => const ProjectReportsPage(),
+        ),
+        GoRoute(
+          name: Routes.projectReportsFilter.name,
+          path: Routes.projectReportsFilter.path,
+          builder: (context, state) => ProjectReportsFilterPage(
+            initial: state.extra is ProjectReportFilter
+                ? state.extra! as ProjectReportFilter
+                : ProjectReportFilter.empty,
           ),
         ),
         GoRoute(

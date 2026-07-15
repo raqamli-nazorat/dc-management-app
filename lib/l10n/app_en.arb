@@ -70,6 +70,22 @@
   "reportExpenseStatusPaidUnconfirmed": "Paid (unconfirmed)",
   "reportPayrollTypePenalty": "Penalty amount",
 
+  "reportsProjectEmpty": "No projects yet",
+  "reportAuthor": "Author:",
+  "reportManager": "Manager:",
+  "reportEmployeesLabel": "Employees:",
+  "reportTestersLabel": "Testers:",
+  "reportManagerBonus": "Manager bonus (UZS):",
+  "reportStatusLabel": "Status:",
+
+  "reportFilterManagerBonus": "Manager bonus",
+  "reportFilterAuthor": "Author",
+  "reportFilterAuthorHint": "Select author",
+  "reportFilterManager": "Manager",
+  "reportFilterManagerHint": "Select manager",
+  "reportFilterTesters": "Testers",
+  "reportFilterTestersHint": "Select testers",
+
   "statPeriodSelect": "Select period",
   "statPeriod1Month": "1 month",
   "statPeriod3Months": "3 months",
