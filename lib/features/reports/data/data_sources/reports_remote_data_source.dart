@@ -9,9 +9,12 @@ import '../../domain/entities/expense_report.dart';
 import '../../domain/entities/expense_report_filter.dart';
 import '../../domain/entities/user_report.dart';
 import '../../domain/entities/user_report_filter.dart';
+import '../../domain/entities/task_report.dart';
+import '../../domain/entities/task_report_filter.dart';
 import '../models/project_report_model.dart';
 import '../models/expense_report_model.dart';
 import '../models/region_model.dart';
+import '../models/task_report_model.dart';
 import '../models/user_report_model.dart';
 
 /// Xodimlar/loyihalar bo'yicha hisobot backend bilan to'g'ridan-to'g'ri
@@ -35,6 +38,9 @@ abstract interface class ReportsRemoteDataSource {
   });
 
   Future<ExpenseReportOptions> getExpenseReportOptions();
+
+  /// Vazifalar bo'yicha hisobot sahifasi (`GET /reports/tasks/?page=` + filtr).
+  Future<TaskReportPage> getTaskReports({int page, TaskReportFilter filter});
 }
 
 class ReportsRemoteDataSourceImpl implements ReportsRemoteDataSource {
@@ -216,6 +222,55 @@ class ReportsRemoteDataSourceImpl implements ReportsRemoteDataSource {
       throw ResponseMapper.mapDioException(e);
     }
   }
+
+  @override
+  Future<TaskReportPage> getTaskReports({
+    int page = 1,
+    TaskReportFilter filter = TaskReportFilter.empty,
+  }) async {
+    try {
+      final response = await _client.get(
+        ApiConstants.reportsTasks,
+        queryParameters: {
+          'page': page,
+          'page_size': _pageSize,
+          ..._taskFilterParams(filter),
+        },
+      );
+      final body = ResponseMapper.asMap(response.data);
+      final items = ResponseMapper.asList(response.data)
+          .whereType<Map>()
+          .map((e) => TaskReportModel.fromJson(e.cast<String, dynamic>()))
+          .toList();
+      return (items: items, hasMore: body['next'] != null);
+    } on DioException catch (e) {
+      throw ResponseMapper.mapDioException(e);
+    }
+  }
+
+  /// [TaskReportFilter] → `GET /reports/tasks/` query paramlari (faqat
+  /// to'ldirilganlari).
+  Map<String, dynamic> _taskFilterParams(TaskReportFilter f) => {
+    if (f.search.trim().isNotEmpty) 'search': f.search.trim(),
+    if (f.createdFrom != null)
+      'created_at_min': f.createdFrom!.toIso8601String(),
+    if (f.createdTo != null) 'created_at_max': f.createdTo!.toIso8601String(),
+    if (f.projectIds.isNotEmpty) 'project': f.projectIds.join(','),
+    if (f.assigneeIds.isNotEmpty) 'assignee': f.assigneeIds.join(','),
+    if (f.authorIds.isNotEmpty) 'created_by': f.authorIds.join(','),
+    if (f.priority?.apiValue != null) 'priority': f.priority!.apiValue,
+    if (f.status?.apiValue != null) 'status': f.status!.apiValue,
+    if (f.types.isNotEmpty)
+      'type': f.types.map((e) => e.apiValue).join(','),
+    if (f.sprints.isNotEmpty) 'sprint': f.sprints.join(','),
+    if (f.positionIds.isNotEmpty) 'position': f.positionIds.join(','),
+    if (f.priceFrom != null) 'price_min': f.priceFrom,
+    if (f.priceTo != null) 'price_max': f.priceTo,
+    if (f.penaltyFrom != null) 'penalty_min': f.penaltyFrom,
+    if (f.penaltyTo != null) 'penalty_max': f.penaltyTo,
+    if (f.reopenedFrom != null) 'reopened_min': f.reopenedFrom,
+    if (f.reopenedTo != null) 'reopened_max': f.reopenedTo,
+  };
 
   Map<String, dynamic> _expenseFilterParams(ExpenseReportFilter f) => {
     if (f.search.trim().isNotEmpty) 'search': f.search.trim(),

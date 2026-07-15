@@ -2,6 +2,8 @@ import '../entities/project_report.dart';
 import '../entities/project_report_filter.dart';
 import '../entities/expense_report.dart';
 import '../entities/expense_report_filter.dart';
+import '../entities/task_report.dart';
+import '../entities/task_report_filter.dart';
 import '../entities/user_report.dart';
 import '../entities/user_report_filter.dart';
 
@@ -26,4 +28,7 @@ abstract interface class ReportsRepository {
   });
 
   Future<ExpenseReportOptions> getExpenseReportOptions();
+
+  /// Vazifalar bo'yicha hisobot sahifasi (`GET /reports/tasks/?page=` + filtr).
+  Future<TaskReportPage> getTaskReports({int page, TaskReportFilter filter});
 }

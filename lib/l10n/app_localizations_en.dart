@@ -194,6 +194,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get expenseReportTitleHint => 'Search by title';
 
   @override
+  String get taskReportsEmpty => 'No tasks yet';
+
+  @override
+  String get taskReportAssignees => 'Assignees';
+
+  @override
+  String get taskReportAssigneesHint => 'Select assignees';
+
+  @override
+  String get taskReportSprint => 'Sprint number';
+
+  @override
+  String get taskReportPrice => 'Task price (UZS)';
+
+  @override
+  String get taskReportPenalty => 'Penalty (%)';
+
+  @override
+  String get taskReportReopened => 'Reopen count';
+
+  @override
   String get reportsEmployeeEmpty => 'No employees yet';
 
   @override

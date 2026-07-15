@@ -67,6 +67,14 @@
   "expenseReportTitle": "Title",
   "expenseReportTitleHint": "Search by title",
 
+  "taskReportsEmpty": "No tasks yet",
+  "taskReportAssignees": "Assignees",
+  "taskReportAssigneesHint": "Select assignees",
+  "taskReportSprint": "Sprint number",
+  "taskReportPrice": "Task price (UZS)",
+  "taskReportPenalty": "Penalty (%)",
+  "taskReportReopened": "Reopen count",
+
   "reportsEmployeeEmpty": "No employees yet",
   "reportFixedSalary": "Fixed salary (UZS):",
   "reportBalance": "Balance (UZS):",

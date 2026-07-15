@@ -24,6 +24,9 @@ import '../../features/reports/presentation/pages/project_reports_filter_page.da
 import '../../features/reports/presentation/pages/project_reports_page.dart';
 import '../../features/reports/presentation/pages/expense_reports_filter_page.dart';
 import '../../features/reports/presentation/pages/expense_reports_page.dart';
+import '../../features/reports/domain/entities/task_report_filter.dart';
+import '../../features/reports/presentation/pages/task_reports_filter_page.dart';
+import '../../features/reports/presentation/pages/task_reports_page.dart';
 import '../../features/reports/presentation/pages/user_reports_filter_page.dart';
 import '../../features/reports/presentation/pages/user_reports_page.dart';
 import '../../features/notification/presentation/pages/notification_page.dart';
@@ -233,6 +236,20 @@ class AppRouter {
             initial: state.extra is ExpenseReportFilter
                 ? state.extra! as ExpenseReportFilter
                 : ExpenseReportFilter.empty,
+          ),
+        ),
+        GoRoute(
+          name: Routes.taskReports.name,
+          path: Routes.taskReports.path,
+          builder: (context, state) => const TaskReportsPage(),
+        ),
+        GoRoute(
+          name: Routes.taskReportsFilter.name,
+          path: Routes.taskReportsFilter.path,
+          builder: (context, state) => TaskReportsFilterPage(
+            initial: state.extra is TaskReportFilter
+                ? state.extra! as TaskReportFilter
+                : TaskReportFilter.empty,
           ),
         ),
         GoRoute(
