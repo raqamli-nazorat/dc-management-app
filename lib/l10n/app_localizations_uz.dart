@@ -82,7 +82,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get navUsers => 'Foydalanuvchilar';
 
   @override
-  String get navProjects => 'Loyihalar';
+  String get navTasks => 'Vazifalar';
 
   @override
   String get navFinance => 'Moliya';

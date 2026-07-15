@@ -54,7 +54,7 @@ class _HomePageState extends State<HomePage> {
       case AppSection.projects:
         return AppBottomNavItem(
           icon: Assets.icons.icFolder,
-          label: l10n.navProjects,
+          label: l10n.navTasks,
         );
       case AppSection.finance:
         return AppBottomNavItem(

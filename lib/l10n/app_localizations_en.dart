@@ -80,7 +80,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navUsers => 'Users';
 
   @override
-  String get navProjects => 'Projects';
+  String get navTasks => 'Tasks';
 
   @override
   String get navFinance => 'Finance';

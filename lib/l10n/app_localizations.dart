@@ -236,11 +236,11 @@ abstract class AppLocalizations {
   /// **'Foydalanuvchilar'**
   String get navUsers;
 
-  /// No description provided for @navProjects.
+  /// No description provided for @navTasks.
   ///
   /// In uz, this message translates to:
-  /// **'Loyihalar'**
-  String get navProjects;
+  /// **'Vazifalar'**
+  String get navTasks;
 
   /// No description provided for @navFinance.
   ///
