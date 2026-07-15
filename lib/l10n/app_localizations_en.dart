@@ -197,6 +197,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get taskReportsEmpty => 'No tasks yet';
 
   @override
+  String get payrollReportsEmpty => 'No payroll reports yet';
+
+  @override
+  String get payrollFixedSalary => 'Fixed salary (UZS)';
+
+  @override
+  String get payrollKpiBonus => 'KPI bonus (UZS)';
+
+  @override
+  String get payrollPenalty => 'Penalty amount (UZS)';
+
+  @override
+  String get payrollTotal => 'Total amount (UZS)';
+
+  @override
+  String get payrollCreatedAt => 'Calculated at';
+
+  @override
   String get taskReportAssignees => 'Assignees';
 
   @override

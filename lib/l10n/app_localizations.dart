@@ -470,6 +470,42 @@ abstract class AppLocalizations {
   /// **'Hozircha vazifalar yo\'q'**
   String get taskReportsEmpty;
 
+  /// No description provided for @payrollReportsEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hozircha ish haqi hisobotlari yo\'q'**
+  String get payrollReportsEmpty;
+
+  /// No description provided for @payrollFixedSalary.
+  ///
+  /// In uz, this message translates to:
+  /// **'Oylik maoshi (UZS)'**
+  String get payrollFixedSalary;
+
+  /// No description provided for @payrollKpiBonus.
+  ///
+  /// In uz, this message translates to:
+  /// **'KPI bonusi (UZS)'**
+  String get payrollKpiBonus;
+
+  /// No description provided for @payrollPenalty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Jarima miqdori (UZS)'**
+  String get payrollPenalty;
+
+  /// No description provided for @payrollTotal.
+  ///
+  /// In uz, this message translates to:
+  /// **'Jami miqdori (UZS)'**
+  String get payrollTotal;
+
+  /// No description provided for @payrollCreatedAt.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hisoblangan vaqti'**
+  String get payrollCreatedAt;
+
   /// No description provided for @taskReportAssignees.
   ///
   /// In uz, this message translates to:

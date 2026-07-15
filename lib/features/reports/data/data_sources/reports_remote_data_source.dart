@@ -9,8 +9,10 @@ import '../../domain/entities/expense_report.dart';
 import '../../domain/entities/expense_report_filter.dart';
 import '../../domain/entities/user_report.dart';
 import '../../domain/entities/user_report_filter.dart';
+import '../../domain/entities/payroll_report.dart';
 import '../../domain/entities/task_report.dart';
 import '../../domain/entities/task_report_filter.dart';
+import '../models/payroll_report_model.dart';
 import '../models/project_report_model.dart';
 import '../models/expense_report_model.dart';
 import '../models/region_model.dart';
@@ -41,6 +43,10 @@ abstract interface class ReportsRemoteDataSource {
 
   /// Vazifalar bo'yicha hisobot sahifasi (`GET /reports/tasks/?page=` + filtr).
   Future<TaskReportPage> getTaskReports({int page, TaskReportFilter filter});
+
+  /// Ish haqi bo'yicha hisobot sahifasi (`GET /reports/payrolls/?page=` +
+  /// ixtiyoriy `search`).
+  Future<PayrollReportPage> getPayrollReports({int page, String search});
 }
 
 class ReportsRemoteDataSourceImpl implements ReportsRemoteDataSource {
@@ -241,6 +247,31 @@ class ReportsRemoteDataSourceImpl implements ReportsRemoteDataSource {
       final items = ResponseMapper.asList(response.data)
           .whereType<Map>()
           .map((e) => TaskReportModel.fromJson(e.cast<String, dynamic>()))
+          .toList();
+      return (items: items, hasMore: body['next'] != null);
+    } on DioException catch (e) {
+      throw ResponseMapper.mapDioException(e);
+    }
+  }
+
+  @override
+  Future<PayrollReportPage> getPayrollReports({
+    int page = 1,
+    String search = '',
+  }) async {
+    try {
+      final response = await _client.get(
+        ApiConstants.reportsPayrolls,
+        queryParameters: {
+          'page': page,
+          'page_size': _pageSize,
+          if (search.trim().isNotEmpty) 'search': search.trim(),
+        },
+      );
+      final body = ResponseMapper.asMap(response.data);
+      final items = ResponseMapper.asList(response.data)
+          .whereType<Map>()
+          .map((e) => PayrollReportModel.fromJson(e.cast<String, dynamic>()))
           .toList();
       return (items: items, hasMore: body['next'] != null);
     } on DioException catch (e) {

@@ -29,6 +29,9 @@ Future<DateTime?> showAppDatePicker(
   );
 }
 
+/// O'zbekcha oy nomi (1..12) — sana ko'rsatishda umumiy ishlatiladi.
+String uzMonthName(int month) => _months[month - 1];
+
 /// Oy nomlari (o'zbekcha) — 1..12.
 const _months = [
   'Yanvar',
