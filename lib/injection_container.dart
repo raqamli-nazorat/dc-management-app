@@ -73,12 +73,15 @@ import 'features/reports/domain/usecases/get_regions_usecase.dart';
 import 'features/reports/domain/usecases/get_user_reports_usecase.dart';
 import 'features/reports/domain/usecases/get_expense_reports_usecase.dart';
 import 'features/reports/domain/usecases/get_expense_report_options_usecase.dart';
+import 'features/reports/domain/usecases/get_task_reports_usecase.dart';
 import 'features/reports/presentation/bloc/project_reports_bloc.dart';
 import 'features/reports/presentation/bloc/project_reports_filter_bloc.dart';
 import 'features/reports/presentation/bloc/reports_filter_bloc.dart';
 import 'features/reports/presentation/bloc/user_reports_bloc.dart';
 import 'features/reports/presentation/bloc/expense_reports_bloc.dart';
 import 'features/reports/presentation/bloc/expense_reports_filter_bloc.dart';
+import 'features/reports/presentation/bloc/task_reports_bloc.dart';
+import 'features/reports/presentation/bloc/task_reports_filter_bloc.dart';
 import 'features/profile/data/repository/profile_repository_impl.dart';
 import 'features/profile/domain/repository/profile_repository.dart';
 import 'features/profile/domain/usecases/change_password_usecase.dart';
@@ -396,6 +399,9 @@ Future<void> configureDependencies() async {
     ..registerLazySingleton<GetExpenseReportOptionsUseCase>(
       () => GetExpenseReportOptionsUseCase(getIt()),
     )
+    ..registerLazySingleton<GetTaskReportsUseCase>(
+      () => GetTaskReportsUseCase(getIt()),
+    )
     ..registerFactory<UserReportsBloc>(
       () => UserReportsBloc(getUserReports: getIt()),
     )
@@ -417,6 +423,12 @@ Future<void> configureDependencies() async {
     )
     ..registerFactory<ExpenseReportsFilterBloc>(
       () => ExpenseReportsFilterBloc(getOptions: getIt(), getUsers: getIt()),
+    )
+    ..registerFactory<TaskReportsBloc>(
+      () => TaskReportsBloc(getTaskReports: getIt()),
+    )
+    ..registerFactory<TaskReportsFilterBloc>(
+      () => TaskReportsFilterBloc(getOptions: getIt(), getUsers: getIt()),
     );
 
   // ── Statistics feature ────────────────────────────────────────────────

@@ -464,6 +464,48 @@ abstract class AppLocalizations {
   /// **'Nomi bo\'yicha qidirish'**
   String get expenseReportTitleHint;
 
+  /// No description provided for @taskReportsEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hozircha vazifalar yo\'q'**
+  String get taskReportsEmpty;
+
+  /// No description provided for @taskReportAssignees.
+  ///
+  /// In uz, this message translates to:
+  /// **'Topshiruvchilar'**
+  String get taskReportAssignees;
+
+  /// No description provided for @taskReportAssigneesHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Topshiruvchilar tanlang'**
+  String get taskReportAssigneesHint;
+
+  /// No description provided for @taskReportSprint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sprint raqami'**
+  String get taskReportSprint;
+
+  /// No description provided for @taskReportPrice.
+  ///
+  /// In uz, this message translates to:
+  /// **'Vazifa narxi (UZS)'**
+  String get taskReportPrice;
+
+  /// No description provided for @taskReportPenalty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Jarima foizi (%)'**
+  String get taskReportPenalty;
+
+  /// No description provided for @taskReportReopened.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qaytishlar soni'**
+  String get taskReportReopened;
+
   /// No description provided for @reportsEmployeeEmpty.
   ///
   /// In uz, this message translates to:

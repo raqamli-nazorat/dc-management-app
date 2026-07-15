@@ -70,6 +70,14 @@
   "expenseReportTitle": "Titul",
   "expenseReportTitleHint": "Nomi bo'yicha qidirish",
 
+  "taskReportsEmpty": "Hozircha vazifalar yo'q",
+  "taskReportAssignees": "Topshiruvchilar",
+  "taskReportAssigneesHint": "Topshiruvchilar tanlang",
+  "taskReportSprint": "Sprint raqami",
+  "taskReportPrice": "Vazifa narxi (UZS)",
+  "taskReportPenalty": "Jarima foizi (%)",
+  "taskReportReopened": "Qaytishlar soni",
+
   "reportsEmployeeEmpty": "Hozircha xodimlar yo'q",
   "reportFixedSalary": "Oylik maoshi (UZS):",
   "reportBalance": "Balansi (UZS):",

@@ -196,6 +196,27 @@ class AppLocalizationsUz extends AppLocalizations {
   String get expenseReportTitleHint => 'Nomi bo\'yicha qidirish';
 
   @override
+  String get taskReportsEmpty => 'Hozircha vazifalar yo\'q';
+
+  @override
+  String get taskReportAssignees => 'Topshiruvchilar';
+
+  @override
+  String get taskReportAssigneesHint => 'Topshiruvchilar tanlang';
+
+  @override
+  String get taskReportSprint => 'Sprint raqami';
+
+  @override
+  String get taskReportPrice => 'Vazifa narxi (UZS)';
+
+  @override
+  String get taskReportPenalty => 'Jarima foizi (%)';
+
+  @override
+  String get taskReportReopened => 'Qaytishlar soni';
+
+  @override
   String get reportsEmployeeEmpty => 'Hozircha xodimlar yo\'q';
 
   @override

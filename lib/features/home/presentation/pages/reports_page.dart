@@ -48,6 +48,7 @@ class ReportsPage extends StatelessWidget {
               label: l10n.reportTasks,
               image: Assets.images.byTasks,
               imageSize: 82.w,
+              onTap: () => context.pushNamed(Routes.taskReports.name),
             ),
           ],
         ),

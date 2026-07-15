@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -16,29 +15,6 @@ import '../../../tasks/presentation/pages/task_multi_select_page.dart';
 import '../../domain/entities/expense_report.dart';
 import '../../domain/entities/expense_report_filter.dart';
 import '../bloc/expense_reports_filter_bloc.dart';
-
-/// So'ralayotgan/kiritayotgan summani yuzlab guruhlab ko'rsatadi (`10000` →
-/// `10 000`) — kursor har doim oxirga o'tadi, filtr "dan/gacha" maydoni uchun
-/// yetarli.
-class _ThousandsInputFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
-    final digits = newValue.text.replaceAll(RegExp(r'\D'), '');
-    if (digits.isEmpty) return newValue.copyWith(text: '');
-    final buffer = StringBuffer();
-    for (var i = 0; i < digits.length; i++) {
-      if (i > 0 && (digits.length - i) % 3 == 0) buffer.write(' ');
-      buffer.write(digits[i]);
-    }
-    return TextEditingValue(
-      text: buffer.toString(),
-      selection: TextSelection.collapsed(offset: buffer.length),
-    );
-  }
-}
 
 /// Ochilib turgan dropdown maydoni — bir vaqtda bittasi.
 enum _Field { none, paymentMethod, status, type, category }
@@ -650,7 +626,7 @@ class _Number extends StatelessWidget {
             child: TextField(
               controller: controller,
               keyboardType: TextInputType.number,
-              inputFormatters: [_ThousandsInputFormatter()],
+              inputFormatters: [AppThousandsInputFormatter()],
               style: style,
               cursorColor: colors.accentSub,
               decoration: InputDecoration.collapsed(

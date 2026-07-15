@@ -1,9 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../config/theme/app_colors.dart';
 import '../extentions/text_extensions.dart';
 import '../gen/assets.gen.dart';
+
+/// Kiritilayotgan sonni yuzlab guruhlab ko'rsatadi (`10000` → `10 000`) —
+/// kursor har doim oxirga o'tadi, filtr "dan/gacha" maydonlari uchun yetarli.
+class AppThousandsInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final digits = newValue.text.replaceAll(RegExp(r'\D'), '');
+    if (digits.isEmpty) return newValue.copyWith(text: '');
+    final buffer = StringBuffer();
+    for (var i = 0; i < digits.length; i++) {
+      if (i > 0 && (digits.length - i) % 3 == 0) buffer.write(' ');
+      buffer.write(digits[i]);
+    }
+    return TextEditingValue(
+      text: buffer.toString(),
+      selection: TextSelection.collapsed(offset: buffer.length),
+    );
+  }
+}
 
 class AppFilterHeader extends StatelessWidget {
   const AppFilterHeader({required this.title, super.key});
