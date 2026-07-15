@@ -41,7 +41,10 @@ class ProjectUpdated extends ProjectCreateEvent {
   });
 
   final int id;
-  final ProjectForm form;
+
+  /// `null` — faqat hujjatlar o'zgargan (menejer rejimi): loyihaning o'zi
+  /// PATCH qilinmaydi.
+  final ProjectForm? form;
   final List<ProjectDocumentDraft> documents;
   final List<int> removedDocumentIds;
 

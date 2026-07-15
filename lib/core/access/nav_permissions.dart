@@ -82,8 +82,16 @@ abstract final class NavPermissions {
 
   static bool canCreateProject(RoleType role) => role == RoleType.admin;
 
+  /// Loyiha kartasidagi "Tahrirlash" va `/edit` sahifasiga kirish. Menejer
+  /// kiradi, lekin faqat hujjatlarni o'zgartira oladi ([canEditProjectFields]).
   static bool canManageProject(RoleType role) =>
       role == RoleType.admin || role == RoleType.manager;
+
+  /// Loyiha maydonlarini (nom, status, menejer, muddat…) tahrirlash — faqat
+  /// admin. Menejerga forma readOnly, hujjatlar bo'limi ochiq.
+  static bool canEditProjectFields(RoleType role) => role == RoleType.admin;
+
+  static bool canDeleteProject(RoleType role) => role == RoleType.admin;
 
   /// Ariza yaratish — [isVisible]dagi [AppSection.applications]dan alohida
   /// ruxsat: Menejer va Xodim ariza yubora oladi (Xodim bo'limni ko'rmasa

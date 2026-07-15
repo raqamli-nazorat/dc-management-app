@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../app/bloc/session_bloc.dart';
 import '../../../../config/theme/app_colors.dart';
+import '../../../../core/access/nav_permissions.dart';
 import '../../../../core/access/role_type.dart';
 import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/widgets/app_toast.dart';
@@ -25,7 +26,10 @@ class ProjectDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final role = context.select<SessionBloc, RoleType>((b) => b.state.roleType);
-    final readOnly = !edit || role != RoleType.admin;
+    // Maydonlarni faqat admin tahrirlaydi; menejer `edit`ga kirsa — forma
+    // qulf, hujjatlar bo'limi ochiq.
+    final readOnly = !edit || !NavPermissions.canEditProjectFields(role);
+    final docsOnly = edit && readOnly && NavPermissions.canManageProject(role);
     return BlocProvider<ProjectDetailsBloc>(
       create: (_) =>
           getIt<ProjectDetailsBloc>()..add(ProjectDetailsRequested(projectId)),
@@ -33,6 +37,7 @@ class ProjectDetailsPage extends StatelessWidget {
         projectId: projectId,
         edit: edit,
         readOnly: readOnly,
+        docsOnly: docsOnly,
       ),
     );
   }
@@ -43,11 +48,13 @@ class _ProjectDetailsView extends StatelessWidget {
     required this.projectId,
     required this.edit,
     required this.readOnly,
+    required this.docsOnly,
   });
 
   final int projectId;
   final bool edit;
   final bool readOnly;
+  final bool docsOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -102,6 +109,7 @@ class _ProjectDetailsView extends StatelessWidget {
             return AddProjectPage(
               project: project,
               readOnly: readOnly,
+              docsOnly: docsOnly,
               screenTitle: edit
                   ? l10n.projectEditTitle
                   : l10n.projectDetailsTitle,

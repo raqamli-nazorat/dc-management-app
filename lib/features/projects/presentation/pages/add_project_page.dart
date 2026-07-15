@@ -30,11 +30,16 @@ class AddProjectPage extends StatelessWidget {
     super.key,
     this.project,
     this.readOnly = false,
+    this.docsOnly = false,
     this.screenTitle,
   });
 
   final Project? project;
   final bool readOnly;
+
+  /// Menejer rejimi: [readOnly] bilan birga beriladi — maydonlar qulf, faqat
+  /// hujjatlar bo'limi va saqlash tugmasi ochiq.
+  final bool docsOnly;
   final String? screenTitle;
 
   @override
@@ -49,6 +54,7 @@ class AddProjectPage extends StatelessWidget {
       child: _AddProjectView(
         project: project,
         readOnly: readOnly,
+        docsOnly: docsOnly,
         screenTitle: screenTitle,
       ),
     );
@@ -59,11 +65,13 @@ class _AddProjectView extends StatefulWidget {
   const _AddProjectView({
     required this.project,
     required this.readOnly,
+    required this.docsOnly,
     required this.screenTitle,
   });
 
   final Project? project;
   final bool readOnly;
+  final bool docsOnly;
   final String? screenTitle;
 
   @override
@@ -241,6 +249,18 @@ class _AddProjectViewState extends State<_AddProjectView> {
 
   void _submit() {
     final l10n = AppLocalizations.of(context);
+    // Menejer: loyihaning o'zi PATCH qilinmaydi, faqat hujjatlar.
+    if (widget.docsOnly) {
+      context.read<ProjectCreateBloc>().add(
+        ProjectUpdated(
+          _project!.id,
+          null,
+          documents: _newDocs,
+          removedDocumentIds: _removedDocumentIds.toList(),
+        ),
+      );
+      return;
+    }
     if (_nameCtrl.text.trim().isEmpty ||
         _prefixCtrl.text.trim().isEmpty ||
         _manager == null ||
@@ -482,11 +502,12 @@ class _AddProjectViewState extends State<_AddProjectView> {
                           ),
                           // Yaratish/tahrirlash/detail uchun umumiy hujjat oqimi.
                           if (!widget.readOnly ||
+                              widget.docsOnly ||
                               state.documentsLoading ||
                               state.documents.isNotEmpty ||
                               _newDocs.isNotEmpty)
                             _FilesSection(
-                              label: widget.readOnly
+                              label: widget.readOnly && !widget.docsOnly
                                   ? l10n.projectExistingFilesLabel
                                   : l10n.projectCreateFilesLabel,
                               nameCtrl: _docNameCtrl,
@@ -500,7 +521,7 @@ class _AddProjectViewState extends State<_AddProjectView> {
                                     document,
                               ],
                               loading: state.documentsLoading,
-                              readOnly: widget.readOnly,
+                              readOnly: widget.readOnly && !widget.docsOnly,
                               onAdd: _addDocument,
                               onRemoveNew: (i) =>
                                   setState(() => _newDocs.removeAt(i)),
@@ -513,7 +534,7 @@ class _AddProjectViewState extends State<_AddProjectView> {
                     ),
                   ),
                 ),
-                if (!widget.readOnly)
+                if (!widget.readOnly || widget.docsOnly)
                   BlocBuilder<ProjectCreateBloc, ProjectCreateState>(
                     buildWhen: (previous, current) =>
                         previous.submitStatus != current.submitStatus,

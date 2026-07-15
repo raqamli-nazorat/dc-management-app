@@ -166,7 +166,8 @@ class ProjectCard extends StatelessWidget {
                   ),
                   SizedBox(width: 8.w),
                   _MoreMenu(
-                    canManage: NavPermissions.canManageProject(role),
+                    canEdit: NavPermissions.canManageProject(role),
+                    canDelete: NavPermissions.canDeleteProject(role),
                     onDetails: onDetails,
                     onEdit: onEdit,
                     onDelete: onDelete,
@@ -258,13 +259,15 @@ enum _ProjectMenuAction { edit, details, delete }
 
 class _MoreMenu extends StatelessWidget {
   const _MoreMenu({
-    required this.canManage,
+    required this.canEdit,
+    required this.canDelete,
     this.onDetails,
     this.onEdit,
     this.onDelete,
   });
 
-  final bool canManage;
+  final bool canEdit;
+  final bool canDelete;
   final VoidCallback? onDetails;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
@@ -302,7 +305,7 @@ class _MoreMenu extends StatelessWidget {
       ),
       onSelected: (action) => _onSelected(context, action),
       itemBuilder: (_) => [
-        if (canManage)
+        if (canEdit)
           PopupMenuItem(
             value: _ProjectMenuAction.edit,
             height: 40.h,
@@ -323,7 +326,7 @@ class _MoreMenu extends StatelessWidget {
             color: colors.textStrong,
           ),
         ),
-        if (canManage)
+        if (canDelete)
           PopupMenuItem(
             value: _ProjectMenuAction.delete,
             height: 40.h,

@@ -125,7 +125,10 @@ class ProjectCreateBloc extends Bloc<ProjectCreateEvent, ProjectCreateState> {
   ) async {
     emit(state.copyWith(submitStatus: ProjectCreateSubmitStatus.submitting));
     try {
-      final project = await _updateProject((id: event.id, form: event.form));
+      final form = event.form;
+      final project = form == null
+          ? null
+          : await _updateProject((id: event.id, form: form));
       var documentsFailed = false;
       for (final id in event.removedDocumentIds) {
         try {
