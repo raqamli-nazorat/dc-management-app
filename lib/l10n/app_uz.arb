@@ -71,6 +71,16 @@
   "expenseReportTitleHint": "Nomi bo'yicha qidirish",
 
   "taskReportsEmpty": "Hozircha vazifalar yo'q",
+
+  "payrollReportsEmpty": "Hozircha ish haqi hisobotlari yo'q",
+  "payrollFixedSalary": "Oylik maoshi (UZS)",
+  "payrollKpiBonus": "KPI bonusi (UZS)",
+  "payrollPenalty": "Jarima miqdori (UZS)",
+  "payrollTotal": "Jami miqdori (UZS)",
+  "payrollCreatedAt": "Hisoblangan vaqti",
+  "payrollMonth": "Oy uchun",
+  "payrollStatusCalculated": "Hisoblangan",
+  "payrollStatusConfirmed": "Tasdiqlangan",
   "taskReportAssignees": "Topshiruvchilar",
   "taskReportAssigneesHint": "Topshiruvchilar tanlang",
   "taskReportSprint": "Sprint raqami",

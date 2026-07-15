@@ -46,6 +46,9 @@ abstract final class ApiConstants {
   // ── Task Reports ───────────────────────────────────────────────────────
   static const reportsTasks = '/reports/tasks/';
 
+  // ── Payroll Reports ────────────────────────────────────────────────────
+  static const reportsPayrolls = '/reports/payrolls/';
+
   /// Viloyatlar — hisobot filtri "Viloyat" tanlovi (`GET /applications/regions/`).
   static const applicationsRegions = '/applications/regions/';
 

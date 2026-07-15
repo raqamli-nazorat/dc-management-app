@@ -199,6 +199,33 @@ class AppLocalizationsUz extends AppLocalizations {
   String get taskReportsEmpty => 'Hozircha vazifalar yo\'q';
 
   @override
+  String get payrollReportsEmpty => 'Hozircha ish haqi hisobotlari yo\'q';
+
+  @override
+  String get payrollFixedSalary => 'Oylik maoshi (UZS)';
+
+  @override
+  String get payrollKpiBonus => 'KPI bonusi (UZS)';
+
+  @override
+  String get payrollPenalty => 'Jarima miqdori (UZS)';
+
+  @override
+  String get payrollTotal => 'Jami miqdori (UZS)';
+
+  @override
+  String get payrollCreatedAt => 'Hisoblangan vaqti';
+
+  @override
+  String get payrollMonth => 'Oy uchun';
+
+  @override
+  String get payrollStatusCalculated => 'Hisoblangan';
+
+  @override
+  String get payrollStatusConfirmed => 'Tasdiqlangan';
+
+  @override
   String get taskReportAssignees => 'Topshiruvchilar';
 
   @override

@@ -68,6 +68,16 @@
   "expenseReportTitleHint": "Search by title",
 
   "taskReportsEmpty": "No tasks yet",
+
+  "payrollReportsEmpty": "No payroll reports yet",
+  "payrollFixedSalary": "Fixed salary (UZS)",
+  "payrollKpiBonus": "KPI bonus (UZS)",
+  "payrollPenalty": "Penalty amount (UZS)",
+  "payrollTotal": "Total amount (UZS)",
+  "payrollCreatedAt": "Calculated at",
+  "payrollMonth": "Month",
+  "payrollStatusCalculated": "Calculated",
+  "payrollStatusConfirmed": "Confirmed",
   "taskReportAssignees": "Assignees",
   "taskReportAssigneesHint": "Select assignees",
   "taskReportSprint": "Sprint number",
