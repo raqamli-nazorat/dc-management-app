@@ -42,6 +42,10 @@ class ProfileRepositoryImpl implements ProfileRepository {
       throw NetworkFailure(e.message);
     } on ServerException catch (e) {
       throw ServerFailure(e.message);
+    } catch (e) {
+      // Kutilmagan xato (masalan, kutilmagan JSON shakli) — bloclar faqat
+      // `Failure` ushlaydi, aks holda u yerdan o‘tib ketib UI loading’da qotardi.
+      throw ServerFailure(e.toString());
     }
   }
 }

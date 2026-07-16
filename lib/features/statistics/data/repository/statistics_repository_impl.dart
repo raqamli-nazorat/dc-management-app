@@ -15,10 +15,6 @@ class StatisticsRepositoryImpl implements StatisticsRepository {
   Future<PeriodStatistics> getPeriodStatistics(int months) =>
       _guard(() => _remote.getPeriodStatistics(months));
 
-  @override
-  Future<EfficiencyStatistics> getEfficiency(int months) =>
-      _guard(() => _remote.getEfficiency(months));
-
   /// Data source chaqiruvini o‘rab, `Exception` → `Failure` xaritalaydi.
   Future<T> _guard<T>(Future<T> Function() action) async {
     try {
@@ -31,6 +27,10 @@ class StatisticsRepositoryImpl implements StatisticsRepository {
       throw NetworkFailure(e.message);
     } on ServerException catch (e) {
       throw ServerFailure(e.message);
+    } catch (e) {
+      // Kutilmagan xato (masalan, kutilmagan JSON shakli) — bloclar faqat
+      // `Failure` ushlaydi, aks holda u yerdan o‘tib ketib UI loading’da qotardi.
+      throw ServerFailure(e.toString());
     }
   }
 }

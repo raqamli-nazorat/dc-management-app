@@ -9,9 +9,6 @@ import '../models/statistics_model.dart';
 abstract interface class StatisticsRemoteDataSource {
   /// Davr statistikasi (`GET /users/me/period-statistics/?months=`).
   Future<PeriodStatisticsModel> getPeriodStatistics(int months);
-
-  /// Samaradorlik (`GET /users/me/efficiency/?months=`).
-  Future<EfficiencyStatisticsModel> getEfficiency(int months);
 }
 
 class StatisticsRemoteDataSourceImpl implements StatisticsRemoteDataSource {
@@ -27,21 +24,6 @@ class StatisticsRemoteDataSourceImpl implements StatisticsRemoteDataSource {
         queryParameters: {'months': months},
       );
       return PeriodStatisticsModel.fromJson(ResponseMapper.asMap(response.data));
-    } on DioException catch (e) {
-      throw ResponseMapper.mapDioException(e);
-    }
-  }
-
-  @override
-  Future<EfficiencyStatisticsModel> getEfficiency(int months) async {
-    try {
-      final response = await _client.get(
-        ApiConstants.usersMeEfficiency,
-        queryParameters: {'months': months},
-      );
-      return EfficiencyStatisticsModel.fromJson(
-        ResponseMapper.asMap(response.data),
-      );
     } on DioException catch (e) {
       throw ResponseMapper.mapDioException(e);
     }

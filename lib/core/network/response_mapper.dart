@@ -11,7 +11,9 @@ import '../error/exceptions.dart';
 abstract final class ResponseMapper {
   /// Konvert ichidagi `data`ni (yoki tananing o‘zini) `Map` sifatida qaytaradi.
   static Map<String, dynamic> asMap(dynamic responseData) {
-    final body = (responseData as Map?)?.cast<String, dynamic>() ?? {};
+    // `is Map` — `as Map?` bo‘lsa List/String tanada TypeError otardi.
+    if (responseData is! Map) return {};
+    final body = responseData.cast<String, dynamic>();
     final data = body['data'];
     if (data is Map) return data.cast<String, dynamic>();
     return body;
@@ -21,7 +23,8 @@ abstract final class ResponseMapper {
   /// Sahifalangan javoblarda (`{results: [...]}`) `results` ham tekshiriladi.
   static List<dynamic> asList(dynamic responseData) {
     if (responseData is List) return responseData;
-    final body = (responseData as Map?)?.cast<String, dynamic>() ?? {};
+    if (responseData is! Map) return const [];
+    final body = responseData.cast<String, dynamic>();
     final data = body['data'];
     if (data is List) return data;
     if (data is Map && data['results'] is List) return data['results'] as List;
@@ -60,8 +63,9 @@ abstract final class ResponseMapper {
     }
 
     final status = e.response?.statusCode;
-    final body = (e.response?.data as Map?)?.cast<String, dynamic>();
-    final message = body == null ? null : messageFromBody(body);
+    final data = e.response?.data;
+    final message =
+        data is Map ? messageFromBody(data.cast<String, dynamic>()) : null;
 
     if (status == 401) return UnauthorizedException(message ?? 'Unauthorized');
     if (status == 429) return ThrottleException(message ?? 'Too many requests');

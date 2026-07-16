@@ -121,6 +121,7 @@ class _AppState extends State<App> with WidgetsBindingObserver {
               // (faqat `kIsDebug`da yoqiq, release’da avtomatik o‘chadi).
               builder: (context, child) => Thunder(
                 dio: [getIt<Dio>()],
+                enabled:true,
                 child: child ?? const SizedBox.shrink(),
               ),
             );

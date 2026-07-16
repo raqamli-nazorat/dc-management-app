@@ -102,7 +102,6 @@ import 'features/projects/presentation/bloc/projects_bloc.dart';
 import 'features/statistics/data/data_sources/statistics_remote_data_source.dart';
 import 'features/statistics/data/repository/statistics_repository_impl.dart';
 import 'features/statistics/domain/repository/statistics_repository.dart';
-import 'features/statistics/domain/usecases/get_efficiency_usecase.dart';
 import 'features/statistics/domain/usecases/get_period_statistics_usecase.dart';
 import 'features/statistics/presentation/bloc/statistics_bloc.dart';
 
@@ -454,11 +453,8 @@ Future<void> configureDependencies() async {
     ..registerLazySingleton<GetPeriodStatisticsUseCase>(
       () => GetPeriodStatisticsUseCase(getIt()),
     )
-    ..registerLazySingleton<GetEfficiencyUseCase>(
-      () => GetEfficiencyUseCase(getIt()),
-    )
     ..registerFactory<StatisticsBloc>(
-      () => StatisticsBloc(getPeriod: getIt(), getEfficiency: getIt()),
+      () => StatisticsBloc(getPeriod: getIt()),
     );
 
   // ── Notification feature ──────────────────────────────────────────────

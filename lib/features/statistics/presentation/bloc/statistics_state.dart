@@ -20,14 +20,12 @@ class StatisticsState extends Equatable {
     this.status = StatisticsStatus.initial,
     this.period = StatPeriod.month1,
     this.periodStatistics,
-    this.efficiency,
     this.failure,
   });
 
   final StatisticsStatus status;
   final StatPeriod period;
   final PeriodStatistics? periodStatistics;
-  final EfficiencyStatistics? efficiency;
   final Failure? failure;
 
   /// Kamida bir marta muvaffaqiyatli yuklangan (grafiklar chizishga tayyor).
@@ -37,23 +35,15 @@ class StatisticsState extends Equatable {
     StatisticsStatus? status,
     StatPeriod? period,
     PeriodStatistics? periodStatistics,
-    EfficiencyStatistics? efficiency,
     Failure? failure,
   }) =>
       StatisticsState(
         status: status ?? this.status,
         period: period ?? this.period,
         periodStatistics: periodStatistics ?? this.periodStatistics,
-        efficiency: efficiency ?? this.efficiency,
         failure: failure,
       );
 
   @override
-  List<Object?> get props => [
-        status,
-        period,
-        periodStatistics,
-        efficiency,
-        failure,
-      ];
+  List<Object?> get props => [status, period, periodStatistics, failure];
 }

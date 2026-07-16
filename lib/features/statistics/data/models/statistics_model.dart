@@ -1,7 +1,13 @@
 import '../../domain/entities/statistics.dart';
 
-int _int(dynamic v) => (v as num?)?.toInt() ?? 0;
-double _double(dynamic v) => (v as num?)?.toDouble() ?? 0.0;
+/// Backend son maydonlarni ba’zan matn (`"12"`, `"85.5"`) yoki `null` qilib
+/// qaytaradi — `as num?` bunda TypeError otardi, shu bois bardoshli parsing.
+double _double(dynamic v) => switch (v) {
+      num() => v.toDouble(),
+      String() => double.tryParse(v) ?? 0.0,
+      _ => 0.0,
+    };
+int _int(dynamic v) => _double(v).toInt();
 
 /// [PeriodStatistics] JSON serializatsiyasi (`/users/me/period-statistics/`).
 ///
@@ -14,8 +20,10 @@ class PeriodStatisticsModel extends PeriodStatistics {
   });
 
   factory PeriodStatisticsModel.fromJson(Map<String, dynamic> json) {
-    Map<String, dynamic> section(String key) =>
-        (json[key] as Map?)?.cast<String, dynamic>() ?? const {};
+    Map<String, dynamic> section(String key) {
+      final v = json[key];
+      return v is Map ? v.cast<String, dynamic>() : const {};
+    }
     return PeriodStatisticsModel(
       projects: _projects(section('projects')),
       tasks: _tasks(section('tasks')),
@@ -59,34 +67,4 @@ class PeriodStatisticsModel extends PeriodStatistics {
         uniqueMeetings: _int(j['unique_meetings']),
         attendanceRate: _double(j['attendance_rate']),
       );
-}
-
-/// [EfficiencyStatistics] JSON serializatsiyasi (`/users/me/efficiency/`).
-class EfficiencyStatisticsModel extends EfficiencyStatistics {
-  const EfficiencyStatisticsModel({
-    required super.overallEfficiency,
-    required super.taskScore,
-    required super.meetingScore,
-    required super.metrics,
-    required super.insights,
-  });
-
-  factory EfficiencyStatisticsModel.fromJson(Map<String, dynamic> json) {
-    final m = (json['metrics'] as Map?)?.cast<String, dynamic>() ?? const {};
-    return EfficiencyStatisticsModel(
-      overallEfficiency: _double(json['overall_efficiency']),
-      taskScore: _double(json['task_score']),
-      meetingScore: _double(json['meeting_score']),
-      metrics: EfficiencyMetrics(
-        totalTasks: _int(m['total_tasks']),
-        overdueTasks: _int(m['overdue_tasks']),
-        rejectedTasks: _int(m['rejected_tasks']),
-        totalReopenedActions: _int(m['total_reopened_actions']),
-        totalMeetings: _int(m['total_meetings']),
-        unexcusedMeetings: _int(m['unexcused_meetings']),
-      ),
-      insights: (json['insights'] as List?)?.map((e) => e.toString()).toList() ??
-          const [],
-    );
-  }
 }
