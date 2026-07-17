@@ -1083,4 +1083,76 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get networkError => 'No internet connection. Check your connection.';
+
+  @override
+  String get usersEmpty => 'No users yet';
+
+  @override
+  String get userFullNameLabel => 'Full name:';
+
+  @override
+  String get userPositionLabel => 'Position:';
+
+  @override
+  String get userRoleLabel => 'Role:';
+
+  @override
+  String get userSalaryLabel => 'Salary:';
+
+  @override
+  String get userBalanceLabel => 'Balance:';
+
+  @override
+  String get usersFilterAllPositions => 'All positions';
+
+  @override
+  String get usersFilterAllRoles => 'All roles';
+
+  @override
+  String get usersSortNameAsc => 'A to Z';
+
+  @override
+  String get usersSortNameDesc => 'Z to A';
+
+  @override
+  String get usersSortNewest => 'New → Old';
+
+  @override
+  String get usersSortOldest => 'Old → New';
+
+  @override
+  String get userDetailTitle => 'User details';
+
+  @override
+  String get userDetailFullName => 'Full name';
+
+  @override
+  String get userDetailCreatedAt => 'Created at';
+
+  @override
+  String get userDetailPhone => 'Phone number';
+
+  @override
+  String get userDetailCard => 'Card number';
+
+  @override
+  String get userDetailSalary => 'Monthly salary';
+
+  @override
+  String get userDetailBalance => 'Balance';
+
+  @override
+  String get userDetailDistrict => 'District';
+
+  @override
+  String get userDetailPassport => 'Passport details';
+
+  @override
+  String get userDetailPassportImage => 'Passport image';
+
+  @override
+  String get userDetailPosition => 'Position';
+
+  @override
+  String get userDetailRole => 'Role';
 }

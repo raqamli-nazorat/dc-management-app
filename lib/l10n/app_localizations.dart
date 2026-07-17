@@ -2203,6 +2203,150 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Internet aloqasi yo‘q. Ulanishni tekshiring.'**
   String get networkError;
+
+  /// No description provided for @usersEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hozircha foydalanuvchilar yo\'q'**
+  String get usersEmpty;
+
+  /// No description provided for @userFullNameLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ism sharifi:'**
+  String get userFullNameLabel;
+
+  /// No description provided for @userPositionLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Lavozimi:'**
+  String get userPositionLabel;
+
+  /// No description provided for @userRoleLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rol:'**
+  String get userRoleLabel;
+
+  /// No description provided for @userSalaryLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Oylik maoshi:'**
+  String get userSalaryLabel;
+
+  /// No description provided for @userBalanceLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Balansi:'**
+  String get userBalanceLabel;
+
+  /// No description provided for @usersFilterAllPositions.
+  ///
+  /// In uz, this message translates to:
+  /// **'Barcha lavozimlar'**
+  String get usersFilterAllPositions;
+
+  /// No description provided for @usersFilterAllRoles.
+  ///
+  /// In uz, this message translates to:
+  /// **'Barcha rollar'**
+  String get usersFilterAllRoles;
+
+  /// No description provided for @usersSortNameAsc.
+  ///
+  /// In uz, this message translates to:
+  /// **'A dan Z gacha'**
+  String get usersSortNameAsc;
+
+  /// No description provided for @usersSortNameDesc.
+  ///
+  /// In uz, this message translates to:
+  /// **'Z dan A gacha'**
+  String get usersSortNameDesc;
+
+  /// No description provided for @usersSortNewest.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi → Eski'**
+  String get usersSortNewest;
+
+  /// No description provided for @usersSortOldest.
+  ///
+  /// In uz, this message translates to:
+  /// **'Eski → Yangi'**
+  String get usersSortOldest;
+
+  /// No description provided for @userDetailTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Foydalanuvchining ma’lumotlari'**
+  String get userDetailTitle;
+
+  /// No description provided for @userDetailFullName.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ism Sharifi'**
+  String get userDetailFullName;
+
+  /// No description provided for @userDetailCreatedAt.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yaratilgan vaqt'**
+  String get userDetailCreatedAt;
+
+  /// No description provided for @userDetailPhone.
+  ///
+  /// In uz, this message translates to:
+  /// **'Telefon raqami'**
+  String get userDetailPhone;
+
+  /// No description provided for @userDetailCard.
+  ///
+  /// In uz, this message translates to:
+  /// **'Karta raqami'**
+  String get userDetailCard;
+
+  /// No description provided for @userDetailSalary.
+  ///
+  /// In uz, this message translates to:
+  /// **'Oylik maosh'**
+  String get userDetailSalary;
+
+  /// No description provided for @userDetailBalance.
+  ///
+  /// In uz, this message translates to:
+  /// **'Balansi'**
+  String get userDetailBalance;
+
+  /// No description provided for @userDetailDistrict.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tuman'**
+  String get userDetailDistrict;
+
+  /// No description provided for @userDetailPassport.
+  ///
+  /// In uz, this message translates to:
+  /// **'Passport ma’lumotlari'**
+  String get userDetailPassport;
+
+  /// No description provided for @userDetailPassportImage.
+  ///
+  /// In uz, this message translates to:
+  /// **'Passport rasmi'**
+  String get userDetailPassportImage;
+
+  /// No description provided for @userDetailPosition.
+  ///
+  /// In uz, this message translates to:
+  /// **'Lavozimi'**
+  String get userDetailPosition;
+
+  /// No description provided for @userDetailRole.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rolli'**
+  String get userDetailRole;
 }
 
 class _AppLocalizationsDelegate

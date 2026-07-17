@@ -1088,4 +1088,76 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get networkError => 'Internet aloqasi yo‘q. Ulanishni tekshiring.';
+
+  @override
+  String get usersEmpty => 'Hozircha foydalanuvchilar yo\'q';
+
+  @override
+  String get userFullNameLabel => 'Ism sharifi:';
+
+  @override
+  String get userPositionLabel => 'Lavozimi:';
+
+  @override
+  String get userRoleLabel => 'Rol:';
+
+  @override
+  String get userSalaryLabel => 'Oylik maoshi:';
+
+  @override
+  String get userBalanceLabel => 'Balansi:';
+
+  @override
+  String get usersFilterAllPositions => 'Barcha lavozimlar';
+
+  @override
+  String get usersFilterAllRoles => 'Barcha rollar';
+
+  @override
+  String get usersSortNameAsc => 'A dan Z gacha';
+
+  @override
+  String get usersSortNameDesc => 'Z dan A gacha';
+
+  @override
+  String get usersSortNewest => 'Yangi → Eski';
+
+  @override
+  String get usersSortOldest => 'Eski → Yangi';
+
+  @override
+  String get userDetailTitle => 'Foydalanuvchining ma’lumotlari';
+
+  @override
+  String get userDetailFullName => 'Ism Sharifi';
+
+  @override
+  String get userDetailCreatedAt => 'Yaratilgan vaqt';
+
+  @override
+  String get userDetailPhone => 'Telefon raqami';
+
+  @override
+  String get userDetailCard => 'Karta raqami';
+
+  @override
+  String get userDetailSalary => 'Oylik maosh';
+
+  @override
+  String get userDetailBalance => 'Balansi';
+
+  @override
+  String get userDetailDistrict => 'Tuman';
+
+  @override
+  String get userDetailPassport => 'Passport ma’lumotlari';
+
+  @override
+  String get userDetailPassportImage => 'Passport rasmi';
+
+  @override
+  String get userDetailPosition => 'Lavozimi';
+
+  @override
+  String get userDetailRole => 'Rolli';
 }

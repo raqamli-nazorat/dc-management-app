@@ -126,6 +126,15 @@ class Routes implements Coordinate {
     path: '/meetings/:id/reason',
   );
 
+  /// Foydalanuvchilarni filtrlash sahifasi (Foydalanuvchilar tabidan).
+  static const usersFilter = Routes._(
+    name: 'users_filter',
+    path: '/users/filter',
+  );
+
+  /// Foydalanuvchi detail sahifasi (kartaga bosilganda).
+  static const userDetail = Routes._(name: 'user_detail', path: '/users/:id');
+
   /// Xodim bo'yicha hisobot ro'yxati (Hisobotlar tabidan).
   static const userReports = Routes._(
     name: 'user_reports',

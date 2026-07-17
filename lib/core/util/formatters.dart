@@ -23,4 +23,9 @@ abstract final class Formatters {
         ? buffer.toString()
         : '${buffer.toString()}.$fraction';
   }
+
+  /// [formatAmount] + vergulli kasr (dizayn ko'rinishi):
+  /// `12000000.00` → `12 000 000,00`.
+  static String formatAmountComma(String value) =>
+      formatAmount(value).replaceAll('.', ',');
 }
