@@ -422,5 +422,9 @@
   "userDetailPassport": "Passport ma’lumotlari",
   "userDetailPassportImage": "Passport rasmi",
   "userDetailPosition": "Lavozimi",
-  "userDetailRole": "Rolli"
+  "userDetailRole": "Rolli",
+
+  "financeExpenseRequests": "Xarajat so'rovlari",
+  "financeWages": "Ish haqi",
+  "financeHistory": "Tarix"
 }

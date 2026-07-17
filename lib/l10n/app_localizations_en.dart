@@ -1155,4 +1155,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get userDetailRole => 'Role';
+
+  @override
+  String get financeExpenseRequests => 'Expense requests';
+
+  @override
+  String get financeWages => 'Wages';
+
+  @override
+  String get financeHistory => 'History';
 }

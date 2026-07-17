@@ -272,6 +272,10 @@ class $AssetsImagesGen {
   AssetGenImage get cardboardTexture =>
       const AssetGenImage('assets/images/cardboard_texture.jpg');
 
+  /// File path: assets/images/history_image.png
+  AssetGenImage get historyImage =>
+      const AssetGenImage('assets/images/history_image.png');
+
   /// File path: assets/images/meetings.png
   AssetGenImage get meetings =>
       const AssetGenImage('assets/images/meetings.png');
@@ -292,8 +296,16 @@ class $AssetsImagesGen {
   AssetGenImage get regardingWages =>
       const AssetGenImage('assets/images/regarding_wages.png');
 
+  /// File path: assets/images/spending_requests_image.png
+  AssetGenImage get spendingRequestsImage =>
+      const AssetGenImage('assets/images/spending_requests_image.png');
+
   /// File path: assets/images/tasks.png
   AssetGenImage get tasks => const AssetGenImage('assets/images/tasks.png');
+
+  /// File path: assets/images/wages_image.png
+  AssetGenImage get wagesImage =>
+      const AssetGenImage('assets/images/wages_image.png');
 
   /// List of all assets
   List<AssetGenImage> get values => [
@@ -301,12 +313,15 @@ class $AssetsImagesGen {
     appLogo,
     byTasks,
     cardboardTexture,
+    historyImage,
     meetings,
     onSpendingRequests,
     perEmployee,
     projects,
     regardingWages,
+    spendingRequestsImage,
     tasks,
+    wagesImage,
   ];
 }
 

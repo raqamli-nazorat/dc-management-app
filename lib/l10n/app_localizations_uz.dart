@@ -1160,4 +1160,13 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get userDetailRole => 'Rolli';
+
+  @override
+  String get financeExpenseRequests => 'Xarajat so\'rovlari';
+
+  @override
+  String get financeWages => 'Ish haqi';
+
+  @override
+  String get financeHistory => 'Tarix';
 }

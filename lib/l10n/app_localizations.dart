@@ -2347,6 +2347,24 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Rolli'**
   String get userDetailRole;
+
+  /// No description provided for @financeExpenseRequests.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xarajat so\'rovlari'**
+  String get financeExpenseRequests;
+
+  /// No description provided for @financeWages.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ish haqi'**
+  String get financeWages;
+
+  /// No description provided for @financeHistory.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tarix'**
+  String get financeHistory;
 }
 
 class _AppLocalizationsDelegate

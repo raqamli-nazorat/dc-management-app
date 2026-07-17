@@ -419,5 +419,9 @@
   "userDetailPassport": "Passport details",
   "userDetailPassportImage": "Passport image",
   "userDetailPosition": "Position",
-  "userDetailRole": "Role"
+  "userDetailRole": "Role",
+
+  "financeExpenseRequests": "Expense requests",
+  "financeWages": "Wages",
+  "financeHistory": "History"
 }
