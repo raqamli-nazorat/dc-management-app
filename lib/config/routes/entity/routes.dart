@@ -135,6 +135,30 @@ class Routes implements Coordinate {
   /// Foydalanuvchi detail sahifasi (kartaga bosilganda).
   static const userDetail = Routes._(name: 'user_detail', path: '/users/:id');
 
+  /// Moliya tarixi ro'yxati (Moliya tabidagi "Tarix" kartasidan).
+  static const ledgerList = Routes._(name: 'ledger_list', path: '/ledger');
+
+  /// Moliya tarixini filtrlash sahifasi.
+  static const ledgerFilter = Routes._(
+    name: 'ledger_filter',
+    path: '/ledger/filter',
+  );
+
+  /// Moliya tarixi detail sahifasi (kartaga bosilganda).
+  static const ledgerDetail = Routes._(
+    name: 'ledger_detail',
+    path: '/ledger/:id',
+  );
+
+  /// Ish haqi ro'yxati (Moliya tabidagi "Ish haqi" kartasidan).
+  static const payrollList = Routes._(name: 'payroll_list', path: '/payroll');
+
+  /// Ish haqi detail sahifasi (kartaga bosilganda).
+  static const payrollDetail = Routes._(
+    name: 'payroll_detail',
+    path: '/payroll/:id',
+  );
+
   /// Xodim bo'yicha hisobot ro'yxati (Hisobotlar tabidan).
   static const userReports = Routes._(
     name: 'user_reports',

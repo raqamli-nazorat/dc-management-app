@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../config/routes/entity/routes.dart';
 import '../../../../core/gen/assets.gen.dart';
 import '../../../../core/widgets/app_nav_tile.dart';
 import '../../../../l10n/app_localizations.dart';
@@ -34,6 +36,7 @@ class FinancePage extends StatelessWidget {
                     label: l10n.financeWages,
                     image: Assets.images.wagesImage,
                     imageSize: 72.w,
+                    onTap: () => context.pushNamed(Routes.payrollList.name),
                   ),
                 ),
                 Expanded(
@@ -41,6 +44,7 @@ class FinancePage extends StatelessWidget {
                     label: l10n.financeHistory,
                     image: Assets.images.historyImage,
                     imageSize: 72.w,
+                    onTap: () => context.pushNamed(Routes.ledgerList.name),
                   ),
                 ),
               ],

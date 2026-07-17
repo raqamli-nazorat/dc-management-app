@@ -423,5 +423,33 @@
 
   "financeExpenseRequests": "Expense requests",
   "financeWages": "Wages",
-  "financeHistory": "History"
+  "financeHistory": "History",
+
+  "ledgerEmpty": "No records yet",
+  "ledgerTypeLabel": "Type:",
+  "ledgerAmountLabel": "Amount:",
+  "ledgerDateLabel": "Date:",
+  "ledgerTypeExpense": "Expense",
+  "ledgerTypeIncome": "Income",
+  "ledgerDetailTitle": "History details",
+  "ledgerDetailExpenseType": "Expense type",
+  "ledgerDetailAmount": "Amount",
+  "ledgerDetailConfirmedAt": "Confirmed at",
+  "ledgerFilterExpenseType": "Expense type",
+  "ledgerFilterExpenseTypeHint": "Select expense type",
+  "ledgerFilterDateRange": "Date range",
+  "ledgerFilterAmount": "Amount",
+
+  "payrollEmpty": "No records yet",
+  "payrollMonthLabel": "Month:",
+  "payrollKpiLabel": "KPI bonus:",
+  "payrollTotalLabel": "Total:",
+  "payrollDetailTitle": "Payroll details",
+  "payrollMonthField": "Month",
+  "payrollSalaryField": "Monthly salary (UZS)",
+  "payrollKpiField": "KPI bonus",
+  "payrollPenaltyField": "Penalty amount",
+  "payrollTotalField": "Total amount",
+  "payrollConfirmButton": "Confirm",
+  "payrollConfirmSuccess": "Payroll confirmed"
 }

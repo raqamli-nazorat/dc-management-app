@@ -2365,6 +2365,162 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Tarix'**
   String get financeHistory;
+
+  /// No description provided for @ledgerEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hozircha yozuvlar yo\'q'**
+  String get ledgerEmpty;
+
+  /// No description provided for @ledgerTypeLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Turi:'**
+  String get ledgerTypeLabel;
+
+  /// No description provided for @ledgerAmountLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Miqdor:'**
+  String get ledgerAmountLabel;
+
+  /// No description provided for @ledgerDateLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sana:'**
+  String get ledgerDateLabel;
+
+  /// No description provided for @ledgerTypeExpense.
+  ///
+  /// In uz, this message translates to:
+  /// **'Chiqim'**
+  String get ledgerTypeExpense;
+
+  /// No description provided for @ledgerTypeIncome.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kirim'**
+  String get ledgerTypeIncome;
+
+  /// No description provided for @ledgerDetailTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tarix ma’lumotlari'**
+  String get ledgerDetailTitle;
+
+  /// No description provided for @ledgerDetailExpenseType.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xarajat turi'**
+  String get ledgerDetailExpenseType;
+
+  /// No description provided for @ledgerDetailAmount.
+  ///
+  /// In uz, this message translates to:
+  /// **'Miqdor'**
+  String get ledgerDetailAmount;
+
+  /// No description provided for @ledgerDetailConfirmedAt.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tastiqlangan vaqt'**
+  String get ledgerDetailConfirmedAt;
+
+  /// No description provided for @ledgerFilterExpenseType.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xarajat turi'**
+  String get ledgerFilterExpenseType;
+
+  /// No description provided for @ledgerFilterExpenseTypeHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xarajat turini tanlang'**
+  String get ledgerFilterExpenseTypeHint;
+
+  /// No description provided for @ledgerFilterDateRange.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sana oralig\'i'**
+  String get ledgerFilterDateRange;
+
+  /// No description provided for @ledgerFilterAmount.
+  ///
+  /// In uz, this message translates to:
+  /// **'Miqdor'**
+  String get ledgerFilterAmount;
+
+  /// No description provided for @payrollEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hozircha yozuvlar yo\'q'**
+  String get payrollEmpty;
+
+  /// No description provided for @payrollMonthLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Oy:'**
+  String get payrollMonthLabel;
+
+  /// No description provided for @payrollKpiLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'KPI bonus:'**
+  String get payrollKpiLabel;
+
+  /// No description provided for @payrollTotalLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Jami miqdori:'**
+  String get payrollTotalLabel;
+
+  /// No description provided for @payrollDetailTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ish haqi ma’lumotlari'**
+  String get payrollDetailTitle;
+
+  /// No description provided for @payrollMonthField.
+  ///
+  /// In uz, this message translates to:
+  /// **'Oy'**
+  String get payrollMonthField;
+
+  /// No description provided for @payrollSalaryField.
+  ///
+  /// In uz, this message translates to:
+  /// **'Oylik maosh (UZS)'**
+  String get payrollSalaryField;
+
+  /// No description provided for @payrollKpiField.
+  ///
+  /// In uz, this message translates to:
+  /// **'KPI bonus'**
+  String get payrollKpiField;
+
+  /// No description provided for @payrollPenaltyField.
+  ///
+  /// In uz, this message translates to:
+  /// **'Jarima miqdori'**
+  String get payrollPenaltyField;
+
+  /// No description provided for @payrollTotalField.
+  ///
+  /// In uz, this message translates to:
+  /// **'Jami miqdori'**
+  String get payrollTotalField;
+
+  /// No description provided for @payrollConfirmButton.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tasdiqlash'**
+  String get payrollConfirmButton;
+
+  /// No description provided for @payrollConfirmSuccess.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ish haqi tasdiqlandi'**
+  String get payrollConfirmSuccess;
 }
 
 class _AppLocalizationsDelegate
