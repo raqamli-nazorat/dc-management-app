@@ -2521,6 +2521,54 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Ish haqi tasdiqlandi'**
   String get payrollConfirmSuccess;
+
+  /// No description provided for @payrollConfirmDialogTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ish haqini tasdiqlaysizmi?'**
+  String get payrollConfirmDialogTitle;
+
+  /// No description provided for @payrollConfirmDialogSubtitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tasdiqlangandan so\'ng bu amalni bekor qilib bo\'lmaydi'**
+  String get payrollConfirmDialogSubtitle;
+
+  /// No description provided for @payrollFilterMonth.
+  ///
+  /// In uz, this message translates to:
+  /// **'Oy'**
+  String get payrollFilterMonth;
+
+  /// No description provided for @payrollFilterMonthHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Oy tanlang'**
+  String get payrollFilterMonthHint;
+
+  /// No description provided for @payrollFilterCreatedRange.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yaratilgan vaqti oralig\'i'**
+  String get payrollFilterCreatedRange;
+
+  /// No description provided for @payrollFilterTotal.
+  ///
+  /// In uz, this message translates to:
+  /// **'Jami miqdori (UZS)'**
+  String get payrollFilterTotal;
+
+  /// No description provided for @payrollFilterPenalty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Jarima miqdori'**
+  String get payrollFilterPenalty;
+
+  /// No description provided for @payrollFilterApply.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qidirish'**
+  String get payrollFilterApply;
 }
 
 class _AppLocalizationsDelegate

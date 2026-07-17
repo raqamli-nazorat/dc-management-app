@@ -153,6 +153,12 @@ class Routes implements Coordinate {
   /// Ish haqi ro'yxati (Moliya tabidagi "Ish haqi" kartasidan).
   static const payrollList = Routes._(name: 'payroll_list', path: '/payroll');
 
+  /// Ish haqini filtrlash sahifasi.
+  static const payrollFilter = Routes._(
+    name: 'payroll_filter',
+    path: '/payroll/filter',
+  );
+
   /// Ish haqi detail sahifasi (kartaga bosilganda).
   static const payrollDetail = Routes._(
     name: 'payroll_detail',

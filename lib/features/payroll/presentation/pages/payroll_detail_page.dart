@@ -16,6 +16,7 @@ import '../../../../injection_container.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../domain/entities/payroll.dart';
 import '../bloc/payroll_detail_bloc.dart';
+import '../widgets/payroll_confirm_dialog.dart';
 
 /// Ish haqi detail sahifasi (`Routes.payrollDetail`, `GET /payroll/{id}/`) —
 /// Figma "Ish haqi ma'lumotlari": faqat o'qish uchun boxed maydonlar +
@@ -51,10 +52,17 @@ class _PayrollDetailView extends StatelessWidget {
       listener: (context, state) {
         if (state.confirmed) {
           AppToast.showSuccess(context, title: l10n.payrollConfirmSuccess);
-          // Ro'yxatga tasdiqlangani haqida signal (belgi yangilanadi).
+          // Tasdiqlandi — ro'yxatga qaytadi va avto-refresh bo'ladi (result: true).
           context.pop(true);
         } else if (state.confirmFailure != null) {
-          AppToast.showError(context, title: l10n.commonError);
+          // Backend xabari (masalan "Sizda oyliklarni tasdiqlash huquqi yo'q").
+          final failure = state.confirmFailure!;
+          AppToast.showError(
+            context,
+            title: failure is NetworkFailure
+                ? l10n.networkError
+                : failure.message,
+          );
         }
       },
       child: Scaffold(
@@ -178,13 +186,18 @@ class _PayrollDetailBody extends StatelessWidget {
             padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 12.h),
             child: _ConfirmButton(
               loading: confirming,
-              onTap: () => context.read<PayrollDetailBloc>().add(
-                const PayrollConfirmRequested(),
-              ),
+              onTap: () => _onConfirmTap(context),
             ),
           ),
       ],
     );
+  }
+
+  /// Tasdiqlash tugmasi — avval tasdiq dialogi, "ha" bo'lsa so'rov ketadi.
+  Future<void> _onConfirmTap(BuildContext context) async {
+    final bloc = context.read<PayrollDetailBloc>();
+    final confirmed = await showPayrollConfirmDialog(context);
+    if (confirmed == true) bloc.add(const PayrollConfirmRequested());
   }
 
   /// Jarima manfiy/qizil ko'rsatiladi: `75000.00` → `-75 000,00` (agar != 0).

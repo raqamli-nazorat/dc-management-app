@@ -1242,4 +1242,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get payrollConfirmSuccess => 'Payroll confirmed';
+
+  @override
+  String get payrollConfirmDialogTitle => 'Confirm this payroll?';
+
+  @override
+  String get payrollConfirmDialogSubtitle =>
+      'This action cannot be undone once confirmed';
+
+  @override
+  String get payrollFilterMonth => 'Month';
+
+  @override
+  String get payrollFilterMonthHint => 'Select month';
+
+  @override
+  String get payrollFilterCreatedRange => 'Created date range';
+
+  @override
+  String get payrollFilterTotal => 'Total amount (UZS)';
+
+  @override
+  String get payrollFilterPenalty => 'Penalty amount';
+
+  @override
+  String get payrollFilterApply => 'Search';
 }

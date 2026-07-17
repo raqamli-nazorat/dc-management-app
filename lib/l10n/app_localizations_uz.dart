@@ -1247,4 +1247,29 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get payrollConfirmSuccess => 'Ish haqi tasdiqlandi';
+
+  @override
+  String get payrollConfirmDialogTitle => 'Ish haqini tasdiqlaysizmi?';
+
+  @override
+  String get payrollConfirmDialogSubtitle =>
+      'Tasdiqlangandan so\'ng bu amalni bekor qilib bo\'lmaydi';
+
+  @override
+  String get payrollFilterMonth => 'Oy';
+
+  @override
+  String get payrollFilterMonthHint => 'Oy tanlang';
+
+  @override
+  String get payrollFilterCreatedRange => 'Yaratilgan vaqti oralig\'i';
+
+  @override
+  String get payrollFilterTotal => 'Jami miqdori (UZS)';
+
+  @override
+  String get payrollFilterPenalty => 'Jarima miqdori';
+
+  @override
+  String get payrollFilterApply => 'Qidirish';
 }

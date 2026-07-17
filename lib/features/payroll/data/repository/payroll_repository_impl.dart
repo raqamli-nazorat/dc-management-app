@@ -1,6 +1,7 @@
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
 import '../../domain/entities/payroll.dart';
+import '../../domain/entities/payroll_filter.dart';
 import '../../domain/repository/payroll_repository.dart';
 import '../data_sources/payroll_remote_data_source.dart';
 
@@ -12,8 +13,10 @@ class PayrollRepositoryImpl implements PayrollRepository {
   final PayrollRemoteDataSource _remote;
 
   @override
-  Future<PayrollPage> getPayrolls({int page = 1, String search = ''}) =>
-      _guard(() => _remote.getPayrolls(page: page, search: search));
+  Future<PayrollPage> getPayrolls({
+    int page = 1,
+    PayrollFilter filter = PayrollFilter.empty,
+  }) => _guard(() => _remote.getPayrolls(page: page, filter: filter));
 
   @override
   Future<Payroll> getPayroll(int id) => _guard(() => _remote.getPayroll(id));

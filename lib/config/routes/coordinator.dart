@@ -54,7 +54,9 @@ import '../../features/ledger/domain/entities/ledger_filter.dart';
 import '../../features/ledger/presentation/pages/ledger_detail_page.dart';
 import '../../features/ledger/presentation/pages/ledger_filter_page.dart';
 import '../../features/ledger/presentation/pages/ledger_list_page.dart';
+import '../../features/payroll/domain/entities/payroll_filter.dart';
 import '../../features/payroll/presentation/pages/payroll_detail_page.dart';
+import '../../features/payroll/presentation/pages/payroll_filter_page.dart';
 import '../../features/payroll/presentation/pages/payroll_list_page.dart';
 import 'entity/routes.dart';
 
@@ -249,6 +251,15 @@ class AppRouter {
           name: Routes.payrollList.name,
           path: Routes.payrollList.path,
           builder: (context, state) => const PayrollListPage(),
+        ),
+        GoRoute(
+          name: Routes.payrollFilter.name,
+          path: Routes.payrollFilter.path,
+          builder: (context, state) => PayrollFilterPage(
+            initial: state.extra is PayrollFilter
+                ? state.extra! as PayrollFilter
+                : PayrollFilter.empty,
+          ),
         ),
         GoRoute(
           name: Routes.payrollDetail.name,

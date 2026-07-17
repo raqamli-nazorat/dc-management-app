@@ -10,7 +10,7 @@ class PayrollState extends Equatable {
     this.page = 1,
     this.hasReachedMax = false,
     this.isLoadingMore = false,
-    this.search = '',
+    this.filter = PayrollFilter.empty,
   });
 
   final PayrollStatus status;
@@ -26,8 +26,8 @@ class PayrollState extends Equatable {
   /// Keyingi sahifa yuklanmoqda — footer spinner + qayta so'rov qulfi.
   final bool isLoadingMore;
 
-  /// Joriy qidiruv matni.
-  final String search;
+  /// Joriy filtr (qidiruv matni ham shu ichida).
+  final PayrollFilter filter;
 
   PayrollState copyWith({
     PayrollStatus? status,
@@ -36,7 +36,7 @@ class PayrollState extends Equatable {
     int? page,
     bool? hasReachedMax,
     bool? isLoadingMore,
-    String? search,
+    PayrollFilter? filter,
   }) => PayrollState(
     status: status ?? this.status,
     items: items ?? this.items,
@@ -44,7 +44,7 @@ class PayrollState extends Equatable {
     page: page ?? this.page,
     hasReachedMax: hasReachedMax ?? this.hasReachedMax,
     isLoadingMore: isLoadingMore ?? this.isLoadingMore,
-    search: search ?? this.search,
+    filter: filter ?? this.filter,
   );
 
   @override
@@ -55,6 +55,6 @@ class PayrollState extends Equatable {
     page,
     hasReachedMax,
     isLoadingMore,
-    search,
+    filter,
   ];
 }

@@ -12,6 +12,7 @@ import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
 import '../../../../injection_container.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../domain/entities/payroll_filter.dart';
 import '../bloc/payroll_bloc.dart';
 import '../widgets/payroll_card.dart';
 
@@ -207,6 +208,17 @@ class _PayrollHeaderState extends State<_PayrollHeader> {
     });
   }
 
+  Future<void> _openFilter() async {
+    final bloc = context.read<PayrollBloc>();
+    final result = await context.pushNamed<Object?>(
+      Routes.payrollFilter.name,
+      extra: bloc.state.filter,
+    );
+    if (result is PayrollFilter) {
+      bloc.add(PayrollFilterChanged(result));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -225,17 +237,22 @@ class _PayrollHeaderState extends State<_PayrollHeader> {
                 onChanged: _onChanged,
                 onClose: _closeSearch,
               )
-            : _TitleBar(key: const ValueKey('title'), onSearch: _openSearch),
+            : _TitleBar(
+                key: const ValueKey('title'),
+                onSearch: _openSearch,
+                onFilter: _openFilter,
+              ),
       ),
     );
   }
 }
 
-/// Qidiruv yopiq holati: orqaga + sarlavha + qidiruv + filtr (stub).
+/// Qidiruv yopiq holati: orqaga + sarlavha + qidiruv + filtr (nuqtali).
 class _TitleBar extends StatelessWidget {
-  const _TitleBar({required this.onSearch, super.key});
+  const _TitleBar({required this.onSearch, required this.onFilter, super.key});
 
   final VoidCallback onSearch;
+  final VoidCallback onFilter;
 
   @override
   Widget build(BuildContext context) {
@@ -268,8 +285,15 @@ class _TitleBar extends StatelessWidget {
         SizedBox(width: 12.w),
         _SquareIconButton(icon: Assets.icons.icSearch, onTap: onSearch),
         SizedBox(width: 12.w),
-        // Filtr — dizaynda bor, lekin filtr sahifasi/oqimi hali yo'q (stub).
-        _SquareIconButton(icon: Assets.icons.icFilter, onTap: null),
+        BlocBuilder<PayrollBloc, PayrollState>(
+          buildWhen: (p, c) =>
+              p.filter.hasActiveFilters != c.filter.hasActiveFilters,
+          builder: (context, state) => _SquareIconButton(
+            icon: Assets.icons.icFilter,
+            showDot: state.filter.hasActiveFilters,
+            onTap: onFilter,
+          ),
+        ),
       ],
     );
   }
@@ -382,36 +406,66 @@ class _SearchBar extends StatelessWidget {
 }
 
 class _SquareIconButton extends StatelessWidget {
-  const _SquareIconButton({required this.icon, required this.onTap});
+  const _SquareIconButton({
+    required this.icon,
+    required this.onTap,
+    this.showDot = false,
+  });
 
   final SvgGenImage icon;
-  final VoidCallback? onTap;
+  final VoidCallback onTap;
+
+  /// Faol filtr nishoni — o'ng-yuqorida accent nuqta.
+  final bool showDot;
 
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
 
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12.r),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: colors.backgroundElevation1,
-          borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(color: colors.strokeSoft, width: 1.w),
-        ),
-        child: SizedBox(
-          width: 40.w,
-          height: 40.w,
-          child: Center(
-            child: icon.svg(
-              width: 16.w,
-              height: 16.w,
-              colorFilter: ColorFilter.mode(colors.iconStrong, BlendMode.srcIn),
-            ),
+    Widget square = DecoratedBox(
+      decoration: BoxDecoration(
+        color: colors.backgroundElevation1,
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: colors.strokeSoft, width: 1.w),
+      ),
+      child: SizedBox(
+        width: 40.w,
+        height: 40.w,
+        child: Center(
+          child: icon.svg(
+            width: 16.w,
+            height: 16.w,
+            colorFilter: ColorFilter.mode(colors.iconStrong, BlendMode.srcIn),
           ),
         ),
       ),
+    );
+
+    if (showDot) {
+      square = Stack(
+        clipBehavior: Clip.none,
+        children: [
+          square,
+          Positioned(
+            top: -2.h,
+            right: -2.w,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: colors.accentSub,
+                shape: BoxShape.circle,
+                border: Border.all(color: colors.backgroundBase, width: 2.w),
+              ),
+              child: SizedBox(width: 10.w, height: 10.w),
+            ),
+          ),
+        ],
+      );
+    }
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12.r),
+      child: square,
     );
   }
 }

@@ -451,5 +451,13 @@
   "payrollPenaltyField": "Penalty amount",
   "payrollTotalField": "Total amount",
   "payrollConfirmButton": "Confirm",
-  "payrollConfirmSuccess": "Payroll confirmed"
+  "payrollConfirmSuccess": "Payroll confirmed",
+  "payrollConfirmDialogTitle": "Confirm this payroll?",
+  "payrollConfirmDialogSubtitle": "This action cannot be undone once confirmed",
+  "payrollFilterMonth": "Month",
+  "payrollFilterMonthHint": "Select month",
+  "payrollFilterCreatedRange": "Created date range",
+  "payrollFilterTotal": "Total amount (UZS)",
+  "payrollFilterPenalty": "Penalty amount",
+  "payrollFilterApply": "Search"
 }

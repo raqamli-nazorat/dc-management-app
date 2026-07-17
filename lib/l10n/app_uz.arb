@@ -454,5 +454,13 @@
   "payrollPenaltyField": "Jarima miqdori",
   "payrollTotalField": "Jami miqdori",
   "payrollConfirmButton": "Tasdiqlash",
-  "payrollConfirmSuccess": "Ish haqi tasdiqlandi"
+  "payrollConfirmSuccess": "Ish haqi tasdiqlandi",
+  "payrollConfirmDialogTitle": "Ish haqini tasdiqlaysizmi?",
+  "payrollConfirmDialogSubtitle": "Tasdiqlangandan so'ng bu amalni bekor qilib bo'lmaydi",
+  "payrollFilterMonth": "Oy",
+  "payrollFilterMonthHint": "Oy tanlang",
+  "payrollFilterCreatedRange": "Yaratilgan vaqti oralig'i",
+  "payrollFilterTotal": "Jami miqdori (UZS)",
+  "payrollFilterPenalty": "Jarima miqdori",
+  "payrollFilterApply": "Qidirish"
 }

@@ -1,9 +1,10 @@
 import '../../../../core/usecases/usecase.dart';
 import '../entities/payroll.dart';
+import '../entities/payroll_filter.dart';
 import '../repository/payroll_repository.dart';
 
-/// [GetPayrollsUseCase] parametri: sahifa raqami + qidiruv matni.
-typedef GetPayrollsParams = ({int page, String search});
+/// [GetPayrollsUseCase] parametri: sahifa raqami + filtr.
+typedef GetPayrollsParams = ({int page, PayrollFilter filter});
 
 /// Ish haqi sahifasini olish (`GET /payroll/`).
 class GetPayrollsUseCase implements UseCase<PayrollPage, GetPayrollsParams> {
@@ -13,5 +14,5 @@ class GetPayrollsUseCase implements UseCase<PayrollPage, GetPayrollsParams> {
 
   @override
   Future<PayrollPage> call(GetPayrollsParams params) =>
-      _repository.getPayrolls(page: params.page, search: params.search);
+      _repository.getPayrolls(page: params.page, filter: params.filter);
 }

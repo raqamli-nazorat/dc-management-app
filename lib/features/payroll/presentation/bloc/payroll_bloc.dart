@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/error/failures.dart';
 import '../../domain/entities/payroll.dart';
+import '../../domain/entities/payroll_filter.dart';
 import '../../domain/usecases/get_payrolls_usecase.dart';
 
 part 'payroll_event.dart';
@@ -16,6 +17,7 @@ class PayrollBloc extends Bloc<PayrollEvent, PayrollState> {
     on<PayrollRequested>(_onRequested);
     on<PayrollLoadMore>(_onLoadMore);
     on<PayrollSearchChanged>(_onSearchChanged);
+    on<PayrollFilterChanged>(_onFilterChanged);
   }
 
   final GetPayrollsUseCase _getPayrolls;
@@ -23,17 +25,22 @@ class PayrollBloc extends Bloc<PayrollEvent, PayrollState> {
   Future<void> _onRequested(
     PayrollRequested event,
     Emitter<PayrollState> emit,
-  ) => _reload(state.search, emit);
+  ) => _reload(state.filter, emit);
 
   Future<void> _onSearchChanged(
     PayrollSearchChanged event,
     Emitter<PayrollState> emit,
-  ) => _reload(event.query, emit);
+  ) => _reload(state.filter.copyWithSearch(event.query), emit);
 
-  Future<void> _reload(String search, Emitter<PayrollState> emit) async {
-    emit(state.copyWith(status: PayrollStatus.loading, search: search));
+  Future<void> _onFilterChanged(
+    PayrollFilterChanged event,
+    Emitter<PayrollState> emit,
+  ) => _reload(event.filter, emit);
+
+  Future<void> _reload(PayrollFilter filter, Emitter<PayrollState> emit) async {
+    emit(state.copyWith(status: PayrollStatus.loading, filter: filter));
     try {
-      final page = await _getPayrolls((page: 1, search: search));
+      final page = await _getPayrolls((page: 1, filter: filter));
       emit(
         state.copyWith(
           status: PayrollStatus.success,
@@ -60,7 +67,7 @@ class PayrollBloc extends Bloc<PayrollEvent, PayrollState> {
     emit(state.copyWith(isLoadingMore: true));
     try {
       final next = state.page + 1;
-      final page = await _getPayrolls((page: next, search: state.search));
+      final page = await _getPayrolls((page: next, filter: state.filter));
       emit(
         state.copyWith(
           items: [...state.items, ...page.items],

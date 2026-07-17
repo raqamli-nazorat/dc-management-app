@@ -1,7 +1,38 @@
 import 'package:dc_management_app/features/payroll/data/models/payroll_model.dart';
+import 'package:dc_management_app/features/payroll/domain/entities/payroll_filter.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  group('PayrollFilter', () {
+    test('search alone does not mark filter active', () {
+      expect(const PayrollFilter(search: 'x').hasActiveFilters, isFalse);
+      expect(
+        PayrollFilter(month: DateTime(2025, 3)).hasActiveFilters,
+        isTrue,
+      );
+      expect(const PayrollFilter(totalFrom: 100).hasActiveFilters, isTrue);
+      expect(const PayrollFilter(penaltyTo: 50).hasActiveFilters, isTrue);
+    });
+
+    test('penaltyEnabled toggle alone is not an active filter', () {
+      // Toggle ochilgan, lekin qiymat kiritilmagan — filtr faol emas.
+      expect(const PayrollFilter(penaltyEnabled: true).hasActiveFilters, isFalse);
+    });
+
+    test('copyWithSearch keeps other fields, replaces search', () {
+      final filter = PayrollFilter(
+        month: DateTime(2025, 1),
+        totalFrom: 100,
+        search: 'old',
+      );
+      final next = filter.copyWithSearch('new');
+
+      expect(next.month, DateTime(2025, 1));
+      expect(next.totalFrom, 100);
+      expect(next.search, 'new');
+    });
+  });
+
   group('PayrollModel', () {
     test('maps Payroll payload with nested user_info', () {
       final p = PayrollModel.fromJson({
