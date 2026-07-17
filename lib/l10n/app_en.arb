@@ -393,5 +393,18 @@
   "changePasswordSuccess": "Password changed successfully.",
 
   "commonError": "Something went wrong. Please try again later.",
-  "networkError": "No internet connection. Check your connection."
+  "networkError": "No internet connection. Check your connection.",
+
+  "usersEmpty": "No users yet",
+  "userFullNameLabel": "Full name:",
+  "userPositionLabel": "Position:",
+  "userRoleLabel": "Role:",
+  "userSalaryLabel": "Salary:",
+  "userBalanceLabel": "Balance:",
+  "usersFilterAllPositions": "All positions",
+  "usersFilterAllRoles": "All roles",
+  "usersSortNameAsc": "A to Z",
+  "usersSortNameDesc": "Z to A",
+  "usersSortNewest": "New → Old",
+  "usersSortOldest": "Old → New"
 }

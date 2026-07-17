@@ -1083,4 +1083,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get networkError => 'No internet connection. Check your connection.';
+
+  @override
+  String get usersEmpty => 'No users yet';
+
+  @override
+  String get userFullNameLabel => 'Full name:';
+
+  @override
+  String get userPositionLabel => 'Position:';
+
+  @override
+  String get userRoleLabel => 'Role:';
+
+  @override
+  String get userSalaryLabel => 'Salary:';
+
+  @override
+  String get userBalanceLabel => 'Balance:';
+
+  @override
+  String get usersFilterAllPositions => 'All positions';
+
+  @override
+  String get usersFilterAllRoles => 'All roles';
+
+  @override
+  String get usersSortNameAsc => 'A to Z';
+
+  @override
+  String get usersSortNameDesc => 'Z to A';
+
+  @override
+  String get usersSortNewest => 'New → Old';
+
+  @override
+  String get usersSortOldest => 'Old → New';
 }

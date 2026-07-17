@@ -47,6 +47,8 @@ import '../../features/tasks/presentation/pages/task_multi_select_page.dart';
 import '../../features/tasks/presentation/pages/tasks_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/profile/presentation/pages/security_page.dart';
+import '../../features/users/domain/entities/users_filter.dart';
+import '../../features/users/presentation/pages/users_filter_page.dart';
 import 'entity/routes.dart';
 
 /// Root navigator key — exposed for context-free navigation (snackbars,
@@ -198,6 +200,15 @@ class AppRouter {
           name: Routes.meetings.name,
           path: Routes.meetings.path,
           builder: (context, state) => const MeetingsPage(),
+        ),
+        GoRoute(
+          name: Routes.usersFilter.name,
+          path: Routes.usersFilter.path,
+          builder: (context, state) => UsersFilterPage(
+            initial: state.extra is UsersFilter
+                ? state.extra! as UsersFilter
+                : UsersFilter.empty,
+          ),
         ),
         GoRoute(
           name: Routes.userReports.name,
