@@ -22,10 +22,8 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
 
   final GetAppUsersUseCase _getUsers;
 
-  Future<void> _onRequested(
-    UsersRequested event,
-    Emitter<UsersState> emit,
-  ) => _reload(state.filter, emit);
+  Future<void> _onRequested(UsersRequested event, Emitter<UsersState> emit) =>
+      _reload(state.filter, emit);
 
   Future<void> _onSearchChanged(
     UsersSearchChanged event,

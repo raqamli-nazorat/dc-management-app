@@ -406,5 +406,18 @@
   "usersSortNameAsc": "A to Z",
   "usersSortNameDesc": "Z to A",
   "usersSortNewest": "New → Old",
-  "usersSortOldest": "Old → New"
+  "usersSortOldest": "Old → New",
+
+  "userDetailTitle": "User details",
+  "userDetailFullName": "Full name",
+  "userDetailCreatedAt": "Created at",
+  "userDetailPhone": "Phone number",
+  "userDetailCard": "Card number",
+  "userDetailSalary": "Monthly salary",
+  "userDetailBalance": "Balance",
+  "userDetailDistrict": "District",
+  "userDetailPassport": "Passport details",
+  "userDetailPassportImage": "Passport image",
+  "userDetailPosition": "Position",
+  "userDetailRole": "Role"
 }

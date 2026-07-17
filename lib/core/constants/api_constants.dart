@@ -70,6 +70,9 @@ abstract final class ApiConstants {
   static const usersAll = '/users/all/';
   static const users = '/users/';
 
+  /// Bitta foydalanuvchi: `GET/PUT/PATCH/DELETE /users/{id}/`.
+  static String userById(int id) => '/users/$id/';
+
   // ── Projects ─────────────────────────────────────────────────────────────
   static const projects = '/projects/';
 

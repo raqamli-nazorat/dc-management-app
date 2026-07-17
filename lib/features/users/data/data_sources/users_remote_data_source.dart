@@ -11,6 +11,9 @@ import '../models/app_user_model.dart';
 abstract interface class UsersRemoteDataSource {
   /// Bitta sahifa (`GET /users/?page=` + filtr paramlari).
   Future<AppUserPage> getUsers({int page, UsersFilter filter});
+
+  /// Bitta foydalanuvchi (`GET /users/{id}/`).
+  Future<AppUser> getUser(int id);
 }
 
 class UsersRemoteDataSourceImpl implements UsersRemoteDataSource {
@@ -40,6 +43,18 @@ class UsersRemoteDataSourceImpl implements UsersRemoteDataSource {
           .map((e) => AppUserModel.fromJson(e.cast<String, dynamic>()))
           .toList();
       return (items: items, hasMore: body['next'] != null);
+    } on DioException catch (e) {
+      throw ResponseMapper.mapDioException(e);
+    }
+  }
+
+  @override
+  Future<AppUser> getUser(int id) async {
+    try {
+      final response = await _client.get(ApiConstants.userById(id));
+      return AppUserModel.fromJson(
+        ResponseMapper.asMap(response.data).cast<String, dynamic>(),
+      );
     } on DioException catch (e) {
       throw ResponseMapper.mapDioException(e);
     }

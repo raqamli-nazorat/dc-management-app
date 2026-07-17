@@ -1124,4 +1124,40 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get usersSortOldest => 'Eski → Yangi';
+
+  @override
+  String get userDetailTitle => 'Foydalanuvchining ma’lumotlari';
+
+  @override
+  String get userDetailFullName => 'Ism Sharifi';
+
+  @override
+  String get userDetailCreatedAt => 'Yaratilgan vaqt';
+
+  @override
+  String get userDetailPhone => 'Telefon raqami';
+
+  @override
+  String get userDetailCard => 'Karta raqami';
+
+  @override
+  String get userDetailSalary => 'Oylik maosh';
+
+  @override
+  String get userDetailBalance => 'Balansi';
+
+  @override
+  String get userDetailDistrict => 'Tuman';
+
+  @override
+  String get userDetailPassport => 'Passport ma’lumotlari';
+
+  @override
+  String get userDetailPassportImage => 'Passport rasmi';
+
+  @override
+  String get userDetailPosition => 'Lavozimi';
+
+  @override
+  String get userDetailRole => 'Rolli';
 }

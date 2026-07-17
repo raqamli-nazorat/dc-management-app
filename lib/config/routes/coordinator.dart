@@ -48,6 +48,7 @@ import '../../features/tasks/presentation/pages/tasks_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/profile/presentation/pages/security_page.dart';
 import '../../features/users/domain/entities/users_filter.dart';
+import '../../features/users/presentation/pages/user_detail_page.dart';
 import '../../features/users/presentation/pages/users_filter_page.dart';
 import 'entity/routes.dart';
 
@@ -208,6 +209,13 @@ class AppRouter {
             initial: state.extra is UsersFilter
                 ? state.extra! as UsersFilter
                 : UsersFilter.empty,
+          ),
+        ),
+        GoRoute(
+          name: Routes.userDetail.name,
+          path: Routes.userDetail.path,
+          builder: (context, state) => UserDetailPage(
+            userId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
           ),
         ),
         GoRoute(

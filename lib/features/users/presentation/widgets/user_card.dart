@@ -11,9 +11,10 @@ import '../../domain/entities/app_user.dart';
 /// Bitta foydalanuvchi kartasi — "Foydalanuvchilar" tabi ro'yxati (Figma card,
 /// dizayndagi checkbox ataylab yo'q — xato deb tasdiqlangan).
 class UserCard extends StatelessWidget {
-  const UserCard({required this.user, super.key});
+  const UserCard({required this.user, this.onTap, super.key});
 
   final AppUser user;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -23,63 +24,63 @@ class UserCard extends StatelessWidget {
         .map((r) => RolePresentation.of(l10n, r).label)
         .join(', ');
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: colors.backgroundElevation1,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: colors.strokeSoft, width: 1.w),
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(12.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 6.h,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                TuiAvatar(
-                  initial: user.username,
-                  avatarUrl: user.avatar,
-                  size: 40,
-                ),
-                SizedBox(width: 8.w),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    spacing: 4.h,
-                    children: [
-                      _LabeledValue(
-                        label: l10n.userFullNameLabel,
-                        value: user.username,
-                      ),
-                      _LabeledValue(
-                        label: l10n.userPositionLabel,
-                        value: user.positionName,
-                      ),
-                    ],
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12.r),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: colors.backgroundElevation1,
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(color: colors.strokeSoft, width: 1.w),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(12.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 6.h,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TuiAvatar(
+                    initial: user.username,
+                    avatarUrl: user.avatar,
+                    size: 40,
                   ),
-                ),
-              ],
-            ),
-            _LabeledValue(label: l10n.userRoleLabel, value: roles),
-            _LabeledValue(
-              label: l10n.userSalaryLabel,
-              value: _amount(user.fixedSalary),
-            ),
-            _LabeledValue(
-              label: l10n.userBalanceLabel,
-              value: _amount(user.balance),
-            ),
-          ],
+                  SizedBox(width: 8.w),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 4.h,
+                      children: [
+                        _LabeledValue(
+                          label: l10n.userFullNameLabel,
+                          value: user.username,
+                        ),
+                        _LabeledValue(
+                          label: l10n.userPositionLabel,
+                          value: user.positionName,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              _LabeledValue(label: l10n.userRoleLabel, value: roles),
+              _LabeledValue(
+                label: l10n.userSalaryLabel,
+                value: Formatters.formatAmountComma(user.fixedSalary),
+              ),
+              _LabeledValue(
+                label: l10n.userBalanceLabel,
+                value: Formatters.formatAmountComma(user.balance),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
-
-  /// `12000000.00` → `12 000 000,00` (dizayndagi vergulli ko'rinish).
-  static String _amount(String value) =>
-      Formatters.formatAmount(value).replaceAll('.', ',');
 }
 
 /// "Yorliq: **Qiymat**" qatori — yorliq kulrang, qiymat qalin.

@@ -2275,6 +2275,78 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Eski → Yangi'**
   String get usersSortOldest;
+
+  /// No description provided for @userDetailTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Foydalanuvchining ma’lumotlari'**
+  String get userDetailTitle;
+
+  /// No description provided for @userDetailFullName.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ism Sharifi'**
+  String get userDetailFullName;
+
+  /// No description provided for @userDetailCreatedAt.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yaratilgan vaqt'**
+  String get userDetailCreatedAt;
+
+  /// No description provided for @userDetailPhone.
+  ///
+  /// In uz, this message translates to:
+  /// **'Telefon raqami'**
+  String get userDetailPhone;
+
+  /// No description provided for @userDetailCard.
+  ///
+  /// In uz, this message translates to:
+  /// **'Karta raqami'**
+  String get userDetailCard;
+
+  /// No description provided for @userDetailSalary.
+  ///
+  /// In uz, this message translates to:
+  /// **'Oylik maosh'**
+  String get userDetailSalary;
+
+  /// No description provided for @userDetailBalance.
+  ///
+  /// In uz, this message translates to:
+  /// **'Balansi'**
+  String get userDetailBalance;
+
+  /// No description provided for @userDetailDistrict.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tuman'**
+  String get userDetailDistrict;
+
+  /// No description provided for @userDetailPassport.
+  ///
+  /// In uz, this message translates to:
+  /// **'Passport ma’lumotlari'**
+  String get userDetailPassport;
+
+  /// No description provided for @userDetailPassportImage.
+  ///
+  /// In uz, this message translates to:
+  /// **'Passport rasmi'**
+  String get userDetailPassportImage;
+
+  /// No description provided for @userDetailPosition.
+  ///
+  /// In uz, this message translates to:
+  /// **'Lavozimi'**
+  String get userDetailPosition;
+
+  /// No description provided for @userDetailRole.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rolli'**
+  String get userDetailRole;
 }
 
 class _AppLocalizationsDelegate

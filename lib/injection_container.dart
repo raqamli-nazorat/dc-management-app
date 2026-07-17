@@ -87,7 +87,9 @@ import 'features/reports/presentation/bloc/task_reports_filter_bloc.dart';
 import 'features/users/data/data_sources/users_remote_data_source.dart';
 import 'features/users/data/repository/users_repository_impl.dart';
 import 'features/users/domain/repository/users_repository.dart';
+import 'features/users/domain/usecases/get_app_user_detail_usecase.dart';
 import 'features/users/domain/usecases/get_app_users_usecase.dart';
+import 'features/users/presentation/bloc/user_detail_bloc.dart';
 import 'features/users/presentation/bloc/users_bloc.dart';
 import 'features/users/presentation/bloc/users_filter_bloc.dart';
 import 'features/profile/data/repository/profile_repository_impl.dart';
@@ -457,7 +459,11 @@ Future<void> configureDependencies() async {
     ..registerLazySingleton<GetAppUsersUseCase>(
       () => GetAppUsersUseCase(getIt()),
     )
+    ..registerLazySingleton<GetAppUserDetailUseCase>(
+      () => GetAppUserDetailUseCase(getIt()),
+    )
     ..registerFactory<UsersBloc>(() => UsersBloc(getUsers: getIt()))
+    ..registerFactory<UserDetailBloc>(() => UserDetailBloc(getUser: getIt()))
     ..registerFactory<UsersFilterBloc>(
       () => UsersFilterBloc(getOptions: getIt()),
     );

@@ -409,5 +409,18 @@
   "usersSortNameAsc": "A dan Z gacha",
   "usersSortNameDesc": "Z dan A gacha",
   "usersSortNewest": "Yangi → Eski",
-  "usersSortOldest": "Eski → Yangi"
+  "usersSortOldest": "Eski → Yangi",
+
+  "userDetailTitle": "Foydalanuvchining ma’lumotlari",
+  "userDetailFullName": "Ism Sharifi",
+  "userDetailCreatedAt": "Yaratilgan vaqt",
+  "userDetailPhone": "Telefon raqami",
+  "userDetailCard": "Karta raqami",
+  "userDetailSalary": "Oylik maosh",
+  "userDetailBalance": "Balansi",
+  "userDetailDistrict": "Tuman",
+  "userDetailPassport": "Passport ma’lumotlari",
+  "userDetailPassportImage": "Passport rasmi",
+  "userDetailPosition": "Lavozimi",
+  "userDetailRole": "Rolli"
 }

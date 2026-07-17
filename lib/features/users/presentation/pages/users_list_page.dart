@@ -99,10 +99,9 @@ class _UsersViewState extends State<_UsersView> {
                     case UsersStatus.success:
                       if (state.items.isEmpty) {
                         return _CenteredScrollable(
-                          child: AppLocalizations.of(context).usersEmpty
-                              .s(14.sp)
-                              .w(500)
-                              .c(colors.textSub),
+                          child: AppLocalizations.of(
+                            context,
+                          ).usersEmpty.s(14.sp).w(500).c(colors.textSub),
                         );
                       }
                       return ListView.separated(
@@ -128,7 +127,14 @@ class _UsersViewState extends State<_UsersView> {
                               ),
                             );
                           }
-                          return UserCard(user: state.items[i]);
+                          final user = state.items[i];
+                          return UserCard(
+                            user: user,
+                            onTap: () => context.pushNamed(
+                              Routes.userDetail.name,
+                              pathParameters: {'id': '${user.id}'},
+                            ),
+                          );
                         },
                       );
                   }

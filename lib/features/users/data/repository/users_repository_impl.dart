@@ -16,9 +16,14 @@ class UsersRepositoryImpl implements UsersRepository {
   Future<AppUserPage> getUsers({
     int page = 1,
     UsersFilter filter = UsersFilter.empty,
-  }) async {
+  }) => _guard(() => _remote.getUsers(page: page, filter: filter));
+
+  @override
+  Future<AppUser> getUser(int id) => _guard(() => _remote.getUser(id));
+
+  Future<T> _guard<T>(Future<T> Function() action) async {
     try {
-      return await _remote.getUsers(page: page, filter: filter);
+      return await action();
     } on UnauthorizedException catch (e) {
       throw UnauthorizedFailure(e.message);
     } on ThrottleException catch (e) {

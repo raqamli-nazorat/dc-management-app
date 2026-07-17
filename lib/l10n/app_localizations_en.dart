@@ -1119,4 +1119,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get usersSortOldest => 'Old → New';
+
+  @override
+  String get userDetailTitle => 'User details';
+
+  @override
+  String get userDetailFullName => 'Full name';
+
+  @override
+  String get userDetailCreatedAt => 'Created at';
+
+  @override
+  String get userDetailPhone => 'Phone number';
+
+  @override
+  String get userDetailCard => 'Card number';
+
+  @override
+  String get userDetailSalary => 'Monthly salary';
+
+  @override
+  String get userDetailBalance => 'Balance';
+
+  @override
+  String get userDetailDistrict => 'District';
+
+  @override
+  String get userDetailPassport => 'Passport details';
+
+  @override
+  String get userDetailPassportImage => 'Passport image';
+
+  @override
+  String get userDetailPosition => 'Position';
+
+  @override
+  String get userDetailRole => 'Role';
 }

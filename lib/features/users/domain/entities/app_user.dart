@@ -1,9 +1,10 @@
 import 'package:equatable/equatable.dart';
 
-/// Foydalanuvchi (`GET /users/` — `User` sxemasi, admin ro'yxati).
+/// Foydalanuvchi (`GET /users/` va `GET /users/{id}/` — `User` sxemasi).
 ///
-/// Karta faqat shu maydonlarni ko'rsatadi; sxemadagi qolgan maydonlar
-/// (passport, region va h.k.) hozircha UIda ishlatilmaydi.
+/// Ro'yxat kartasi va detail sahifa bir xil sxemadan oziqlanadi, shu sabab
+/// entity bitta; sxemadagi qolgan maydonlar (social_links va h.k.) hozircha
+/// UIda ishlatilmaydi.
 class AppUser extends Equatable {
   const AppUser({
     required this.id,
@@ -13,6 +14,13 @@ class AppUser extends Equatable {
     required this.roles,
     required this.fixedSalary,
     required this.balance,
+    this.phoneNumber = '',
+    this.cardNumber = '',
+    this.regionName = '',
+    this.districtName = '',
+    this.passportSeries = '',
+    this.passportImage = '',
+    this.dateJoined,
   });
 
   final int id;
@@ -35,6 +43,25 @@ class AppUser extends Equatable {
   /// API decimal string (`balance`).
   final String balance;
 
+  final String phoneNumber;
+  final String cardNumber;
+
+  /// `region_info.name`.
+  final String regionName;
+
+  /// `district_info.name`.
+  final String districtName;
+
+  /// `passport_series` — seriya+raqam bitta string (masalan `AA1425053`).
+  final String passportSeries;
+
+  /// `passport_image` — URI (bo'sh bo'lsa bo'lim ko'rsatilmaydi).
+  final String passportImage;
+
+  /// `date_joined` — sxemada yo'q, lekin backend qaytarsa ko'rsatiladi
+  /// (Yaratilgan vaqt maydoni).
+  final DateTime? dateJoined;
+
   @override
   List<Object?> get props => [
     id,
@@ -44,6 +71,13 @@ class AppUser extends Equatable {
     roles,
     fixedSalary,
     balance,
+    phoneNumber,
+    cardNumber,
+    regionName,
+    districtName,
+    passportSeries,
+    passportImage,
+    dateJoined,
   ];
 }
 

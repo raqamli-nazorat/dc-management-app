@@ -6,4 +6,7 @@ import '../entities/users_filter.dart';
 abstract interface class UsersRepository {
   /// Bitta sahifa (`GET /users/?page=` + filtr paramlari).
   Future<AppUserPage> getUsers({int page, UsersFilter filter});
+
+  /// Bitta foydalanuvchi (`GET /users/{id}/`).
+  Future<AppUser> getUser(int id);
 }
