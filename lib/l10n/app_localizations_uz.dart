@@ -1160,4 +1160,116 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get userDetailRole => 'Rolli';
+
+  @override
+  String get financeExpenseRequests => 'Xarajat so\'rovlari';
+
+  @override
+  String get financeWages => 'Ish haqi';
+
+  @override
+  String get financeHistory => 'Tarix';
+
+  @override
+  String get ledgerEmpty => 'Hozircha yozuvlar yo\'q';
+
+  @override
+  String get ledgerTypeLabel => 'Turi:';
+
+  @override
+  String get ledgerAmountLabel => 'Miqdor:';
+
+  @override
+  String get ledgerDateLabel => 'Sana:';
+
+  @override
+  String get ledgerTypeExpense => 'Chiqim';
+
+  @override
+  String get ledgerTypeIncome => 'Kirim';
+
+  @override
+  String get ledgerDetailTitle => 'Tarix ma’lumotlari';
+
+  @override
+  String get ledgerDetailExpenseType => 'Xarajat turi';
+
+  @override
+  String get ledgerDetailAmount => 'Miqdor';
+
+  @override
+  String get ledgerDetailConfirmedAt => 'Tastiqlangan vaqt';
+
+  @override
+  String get ledgerFilterExpenseType => 'Xarajat turi';
+
+  @override
+  String get ledgerFilterExpenseTypeHint => 'Xarajat turini tanlang';
+
+  @override
+  String get ledgerFilterDateRange => 'Sana oralig\'i';
+
+  @override
+  String get ledgerFilterAmount => 'Miqdor';
+
+  @override
+  String get payrollEmpty => 'Hozircha yozuvlar yo\'q';
+
+  @override
+  String get payrollMonthLabel => 'Oy:';
+
+  @override
+  String get payrollKpiLabel => 'KPI bonus:';
+
+  @override
+  String get payrollTotalLabel => 'Jami miqdori:';
+
+  @override
+  String get payrollDetailTitle => 'Ish haqi ma’lumotlari';
+
+  @override
+  String get payrollMonthField => 'Oy';
+
+  @override
+  String get payrollSalaryField => 'Oylik maosh (UZS)';
+
+  @override
+  String get payrollKpiField => 'KPI bonus';
+
+  @override
+  String get payrollPenaltyField => 'Jarima miqdori';
+
+  @override
+  String get payrollTotalField => 'Jami miqdori';
+
+  @override
+  String get payrollConfirmButton => 'Tasdiqlash';
+
+  @override
+  String get payrollConfirmSuccess => 'Ish haqi tasdiqlandi';
+
+  @override
+  String get payrollConfirmDialogTitle => 'Ish haqini tasdiqlaysizmi?';
+
+  @override
+  String get payrollConfirmDialogSubtitle =>
+      'Tasdiqlangandan so\'ng bu amalni bekor qilib bo\'lmaydi';
+
+  @override
+  String get payrollFilterMonth => 'Oy';
+
+  @override
+  String get payrollFilterMonthHint => 'Oy tanlang';
+
+  @override
+  String get payrollFilterCreatedRange => 'Yaratilgan vaqti oralig\'i';
+
+  @override
+  String get payrollFilterTotal => 'Jami miqdori (UZS)';
+
+  @override
+  String get payrollFilterPenalty => 'Jarima miqdori';
+
+  @override
+  String get payrollFilterApply => 'Qidirish';
 }

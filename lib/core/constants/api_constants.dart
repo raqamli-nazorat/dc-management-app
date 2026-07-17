@@ -73,6 +73,21 @@ abstract final class ApiConstants {
   /// Bitta foydalanuvchi: `GET/PUT/PATCH/DELETE /users/{id}/`.
   static String userById(int id) => '/users/$id/';
 
+  // ── Ledger (moliya tarixi) ────────────────────────────────────────────
+  static const ledger = '/ledger/';
+
+  /// Bitta tarix yozuvi: `GET /ledger/{id}/`.
+  static String ledgerById(int id) => '/ledger/$id/';
+
+  // ── Payroll (ish haqi) ────────────────────────────────────────────────
+  static const payroll = '/payroll/';
+
+  /// Bitta ish haqi yozuvi: `GET /payroll/{id}/`.
+  static String payrollById(int id) => '/payroll/$id/';
+
+  /// Ish haqi yozuv(lar)ini tasdiqlash: `POST /payroll/confirm/`.
+  static const payrollConfirm = '/payroll/confirm/';
+
   // ── Projects ─────────────────────────────────────────────────────────────
   static const projects = '/projects/';
 

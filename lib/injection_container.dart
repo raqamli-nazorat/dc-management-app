@@ -91,6 +91,21 @@ import 'features/users/domain/usecases/get_app_user_detail_usecase.dart';
 import 'features/users/domain/usecases/get_app_users_usecase.dart';
 import 'features/users/presentation/bloc/user_detail_bloc.dart';
 import 'features/users/presentation/bloc/users_bloc.dart';
+import 'features/ledger/data/data_sources/ledger_remote_data_source.dart';
+import 'features/ledger/data/repository/ledger_repository_impl.dart';
+import 'features/ledger/domain/repository/ledger_repository.dart';
+import 'features/ledger/domain/usecases/get_ledger_detail_usecase.dart';
+import 'features/ledger/domain/usecases/get_ledger_usecase.dart';
+import 'features/ledger/presentation/bloc/ledger_bloc.dart';
+import 'features/ledger/presentation/bloc/ledger_detail_bloc.dart';
+import 'features/payroll/data/data_sources/payroll_remote_data_source.dart';
+import 'features/payroll/data/repository/payroll_repository_impl.dart';
+import 'features/payroll/domain/repository/payroll_repository.dart';
+import 'features/payroll/domain/usecases/confirm_payroll_usecase.dart';
+import 'features/payroll/domain/usecases/get_payroll_detail_usecase.dart';
+import 'features/payroll/domain/usecases/get_payrolls_usecase.dart';
+import 'features/payroll/presentation/bloc/payroll_bloc.dart';
+import 'features/payroll/presentation/bloc/payroll_detail_bloc.dart';
 import 'features/users/presentation/bloc/users_filter_bloc.dart';
 import 'features/profile/data/repository/profile_repository_impl.dart';
 import 'features/profile/domain/repository/profile_repository.dart';
@@ -466,6 +481,45 @@ Future<void> configureDependencies() async {
     ..registerFactory<UserDetailBloc>(() => UserDetailBloc(getUser: getIt()))
     ..registerFactory<UsersFilterBloc>(
       () => UsersFilterBloc(getOptions: getIt()),
+    );
+
+  // ── Ledger (moliya tarixi) feature ────────────────────────────────────
+  getIt
+    ..registerLazySingleton<LedgerRemoteDataSource>(
+      () => LedgerRemoteDataSourceImpl(getIt()),
+    )
+    ..registerLazySingleton<LedgerRepository>(
+      () => LedgerRepositoryImpl(getIt()),
+    )
+    ..registerLazySingleton<GetLedgerUseCase>(() => GetLedgerUseCase(getIt()))
+    ..registerLazySingleton<GetLedgerDetailUseCase>(
+      () => GetLedgerDetailUseCase(getIt()),
+    )
+    ..registerFactory<LedgerBloc>(() => LedgerBloc(getLedger: getIt()))
+    ..registerFactory<LedgerDetailBloc>(
+      () => LedgerDetailBloc(getEntry: getIt()),
+    );
+
+  // ── Payroll (ish haqi) feature ────────────────────────────────────────
+  getIt
+    ..registerLazySingleton<PayrollRemoteDataSource>(
+      () => PayrollRemoteDataSourceImpl(getIt()),
+    )
+    ..registerLazySingleton<PayrollRepository>(
+      () => PayrollRepositoryImpl(getIt()),
+    )
+    ..registerLazySingleton<GetPayrollsUseCase>(
+      () => GetPayrollsUseCase(getIt()),
+    )
+    ..registerLazySingleton<GetPayrollDetailUseCase>(
+      () => GetPayrollDetailUseCase(getIt()),
+    )
+    ..registerLazySingleton<ConfirmPayrollUseCase>(
+      () => ConfirmPayrollUseCase(getIt()),
+    )
+    ..registerFactory<PayrollBloc>(() => PayrollBloc(getPayrolls: getIt()))
+    ..registerFactory<PayrollDetailBloc>(
+      () => PayrollDetailBloc(getPayroll: getIt(), confirmPayroll: getIt()),
     );
 
   // ── Statistics feature ────────────────────────────────────────────────

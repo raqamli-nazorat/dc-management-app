@@ -50,6 +50,14 @@ import '../../features/profile/presentation/pages/security_page.dart';
 import '../../features/users/domain/entities/users_filter.dart';
 import '../../features/users/presentation/pages/user_detail_page.dart';
 import '../../features/users/presentation/pages/users_filter_page.dart';
+import '../../features/ledger/domain/entities/ledger_filter.dart';
+import '../../features/ledger/presentation/pages/ledger_detail_page.dart';
+import '../../features/ledger/presentation/pages/ledger_filter_page.dart';
+import '../../features/ledger/presentation/pages/ledger_list_page.dart';
+import '../../features/payroll/domain/entities/payroll_filter.dart';
+import '../../features/payroll/presentation/pages/payroll_detail_page.dart';
+import '../../features/payroll/presentation/pages/payroll_filter_page.dart';
+import '../../features/payroll/presentation/pages/payroll_list_page.dart';
 import 'entity/routes.dart';
 
 /// Root navigator key — exposed for context-free navigation (snackbars,
@@ -216,6 +224,48 @@ class AppRouter {
           path: Routes.userDetail.path,
           builder: (context, state) => UserDetailPage(
             userId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
+          ),
+        ),
+        GoRoute(
+          name: Routes.ledgerList.name,
+          path: Routes.ledgerList.path,
+          builder: (context, state) => const LedgerListPage(),
+        ),
+        GoRoute(
+          name: Routes.ledgerFilter.name,
+          path: Routes.ledgerFilter.path,
+          builder: (context, state) => LedgerFilterPage(
+            initial: state.extra is LedgerFilter
+                ? state.extra! as LedgerFilter
+                : LedgerFilter.empty,
+          ),
+        ),
+        GoRoute(
+          name: Routes.ledgerDetail.name,
+          path: Routes.ledgerDetail.path,
+          builder: (context, state) => LedgerDetailPage(
+            entryId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
+          ),
+        ),
+        GoRoute(
+          name: Routes.payrollList.name,
+          path: Routes.payrollList.path,
+          builder: (context, state) => const PayrollListPage(),
+        ),
+        GoRoute(
+          name: Routes.payrollFilter.name,
+          path: Routes.payrollFilter.path,
+          builder: (context, state) => PayrollFilterPage(
+            initial: state.extra is PayrollFilter
+                ? state.extra! as PayrollFilter
+                : PayrollFilter.empty,
+          ),
+        ),
+        GoRoute(
+          name: Routes.payrollDetail.name,
+          path: Routes.payrollDetail.path,
+          builder: (context, state) => PayrollDetailPage(
+            payrollId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
           ),
         ),
         GoRoute(

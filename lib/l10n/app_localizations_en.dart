@@ -1155,4 +1155,116 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get userDetailRole => 'Role';
+
+  @override
+  String get financeExpenseRequests => 'Expense requests';
+
+  @override
+  String get financeWages => 'Wages';
+
+  @override
+  String get financeHistory => 'History';
+
+  @override
+  String get ledgerEmpty => 'No records yet';
+
+  @override
+  String get ledgerTypeLabel => 'Type:';
+
+  @override
+  String get ledgerAmountLabel => 'Amount:';
+
+  @override
+  String get ledgerDateLabel => 'Date:';
+
+  @override
+  String get ledgerTypeExpense => 'Expense';
+
+  @override
+  String get ledgerTypeIncome => 'Income';
+
+  @override
+  String get ledgerDetailTitle => 'History details';
+
+  @override
+  String get ledgerDetailExpenseType => 'Expense type';
+
+  @override
+  String get ledgerDetailAmount => 'Amount';
+
+  @override
+  String get ledgerDetailConfirmedAt => 'Confirmed at';
+
+  @override
+  String get ledgerFilterExpenseType => 'Expense type';
+
+  @override
+  String get ledgerFilterExpenseTypeHint => 'Select expense type';
+
+  @override
+  String get ledgerFilterDateRange => 'Date range';
+
+  @override
+  String get ledgerFilterAmount => 'Amount';
+
+  @override
+  String get payrollEmpty => 'No records yet';
+
+  @override
+  String get payrollMonthLabel => 'Month:';
+
+  @override
+  String get payrollKpiLabel => 'KPI bonus:';
+
+  @override
+  String get payrollTotalLabel => 'Total:';
+
+  @override
+  String get payrollDetailTitle => 'Payroll details';
+
+  @override
+  String get payrollMonthField => 'Month';
+
+  @override
+  String get payrollSalaryField => 'Monthly salary (UZS)';
+
+  @override
+  String get payrollKpiField => 'KPI bonus';
+
+  @override
+  String get payrollPenaltyField => 'Penalty amount';
+
+  @override
+  String get payrollTotalField => 'Total amount';
+
+  @override
+  String get payrollConfirmButton => 'Confirm';
+
+  @override
+  String get payrollConfirmSuccess => 'Payroll confirmed';
+
+  @override
+  String get payrollConfirmDialogTitle => 'Confirm this payroll?';
+
+  @override
+  String get payrollConfirmDialogSubtitle =>
+      'This action cannot be undone once confirmed';
+
+  @override
+  String get payrollFilterMonth => 'Month';
+
+  @override
+  String get payrollFilterMonthHint => 'Select month';
+
+  @override
+  String get payrollFilterCreatedRange => 'Created date range';
+
+  @override
+  String get payrollFilterTotal => 'Total amount (UZS)';
+
+  @override
+  String get payrollFilterPenalty => 'Penalty amount';
+
+  @override
+  String get payrollFilterApply => 'Search';
 }
