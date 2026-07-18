@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -15,9 +16,12 @@ import '../../../../core/widgets/tui_avatar.dart';
 import '../../../../injection_container.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../reports/domain/entities/expense_report.dart';
+import '../../domain/entities/expense_receipt.dart';
 import '../../domain/entities/expense_request.dart';
 import '../bloc/expense_request_detail_bloc.dart';
 import '../widgets/expense_request_dialogs.dart';
+import '../widgets/expense_request_receipt_dialog.dart';
+import '../widgets/receipt_viewer.dart';
 
 /// "So'rov ma'lumotlari" — xarajat so'rovi detail sahifasi
 /// (`Routes.expenseRequestDetail`, `GET /expense-request/{id}/`). Figma:
@@ -57,20 +61,27 @@ class _QueryDataView extends StatelessWidget {
           p.actionDone != c.actionDone || p.actionFailure != c.actionFailure,
       listener: (context, state) {
         if (state.actionDone) {
-          final paid = state.request?.status == ExpenseStatus.paid;
-          // To'lov — yashil success toast; rad etish — orange alert toast.
-          if (paid) {
-            AppToast.showSuccess(
-              context,
-              title: l10n.expenseRequestPaySuccess,
-              message: l10n.expenseRequestPaySuccessMessage,
-            );
-          } else {
-            AppToast.showError(
-              context,
-              title: l10n.expenseRequestCancelSuccess,
-              message: l10n.expenseRequestCancelSuccessMessage,
-            );
+          // Yakuniy holatga qarab toast: to'landi — yashil; tasdiqlandi —
+          // yashil; rad etildi — orange alert.
+          switch (state.request?.status) {
+            case ExpenseStatus.paid:
+              AppToast.showSuccess(
+                context,
+                title: l10n.expenseRequestPaySuccess,
+                message: l10n.expenseRequestPaySuccessMessage,
+              );
+            case ExpenseStatus.confirmed:
+              AppToast.showSuccess(
+                context,
+                title: l10n.expenseRequestConfirmSuccess,
+                message: l10n.expenseRequestConfirmSuccessMessage,
+              );
+            default:
+              AppToast.showError(
+                context,
+                title: l10n.expenseRequestCancelSuccess,
+                message: l10n.expenseRequestCancelSuccessMessage,
+              );
           }
           // Ro'yxatga qaytadi va avto-refresh bo'ladi (result: true).
           context.pop(true);
@@ -115,6 +126,7 @@ class _QueryDataView extends StatelessWidget {
                           case ExpenseRequestDetailStatus.success:
                             return _QueryDataBody(
                               request: state.request!,
+                              receipts: state.receipts,
                               acting: state.acting,
                             );
                         }
@@ -130,9 +142,14 @@ class _QueryDataView extends StatelessWidget {
 }
 
 class _QueryDataBody extends StatelessWidget {
-  const _QueryDataBody({required this.request, required this.acting});
+  const _QueryDataBody({
+    required this.request,
+    required this.receipts,
+    required this.acting,
+  });
 
   final ExpenseRequest request;
+  final List<ExpenseReceipt> receipts;
   final bool acting;
 
   @override
@@ -208,6 +225,32 @@ class _QueryDataBody extends StatelessWidget {
                     value: request.reason,
                   ),
                 ],
+                // To'lov qayd etilgach yaratuvchi rekvizitlarni tekshiradi.
+                if (request.status == ExpenseStatus.paid ||
+                    request.status == ExpenseStatus.confirmed) ...[
+                  if (request.cardNumber.isNotEmpty)
+                    Row(
+                      spacing: 12.w,
+                      children: [
+                        Expanded(
+                          child: _Field(
+                            label: l10n.expenseReportPaymentMethod,
+                            value: _paymentLabel(request.paymentMethod, l10n),
+                          ),
+                        ),
+                        Expanded(
+                          child: _CardNumberField(
+                            cardNumber: request.cardNumber,
+                          ),
+                        ),
+                      ],
+                    )
+                  else
+                    _Field(
+                      label: l10n.expenseReportPaymentMethod,
+                      value: _paymentLabel(request.paymentMethod, l10n),
+                    ),
+                ],
                 Row(
                   spacing: 12.w,
                   children: [
@@ -229,6 +272,11 @@ class _QueryDataBody extends StatelessWidget {
                   label: l10n.expenseReportConfirmedAt,
                   value: _fmt(request.confirmedAt),
                 ),
+                // Rad etilgan — status + sabab; qabul qilingan — cheklar.
+                if (request.status == ExpenseStatus.cancelled)
+                  _RejectedSection(reason: request.cancelReason)
+                else if (receipts.isNotEmpty)
+                  _ReceiptsSection(receipts: receipts),
               ],
             ),
           ),
@@ -259,16 +307,44 @@ class _QueryDataBody extends StatelessWidget {
                 ),
               ],
             ),
+          )
+        // To'lov qayd etilgach — so'rov yaratuvchisi tasdiqlaydi.
+        else if (request.status == ExpenseStatus.paid)
+          Padding(
+            padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 12.h),
+            child: _ActionButton(
+              label: l10n.expenseRequestConfirmButton,
+              color: colors.accentStrong,
+              icon: Assets.icons.icCheckmarkCircle,
+              loading: acting,
+              onTap: () => _onConfirmActionTap(context),
+            ),
           ),
       ],
     );
   }
 
-  /// "To'lov qildim" — avval tasdiq dialogi, "ha" bo'lsa so'rov ketadi.
+  /// "Tasdiqlash" — pay dialogi (Figma image 2) ko'rsatiladi; tasdiqlansa
+  /// `POST /expense-request/{id}/confirm/` ketadi.
+  Future<void> _onConfirmActionTap(BuildContext context) async {
+    final bloc = context.read<ExpenseRequestDetailBloc>();
+    final confirmed = await showExpenseRequestPayDialog(context);
+    if (confirmed == true) {
+      bloc.add(const ExpenseRequestConfirmRequested());
+    }
+  }
+
+  /// "To'lov qildim" — avval tasdiq dialogi, "ha" bo'lsa chek yuklash dialogi;
+  /// undan qaytgan fayllar (yoki bo'sh — "O'tkazib yuborish") bilan to'lov
+  /// so'rovi ketadi. Chek dialogi bekor qilinsa (barrier) — to'lov qilinmaydi.
   Future<void> _onPayTap(BuildContext context) async {
     final bloc = context.read<ExpenseRequestDetailBloc>();
     final confirmed = await showExpenseRequestPayDialog(context);
-    if (confirmed == true) bloc.add(const ExpenseRequestPayRequested());
+    if (confirmed != true || !context.mounted) return;
+    final receiptPaths = await showExpenseRequestReceiptDialog(context);
+    if (receiptPaths != null) {
+      bloc.add(ExpenseRequestPayRequested(receiptPaths));
+    }
   }
 
   /// "Rad etish" — sabab dialogi, sabab kiritilsa so'rov ketadi.
@@ -290,6 +366,80 @@ String _typeLabel(ExpenseType t, AppLocalizations l10n) => switch (t) {
   ExpenseType.other => l10n.expenseReportTypeOther,
   ExpenseType.unknown => '',
 };
+
+String _paymentLabel(ExpensePaymentMethod m, AppLocalizations l10n) =>
+    switch (m) {
+      ExpensePaymentMethod.cash => l10n.expenseReportPaymentCash,
+      ExpensePaymentMethod.card => l10n.expenseReportPaymentCard,
+      ExpensePaymentMethod.unknown => '',
+    };
+
+/// Karta raqami maydoni — bosilganda buferga nusxalanadi (nusxa ikonkasi
+/// dizayn assetida yo'q, shu bois butun maydon bosiladigan qilingan).
+class _CardNumberField extends StatelessWidget {
+  const _CardNumberField({required this.cardNumber});
+
+  final String cardNumber;
+
+  Future<void> _copy(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
+    await Clipboard.setData(ClipboardData(text: cardNumber));
+    if (context.mounted) {
+      AppToast.showSuccess(context, title: l10n.expenseRequestCardCopied);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final l10n = AppLocalizations.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        AppFilterFieldLabel(l10n.expenseReportCard),
+        InkWell(
+          onTap: () => _copy(context),
+          borderRadius: BorderRadius.circular(12.r),
+          child: DecoratedBox(
+            decoration: appFilterFieldDecoration(colors),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12.w),
+              child: SizedBox(
+                height: 44.h,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: cardNumber
+                          .s(13.sp)
+                          .w(700)
+                          .h(20 / 13)
+                          .c(colors.textStrong)
+                          .copyWith(
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                    ),
+                    SizedBox(width: 8.w),
+                    Assets.icons.icShareNodes.svg(
+                      width: 16.w,
+                      height: 16.w,
+                      colorFilter: ColorFilter.mode(
+                        colors.iconSub,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
 
 /// Yorliq + faqat o'qish uchun boxed qiymat.
 class _Field extends StatelessWidget {
@@ -365,6 +515,143 @@ class _MultilineField extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Rad etilgan so'rov bo'limi — "Rad etilgan" status + rad etish sababi.
+class _RejectedSection extends StatelessWidget {
+  const _RejectedSection({required this.reason});
+
+  final String reason;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final l10n = AppLocalizations.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      spacing: 12.h,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AppFilterFieldLabel(l10n.taskFilterStatus),
+            DecoratedBox(
+              decoration: BoxDecoration(
+                color: colors.errorSub,
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(color: colors.errorStrong, width: 1.w),
+              ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12.w),
+                child: SizedBox(
+                  height: 44.h,
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: l10n.expenseRequestStatusRejected
+                        .s(13.sp)
+                        .w(700)
+                        .h(20 / 13)
+                        .c(colors.textStrong),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        if (reason.isNotEmpty)
+          _MultilineField(label: l10n.expenseReportCancelReason, value: reason),
+      ],
+    );
+  }
+}
+
+/// Qabul qilingan so'rov cheklari — bosilganda to'liq ekranli ko'rish.
+class _ReceiptsSection extends StatelessWidget {
+  const _ReceiptsSection({required this.receipts});
+
+  final List<ExpenseReceipt> receipts;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final spacing = 12.w;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        AppFilterFieldLabel(l10n.expenseRequestReceiptsTitle),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final tileWidth = (constraints.maxWidth - spacing) / 2;
+            return Wrap(
+              spacing: spacing,
+              runSpacing: spacing,
+              children: [
+                for (final r in receipts)
+                  _ReceiptThumb(
+                    width: tileWidth,
+                    url: r.fileUrl,
+                    onTap: () => showReceiptViewer(context, r.fileUrl),
+                  ),
+              ],
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class _ReceiptThumb extends StatelessWidget {
+  const _ReceiptThumb({
+    required this.width,
+    required this.url,
+    required this.onTap,
+  });
+
+  final double width;
+  final String url;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12.r),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12.r),
+        child: Image.network(
+          url,
+          width: width,
+          height: 140.h,
+          fit: BoxFit.cover,
+          errorBuilder: (_, _, _) => DecoratedBox(
+            decoration: BoxDecoration(color: colors.backgroundElevation1Alt),
+            child: SizedBox(
+              width: width,
+              height: 140.h,
+              child: Center(
+                child: Assets.icons.icDocument.svg(
+                  width: 24.w,
+                  height: 24.w,
+                  colorFilter: ColorFilter.mode(
+                    colors.iconSub,
+                    BlendMode.srcIn,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

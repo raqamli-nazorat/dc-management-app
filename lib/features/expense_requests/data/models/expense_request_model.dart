@@ -24,6 +24,11 @@ abstract final class ExpenseRequestModel {
       type: ExpenseType.fromApi(json['type'] as String?),
       amount: json['amount'] == null ? '' : '${json['amount']}',
       reason: json['reason'] as String? ?? '',
+      cancelReason: json['cancel_reason'] as String? ?? '',
+      paymentMethod: ExpensePaymentMethod.fromApi(
+        json['payment_method'] as String?,
+      ),
+      cardNumber: json['card_number'] as String? ?? '',
       status: ExpenseStatus.fromApi(json['status'] as String?),
       createdAt: date(json['created_at']),
       paidAt: date(json['paid_at']),

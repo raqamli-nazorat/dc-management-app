@@ -17,9 +17,15 @@ class ExpenseRequestDetailRequested extends ExpenseRequestDetailEvent {
   List<Object?> get props => [id];
 }
 
-/// "To'lov qildim" tasdiqlandi — `POST /expense-request/{id}/pay/`.
+/// "To'lov qildim" tasdiqlandi — chek fayllari (bo'lsa) yuklanadi, so'ng
+/// `POST /expense-request/{id}/pay/`. [receiptPaths] bo'sh — chek qo'shmasdan.
 class ExpenseRequestPayRequested extends ExpenseRequestDetailEvent {
-  const ExpenseRequestPayRequested();
+  const ExpenseRequestPayRequested(this.receiptPaths);
+
+  final List<String> receiptPaths;
+
+  @override
+  List<Object?> get props => [receiptPaths];
 }
 
 /// "Rad etish" sababi kiritildi — `POST /expense-request/{id}/cancel/`.
@@ -30,4 +36,9 @@ class ExpenseRequestCancelRequested extends ExpenseRequestDetailEvent {
 
   @override
   List<Object?> get props => [reason];
+}
+
+/// Yaratuvchi "Tasdiqlash"ni bosdi — `POST /expense-request/{id}/confirm/`.
+class ExpenseRequestConfirmRequested extends ExpenseRequestDetailEvent {
+  const ExpenseRequestConfirmRequested();
 }

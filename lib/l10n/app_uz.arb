@@ -482,5 +482,18 @@
   "expenseRequestPaySuccess": "To'lov qayd etildi.",
   "expenseRequestPaySuccessMessage": "Mablag' berilgani tizimda belgilandi.",
   "expenseRequestCancelSuccess": "So'rov rad etildi.",
-  "expenseRequestCancelSuccessMessage": "So'rov bo'yicha rad etish sababi saqlandi."
+  "expenseRequestCancelSuccessMessage": "So'rov bo'yicha rad etish sababi saqlandi.",
+  "expenseRequestReceiptDialogTitle": "To'lov chekini yuklang.",
+  "expenseRequestReceiptDialogSubtitle": "To'lov tasdiqlanishi uchun chek yoki kvitansiyani yuklang.",
+  "expenseRequestReceiptInfo": "Chek faylini hozir yuklamasangiz ham bo'ladi. Uni keyinroq qo'shishingiz mumkin.",
+  "expenseRequestReceiptAddTile": "To'lov chekini yuklash",
+  "expenseRequestReceiptSkip": "O'tkazib yuborish",
+  "expenseRequestReceiptSend": "Yuborish",
+  "expenseRequestReceiptsTitle": "To'lov cheklari",
+  "expenseRequestReceiptViewerTitle": "To'lov cheki",
+  "expenseRequestStatusRejected": "Rad etilgan",
+  "expenseRequestConfirmButton": "Tasdiqlash",
+  "expenseRequestConfirmSuccess": "So'rov tasdiqlandi.",
+  "expenseRequestConfirmSuccessMessage": "Tasdiqlash tizimda qayd etildi.",
+  "expenseRequestCardCopied": "Karta raqami nusxalandi"
 }

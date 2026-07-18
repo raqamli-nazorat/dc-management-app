@@ -1329,4 +1329,46 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get expenseRequestCancelSuccessMessage =>
       'The rejection reason for the request has been saved.';
+
+  @override
+  String get expenseRequestReceiptDialogTitle => 'Upload the payment receipt.';
+
+  @override
+  String get expenseRequestReceiptDialogSubtitle =>
+      'Upload a receipt or invoice to confirm the payment.';
+
+  @override
+  String get expenseRequestReceiptInfo =>
+      'You can upload the receipt file now or add it later.';
+
+  @override
+  String get expenseRequestReceiptAddTile => 'Upload payment receipt';
+
+  @override
+  String get expenseRequestReceiptSkip => 'Skip';
+
+  @override
+  String get expenseRequestReceiptSend => 'Send';
+
+  @override
+  String get expenseRequestReceiptsTitle => 'Payment receipts';
+
+  @override
+  String get expenseRequestReceiptViewerTitle => 'Payment receipt';
+
+  @override
+  String get expenseRequestStatusRejected => 'Rejected';
+
+  @override
+  String get expenseRequestConfirmButton => 'Confirm';
+
+  @override
+  String get expenseRequestConfirmSuccess => 'Request confirmed.';
+
+  @override
+  String get expenseRequestConfirmSuccessMessage =>
+      'The confirmation has been recorded in the system.';
+
+  @override
+  String get expenseRequestCardCopied => 'Card number copied';
 }

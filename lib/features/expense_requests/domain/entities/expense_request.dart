@@ -15,6 +15,9 @@ class ExpenseRequest extends Equatable {
     required this.type,
     required this.amount,
     required this.reason,
+    required this.cancelReason,
+    required this.paymentMethod,
+    required this.cardNumber,
     required this.status,
     required this.createdAt,
     required this.paidAt,
@@ -44,6 +47,15 @@ class ExpenseRequest extends Equatable {
   /// `reason` — so'rov sababi.
   final String reason;
 
+  /// `cancel_reason` — rad etish sababi (faqat `cancelled` holatda).
+  final String cancelReason;
+
+  /// `payment_method` — to'lov turi (naqd/karta).
+  final ExpensePaymentMethod paymentMethod;
+
+  /// `card_number` — karta raqami (karta orqali to'lovda).
+  final String cardNumber;
+
   /// `status` — karta checkbox `confirmed` holatini ko'rsatadi; detail
   /// tugmalari faqat `pending`da chiqadi.
   final ExpenseStatus status;
@@ -62,6 +74,9 @@ class ExpenseRequest extends Equatable {
     type,
     amount,
     reason,
+    cancelReason,
+    paymentMethod,
+    cardNumber,
     status,
     createdAt,
     paidAt,

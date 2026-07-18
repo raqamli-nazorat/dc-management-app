@@ -6,6 +6,7 @@ class ExpenseRequestDetailState extends Equatable {
   const ExpenseRequestDetailState({
     this.status = ExpenseRequestDetailStatus.initial,
     this.request,
+    this.receipts = const [],
     this.failure,
     this.acting = false,
     this.actionDone = false,
@@ -14,6 +15,10 @@ class ExpenseRequestDetailState extends Equatable {
 
   final ExpenseRequestDetailStatus status;
   final ExpenseRequest? request;
+
+  /// Qabul qilingan so'rov cheklari (faqat paid/confirmed holatda yuklanadi).
+  final List<ExpenseReceipt> receipts;
+
   final Failure? failure;
 
   /// To'lov/rad etish so'rovi ketmoqda — tugmalar bloklanadi.
@@ -28,6 +33,7 @@ class ExpenseRequestDetailState extends Equatable {
   ExpenseRequestDetailState copyWith({
     ExpenseRequestDetailStatus? status,
     ExpenseRequest? request,
+    List<ExpenseReceipt>? receipts,
     Failure? failure,
     bool? acting,
     bool? actionDone,
@@ -35,6 +41,7 @@ class ExpenseRequestDetailState extends Equatable {
   }) => ExpenseRequestDetailState(
     status: status ?? this.status,
     request: request ?? this.request,
+    receipts: receipts ?? this.receipts,
     failure: failure ?? this.failure,
     acting: acting ?? this.acting,
     actionDone: actionDone ?? this.actionDone,
@@ -45,6 +52,7 @@ class ExpenseRequestDetailState extends Equatable {
   List<Object?> get props => [
     status,
     request,
+    receipts,
     failure,
     acting,
     actionDone,

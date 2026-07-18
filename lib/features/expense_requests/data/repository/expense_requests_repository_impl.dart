@@ -1,5 +1,6 @@
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
+import '../../domain/entities/expense_receipt.dart';
 import '../../domain/entities/expense_request.dart';
 import '../../domain/entities/expense_request_filter.dart';
 import '../../domain/repository/expense_requests_repository.dart';
@@ -29,6 +30,18 @@ class ExpenseRequestsRepositoryImpl implements ExpenseRequestsRepository {
   @override
   Future<ExpenseRequest> cancelExpenseRequest(int id, String reason) =>
       _guard(() => _remote.cancelExpenseRequest(id, reason));
+
+  @override
+  Future<ExpenseRequest> confirmExpenseRequest(int id) =>
+      _guard(() => _remote.confirmExpenseRequest(id));
+
+  @override
+  Future<List<ExpenseReceipt>> getReceipts(int expenseId) =>
+      _guard(() => _remote.getReceipts(expenseId));
+
+  @override
+  Future<void> createReceipt(int expenseId, String filePath) =>
+      _guard(() => _remote.createReceipt(expenseId, filePath));
 
   Future<T> _guard<T>(Future<T> Function() action) async {
     try {

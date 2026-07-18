@@ -479,5 +479,18 @@
   "expenseRequestPaySuccess": "Payment recorded.",
   "expenseRequestPaySuccessMessage": "The disbursement has been marked in the system.",
   "expenseRequestCancelSuccess": "Request rejected.",
-  "expenseRequestCancelSuccessMessage": "The rejection reason for the request has been saved."
+  "expenseRequestCancelSuccessMessage": "The rejection reason for the request has been saved.",
+  "expenseRequestReceiptDialogTitle": "Upload the payment receipt.",
+  "expenseRequestReceiptDialogSubtitle": "Upload a receipt or invoice to confirm the payment.",
+  "expenseRequestReceiptInfo": "You can upload the receipt file now or add it later.",
+  "expenseRequestReceiptAddTile": "Upload payment receipt",
+  "expenseRequestReceiptSkip": "Skip",
+  "expenseRequestReceiptSend": "Send",
+  "expenseRequestReceiptsTitle": "Payment receipts",
+  "expenseRequestReceiptViewerTitle": "Payment receipt",
+  "expenseRequestStatusRejected": "Rejected",
+  "expenseRequestConfirmButton": "Confirm",
+  "expenseRequestConfirmSuccess": "Request confirmed.",
+  "expenseRequestConfirmSuccessMessage": "The confirmation has been recorded in the system.",
+  "expenseRequestCardCopied": "Card number copied"
 }

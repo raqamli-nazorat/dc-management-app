@@ -1,3 +1,4 @@
+import '../entities/expense_receipt.dart';
 import '../entities/expense_request.dart';
 import '../entities/expense_request_filter.dart';
 
@@ -19,4 +20,13 @@ abstract interface class ExpenseRequestsRepository {
 
   /// Rad etish (`POST /expense-request/{id}/cancel/` — `{cancel_reason}`).
   Future<ExpenseRequest> cancelExpenseRequest(int id, String reason);
+
+  /// Yaratuvchi tomonidan tasdiqlash (`POST /expense-request/{id}/confirm/`).
+  Future<ExpenseRequest> confirmExpenseRequest(int id);
+
+  /// So'rovga biriktirilgan cheklar (`GET /expense-receipt/?expense=`).
+  Future<List<ExpenseReceipt>> getReceipts(int expenseId);
+
+  /// Chek yuklash (multipart `POST /expense-receipt/ {expense, file}`).
+  Future<void> createReceipt(int expenseId, String filePath);
 }

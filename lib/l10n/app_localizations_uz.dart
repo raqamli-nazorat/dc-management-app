@@ -1335,4 +1335,46 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String get expenseRequestCancelSuccessMessage =>
       'So\'rov bo\'yicha rad etish sababi saqlandi.';
+
+  @override
+  String get expenseRequestReceiptDialogTitle => 'To\'lov chekini yuklang.';
+
+  @override
+  String get expenseRequestReceiptDialogSubtitle =>
+      'To\'lov tasdiqlanishi uchun chek yoki kvitansiyani yuklang.';
+
+  @override
+  String get expenseRequestReceiptInfo =>
+      'Chek faylini hozir yuklamasangiz ham bo\'ladi. Uni keyinroq qo\'shishingiz mumkin.';
+
+  @override
+  String get expenseRequestReceiptAddTile => 'To\'lov chekini yuklash';
+
+  @override
+  String get expenseRequestReceiptSkip => 'O\'tkazib yuborish';
+
+  @override
+  String get expenseRequestReceiptSend => 'Yuborish';
+
+  @override
+  String get expenseRequestReceiptsTitle => 'To\'lov cheklari';
+
+  @override
+  String get expenseRequestReceiptViewerTitle => 'To\'lov cheki';
+
+  @override
+  String get expenseRequestStatusRejected => 'Rad etilgan';
+
+  @override
+  String get expenseRequestConfirmButton => 'Tasdiqlash';
+
+  @override
+  String get expenseRequestConfirmSuccess => 'So\'rov tasdiqlandi.';
+
+  @override
+  String get expenseRequestConfirmSuccessMessage =>
+      'Tasdiqlash tizimda qayd etildi.';
+
+  @override
+  String get expenseRequestCardCopied => 'Karta raqami nusxalandi';
 }
