@@ -88,6 +88,9 @@ abstract final class ApiConstants {
   /// Ish haqi yozuv(lar)ini tasdiqlash: `POST /payroll/confirm/`.
   static const payrollConfirm = '/payroll/confirm/';
 
+  // ── Expense requests (xarajat so'rovlari) ─────────────────────────────
+  static const expenseRequests = '/expense-request/';
+
   // ── Projects ─────────────────────────────────────────────────────────────
   static const projects = '/projects/';
 

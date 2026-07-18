@@ -1,0 +1,40 @@
+part of 'expense_requests_bloc.dart';
+
+sealed class ExpenseRequestsEvent extends Equatable {
+  const ExpenseRequestsEvent();
+
+  @override
+  List<Object?> get props => [];
+}
+
+/// Ro'yxatni yuklash / qayta yuklash (1-sahifadan, joriy filtr bilan).
+class ExpenseRequestsRequested extends ExpenseRequestsEvent {
+  const ExpenseRequestsRequested();
+}
+
+/// Keyingi sahifani yuklab, ro'yxat oxiriga qo'shish (cheksiz-scroll).
+class ExpenseRequestsLoadMore extends ExpenseRequestsEvent {
+  const ExpenseRequestsLoadMore();
+}
+
+/// Qidiruv matni o'zgardi — boshqa filtrlar saqlanib, 1-sahifa qaytadan
+/// yuklanadi.
+class ExpenseRequestsSearchChanged extends ExpenseRequestsEvent {
+  const ExpenseRequestsSearchChanged(this.query);
+
+  final String query;
+
+  @override
+  List<Object?> get props => [query];
+}
+
+/// Filtr o'zgardi (filtr sahifasidan) — mavjud qidiruv matni saqlanib,
+/// 1-sahifa qaytadan yuklanadi.
+class ExpenseRequestsFilterChanged extends ExpenseRequestsEvent {
+  const ExpenseRequestsFilterChanged(this.filter);
+
+  final ExpenseRequestFilter filter;
+
+  @override
+  List<Object?> get props => [filter];
+}

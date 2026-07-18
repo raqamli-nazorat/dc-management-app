@@ -1267,4 +1267,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get payrollFilterApply => 'Search';
+
+  @override
+  String get expenseRequestProjectLabel => 'Project:';
+
+  @override
+  String get expenseRequestTypeLabel => 'Expense type:';
+
+  @override
+  String get expenseRequestAmountLabel => 'Amount:';
+
+  @override
+  String get expenseRequestFilterCategory => 'Category';
+
+  @override
+  String get expenseRequestFilterCategoryHint => 'Select category';
+
+  @override
+  String get expenseRequestFilterAmount => 'Amount';
+
+  @override
+  String get expenseRequestFilterPaidRange => 'Paid time range';
+
+  @override
+  String get expenseRequestFilterConfirmedRange => 'Confirmed time range';
 }

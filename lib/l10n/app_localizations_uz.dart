@@ -1272,4 +1272,29 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get payrollFilterApply => 'Qidirish';
+
+  @override
+  String get expenseRequestProjectLabel => 'Loyiha:';
+
+  @override
+  String get expenseRequestTypeLabel => 'Xarajat turi:';
+
+  @override
+  String get expenseRequestAmountLabel => 'Summasi:';
+
+  @override
+  String get expenseRequestFilterCategory => 'Toifa';
+
+  @override
+  String get expenseRequestFilterCategoryHint => 'Toifani tanlang';
+
+  @override
+  String get expenseRequestFilterAmount => 'Summa';
+
+  @override
+  String get expenseRequestFilterPaidRange => 'To\'langan vaqti oralig\'i';
+
+  @override
+  String get expenseRequestFilterConfirmedRange =>
+      'Tasdiqlangan vaqti oralig\'i';
 }

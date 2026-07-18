@@ -9,7 +9,7 @@ import '../../../../l10n/app_localizations.dart';
 
 /// "Moliya" tabi — moliya bo'limlari bo'yicha kartalar. Tepada to'liq
 /// kenglikdagi "Xarajat so'rovlari", pastda ikki yarim-kenglikdagi karta
-/// ("Ish haqi" + "Tarix"). Barcha tugmalar hozircha stub (oqim/endpoint yo'q).
+/// ("Ish haqi" + "Tarix").
 class FinancePage extends StatelessWidget {
   const FinancePage({super.key});
 
@@ -27,6 +27,7 @@ class FinancePage extends StatelessWidget {
               label: l10n.financeExpenseRequests,
               image: Assets.images.spendingRequestsImage,
               imageSize: 82.w,
+              onTap: () => context.pushNamed(Routes.expenseRequests.name),
             ),
             Row(
               spacing: 12.w,

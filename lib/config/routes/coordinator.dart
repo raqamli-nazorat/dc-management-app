@@ -54,6 +54,9 @@ import '../../features/ledger/domain/entities/ledger_filter.dart';
 import '../../features/ledger/presentation/pages/ledger_detail_page.dart';
 import '../../features/ledger/presentation/pages/ledger_filter_page.dart';
 import '../../features/ledger/presentation/pages/ledger_list_page.dart';
+import '../../features/expense_requests/domain/entities/expense_request_filter.dart';
+import '../../features/expense_requests/presentation/pages/expense_requests_filter_page.dart';
+import '../../features/expense_requests/presentation/pages/expense_requests_list_page.dart';
 import '../../features/payroll/domain/entities/payroll_filter.dart';
 import '../../features/payroll/presentation/pages/payroll_detail_page.dart';
 import '../../features/payroll/presentation/pages/payroll_filter_page.dart';
@@ -266,6 +269,20 @@ class AppRouter {
           path: Routes.payrollDetail.path,
           builder: (context, state) => PayrollDetailPage(
             payrollId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
+          ),
+        ),
+        GoRoute(
+          name: Routes.expenseRequests.name,
+          path: Routes.expenseRequests.path,
+          builder: (context, state) => const ExpenseRequestsListPage(),
+        ),
+        GoRoute(
+          name: Routes.expenseRequestsFilter.name,
+          path: Routes.expenseRequestsFilter.path,
+          builder: (context, state) => ExpenseRequestsFilterPage(
+            initial: state.extra is ExpenseRequestFilter
+                ? state.extra! as ExpenseRequestFilter
+                : ExpenseRequestFilter.empty,
           ),
         ),
         GoRoute(

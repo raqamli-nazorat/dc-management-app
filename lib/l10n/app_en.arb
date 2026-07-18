@@ -459,5 +459,14 @@
   "payrollFilterCreatedRange": "Created date range",
   "payrollFilterTotal": "Total amount (UZS)",
   "payrollFilterPenalty": "Penalty amount",
-  "payrollFilterApply": "Search"
+  "payrollFilterApply": "Search",
+
+  "expenseRequestProjectLabel": "Project:",
+  "expenseRequestTypeLabel": "Expense type:",
+  "expenseRequestAmountLabel": "Amount:",
+  "expenseRequestFilterCategory": "Category",
+  "expenseRequestFilterCategoryHint": "Select category",
+  "expenseRequestFilterAmount": "Amount",
+  "expenseRequestFilterPaidRange": "Paid time range",
+  "expenseRequestFilterConfirmedRange": "Confirmed time range"
 }

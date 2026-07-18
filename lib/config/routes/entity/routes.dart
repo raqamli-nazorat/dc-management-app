@@ -165,6 +165,19 @@ class Routes implements Coordinate {
     path: '/payroll/:id',
   );
 
+  /// Xarajat so'rovlari ro'yxati (Moliya tabidagi "Xarajat so'rovlari"
+  /// kartasidan).
+  static const expenseRequests = Routes._(
+    name: 'expense_requests',
+    path: '/expense-requests',
+  );
+
+  /// Xarajat so'rovlarini filtrlash sahifasi.
+  static const expenseRequestsFilter = Routes._(
+    name: 'expense_requests_filter',
+    path: '/expense-requests/filter',
+  );
+
   /// Xodim bo'yicha hisobot ro'yxati (Hisobotlar tabidan).
   static const userReports = Routes._(
     name: 'user_reports',

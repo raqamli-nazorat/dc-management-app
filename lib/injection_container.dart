@@ -98,6 +98,12 @@ import 'features/ledger/domain/usecases/get_ledger_detail_usecase.dart';
 import 'features/ledger/domain/usecases/get_ledger_usecase.dart';
 import 'features/ledger/presentation/bloc/ledger_bloc.dart';
 import 'features/ledger/presentation/bloc/ledger_detail_bloc.dart';
+import 'features/expense_requests/data/data_sources/expense_requests_remote_data_source.dart';
+import 'features/expense_requests/data/repository/expense_requests_repository_impl.dart';
+import 'features/expense_requests/domain/repository/expense_requests_repository.dart';
+import 'features/expense_requests/domain/usecases/get_expense_requests_usecase.dart';
+import 'features/expense_requests/presentation/bloc/expense_request_options_bloc.dart';
+import 'features/expense_requests/presentation/bloc/expense_requests_bloc.dart';
 import 'features/payroll/data/data_sources/payroll_remote_data_source.dart';
 import 'features/payroll/data/repository/payroll_repository_impl.dart';
 import 'features/payroll/domain/repository/payroll_repository.dart';
@@ -520,6 +526,24 @@ Future<void> configureDependencies() async {
     ..registerFactory<PayrollBloc>(() => PayrollBloc(getPayrolls: getIt()))
     ..registerFactory<PayrollDetailBloc>(
       () => PayrollDetailBloc(getPayroll: getIt(), confirmPayroll: getIt()),
+    );
+
+  // ── Expense requests (xarajat so'rovlari) feature ─────────────────────
+  getIt
+    ..registerLazySingleton<ExpenseRequestsRemoteDataSource>(
+      () => ExpenseRequestsRemoteDataSourceImpl(getIt()),
+    )
+    ..registerLazySingleton<ExpenseRequestsRepository>(
+      () => ExpenseRequestsRepositoryImpl(getIt()),
+    )
+    ..registerLazySingleton<GetExpenseRequestsUseCase>(
+      () => GetExpenseRequestsUseCase(getIt()),
+    )
+    ..registerFactory<ExpenseRequestsBloc>(
+      () => ExpenseRequestsBloc(getExpenseRequests: getIt()),
+    )
+    ..registerFactory<ExpenseRequestOptionsBloc>(
+      () => ExpenseRequestOptionsBloc(getOptions: getIt()),
     );
 
   // ── Statistics feature ────────────────────────────────────────────────

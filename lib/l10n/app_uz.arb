@@ -462,5 +462,14 @@
   "payrollFilterCreatedRange": "Yaratilgan vaqti oralig'i",
   "payrollFilterTotal": "Jami miqdori (UZS)",
   "payrollFilterPenalty": "Jarima miqdori",
-  "payrollFilterApply": "Qidirish"
+  "payrollFilterApply": "Qidirish",
+
+  "expenseRequestProjectLabel": "Loyiha:",
+  "expenseRequestTypeLabel": "Xarajat turi:",
+  "expenseRequestAmountLabel": "Summasi:",
+  "expenseRequestFilterCategory": "Toifa",
+  "expenseRequestFilterCategoryHint": "Toifani tanlang",
+  "expenseRequestFilterAmount": "Summa",
+  "expenseRequestFilterPaidRange": "To'langan vaqti oralig'i",
+  "expenseRequestFilterConfirmedRange": "Tasdiqlangan vaqti oralig'i"
 }

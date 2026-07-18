@@ -2569,6 +2569,54 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Qidirish'**
   String get payrollFilterApply;
+
+  /// No description provided for @expenseRequestProjectLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Loyiha:'**
+  String get expenseRequestProjectLabel;
+
+  /// No description provided for @expenseRequestTypeLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xarajat turi:'**
+  String get expenseRequestTypeLabel;
+
+  /// No description provided for @expenseRequestAmountLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Summasi:'**
+  String get expenseRequestAmountLabel;
+
+  /// No description provided for @expenseRequestFilterCategory.
+  ///
+  /// In uz, this message translates to:
+  /// **'Toifa'**
+  String get expenseRequestFilterCategory;
+
+  /// No description provided for @expenseRequestFilterCategoryHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Toifani tanlang'**
+  String get expenseRequestFilterCategoryHint;
+
+  /// No description provided for @expenseRequestFilterAmount.
+  ///
+  /// In uz, this message translates to:
+  /// **'Summa'**
+  String get expenseRequestFilterAmount;
+
+  /// No description provided for @expenseRequestFilterPaidRange.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'langan vaqti oralig\'i'**
+  String get expenseRequestFilterPaidRange;
+
+  /// No description provided for @expenseRequestFilterConfirmedRange.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tasdiqlangan vaqti oralig\'i'**
+  String get expenseRequestFilterConfirmedRange;
 }
 
 class _AppLocalizationsDelegate
