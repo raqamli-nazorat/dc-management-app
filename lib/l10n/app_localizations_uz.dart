@@ -1297,4 +1297,42 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String get expenseRequestFilterConfirmedRange =>
       'Tasdiqlangan vaqti oralig\'i';
+
+  @override
+  String get expenseRequestDetailTitle => 'So\'rov ma\'lumotlari';
+
+  @override
+  String get expenseRequestAmountField => 'Summa (UZS)';
+
+  @override
+  String get expenseRequestReasonField => 'Sababi';
+
+  @override
+  String get expenseRequestPayButton => 'To\'lov qildim';
+
+  @override
+  String get expenseRequestPayDialogTitle =>
+      'To\'lov amalga oshirilganini tasdiqlaysizmi?';
+
+  @override
+  String get expenseRequestPayDialogSubtitle =>
+      'Bu orqali to\'lov amalga oshirilgani tizimda qayd etiladi.';
+
+  @override
+  String get expenseRequestCancelReasonHint =>
+      'Iltimos, sababni yozing. Bu majburiy';
+
+  @override
+  String get expenseRequestPaySuccess => 'To\'lov qayd etildi.';
+
+  @override
+  String get expenseRequestPaySuccessMessage =>
+      'Mablag\' berilgani tizimda belgilandi.';
+
+  @override
+  String get expenseRequestCancelSuccess => 'So\'rov rad etildi.';
+
+  @override
+  String get expenseRequestCancelSuccessMessage =>
+      'So\'rov bo\'yicha rad etish sababi saqlandi.';
 }

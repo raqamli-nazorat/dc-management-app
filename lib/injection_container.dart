@@ -101,7 +101,11 @@ import 'features/ledger/presentation/bloc/ledger_detail_bloc.dart';
 import 'features/expense_requests/data/data_sources/expense_requests_remote_data_source.dart';
 import 'features/expense_requests/data/repository/expense_requests_repository_impl.dart';
 import 'features/expense_requests/domain/repository/expense_requests_repository.dart';
+import 'features/expense_requests/domain/usecases/cancel_expense_request_usecase.dart';
+import 'features/expense_requests/domain/usecases/get_expense_request_detail_usecase.dart';
 import 'features/expense_requests/domain/usecases/get_expense_requests_usecase.dart';
+import 'features/expense_requests/domain/usecases/pay_expense_request_usecase.dart';
+import 'features/expense_requests/presentation/bloc/expense_request_detail_bloc.dart';
 import 'features/expense_requests/presentation/bloc/expense_request_options_bloc.dart';
 import 'features/expense_requests/presentation/bloc/expense_requests_bloc.dart';
 import 'features/payroll/data/data_sources/payroll_remote_data_source.dart';
@@ -539,11 +543,27 @@ Future<void> configureDependencies() async {
     ..registerLazySingleton<GetExpenseRequestsUseCase>(
       () => GetExpenseRequestsUseCase(getIt()),
     )
+    ..registerLazySingleton<GetExpenseRequestDetailUseCase>(
+      () => GetExpenseRequestDetailUseCase(getIt()),
+    )
+    ..registerLazySingleton<PayExpenseRequestUseCase>(
+      () => PayExpenseRequestUseCase(getIt()),
+    )
+    ..registerLazySingleton<CancelExpenseRequestUseCase>(
+      () => CancelExpenseRequestUseCase(getIt()),
+    )
     ..registerFactory<ExpenseRequestsBloc>(
       () => ExpenseRequestsBloc(getExpenseRequests: getIt()),
     )
     ..registerFactory<ExpenseRequestOptionsBloc>(
       () => ExpenseRequestOptionsBloc(getOptions: getIt()),
+    )
+    ..registerFactory<ExpenseRequestDetailBloc>(
+      () => ExpenseRequestDetailBloc(
+        getRequest: getIt(),
+        payRequest: getIt(),
+        cancelRequest: getIt(),
+      ),
     );
 
   // ── Statistics feature ────────────────────────────────────────────────

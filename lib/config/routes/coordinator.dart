@@ -57,6 +57,7 @@ import '../../features/ledger/presentation/pages/ledger_list_page.dart';
 import '../../features/expense_requests/domain/entities/expense_request_filter.dart';
 import '../../features/expense_requests/presentation/pages/expense_requests_filter_page.dart';
 import '../../features/expense_requests/presentation/pages/expense_requests_list_page.dart';
+import '../../features/expense_requests/presentation/pages/query_data_page.dart';
 import '../../features/payroll/domain/entities/payroll_filter.dart';
 import '../../features/payroll/presentation/pages/payroll_detail_page.dart';
 import '../../features/payroll/presentation/pages/payroll_filter_page.dart';
@@ -283,6 +284,13 @@ class AppRouter {
             initial: state.extra is ExpenseRequestFilter
                 ? state.extra! as ExpenseRequestFilter
                 : ExpenseRequestFilter.empty,
+          ),
+        ),
+        GoRoute(
+          name: Routes.expenseRequestDetail.name,
+          path: Routes.expenseRequestDetail.path,
+          builder: (context, state) => QueryDataPage(
+            requestId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
           ),
         ),
         GoRoute(

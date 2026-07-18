@@ -71,6 +71,16 @@ class _ExpenseRequestsViewState extends State<_ExpenseRequestsView> {
     );
   }
 
+  Future<void> _openDetail(BuildContext context, int id) async {
+    final bloc = context.read<ExpenseRequestsBloc>();
+    final result = await context.pushNamed<Object?>(
+      Routes.expenseRequestDetail.name,
+      pathParameters: {'id': '$id'},
+    );
+    // Detailda to'lov/rad etish bo'lsa — holat belgisi yangilansin.
+    if (result == true) bloc.add(const ExpenseRequestsRequested());
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
@@ -97,10 +107,9 @@ class _ExpenseRequestsViewState extends State<_ExpenseRequestsView> {
                         return _CenteredScrollable(
                           child: _ErrorState(
                             failure: state.failure,
-                            onRetry: () =>
-                                context.read<ExpenseRequestsBloc>().add(
-                                  const ExpenseRequestsRequested(),
-                                ),
+                            onRetry: () => context
+                                .read<ExpenseRequestsBloc>()
+                                .add(const ExpenseRequestsRequested()),
                           ),
                         );
                       case ExpenseRequestsStatus.success:
@@ -137,7 +146,11 @@ class _ExpenseRequestsViewState extends State<_ExpenseRequestsView> {
                                 ),
                               );
                             }
-                            return ExpenseRequestCard(request: state.items[i]);
+                            final request = state.items[i];
+                            return ExpenseRequestCard(
+                              request: request,
+                              onTap: () => _openDetail(context, request.id),
+                            );
                           },
                         );
                     }

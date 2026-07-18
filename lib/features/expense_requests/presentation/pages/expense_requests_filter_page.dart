@@ -86,6 +86,19 @@ class _ExpenseRequestsFilterViewState
     ExpenseType.other,
   ];
 
+  /// Turi bo'yicha maydon qulflari: `withdrawal` — Loyiha ham Toifa ham yo'q;
+  /// `company` — faqat Loyiha; `other` — faqat Toifa; tur tanlanmagan —
+  /// ikkalasi ochiq.
+  bool get _projectEnabled => _type == null || _type == ExpenseType.company;
+
+  bool get _categoryEnabled => _type == null || _type == ExpenseType.other;
+
+  /// Tur almashganda unga mos kelmaydigan tanlovlar tozalanadi.
+  void _applyTypeRules() {
+    if (!_projectEnabled) _projectId = null;
+    if (!_categoryEnabled) _categoryId = null;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -93,6 +106,7 @@ class _ExpenseRequestsFilterViewState
     _type = f.type;
     _categoryId = f.categoryId;
     _projectId = f.projectId;
+    _applyTypeRules();
     _amountFromCtrl.text = _numText(f.amountFrom);
     _amountToCtrl.text = _numText(f.amountTo);
     void seed(_Range r, DateTime? from, DateTime? to) {
@@ -232,7 +246,10 @@ class _ExpenseRequestsFilterViewState
           controller: _portalCtrl,
           overlayChildBuilder: _buildOverlay,
           child:
-              BlocBuilder<ExpenseRequestOptionsBloc, ExpenseRequestOptionsState>(
+              BlocBuilder<
+                ExpenseRequestOptionsBloc,
+                ExpenseRequestOptionsState
+              >(
                 builder: (context, state) => Column(
                   children: [
                     AppFilterHeader(title: l10n.taskFilterTitle),
@@ -261,10 +278,10 @@ class _ExpenseRequestsFilterViewState
                               ),
                               placeholder:
                                   l10n.expenseRequestFilterCategoryHint,
+                              enabled: _categoryEnabled,
                               link: _links[_Field.category],
                               onTap: () => _toggle(_Field.category),
-                              onClear: () =>
-                                  setState(() => _categoryId = null),
+                              onClear: () => setState(() => _categoryId = null),
                             ),
                             AppFilterFieldBox(
                               label: l10n.expenseReportProject,
@@ -273,6 +290,7 @@ class _ExpenseRequestsFilterViewState
                                 _projectId,
                               ),
                               placeholder: l10n.expenseReportProjectHint,
+                              enabled: _projectEnabled,
                               link: _links[_Field.project],
                               onTap: () => _toggle(_Field.project),
                               onClear: () => setState(() => _projectId = null),
@@ -364,7 +382,10 @@ class _ExpenseRequestsFilterViewState
               AppFilterDropdownItem(
                 verticalPadding: 6,
                 selected: t == _type,
-                onTap: () => _pick(() => _type = t),
+                onTap: () => _pick(() {
+                  _type = t;
+                  _applyTypeRules();
+                }),
                 child: _labelRow(_typeLabel(t, l10n)),
               ),
           ],
@@ -373,7 +394,8 @@ class _ExpenseRequestsFilterViewState
         return AppFilterDropdownBox(
           emptyText: l10n.statEmpty,
           children: [
-            for (final o in options?.categories ?? const <ExpenseFilterOption>[])
+            for (final o
+                in options?.categories ?? const <ExpenseFilterOption>[])
               AppFilterDropdownItem(
                 verticalPadding: 6,
                 selected: o.id == _categoryId,
@@ -474,7 +496,9 @@ class _DateTimeRange extends StatelessWidget {
       children: [
         Expanded(
           child: AppFilterPickerBox(
-            value: _fmtDate(from ? state._fromDate[range] : state._toDate[range]),
+            value: _fmtDate(
+              from ? state._fromDate[range] : state._toDate[range],
+            ),
             placeholder: l10n.taskFilterDateHint,
             icon: Assets.icons.icCalendar,
             onTap: () => state._pickDate(range, from),
@@ -483,7 +507,9 @@ class _DateTimeRange extends StatelessWidget {
         SizedBox(width: 16.w),
         Expanded(
           child: AppFilterPickerBox(
-            value: _fmtTime(from ? state._fromTime[range] : state._toTime[range]),
+            value: _fmtTime(
+              from ? state._fromTime[range] : state._toTime[range],
+            ),
             placeholder: '00:00',
             icon: Assets.icons.icTuilconTime,
             onTap: () => state._pickTime(range, from),
@@ -496,11 +522,7 @@ class _DateTimeRange extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       spacing: 8.h,
-      children: [
-        AppFilterFieldLabel(label),
-        row(true),
-        row(false),
-      ],
+      children: [AppFilterFieldLabel(label), row(true), row(false)],
     );
   }
 }

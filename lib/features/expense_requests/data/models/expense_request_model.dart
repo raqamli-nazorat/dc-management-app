@@ -10,15 +10,24 @@ abstract final class ExpenseRequestModel {
         value is Map ? value.cast<String, dynamic>() : const {};
     final user = asMap(json['user_info']);
     final project = asMap(json['project_info']);
+    final category = asMap(json['expense_category_info']);
+    DateTime? date(Object? value) =>
+        value is String ? DateTime.tryParse(value) : null;
     return ExpenseRequest(
       id: (json['id'] as num?)?.toInt() ?? 0,
       userName: user['username'] as String? ?? '',
       avatar: user['avatar'] as String? ?? '',
       projectName:
           project['title'] as String? ?? project['name'] as String? ?? '',
+      categoryName:
+          category['title'] as String? ?? category['name'] as String? ?? '',
       type: ExpenseType.fromApi(json['type'] as String?),
       amount: json['amount'] == null ? '' : '${json['amount']}',
+      reason: json['reason'] as String? ?? '',
       status: ExpenseStatus.fromApi(json['status'] as String?),
+      createdAt: date(json['created_at']),
+      paidAt: date(json['paid_at']),
+      confirmedAt: date(json['confirmed_at']),
     );
   }
 }

@@ -471,5 +471,16 @@
   "expenseRequestFilterCategoryHint": "Toifani tanlang",
   "expenseRequestFilterAmount": "Summa",
   "expenseRequestFilterPaidRange": "To'langan vaqti oralig'i",
-  "expenseRequestFilterConfirmedRange": "Tasdiqlangan vaqti oralig'i"
+  "expenseRequestFilterConfirmedRange": "Tasdiqlangan vaqti oralig'i",
+  "expenseRequestDetailTitle": "So'rov ma'lumotlari",
+  "expenseRequestAmountField": "Summa (UZS)",
+  "expenseRequestReasonField": "Sababi",
+  "expenseRequestPayButton": "To'lov qildim",
+  "expenseRequestPayDialogTitle": "To'lov amalga oshirilganini tasdiqlaysizmi?",
+  "expenseRequestPayDialogSubtitle": "Bu orqali to'lov amalga oshirilgani tizimda qayd etiladi.",
+  "expenseRequestCancelReasonHint": "Iltimos, sababni yozing. Bu majburiy",
+  "expenseRequestPaySuccess": "To'lov qayd etildi.",
+  "expenseRequestPaySuccessMessage": "Mablag' berilgani tizimda belgilandi.",
+  "expenseRequestCancelSuccess": "So'rov rad etildi.",
+  "expenseRequestCancelSuccessMessage": "So'rov bo'yicha rad etish sababi saqlandi."
 }

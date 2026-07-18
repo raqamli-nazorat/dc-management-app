@@ -11,63 +11,69 @@ import '../../domain/entities/expense_request.dart';
 
 /// Bitta xarajat so'rovi kartasi — "Xarajat so'rovlari" ro'yxati (Figma:
 /// node 1881-316875). O'ngdagi belgi `status == confirmed` holatini
-/// ko'rsatadi (tasdiqlangan — yashil check).
+/// ko'rsatadi (tasdiqlangan — yashil check). Bosilganda detail sahifasiga
+/// o'tadi.
 class ExpenseRequestCard extends StatelessWidget {
-  const ExpenseRequestCard({required this.request, super.key});
+  const ExpenseRequestCard({required this.request, this.onTap, super.key});
 
   final ExpenseRequest request;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
     final l10n = AppLocalizations.of(context);
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: colors.backgroundElevation1,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: colors.strokeSoft, width: 1.w),
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(12.w),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            TuiAvatar(
-              initial: request.userName,
-              avatarUrl: request.avatar,
-              size: 40,
-            ),
-            SizedBox(width: 8.w),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 4.h,
-                children: [
-                  _Line(
-                    label: l10n.userFullNameLabel,
-                    value: request.userName,
-                  ),
-                  _Line(
-                    label: l10n.expenseRequestProjectLabel,
-                    value: request.projectName,
-                  ),
-                  _Line(
-                    label: l10n.expenseRequestTypeLabel,
-                    value: _typeLabel(request.type, l10n),
-                  ),
-                  _Line(
-                    label: l10n.expenseRequestAmountLabel,
-                    value: Formatters.formatAmountComma(request.amount),
-                  ),
-                ],
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12.r),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: colors.backgroundElevation1,
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(color: colors.strokeSoft, width: 1.w),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(12.w),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              TuiAvatar(
+                initial: request.userName,
+                avatarUrl: request.avatar,
+                size: 40,
               ),
-            ),
-            SizedBox(width: 8.w),
-            _ConfirmBadge(
-              confirmed: request.status == ExpenseStatus.confirmed,
-            ),
-          ],
+              SizedBox(width: 8.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: 4.h,
+                  children: [
+                    _Line(
+                      label: l10n.userFullNameLabel,
+                      value: request.userName,
+                    ),
+                    _Line(
+                      label: l10n.expenseRequestProjectLabel,
+                      value: request.projectName,
+                    ),
+                    _Line(
+                      label: l10n.expenseRequestTypeLabel,
+                      value: _typeLabel(request.type, l10n),
+                    ),
+                    _Line(
+                      label: l10n.expenseRequestAmountLabel,
+                      value: Formatters.formatAmountComma(request.amount),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(width: 8.w),
+              _ConfirmBadge(
+                confirmed: request.status == ExpenseStatus.confirmed,
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -18,6 +18,18 @@ class ExpenseRequestsRepositoryImpl implements ExpenseRequestsRepository {
     ExpenseRequestFilter filter = ExpenseRequestFilter.empty,
   }) => _guard(() => _remote.getExpenseRequests(page: page, filter: filter));
 
+  @override
+  Future<ExpenseRequest> getExpenseRequest(int id) =>
+      _guard(() => _remote.getExpenseRequest(id));
+
+  @override
+  Future<ExpenseRequest> payExpenseRequest(int id) =>
+      _guard(() => _remote.payExpenseRequest(id));
+
+  @override
+  Future<ExpenseRequest> cancelExpenseRequest(int id, String reason) =>
+      _guard(() => _remote.cancelExpenseRequest(id, reason));
+
   Future<T> _guard<T>(Future<T> Function() action) async {
     try {
       return await action();

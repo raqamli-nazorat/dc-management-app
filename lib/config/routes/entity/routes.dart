@@ -178,6 +178,13 @@ class Routes implements Coordinate {
     path: '/expense-requests/filter',
   );
 
+  /// Xarajat so'rovi detail sahifasi — "So'rov ma'lumotlari" (kartaga
+  /// bosilganda).
+  static const expenseRequestDetail = Routes._(
+    name: 'expense_request_detail',
+    path: '/expense-requests/:id',
+  );
+
   /// Xodim bo'yicha hisobot ro'yxati (Hisobotlar tabidan).
   static const userReports = Routes._(
     name: 'user_reports',

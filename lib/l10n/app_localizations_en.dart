@@ -1291,4 +1291,42 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get expenseRequestFilterConfirmedRange => 'Confirmed time range';
+
+  @override
+  String get expenseRequestDetailTitle => 'Request details';
+
+  @override
+  String get expenseRequestAmountField => 'Amount (UZS)';
+
+  @override
+  String get expenseRequestReasonField => 'Reason';
+
+  @override
+  String get expenseRequestPayButton => 'I paid';
+
+  @override
+  String get expenseRequestPayDialogTitle =>
+      'Confirm that the payment was made?';
+
+  @override
+  String get expenseRequestPayDialogSubtitle =>
+      'This records the payment as completed in the system.';
+
+  @override
+  String get expenseRequestCancelReasonHint =>
+      'Please write the reason. It is required';
+
+  @override
+  String get expenseRequestPaySuccess => 'Payment recorded.';
+
+  @override
+  String get expenseRequestPaySuccessMessage =>
+      'The disbursement has been marked in the system.';
+
+  @override
+  String get expenseRequestCancelSuccess => 'Request rejected.';
+
+  @override
+  String get expenseRequestCancelSuccessMessage =>
+      'The rejection reason for the request has been saved.';
 }

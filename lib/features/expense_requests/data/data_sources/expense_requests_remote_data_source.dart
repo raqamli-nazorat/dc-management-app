@@ -13,6 +13,12 @@ abstract interface class ExpenseRequestsRemoteDataSource {
     int page,
     ExpenseRequestFilter filter,
   });
+
+  Future<ExpenseRequest> getExpenseRequest(int id);
+
+  Future<ExpenseRequest> payExpenseRequest(int id);
+
+  Future<ExpenseRequest> cancelExpenseRequest(int id, String reason);
 }
 
 class ExpenseRequestsRemoteDataSourceImpl
@@ -47,6 +53,44 @@ class ExpenseRequestsRemoteDataSourceImpl
       throw ResponseMapper.mapDioException(e);
     }
   }
+
+  @override
+  Future<ExpenseRequest> getExpenseRequest(int id) async {
+    try {
+      final response = await _client.get(ApiConstants.expenseRequestById(id));
+      return _asRequest(response.data);
+    } on DioException catch (e) {
+      throw ResponseMapper.mapDioException(e);
+    }
+  }
+
+  @override
+  Future<ExpenseRequest> payExpenseRequest(int id) async {
+    try {
+      final response = await _client.post(ApiConstants.expenseRequestPay(id));
+      return _asRequest(response.data);
+    } on DioException catch (e) {
+      throw ResponseMapper.mapDioException(e);
+    }
+  }
+
+  @override
+  Future<ExpenseRequest> cancelExpenseRequest(int id, String reason) async {
+    try {
+      final response = await _client.post(
+        ApiConstants.expenseRequestCancel(id),
+        data: {'cancel_reason': reason},
+      );
+      return _asRequest(response.data);
+    } on DioException catch (e) {
+      throw ResponseMapper.mapDioException(e);
+    }
+  }
+
+  static ExpenseRequest _asRequest(Object? data) =>
+      ExpenseRequestModel.fromJson(
+        ResponseMapper.asMap(data).cast<String, dynamic>(),
+      );
 
   /// [ExpenseRequestFilter] → `GET /expense-request/` query paramlari (faqat
   /// to'ldirilganlari).

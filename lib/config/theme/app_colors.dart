@@ -380,6 +380,14 @@ class AppColors extends ThemeExtension<AppColors> {
       ? backgroundElevation1
       : backgroundElevation1Alt;
 
+  /// Dialog/toast ustidagi yuza foni — sahifa fonidan (base) ajralib turishi
+  /// uchun. Dark rejimda `backgroundBase` qora bo'lib, dialog/toast page bilan
+  /// qorishib ketardi; shu bois dark'da ko'tarilgan yuza ishlatiladi. Light —
+  /// oq (base bilan bir xil, dizayn shunday).
+  Color get overlaySurface => backgroundBase.computeLuminance() < 0.5
+      ? backgroundElevation1
+      : backgroundBase;
+
   /// Xarajatlar AppBar filtr/bildirishnoma tugmasi foni (light: `backgroundElevation2`, dark: `strokeSub`).
   Color get expenseAppBarFilterSurface =>
       backgroundBase.computeLuminance() < 0.5

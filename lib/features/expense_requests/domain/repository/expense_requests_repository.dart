@@ -9,4 +9,14 @@ abstract interface class ExpenseRequestsRepository {
     int page,
     ExpenseRequestFilter filter,
   });
+
+  /// Bitta so'rov (`GET /expense-request/{id}/`).
+  Future<ExpenseRequest> getExpenseRequest(int id);
+
+  /// To'lovni qayd etish (`POST /expense-request/{id}/pay/`) — yangilangan
+  /// so'rov qaytadi.
+  Future<ExpenseRequest> payExpenseRequest(int id);
+
+  /// Rad etish (`POST /expense-request/{id}/cancel/` — `{cancel_reason}`).
+  Future<ExpenseRequest> cancelExpenseRequest(int id, String reason);
 }

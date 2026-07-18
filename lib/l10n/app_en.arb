@@ -468,5 +468,16 @@
   "expenseRequestFilterCategoryHint": "Select category",
   "expenseRequestFilterAmount": "Amount",
   "expenseRequestFilterPaidRange": "Paid time range",
-  "expenseRequestFilterConfirmedRange": "Confirmed time range"
+  "expenseRequestFilterConfirmedRange": "Confirmed time range",
+  "expenseRequestDetailTitle": "Request details",
+  "expenseRequestAmountField": "Amount (UZS)",
+  "expenseRequestReasonField": "Reason",
+  "expenseRequestPayButton": "I paid",
+  "expenseRequestPayDialogTitle": "Confirm that the payment was made?",
+  "expenseRequestPayDialogSubtitle": "This records the payment as completed in the system.",
+  "expenseRequestCancelReasonHint": "Please write the reason. It is required",
+  "expenseRequestPaySuccess": "Payment recorded.",
+  "expenseRequestPaySuccessMessage": "The disbursement has been marked in the system.",
+  "expenseRequestCancelSuccess": "Request rejected.",
+  "expenseRequestCancelSuccessMessage": "The rejection reason for the request has been saved."
 }

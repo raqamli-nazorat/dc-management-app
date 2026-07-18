@@ -2617,6 +2617,72 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Tasdiqlangan vaqti oralig\'i'**
   String get expenseRequestFilterConfirmedRange;
+
+  /// No description provided for @expenseRequestDetailTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'So\'rov ma\'lumotlari'**
+  String get expenseRequestDetailTitle;
+
+  /// No description provided for @expenseRequestAmountField.
+  ///
+  /// In uz, this message translates to:
+  /// **'Summa (UZS)'**
+  String get expenseRequestAmountField;
+
+  /// No description provided for @expenseRequestReasonField.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sababi'**
+  String get expenseRequestReasonField;
+
+  /// No description provided for @expenseRequestPayButton.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lov qildim'**
+  String get expenseRequestPayButton;
+
+  /// No description provided for @expenseRequestPayDialogTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lov amalga oshirilganini tasdiqlaysizmi?'**
+  String get expenseRequestPayDialogTitle;
+
+  /// No description provided for @expenseRequestPayDialogSubtitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bu orqali to\'lov amalga oshirilgani tizimda qayd etiladi.'**
+  String get expenseRequestPayDialogSubtitle;
+
+  /// No description provided for @expenseRequestCancelReasonHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Iltimos, sababni yozing. Bu majburiy'**
+  String get expenseRequestCancelReasonHint;
+
+  /// No description provided for @expenseRequestPaySuccess.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lov qayd etildi.'**
+  String get expenseRequestPaySuccess;
+
+  /// No description provided for @expenseRequestPaySuccessMessage.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mablag\' berilgani tizimda belgilandi.'**
+  String get expenseRequestPaySuccessMessage;
+
+  /// No description provided for @expenseRequestCancelSuccess.
+  ///
+  /// In uz, this message translates to:
+  /// **'So\'rov rad etildi.'**
+  String get expenseRequestCancelSuccess;
+
+  /// No description provided for @expenseRequestCancelSuccessMessage.
+  ///
+  /// In uz, this message translates to:
+  /// **'So\'rov bo\'yicha rad etish sababi saqlandi.'**
+  String get expenseRequestCancelSuccessMessage;
 }
 
 class _AppLocalizationsDelegate
