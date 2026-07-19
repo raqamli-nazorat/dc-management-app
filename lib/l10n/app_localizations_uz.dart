@@ -1297,4 +1297,122 @@ class AppLocalizationsUz extends AppLocalizations {
   @override
   String get expenseRequestFilterConfirmedRange =>
       'Tasdiqlangan vaqti oralig\'i';
+
+  @override
+  String get expenseRequestDetailTitle => 'So\'rov ma\'lumotlari';
+
+  @override
+  String get expenseRequestAmountField => 'Summa (UZS)';
+
+  @override
+  String get expenseRequestReasonField => 'Sababi';
+
+  @override
+  String get expenseRequestPayButton => 'To\'lov qildim';
+
+  @override
+  String get expenseRequestPayDialogTitle =>
+      'To\'lov amalga oshirilganini tasdiqlaysizmi?';
+
+  @override
+  String get expenseRequestPayDialogSubtitle =>
+      'Bu orqali to\'lov amalga oshirilgani tizimda qayd etiladi.';
+
+  @override
+  String get expenseRequestCancelReasonHint =>
+      'Iltimos, sababni yozing. Bu majburiy';
+
+  @override
+  String get expenseRequestPaySuccess => 'To\'lov qayd etildi.';
+
+  @override
+  String get expenseRequestPaySuccessMessage =>
+      'Mablag\' berilgani tizimda belgilandi.';
+
+  @override
+  String get expenseRequestCancelSuccess => 'So\'rov rad etildi.';
+
+  @override
+  String get expenseRequestCancelSuccessMessage =>
+      'So\'rov bo\'yicha rad etish sababi saqlandi.';
+
+  @override
+  String get expenseRequestReceiptDialogTitle => 'To\'lov chekini yuklang.';
+
+  @override
+  String get expenseRequestReceiptDialogSubtitle =>
+      'To\'lov tasdiqlanishi uchun chek yoki kvitansiyani yuklang.';
+
+  @override
+  String get expenseRequestReceiptInfo =>
+      'Chek faylini hozir yuklamasangiz ham bo\'ladi. Uni keyinroq qo\'shishingiz mumkin.';
+
+  @override
+  String get expenseRequestReceiptAddTile => 'To\'lov chekini yuklash';
+
+  @override
+  String get expenseRequestReceiptSkip => 'O\'tkazib yuborish';
+
+  @override
+  String get expenseRequestReceiptSend => 'Yuborish';
+
+  @override
+  String get expenseRequestReceiptsTitle => 'To\'lov cheklari';
+
+  @override
+  String get expenseRequestReceiptViewerTitle => 'To\'lov cheki';
+
+  @override
+  String get expenseRequestStatusRejected => 'Rad etilgan';
+
+  @override
+  String get expenseRequestConfirmButton => 'Tasdiqlash';
+
+  @override
+  String get expenseRequestConfirmSuccess => 'So\'rov tasdiqlandi.';
+
+  @override
+  String get expenseRequestConfirmSuccessMessage =>
+      'Tasdiqlash tizimda qayd etildi.';
+
+  @override
+  String get expenseRequestCardCopied => 'Karta raqami nusxalandi';
+
+  @override
+  String get expenseRequestCreateTitle => 'So\'rov yuborish';
+
+  @override
+  String get expenseRequestCreateSubmit => 'So\'rov yuborish';
+
+  @override
+  String get expenseRequestCreateProjectLabel => 'Loyiha uchun';
+
+  @override
+  String get expenseRequestCreateAmountLabel => 'Miqdori';
+
+  @override
+  String get expenseRequestCreateAmountHint => 'Summani kiriting: 0,00';
+
+  @override
+  String get expenseRequestCreateReasonHint => 'Sababini yozing';
+
+  @override
+  String get expenseRequestCreatePaymentHint => 'To\'lov turini tanlang';
+
+  @override
+  String get expenseRequestCreateCardLabel => 'Karta raqami';
+
+  @override
+  String get expenseRequestCreateCardHint => 'Karta raqamini kiriting';
+
+  @override
+  String get expenseRequestCreateValidation =>
+      'Iltimos, majburiy maydonlarni to\'ldiring.';
+
+  @override
+  String get expenseRequestCreateSuccess => 'So\'rov yuborildi.';
+
+  @override
+  String get expenseRequestCreateSuccessMessage =>
+      'Xarajat so\'rovingiz muvaffaqiyatli yuborildi.';
 }

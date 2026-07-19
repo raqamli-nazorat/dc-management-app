@@ -23,8 +23,7 @@ abstract final class AppToast {
     required String title,
     String? message,
     Duration duration = const Duration(seconds: 3),
-  }) =>
-      _show(context, _ToastVariant.success, title, message, duration);
+  }) => _show(context, _ToastVariant.success, title, message, duration);
 
   /// Xato toasti (qizil ogohlantirish ikonka bilan). Backenddan kelgan
   /// validatsiya xabarlarini ko‘rsatish uchun.
@@ -33,8 +32,7 @@ abstract final class AppToast {
     required String title,
     String? message,
     Duration duration = const Duration(seconds: 4),
-  }) =>
-      _show(context, _ToastVariant.error, title, message, duration);
+  }) => _show(context, _ToastVariant.error, title, message, duration);
 
   static void _show(
     BuildContext context,
@@ -119,8 +117,9 @@ class _ToastCardState extends State<_ToastCard>
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
     final isError = widget.variant == _ToastVariant.error;
-    final icon =
-        isError ? Assets.icons.icAlertCircle : Assets.icons.icCheckCircle;
+    final icon = isError
+        ? Assets.icons.icAlertCircle
+        : Assets.icons.icCheckCircle;
     final iconColor = isError ? colors.errorStrong : colors.successStrong;
 
     return Positioned(
@@ -135,7 +134,7 @@ class _ToastCardState extends State<_ToastCard>
             type: MaterialType.transparency,
             child: DecoratedBox(
               decoration: BoxDecoration(
-                color: colors.backgroundBase,
+                color: colors.overlaySurface,
                 borderRadius: BorderRadius.circular(16.r),
                 border: Border.all(color: colors.strokeSub, width: 1.w),
                 boxShadow: [

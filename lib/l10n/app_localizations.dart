@@ -2617,6 +2617,222 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Tasdiqlangan vaqti oralig\'i'**
   String get expenseRequestFilterConfirmedRange;
+
+  /// No description provided for @expenseRequestDetailTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'So\'rov ma\'lumotlari'**
+  String get expenseRequestDetailTitle;
+
+  /// No description provided for @expenseRequestAmountField.
+  ///
+  /// In uz, this message translates to:
+  /// **'Summa (UZS)'**
+  String get expenseRequestAmountField;
+
+  /// No description provided for @expenseRequestReasonField.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sababi'**
+  String get expenseRequestReasonField;
+
+  /// No description provided for @expenseRequestPayButton.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lov qildim'**
+  String get expenseRequestPayButton;
+
+  /// No description provided for @expenseRequestPayDialogTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lov amalga oshirilganini tasdiqlaysizmi?'**
+  String get expenseRequestPayDialogTitle;
+
+  /// No description provided for @expenseRequestPayDialogSubtitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bu orqali to\'lov amalga oshirilgani tizimda qayd etiladi.'**
+  String get expenseRequestPayDialogSubtitle;
+
+  /// No description provided for @expenseRequestCancelReasonHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Iltimos, sababni yozing. Bu majburiy'**
+  String get expenseRequestCancelReasonHint;
+
+  /// No description provided for @expenseRequestPaySuccess.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lov qayd etildi.'**
+  String get expenseRequestPaySuccess;
+
+  /// No description provided for @expenseRequestPaySuccessMessage.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mablag\' berilgani tizimda belgilandi.'**
+  String get expenseRequestPaySuccessMessage;
+
+  /// No description provided for @expenseRequestCancelSuccess.
+  ///
+  /// In uz, this message translates to:
+  /// **'So\'rov rad etildi.'**
+  String get expenseRequestCancelSuccess;
+
+  /// No description provided for @expenseRequestCancelSuccessMessage.
+  ///
+  /// In uz, this message translates to:
+  /// **'So\'rov bo\'yicha rad etish sababi saqlandi.'**
+  String get expenseRequestCancelSuccessMessage;
+
+  /// No description provided for @expenseRequestReceiptDialogTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lov chekini yuklang.'**
+  String get expenseRequestReceiptDialogTitle;
+
+  /// No description provided for @expenseRequestReceiptDialogSubtitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lov tasdiqlanishi uchun chek yoki kvitansiyani yuklang.'**
+  String get expenseRequestReceiptDialogSubtitle;
+
+  /// No description provided for @expenseRequestReceiptInfo.
+  ///
+  /// In uz, this message translates to:
+  /// **'Chek faylini hozir yuklamasangiz ham bo\'ladi. Uni keyinroq qo\'shishingiz mumkin.'**
+  String get expenseRequestReceiptInfo;
+
+  /// No description provided for @expenseRequestReceiptAddTile.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lov chekini yuklash'**
+  String get expenseRequestReceiptAddTile;
+
+  /// No description provided for @expenseRequestReceiptSkip.
+  ///
+  /// In uz, this message translates to:
+  /// **'O\'tkazib yuborish'**
+  String get expenseRequestReceiptSkip;
+
+  /// No description provided for @expenseRequestReceiptSend.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yuborish'**
+  String get expenseRequestReceiptSend;
+
+  /// No description provided for @expenseRequestReceiptsTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lov cheklari'**
+  String get expenseRequestReceiptsTitle;
+
+  /// No description provided for @expenseRequestReceiptViewerTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lov cheki'**
+  String get expenseRequestReceiptViewerTitle;
+
+  /// No description provided for @expenseRequestStatusRejected.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rad etilgan'**
+  String get expenseRequestStatusRejected;
+
+  /// No description provided for @expenseRequestConfirmButton.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tasdiqlash'**
+  String get expenseRequestConfirmButton;
+
+  /// No description provided for @expenseRequestConfirmSuccess.
+  ///
+  /// In uz, this message translates to:
+  /// **'So\'rov tasdiqlandi.'**
+  String get expenseRequestConfirmSuccess;
+
+  /// No description provided for @expenseRequestConfirmSuccessMessage.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tasdiqlash tizimda qayd etildi.'**
+  String get expenseRequestConfirmSuccessMessage;
+
+  /// No description provided for @expenseRequestCardCopied.
+  ///
+  /// In uz, this message translates to:
+  /// **'Karta raqami nusxalandi'**
+  String get expenseRequestCardCopied;
+
+  /// No description provided for @expenseRequestCreateTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'So\'rov yuborish'**
+  String get expenseRequestCreateTitle;
+
+  /// No description provided for @expenseRequestCreateSubmit.
+  ///
+  /// In uz, this message translates to:
+  /// **'So\'rov yuborish'**
+  String get expenseRequestCreateSubmit;
+
+  /// No description provided for @expenseRequestCreateProjectLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Loyiha uchun'**
+  String get expenseRequestCreateProjectLabel;
+
+  /// No description provided for @expenseRequestCreateAmountLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Miqdori'**
+  String get expenseRequestCreateAmountLabel;
+
+  /// No description provided for @expenseRequestCreateAmountHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Summani kiriting: 0,00'**
+  String get expenseRequestCreateAmountHint;
+
+  /// No description provided for @expenseRequestCreateReasonHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sababini yozing'**
+  String get expenseRequestCreateReasonHint;
+
+  /// No description provided for @expenseRequestCreatePaymentHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lov turini tanlang'**
+  String get expenseRequestCreatePaymentHint;
+
+  /// No description provided for @expenseRequestCreateCardLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Karta raqami'**
+  String get expenseRequestCreateCardLabel;
+
+  /// No description provided for @expenseRequestCreateCardHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Karta raqamini kiriting'**
+  String get expenseRequestCreateCardHint;
+
+  /// No description provided for @expenseRequestCreateValidation.
+  ///
+  /// In uz, this message translates to:
+  /// **'Iltimos, majburiy maydonlarni to\'ldiring.'**
+  String get expenseRequestCreateValidation;
+
+  /// No description provided for @expenseRequestCreateSuccess.
+  ///
+  /// In uz, this message translates to:
+  /// **'So\'rov yuborildi.'**
+  String get expenseRequestCreateSuccess;
+
+  /// No description provided for @expenseRequestCreateSuccessMessage.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xarajat so\'rovingiz muvaffaqiyatli yuborildi.'**
+  String get expenseRequestCreateSuccessMessage;
 }
 
 class _AppLocalizationsDelegate

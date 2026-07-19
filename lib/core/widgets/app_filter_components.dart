@@ -104,6 +104,7 @@ class AppFilterFieldBox extends StatelessWidget {
     required this.onTap,
     required this.onClear,
     this.showClear = true,
+    this.enabled = true,
     this.link,
     this.chevron,
     super.key,
@@ -115,6 +116,11 @@ class AppFilterFieldBox extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback onClear;
   final bool showClear;
+
+  /// `false` — maydon xira ko'rinadi va bosilmaydi (masalan xarajat turiga
+  /// mos kelmaydigan tanlov).
+  final bool enabled;
+
   final LayerLink? link;
   final SvgGenImage? chevron;
 
@@ -173,6 +179,7 @@ class AppFilterFieldBox extends StatelessWidget {
     if (link != null) {
       box = CompositedTransformTarget(link: link!, child: box);
     }
+    if (!enabled) box = Opacity(opacity: 0.5, child: box);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -180,7 +187,7 @@ class AppFilterFieldBox extends StatelessWidget {
       children: [
         AppFilterFieldLabel(label),
         InkWell(
-          onTap: onTap,
+          onTap: enabled ? onTap : null,
           borderRadius: BorderRadius.circular(12.r),
           child: box,
         ),

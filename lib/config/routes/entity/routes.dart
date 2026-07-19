@@ -178,6 +178,20 @@ class Routes implements Coordinate {
     path: '/expense-requests/filter',
   );
 
+  /// Xarajat so'rovi yaratish sahifasi — "So'rov yuborish" (ro'yxatdagi
+  /// tugmadan; faqat hisobchi/xodim). `:id`dan oldin e'lon qilinishi shart.
+  static const expenseRequestCreate = Routes._(
+    name: 'expense_request_create',
+    path: '/expense-requests/create',
+  );
+
+  /// Xarajat so'rovi detail sahifasi — "So'rov ma'lumotlari" (kartaga
+  /// bosilganda).
+  static const expenseRequestDetail = Routes._(
+    name: 'expense_request_detail',
+    path: '/expense-requests/:id',
+  );
+
   /// Xodim bo'yicha hisobot ro'yxati (Hisobotlar tabidan).
   static const userReports = Routes._(
     name: 'user_reports',

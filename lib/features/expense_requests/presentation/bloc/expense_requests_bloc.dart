@@ -42,9 +42,7 @@ class ExpenseRequestsBloc
     ExpenseRequestFilter filter,
     Emitter<ExpenseRequestsState> emit,
   ) async {
-    emit(
-      state.copyWith(status: ExpenseRequestsStatus.loading, filter: filter),
-    );
+    emit(state.copyWith(status: ExpenseRequestsStatus.loading, filter: filter));
     try {
       final page = await _getExpenseRequests((page: 1, filter: filter));
       emit(
@@ -73,7 +71,10 @@ class ExpenseRequestsBloc
     emit(state.copyWith(isLoadingMore: true));
     try {
       final next = state.page + 1;
-      final page = await _getExpenseRequests((page: next, filter: state.filter));
+      final page = await _getExpenseRequests((
+        page: next,
+        filter: state.filter,
+      ));
       emit(
         state.copyWith(
           items: [...state.items, ...page.items],

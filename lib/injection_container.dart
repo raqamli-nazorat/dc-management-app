@@ -101,7 +101,16 @@ import 'features/ledger/presentation/bloc/ledger_detail_bloc.dart';
 import 'features/expense_requests/data/data_sources/expense_requests_remote_data_source.dart';
 import 'features/expense_requests/data/repository/expense_requests_repository_impl.dart';
 import 'features/expense_requests/domain/repository/expense_requests_repository.dart';
+import 'features/expense_requests/domain/usecases/cancel_expense_request_usecase.dart';
+import 'features/expense_requests/domain/usecases/confirm_expense_request_usecase.dart';
+import 'features/expense_requests/domain/usecases/create_expense_receipt_usecase.dart';
+import 'features/expense_requests/domain/usecases/create_expense_request_usecase.dart';
+import 'features/expense_requests/domain/usecases/get_expense_receipts_usecase.dart';
+import 'features/expense_requests/domain/usecases/get_expense_request_detail_usecase.dart';
 import 'features/expense_requests/domain/usecases/get_expense_requests_usecase.dart';
+import 'features/expense_requests/domain/usecases/pay_expense_request_usecase.dart';
+import 'features/expense_requests/presentation/bloc/expense_request_create_bloc.dart';
+import 'features/expense_requests/presentation/bloc/expense_request_detail_bloc.dart';
 import 'features/expense_requests/presentation/bloc/expense_request_options_bloc.dart';
 import 'features/expense_requests/presentation/bloc/expense_requests_bloc.dart';
 import 'features/payroll/data/data_sources/payroll_remote_data_source.dart';
@@ -539,11 +548,45 @@ Future<void> configureDependencies() async {
     ..registerLazySingleton<GetExpenseRequestsUseCase>(
       () => GetExpenseRequestsUseCase(getIt()),
     )
+    ..registerLazySingleton<CreateExpenseRequestUseCase>(
+      () => CreateExpenseRequestUseCase(getIt()),
+    )
+    ..registerLazySingleton<GetExpenseRequestDetailUseCase>(
+      () => GetExpenseRequestDetailUseCase(getIt()),
+    )
+    ..registerLazySingleton<PayExpenseRequestUseCase>(
+      () => PayExpenseRequestUseCase(getIt()),
+    )
+    ..registerLazySingleton<CancelExpenseRequestUseCase>(
+      () => CancelExpenseRequestUseCase(getIt()),
+    )
+    ..registerLazySingleton<ConfirmExpenseRequestUseCase>(
+      () => ConfirmExpenseRequestUseCase(getIt()),
+    )
+    ..registerLazySingleton<GetExpenseReceiptsUseCase>(
+      () => GetExpenseReceiptsUseCase(getIt()),
+    )
+    ..registerLazySingleton<CreateExpenseReceiptUseCase>(
+      () => CreateExpenseReceiptUseCase(getIt()),
+    )
     ..registerFactory<ExpenseRequestsBloc>(
       () => ExpenseRequestsBloc(getExpenseRequests: getIt()),
     )
+    ..registerFactory<ExpenseRequestCreateBloc>(
+      () => ExpenseRequestCreateBloc(create: getIt()),
+    )
     ..registerFactory<ExpenseRequestOptionsBloc>(
       () => ExpenseRequestOptionsBloc(getOptions: getIt()),
+    )
+    ..registerFactory<ExpenseRequestDetailBloc>(
+      () => ExpenseRequestDetailBloc(
+        getRequest: getIt(),
+        payRequest: getIt(),
+        cancelRequest: getIt(),
+        confirmRequest: getIt(),
+        getReceipts: getIt(),
+        createReceipt: getIt(),
+      ),
     );
 
   // ── Statistics feature ────────────────────────────────────────────────

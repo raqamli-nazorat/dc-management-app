@@ -91,6 +91,28 @@ abstract final class ApiConstants {
   // ── Expense requests (xarajat so'rovlari) ─────────────────────────────
   static const expenseRequests = '/expense-request/';
 
+  /// Bitta so'rov: `GET /expense-request/{id}/`.
+  static String expenseRequestById(int id) => '/expense-request/$id/';
+
+  /// To'lovni qayd etish: `POST /expense-request/{id}/pay/` (bodysiz).
+  static String expenseRequestPay(int id) => '/expense-request/$id/pay/';
+
+  /// Rad etish: `POST /expense-request/{id}/cancel/` (`{cancel_reason}`,
+  /// kamida 5 belgi — backend tekshiradi).
+  static String expenseRequestCancel(int id) => '/expense-request/$id/cancel/';
+
+  /// So'rovni tasdiqlash (yaratuvchi tomonidan, moliyachidan keyin):
+  /// `POST /expense-request/{id}/confirm/` (bodysiz).
+  static String expenseRequestConfirm(int id) =>
+      '/expense-request/$id/confirm/';
+
+  /// Xarajat cheklari — ro'yxat (`GET`, sahifalangan) + yaratish (multipart
+  /// `POST {expense, file}`): `/expense-receipt/`.
+  static const expenseReceipts = '/expense-receipt/';
+
+  /// Bitta chek: `GET/DELETE /expense-receipt/{id}/`.
+  static String expenseReceiptById(int id) => '/expense-receipt/$id/';
+
   // ── Projects ─────────────────────────────────────────────────────────────
   static const projects = '/projects/';
 

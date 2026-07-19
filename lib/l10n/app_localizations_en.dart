@@ -1291,4 +1291,122 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get expenseRequestFilterConfirmedRange => 'Confirmed time range';
+
+  @override
+  String get expenseRequestDetailTitle => 'Request details';
+
+  @override
+  String get expenseRequestAmountField => 'Amount (UZS)';
+
+  @override
+  String get expenseRequestReasonField => 'Reason';
+
+  @override
+  String get expenseRequestPayButton => 'I paid';
+
+  @override
+  String get expenseRequestPayDialogTitle =>
+      'Confirm that the payment was made?';
+
+  @override
+  String get expenseRequestPayDialogSubtitle =>
+      'This records the payment as completed in the system.';
+
+  @override
+  String get expenseRequestCancelReasonHint =>
+      'Please write the reason. It is required';
+
+  @override
+  String get expenseRequestPaySuccess => 'Payment recorded.';
+
+  @override
+  String get expenseRequestPaySuccessMessage =>
+      'The disbursement has been marked in the system.';
+
+  @override
+  String get expenseRequestCancelSuccess => 'Request rejected.';
+
+  @override
+  String get expenseRequestCancelSuccessMessage =>
+      'The rejection reason for the request has been saved.';
+
+  @override
+  String get expenseRequestReceiptDialogTitle => 'Upload the payment receipt.';
+
+  @override
+  String get expenseRequestReceiptDialogSubtitle =>
+      'Upload a receipt or invoice to confirm the payment.';
+
+  @override
+  String get expenseRequestReceiptInfo =>
+      'You can upload the receipt file now or add it later.';
+
+  @override
+  String get expenseRequestReceiptAddTile => 'Upload payment receipt';
+
+  @override
+  String get expenseRequestReceiptSkip => 'Skip';
+
+  @override
+  String get expenseRequestReceiptSend => 'Send';
+
+  @override
+  String get expenseRequestReceiptsTitle => 'Payment receipts';
+
+  @override
+  String get expenseRequestReceiptViewerTitle => 'Payment receipt';
+
+  @override
+  String get expenseRequestStatusRejected => 'Rejected';
+
+  @override
+  String get expenseRequestConfirmButton => 'Confirm';
+
+  @override
+  String get expenseRequestConfirmSuccess => 'Request confirmed.';
+
+  @override
+  String get expenseRequestConfirmSuccessMessage =>
+      'The confirmation has been recorded in the system.';
+
+  @override
+  String get expenseRequestCardCopied => 'Card number copied';
+
+  @override
+  String get expenseRequestCreateTitle => 'Submit request';
+
+  @override
+  String get expenseRequestCreateSubmit => 'Submit request';
+
+  @override
+  String get expenseRequestCreateProjectLabel => 'For project';
+
+  @override
+  String get expenseRequestCreateAmountLabel => 'Amount';
+
+  @override
+  String get expenseRequestCreateAmountHint => 'Enter amount: 0.00';
+
+  @override
+  String get expenseRequestCreateReasonHint => 'Write the reason';
+
+  @override
+  String get expenseRequestCreatePaymentHint => 'Select payment method';
+
+  @override
+  String get expenseRequestCreateCardLabel => 'Card number';
+
+  @override
+  String get expenseRequestCreateCardHint => 'Enter card number';
+
+  @override
+  String get expenseRequestCreateValidation =>
+      'Please fill in the required fields.';
+
+  @override
+  String get expenseRequestCreateSuccess => 'Request submitted.';
+
+  @override
+  String get expenseRequestCreateSuccessMessage =>
+      'Your expense request was submitted successfully.';
 }
