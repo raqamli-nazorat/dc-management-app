@@ -1377,4 +1377,42 @@ class AppLocalizationsUz extends AppLocalizations {
 
   @override
   String get expenseRequestCardCopied => 'Karta raqami nusxalandi';
+
+  @override
+  String get expenseRequestCreateTitle => 'So\'rov yuborish';
+
+  @override
+  String get expenseRequestCreateSubmit => 'So\'rov yuborish';
+
+  @override
+  String get expenseRequestCreateProjectLabel => 'Loyiha uchun';
+
+  @override
+  String get expenseRequestCreateAmountLabel => 'Miqdori';
+
+  @override
+  String get expenseRequestCreateAmountHint => 'Summani kiriting: 0,00';
+
+  @override
+  String get expenseRequestCreateReasonHint => 'Sababini yozing';
+
+  @override
+  String get expenseRequestCreatePaymentHint => 'To\'lov turini tanlang';
+
+  @override
+  String get expenseRequestCreateCardLabel => 'Karta raqami';
+
+  @override
+  String get expenseRequestCreateCardHint => 'Karta raqamini kiriting';
+
+  @override
+  String get expenseRequestCreateValidation =>
+      'Iltimos, majburiy maydonlarni to\'ldiring.';
+
+  @override
+  String get expenseRequestCreateSuccess => 'So\'rov yuborildi.';
+
+  @override
+  String get expenseRequestCreateSuccessMessage =>
+      'Xarajat so\'rovingiz muvaffaqiyatli yuborildi.';
 }

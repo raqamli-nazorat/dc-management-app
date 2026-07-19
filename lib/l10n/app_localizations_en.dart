@@ -1371,4 +1371,42 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get expenseRequestCardCopied => 'Card number copied';
+
+  @override
+  String get expenseRequestCreateTitle => 'Submit request';
+
+  @override
+  String get expenseRequestCreateSubmit => 'Submit request';
+
+  @override
+  String get expenseRequestCreateProjectLabel => 'For project';
+
+  @override
+  String get expenseRequestCreateAmountLabel => 'Amount';
+
+  @override
+  String get expenseRequestCreateAmountHint => 'Enter amount: 0.00';
+
+  @override
+  String get expenseRequestCreateReasonHint => 'Write the reason';
+
+  @override
+  String get expenseRequestCreatePaymentHint => 'Select payment method';
+
+  @override
+  String get expenseRequestCreateCardLabel => 'Card number';
+
+  @override
+  String get expenseRequestCreateCardHint => 'Enter card number';
+
+  @override
+  String get expenseRequestCreateValidation =>
+      'Please fill in the required fields.';
+
+  @override
+  String get expenseRequestCreateSuccess => 'Request submitted.';
+
+  @override
+  String get expenseRequestCreateSuccessMessage =>
+      'Your expense request was submitted successfully.';
 }

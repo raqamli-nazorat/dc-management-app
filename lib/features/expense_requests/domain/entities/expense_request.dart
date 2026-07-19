@@ -8,6 +8,7 @@ import '../../../reports/domain/entities/expense_report.dart';
 class ExpenseRequest extends Equatable {
   const ExpenseRequest({
     required this.id,
+    this.userId,
     required this.userName,
     required this.avatar,
     required this.projectName,
@@ -25,6 +26,9 @@ class ExpenseRequest extends Equatable {
   });
 
   final int id;
+
+  /// `user_info.id` ? so'rov yaratuvchisi.
+  final int? userId;
 
   /// `user_info.username`.
   final String userName;
@@ -67,6 +71,7 @@ class ExpenseRequest extends Equatable {
   @override
   List<Object?> get props => [
     id,
+    userId,
     userName,
     avatar,
     projectName,

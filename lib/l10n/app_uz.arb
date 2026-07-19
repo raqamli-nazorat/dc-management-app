@@ -495,5 +495,17 @@
   "expenseRequestConfirmButton": "Tasdiqlash",
   "expenseRequestConfirmSuccess": "So'rov tasdiqlandi.",
   "expenseRequestConfirmSuccessMessage": "Tasdiqlash tizimda qayd etildi.",
-  "expenseRequestCardCopied": "Karta raqami nusxalandi"
+  "expenseRequestCardCopied": "Karta raqami nusxalandi",
+  "expenseRequestCreateTitle": "So'rov yuborish",
+  "expenseRequestCreateSubmit": "So'rov yuborish",
+  "expenseRequestCreateProjectLabel": "Loyiha uchun",
+  "expenseRequestCreateAmountLabel": "Miqdori",
+  "expenseRequestCreateAmountHint": "Summani kiriting: 0,00",
+  "expenseRequestCreateReasonHint": "Sababini yozing",
+  "expenseRequestCreatePaymentHint": "To'lov turini tanlang",
+  "expenseRequestCreateCardLabel": "Karta raqami",
+  "expenseRequestCreateCardHint": "Karta raqamini kiriting",
+  "expenseRequestCreateValidation": "Iltimos, majburiy maydonlarni to'ldiring.",
+  "expenseRequestCreateSuccess": "So'rov yuborildi.",
+  "expenseRequestCreateSuccessMessage": "Xarajat so'rovingiz muvaffaqiyatli yuborildi."
 }

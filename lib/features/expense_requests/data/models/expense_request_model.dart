@@ -15,6 +15,7 @@ abstract final class ExpenseRequestModel {
         value is String ? DateTime.tryParse(value) : null;
     return ExpenseRequest(
       id: (json['id'] as num?)?.toInt() ?? 0,
+      userId: (user['id'] as num?)?.toInt(),
       userName: user['username'] as String? ?? '',
       avatar: user['avatar'] as String? ?? '',
       projectName:

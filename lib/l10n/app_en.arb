@@ -492,5 +492,17 @@
   "expenseRequestConfirmButton": "Confirm",
   "expenseRequestConfirmSuccess": "Request confirmed.",
   "expenseRequestConfirmSuccessMessage": "The confirmation has been recorded in the system.",
-  "expenseRequestCardCopied": "Card number copied"
+  "expenseRequestCardCopied": "Card number copied",
+  "expenseRequestCreateTitle": "Submit request",
+  "expenseRequestCreateSubmit": "Submit request",
+  "expenseRequestCreateProjectLabel": "For project",
+  "expenseRequestCreateAmountLabel": "Amount",
+  "expenseRequestCreateAmountHint": "Enter amount: 0.00",
+  "expenseRequestCreateReasonHint": "Write the reason",
+  "expenseRequestCreatePaymentHint": "Select payment method",
+  "expenseRequestCreateCardLabel": "Card number",
+  "expenseRequestCreateCardHint": "Enter card number",
+  "expenseRequestCreateValidation": "Please fill in the required fields.",
+  "expenseRequestCreateSuccess": "Request submitted.",
+  "expenseRequestCreateSuccessMessage": "Your expense request was submitted successfully."
 }

@@ -6,6 +6,7 @@ import '../../../../core/network/response_mapper.dart';
 import '../../domain/entities/expense_receipt.dart';
 import '../../domain/entities/expense_request.dart';
 import '../../domain/entities/expense_request_filter.dart';
+import '../../domain/entities/new_expense_request.dart';
 import '../models/expense_receipt_model.dart';
 import '../models/expense_request_model.dart';
 
@@ -15,6 +16,8 @@ abstract interface class ExpenseRequestsRemoteDataSource {
     int page,
     ExpenseRequestFilter filter,
   });
+
+  Future<ExpenseRequest> createExpenseRequest(NewExpenseRequest request);
 
   Future<ExpenseRequest> getExpenseRequest(int id);
 
@@ -57,6 +60,33 @@ class ExpenseRequestsRemoteDataSourceImpl
           .map((e) => ExpenseRequestModel.fromJson(e.cast<String, dynamic>()))
           .toList();
       return (items: items, hasMore: body['next'] != null);
+    } on DioException catch (e) {
+      throw ResponseMapper.mapDioException(e);
+    }
+  }
+
+  @override
+  Future<ExpenseRequest> createExpenseRequest(NewExpenseRequest request) async {
+    try {
+      // Faqat turi/to'lov turiga mos maydonlar yuboriladi (project ↔ company,
+      // expense_category ↔ other, card_number ↔ card).
+      final body = <String, dynamic>{
+        if (request.type.apiValue != null) 'type': request.type.apiValue,
+        'amount': request.amount,
+        if (request.paymentMethod.apiValue != null)
+          'payment_method': request.paymentMethod.apiValue,
+        if (request.projectId != null) 'project': request.projectId,
+        if (request.categoryId != null) 'expense_category': request.categoryId,
+        if (request.reason != null && request.reason!.trim().isNotEmpty)
+          'reason': request.reason!.trim(),
+        if (request.cardNumber != null && request.cardNumber!.trim().isNotEmpty)
+          'card_number': request.cardNumber!.trim(),
+      };
+      final response = await _client.post(
+        ApiConstants.expenseRequests,
+        data: body,
+      );
+      return _asRequest(response.data);
     } on DioException catch (e) {
       throw ResponseMapper.mapDioException(e);
     }

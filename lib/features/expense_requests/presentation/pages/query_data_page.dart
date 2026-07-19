@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -5,7 +7,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../app/bloc/session_bloc.dart';
 import '../../../../config/theme/app_colors.dart';
+import '../../../../core/access/role_type.dart';
+import '../../../../core/constants/storage_keys.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
@@ -13,6 +18,7 @@ import '../../../../core/util/formatters.dart';
 import '../../../../core/widgets/app_filter_components.dart';
 import '../../../../core/widgets/app_toast.dart';
 import '../../../../core/widgets/tui_avatar.dart';
+import '../../../../core/services/storage_service.dart';
 import '../../../../injection_container.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../reports/domain/entities/expense_report.dart';
@@ -63,25 +69,27 @@ class _QueryDataView extends StatelessWidget {
         if (state.actionDone) {
           // Yakuniy holatga qarab toast: to'landi — yashil; tasdiqlandi —
           // yashil; rad etildi — orange alert.
-          switch (state.request?.status) {
-            case ExpenseStatus.paid:
+          switch (state.action) {
+            case ExpenseRequestAction.pay:
               AppToast.showSuccess(
                 context,
                 title: l10n.expenseRequestPaySuccess,
                 message: l10n.expenseRequestPaySuccessMessage,
               );
-            case ExpenseStatus.confirmed:
+            case ExpenseRequestAction.confirm:
               AppToast.showSuccess(
                 context,
                 title: l10n.expenseRequestConfirmSuccess,
                 message: l10n.expenseRequestConfirmSuccessMessage,
               );
-            default:
+            case ExpenseRequestAction.cancel:
               AppToast.showError(
                 context,
                 title: l10n.expenseRequestCancelSuccess,
                 message: l10n.expenseRequestCancelSuccessMessage,
               );
+            case ExpenseRequestAction.none:
+              return;
           }
           // Ro'yxatga qaytadi va avto-refresh bo'ladi (result: true).
           context.pop(true);
@@ -157,6 +165,10 @@ class _QueryDataBody extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final colors = AppColors.of(context);
     final type = request.type;
+    // "Rad etish" / "To'lov qildim" — faqat hisobchi (moliyachi) uchun.
+    final isAccountant =
+        context.select<SessionBloc, RoleType>((b) => b.state.roleType) ==
+        RoleType.accountant;
 
     return Column(
       children: [
@@ -281,7 +293,7 @@ class _QueryDataBody extends StatelessWidget {
             ),
           ),
         ),
-        if (request.status == ExpenseStatus.pending)
+        if (request.status == ExpenseStatus.pending && isAccountant)
           Padding(
             padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 12.h),
             child: Row(
@@ -309,7 +321,9 @@ class _QueryDataBody extends StatelessWidget {
             ),
           )
         // To'lov qayd etilgach — so'rov yaratuvchisi tasdiqlaydi.
-        else if (request.status == ExpenseStatus.paid)
+        else if (request.status == ExpenseStatus.paid &&
+            request.userId != null &&
+            request.userId == _cachedUserId())
           Padding(
             padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 12.h),
             child: _ActionButton(
@@ -366,6 +380,17 @@ String _typeLabel(ExpenseType t, AppLocalizations l10n) => switch (t) {
   ExpenseType.other => l10n.expenseReportTypeOther,
   ExpenseType.unknown => '',
 };
+
+int? _cachedUserId() {
+  final raw = getIt<StorageService>().getString(StorageKeys.cachedUser);
+  if (raw == null || raw.isEmpty) return null;
+  try {
+    final user = jsonDecode(raw);
+    return user is Map ? (user['id'] as num?)?.toInt() : null;
+  } on Object {
+    return null;
+  }
+}
 
 String _paymentLabel(ExpensePaymentMethod m, AppLocalizations l10n) =>
     switch (m) {

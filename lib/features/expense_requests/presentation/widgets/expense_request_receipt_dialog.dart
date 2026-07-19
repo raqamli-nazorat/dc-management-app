@@ -130,14 +130,14 @@ class _ReceiptDialogState extends State<_ReceiptDialog> {
               onRemove: (p) => setState(() => _paths.remove(p)),
             ),
             SizedBox(height: 24.h),
-            Wrap(
-              alignment: WrapAlignment.spaceBetween,
-              spacing: 12.w,
-              runSpacing: 8.h,
+            Row(
               children: [
-                _SkipButton(
-                  onTap: () => Navigator.of(context).pop(const <String>[]),
+                Flexible(
+                  child: _SkipButton(
+                    onTap: () => Navigator.of(context).pop(const <String>[]),
+                  ),
                 ),
+                SizedBox(width: 12.w),
                 _SendButton(
                   onTap: () => Navigator.of(context).pop([..._paths]),
                 ),
@@ -319,12 +319,14 @@ class _SkipButton extends StatelessWidget {
               colorFilter: ColorFilter.mode(colors.textAccent, BlendMode.srcIn),
             ),
             SizedBox(width: 8.w),
-            l10n.expenseRequestReceiptSkip
-                .s(15.sp)
-                .w(800)
-                .h(24 / 15)
-                .c(colors.textAccent)
-                .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+            Flexible(
+              child: l10n.expenseRequestReceiptSkip
+                  .s(15.sp)
+                  .w(800)
+                  .h(24 / 15)
+                  .c(colors.textAccent)
+                  .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+            ),
           ],
         ),
       ),

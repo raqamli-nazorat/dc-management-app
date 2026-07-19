@@ -3,6 +3,7 @@ import '../../../../core/error/failures.dart';
 import '../../domain/entities/expense_receipt.dart';
 import '../../domain/entities/expense_request.dart';
 import '../../domain/entities/expense_request_filter.dart';
+import '../../domain/entities/new_expense_request.dart';
 import '../../domain/repository/expense_requests_repository.dart';
 import '../data_sources/expense_requests_remote_data_source.dart';
 
@@ -18,6 +19,10 @@ class ExpenseRequestsRepositoryImpl implements ExpenseRequestsRepository {
     int page = 1,
     ExpenseRequestFilter filter = ExpenseRequestFilter.empty,
   }) => _guard(() => _remote.getExpenseRequests(page: page, filter: filter));
+
+  @override
+  Future<ExpenseRequest> createExpenseRequest(NewExpenseRequest request) =>
+      _guard(() => _remote.createExpenseRequest(request));
 
   @override
   Future<ExpenseRequest> getExpenseRequest(int id) =>

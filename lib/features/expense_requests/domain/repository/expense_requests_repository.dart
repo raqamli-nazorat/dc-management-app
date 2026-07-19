@@ -1,6 +1,7 @@
 import '../entities/expense_receipt.dart';
 import '../entities/expense_request.dart';
 import '../entities/expense_request_filter.dart';
+import '../entities/new_expense_request.dart';
 
 /// Xarajat so'rovlari domen shartnomasi. Implementatsiya `Exception`larni
 /// `Failure`ga aylantiradi (bloclar `Failure` ustida ishlaydi).
@@ -10,6 +11,10 @@ abstract interface class ExpenseRequestsRepository {
     int page,
     ExpenseRequestFilter filter,
   });
+
+  /// Yangi so'rov yaratish (`POST /expense-request/`) — yaratilgan so'rov
+  /// qaytadi.
+  Future<ExpenseRequest> createExpenseRequest(NewExpenseRequest request);
 
   /// Bitta so'rov (`GET /expense-request/{id}/`).
   Future<ExpenseRequest> getExpenseRequest(int id);

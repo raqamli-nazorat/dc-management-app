@@ -2,6 +2,8 @@ part of 'expense_request_detail_bloc.dart';
 
 enum ExpenseRequestDetailStatus { initial, loading, success, failure }
 
+enum ExpenseRequestAction { none, pay, cancel, confirm }
+
 class ExpenseRequestDetailState extends Equatable {
   const ExpenseRequestDetailState({
     this.status = ExpenseRequestDetailStatus.initial,
@@ -10,6 +12,7 @@ class ExpenseRequestDetailState extends Equatable {
     this.failure,
     this.acting = false,
     this.actionDone = false,
+    this.action = ExpenseRequestAction.none,
     this.actionFailure,
   });
 
@@ -27,6 +30,9 @@ class ExpenseRequestDetailState extends Equatable {
   /// Amal muvaffaqiyatli yakunlandi — sahifa `pop(true)` qiladi.
   final bool actionDone;
 
+
+  /// Muvaffaqiyatli yakunlangan amal turi ? toast matnini statusdan ajratadi.
+  final ExpenseRequestAction action;
   /// Amal xatosi (backend xabari toast orqali ko'rsatiladi).
   final Failure? actionFailure;
 
@@ -34,6 +40,7 @@ class ExpenseRequestDetailState extends Equatable {
     ExpenseRequestDetailStatus? status,
     ExpenseRequest? request,
     List<ExpenseReceipt>? receipts,
+    ExpenseRequestAction? action,
     Failure? failure,
     bool? acting,
     bool? actionDone,
@@ -42,6 +49,7 @@ class ExpenseRequestDetailState extends Equatable {
     status: status ?? this.status,
     request: request ?? this.request,
     receipts: receipts ?? this.receipts,
+    action: action ?? this.action,
     failure: failure ?? this.failure,
     acting: acting ?? this.acting,
     actionDone: actionDone ?? this.actionDone,
@@ -53,6 +61,7 @@ class ExpenseRequestDetailState extends Equatable {
     status,
     request,
     receipts,
+    action,
     failure,
     acting,
     actionDone,

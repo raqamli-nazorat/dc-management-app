@@ -55,6 +55,7 @@ import '../../features/ledger/presentation/pages/ledger_detail_page.dart';
 import '../../features/ledger/presentation/pages/ledger_filter_page.dart';
 import '../../features/ledger/presentation/pages/ledger_list_page.dart';
 import '../../features/expense_requests/domain/entities/expense_request_filter.dart';
+import '../../features/expense_requests/presentation/pages/expense_request_create_page.dart';
 import '../../features/expense_requests/presentation/pages/expense_requests_filter_page.dart';
 import '../../features/expense_requests/presentation/pages/expense_requests_list_page.dart';
 import '../../features/expense_requests/presentation/pages/query_data_page.dart';
@@ -285,6 +286,11 @@ class AppRouter {
                 ? state.extra! as ExpenseRequestFilter
                 : ExpenseRequestFilter.empty,
           ),
+        ),
+        GoRoute(
+          name: Routes.expenseRequestCreate.name,
+          path: Routes.expenseRequestCreate.path,
+          builder: (context, state) => const ExpenseRequestCreatePage(),
         ),
         GoRoute(
           name: Routes.expenseRequestDetail.name,

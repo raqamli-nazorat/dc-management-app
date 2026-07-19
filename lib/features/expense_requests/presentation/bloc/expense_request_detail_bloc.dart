@@ -85,7 +85,12 @@ class ExpenseRequestDetailBloc
         await _createReceipt((expenseId: current.id, filePath: path));
       }
       final updated = await _payRequest(current.id);
-      emit(state.copyWith(acting: false, actionDone: true, request: updated));
+      emit(state.copyWith(
+        acting: false,
+        actionDone: true,
+        action: ExpenseRequestAction.pay,
+        request: updated,
+      ));
     } on Failure catch (f) {
       emit(state.copyWith(acting: false, actionFailure: f));
     }
@@ -103,7 +108,12 @@ class ExpenseRequestDetailBloc
         id: current.id,
         reason: event.reason,
       ));
-      emit(state.copyWith(acting: false, actionDone: true, request: updated));
+      emit(state.copyWith(
+        acting: false,
+        actionDone: true,
+        action: ExpenseRequestAction.cancel,
+        request: updated,
+      ));
     } on Failure catch (f) {
       emit(state.copyWith(acting: false, actionFailure: f));
     }
@@ -118,7 +128,12 @@ class ExpenseRequestDetailBloc
     emit(state.copyWith(acting: true, actionFailure: null));
     try {
       final updated = await _confirmRequest(current.id);
-      emit(state.copyWith(acting: false, actionDone: true, request: updated));
+      emit(state.copyWith(
+        acting: false,
+        actionDone: true,
+        action: ExpenseRequestAction.confirm,
+        request: updated,
+      ));
     } on Failure catch (f) {
       emit(state.copyWith(acting: false, actionFailure: f));
     }

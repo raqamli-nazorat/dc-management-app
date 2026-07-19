@@ -2761,6 +2761,78 @@ abstract class AppLocalizations {
   /// In uz, this message translates to:
   /// **'Karta raqami nusxalandi'**
   String get expenseRequestCardCopied;
+
+  /// No description provided for @expenseRequestCreateTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'So\'rov yuborish'**
+  String get expenseRequestCreateTitle;
+
+  /// No description provided for @expenseRequestCreateSubmit.
+  ///
+  /// In uz, this message translates to:
+  /// **'So\'rov yuborish'**
+  String get expenseRequestCreateSubmit;
+
+  /// No description provided for @expenseRequestCreateProjectLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Loyiha uchun'**
+  String get expenseRequestCreateProjectLabel;
+
+  /// No description provided for @expenseRequestCreateAmountLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Miqdori'**
+  String get expenseRequestCreateAmountLabel;
+
+  /// No description provided for @expenseRequestCreateAmountHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Summani kiriting: 0,00'**
+  String get expenseRequestCreateAmountHint;
+
+  /// No description provided for @expenseRequestCreateReasonHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sababini yozing'**
+  String get expenseRequestCreateReasonHint;
+
+  /// No description provided for @expenseRequestCreatePaymentHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'To\'lov turini tanlang'**
+  String get expenseRequestCreatePaymentHint;
+
+  /// No description provided for @expenseRequestCreateCardLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Karta raqami'**
+  String get expenseRequestCreateCardLabel;
+
+  /// No description provided for @expenseRequestCreateCardHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Karta raqamini kiriting'**
+  String get expenseRequestCreateCardHint;
+
+  /// No description provided for @expenseRequestCreateValidation.
+  ///
+  /// In uz, this message translates to:
+  /// **'Iltimos, majburiy maydonlarni to\'ldiring.'**
+  String get expenseRequestCreateValidation;
+
+  /// No description provided for @expenseRequestCreateSuccess.
+  ///
+  /// In uz, this message translates to:
+  /// **'So\'rov yuborildi.'**
+  String get expenseRequestCreateSuccess;
+
+  /// No description provided for @expenseRequestCreateSuccessMessage.
+  ///
+  /// In uz, this message translates to:
+  /// **'Xarajat so\'rovingiz muvaffaqiyatli yuborildi.'**
+  String get expenseRequestCreateSuccessMessage;
 }
 
 class _AppLocalizationsDelegate

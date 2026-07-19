@@ -5,8 +5,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/bloc/session_bloc.dart';
 import '../../../../config/routes/entity/routes.dart';
 import '../../../../config/theme/app_colors.dart';
+import '../../../../core/access/nav_permissions.dart';
+import '../../../../core/access/role_type.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
@@ -81,12 +84,26 @@ class _ExpenseRequestsViewState extends State<_ExpenseRequestsView> {
     if (result == true) bloc.add(const ExpenseRequestsRequested());
   }
 
+  Future<void> _openCreate(BuildContext context) async {
+    final bloc = context.read<ExpenseRequestsBloc>();
+    final result = await context.pushNamed<Object?>(
+      Routes.expenseRequestCreate.name,
+    );
+    // Yangi so'rov yaratilgan bo'lsa — ro'yxat qayta yuklansin.
+    if (result == true) bloc.add(const ExpenseRequestsRequested());
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
+    final role = context.select<SessionBloc, RoleType>((b) => b.state.roleType);
 
     return Scaffold(
       backgroundColor: colors.backgroundBase,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: NavPermissions.canCreateExpenseRequest(role)
+          ? _CreateRequestButton(onTap: () => _openCreate(context))
+          : null,
       body: SafeArea(
         child: Column(
           children: [
@@ -476,6 +493,56 @@ class _SquareIconButton extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(12.r),
       child: square,
+    );
+  }
+}
+
+/// "So'rov yuborish" — hisobchi/xodim uchun pastda suzuvchi accent tugma
+/// (Figma: node 1881-397232 / 1881-399260).
+class _CreateRequestButton extends StatelessWidget {
+  const _CreateRequestButton({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = AppColors.of(context);
+    final l10n = AppLocalizations.of(context);
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16.r),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: colors.accentStrong,
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: SizedBox(
+            height: 48.h,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Assets.icons.icArrowRightExit.svg(
+                  width: 18.w,
+                  height: 18.w,
+                  colorFilter: ColorFilter.mode(
+                    colors.textWhite,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                SizedBox(width: 8.w),
+                l10n.expenseRequestCreateSubmit
+                    .s(15.sp)
+                    .w(800)
+                    .h(24 / 15)
+                    .c(colors.textWhite),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

@@ -104,4 +104,14 @@ abstract final class NavPermissions {
 
   static bool canCreateApplication(RoleType role) =>
       _canCreateApplication.contains(role);
+
+  /// Xarajat so'rovi yuborish — faqat Hisobchi va Xodim (ro'yxatdagi "So'rov
+  /// yuborish" tugmasi shu bilan ko'rsatiladi).
+  static const Set<RoleType> _canCreateExpenseRequest = {
+    RoleType.accountant,
+    RoleType.employee,
+  };
+
+  static bool canCreateExpenseRequest(RoleType role) =>
+      _canCreateExpenseRequest.contains(role);
 }
