@@ -2,29 +2,28 @@ import 'package:flutter/material.dart';
 
 const colorLightScheme = ColorScheme.light(
   primary: Color(0xFF227CBA),
-  surface: Color.fromARGB(255, 12, 29, 43),
-  onSurface: Color(0xFFF2F5F3),
-  onSurfaceVariant: Color(0xF2FFFFFF),
+  surface: Color(0xFFFFFFFF),
+  onSurface: Color(0xFF1A1D2E),
+  onSurfaceVariant: Color(0xFF5B6078),
   secondary: Color(0xFFFF4655),
   onSecondary: Color(0xFFA4A4A4),
   error: Color(0xFFD93F2F),
   secondaryContainer: Color(0xFFF0F0F0),
   outline: Color(0xFFF5F5F5),
-  surfaceContainer: Color(0xFFA5A5A5),
+  surfaceContainer: Color(0xFFF8F9FC),
 );
 
 const colorDarkScheme = ColorScheme.dark(
   primary: Color(0xff0F1923),
-  surface: Color(0xFFFAFAFA),
-  onSurface: Color.fromARGB(255, 12, 29, 43),
-  // onSurface: Color(0xFF0E315D),
-  onSurfaceVariant: Color.fromARGB(255, 15, 55, 82),
+  surface: Color(0xFF000000),
+  onSurface: Color(0xFFE6EDF3),
+  onSurfaceVariant: Color(0xFFC2C8E0),
   secondary: Color(0xFFFF4655),
   onSecondary: Color(0xFFA4A4A4),
   error: Color(0xFFD93F2F),
   secondaryContainer: Color(0xFFF0F0F0),
   outline: Color(0xFFF5F5F5),
-  surfaceContainer: Color.fromARGB(255, 15, 55, 82),
+  surfaceContainer: Color(0xFF161B22),
 );
 
 class ThemeColors extends ThemeExtension<ThemeColors> {

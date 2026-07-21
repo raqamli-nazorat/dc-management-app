@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 
 abstract final class Formatters {
@@ -28,4 +29,29 @@ abstract final class Formatters {
   /// `12000000.00` → `12 000 000,00`.
   static String formatAmountComma(String value) =>
       formatAmount(value).replaceAll('.', ',');
+
+  static String normalizeAmount(String value) =>
+      value.trim().replaceAll(' ', '').replaceAll(',', '.');
+}
+
+class AmountInputFormatter extends TextInputFormatter {
+  const AmountInputFormatter();
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final raw = newValue.text.replaceAll(' ', '').replaceAll(',', '.');
+    if (raw.isEmpty) return newValue.copyWith(text: '');
+    if (!RegExp(r'^\d{0,10}(?:\.\d{0,2})?$').hasMatch(raw)) {
+      return oldValue;
+    }
+
+    final formatted = Formatters.formatAmountComma(raw);
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: formatted.length),
+    );
+  }
 }

@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:file_picker/file_picker.dart';
@@ -12,8 +11,10 @@ import '../../../../config/theme/app_colors.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
+import '../../../../core/util/contact_input_formatters.dart';
 import '../../../../core/util/formatters.dart';
 import '../../../../core/widgets/app_file_actions.dart';
+import '../../../../core/widgets/app_editable_field.dart';
 import '../../../../core/widgets/app_filter_components.dart';
 import '../../../../core/widgets/app_toast.dart';
 import '../../../../core/widgets/custom_button.dart';
@@ -121,10 +122,10 @@ class _ProfileEditBodyState extends State<_ProfileEditBody> {
     super.initState();
     final links = widget.profile.socialLinks;
     _phoneController = TextEditingController(
-      text: _formatPhone(widget.profile.phoneNumber),
+      text: formatPhoneNumber(widget.profile.phoneNumber),
     );
     _cardController = TextEditingController(
-      text: _formatCardNumber(widget.profile.cardNumber),
+      text: formatCardNumber(widget.profile.cardNumber),
     );
     _firstLinkController = TextEditingController(
       text: links.isEmpty ? '' : links.first,
@@ -179,8 +180,8 @@ class _ProfileEditBodyState extends State<_ProfileEditBody> {
   Map<String, dynamic> _changedFields() {
     final profile = widget.profile;
     final fields = <String, dynamic>{};
-    final phone = _normalizePhone(_phoneController.text);
-    final card = _digitsOnly(_cardController.text);
+    final phone = normalizePhoneNumber(_phoneController.text);
+    final card = digitsOnly(_cardController.text);
     final links = _currentLinks;
 
     if (phone != profile.phoneNumber) fields['phone_number'] = phone;
@@ -290,18 +291,18 @@ class _ProfileEditBodyState extends State<_ProfileEditBody> {
                   ],
                 ),
                 SizedBox(height: 8.h),
-                _EditableField(
+                AppEditableField(
                   label: l10n.userDetailPhone,
                   controller: _phoneController,
                   keyboardType: TextInputType.phone,
-                  inputFormatters: const [_PhoneInputFormatter()],
+                  inputFormatters: const [PhoneNumberInputFormatter()],
                 ),
                 SizedBox(height: 8.h),
-                _EditableField(
+                AppEditableField(
                   label: l10n.userDetailCard,
                   controller: _cardController,
                   keyboardType: TextInputType.number,
-                  inputFormatters: const [_CardNumberFormatter()],
+                  inputFormatters: const [CardNumberInputFormatter()],
                 ),
                 SizedBox(height: 8.h),
                 Row(
@@ -333,14 +334,14 @@ class _ProfileEditBodyState extends State<_ProfileEditBody> {
                   url: profile.passportImage,
                 ),
                 SizedBox(height: 8.h),
-                _EditableField(
+                AppEditableField(
                   label: l10n.profileLinkLabel(1),
                   controller: _firstLinkController,
                   keyboardType: TextInputType.url,
                   textInputAction: TextInputAction.next,
                 ),
                 SizedBox(height: 8.h),
-                _EditableField(
+                AppEditableField(
                   label: l10n.profileLinkLabel(2),
                   controller: _secondLinkController,
                   keyboardType: TextInputType.url,
@@ -464,86 +465,6 @@ class _ProfileHeader extends StatelessWidget {
                 ),
               ),
             ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _EditableField extends StatefulWidget {
-  const _EditableField({
-    required this.label,
-    required this.controller,
-    required this.keyboardType,
-    this.textInputAction,
-    this.inputFormatters,
-  });
-
-  final String label;
-  final TextEditingController controller;
-  final TextInputType keyboardType;
-  final TextInputAction? textInputAction;
-  final List<TextInputFormatter>? inputFormatters;
-
-  @override
-  State<_EditableField> createState() => _EditableFieldState();
-}
-
-class _EditableFieldState extends State<_EditableField> {
-  final _focusNode = FocusNode();
-
-  @override
-  void dispose() {
-    _focusNode.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = AppColors.of(context);
-    final textStyle = TextStyle(
-      fontSize: 13.sp,
-      fontWeight: FontWeight.w500,
-      height: 20 / 13,
-      color: colors.textStrong,
-    );
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        AppFilterFieldLabel(widget.label),
-        Focus(
-          onFocusChange: (_) => setState(() {}),
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: colors.backgroundBase,
-              border: Border.all(
-                color: _focusNode.hasFocus
-                    ? colors.strokeAccent
-                    : colors.strokeSub,
-                width: _focusNode.hasFocus ? 1.5.w : 1.w,
-              ),
-              borderRadius: BorderRadius.circular(12.r),
-            ),
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: SizedBox(
-                height: 44.h,
-                child: Center(
-                  child: TextField(
-                    controller: widget.controller,
-                    focusNode: _focusNode,
-                    keyboardType: widget.keyboardType,
-                    textInputAction: widget.textInputAction,
-                    inputFormatters: widget.inputFormatters,
-                    style: textStyle,
-                    cursorColor: colors.accentSub,
-                    decoration: const InputDecoration.collapsed(hintText: ''),
-                  ),
-                ),
-              ),
-            ),
           ),
         ),
       ],
@@ -801,81 +722,6 @@ class _ProfileStatusRow extends StatelessWidget {
             child: valueWidget,
           ),
       ],
-    );
-  }
-}
-
-String _digitsOnly(String value) => value.replaceAll(RegExp(r'\D'), '');
-
-String _formatPhone(String value) {
-  var digits = _digitsOnly(value);
-  if (digits.startsWith('998')) digits = digits.substring(3);
-  if (digits.startsWith('0')) digits = digits.substring(1);
-  if (digits.length > 9) digits = digits.substring(0, 9);
-
-  final groups = <String>[];
-  if (digits.length >= 2) {
-    groups.add(digits.substring(0, 2));
-    digits = digits.substring(2);
-  } else if (digits.isNotEmpty) {
-    groups.add(digits);
-    digits = '';
-  }
-  for (final length in [3, 2, 2]) {
-    if (digits.isEmpty) break;
-    final take = digits.length < length ? digits.length : length;
-    groups.add(digits.substring(0, take));
-    digits = digits.substring(take);
-  }
-  return groups.isEmpty ? '' : '+998 ${groups.join(' ')}';
-}
-
-String _normalizePhone(String value) {
-  var digits = _digitsOnly(value);
-  if (digits.startsWith('998')) digits = digits.substring(3);
-  if (digits.startsWith('0')) digits = digits.substring(1);
-  return digits.isEmpty ? '' : '+998$digits';
-}
-
-String _formatCardNumber(String value) {
-  final digits = _digitsOnly(value);
-  final limited = digits.length > 16 ? digits.substring(0, 16) : digits;
-  final groups = <String>[];
-  for (var index = 0; index < limited.length; index += 4) {
-    final end = index + 4 < limited.length ? index + 4 : limited.length;
-    groups.add(limited.substring(index, end));
-  }
-  return groups.join(' ');
-}
-
-class _PhoneInputFormatter extends TextInputFormatter {
-  const _PhoneInputFormatter();
-
-  @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
-    final formatted = _formatPhone(newValue.text);
-    return TextEditingValue(
-      text: formatted,
-      selection: TextSelection.collapsed(offset: formatted.length),
-    );
-  }
-}
-
-class _CardNumberFormatter extends TextInputFormatter {
-  const _CardNumberFormatter();
-
-  @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
-    final formatted = _formatCardNumber(newValue.text);
-    return TextEditingValue(
-      text: formatted,
-      selection: TextSelection.collapsed(offset: formatted.length),
     );
   }
 }

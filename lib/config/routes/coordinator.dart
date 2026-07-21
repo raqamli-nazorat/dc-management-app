@@ -50,6 +50,7 @@ import '../../features/profile/presentation/pages/profile_edit_page.dart';
 import '../../features/profile/presentation/pages/security_page.dart';
 import '../../features/users/domain/entities/users_filter.dart';
 import '../../features/users/presentation/pages/user_detail_page.dart';
+import '../../features/users/presentation/pages/user_create_page.dart';
 import '../../features/users/presentation/pages/users_filter_page.dart';
 import '../../features/ledger/domain/entities/ledger_filter.dart';
 import '../../features/ledger/presentation/pages/ledger_detail_page.dart';
@@ -229,6 +230,11 @@ class AppRouter {
                 ? state.extra! as UsersFilter
                 : UsersFilter.empty,
           ),
+        ),
+        GoRoute(
+          name: Routes.userCreate.name,
+          path: Routes.userCreate.path,
+          builder: (context, state) => const UserCreatePage(),
         ),
         GoRoute(
           name: Routes.userDetail.name,

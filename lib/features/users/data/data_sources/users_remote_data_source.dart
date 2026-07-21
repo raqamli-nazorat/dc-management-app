@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/network/response_mapper.dart';
 import '../../domain/entities/app_user.dart';
+import '../../domain/entities/new_user.dart';
 import '../../domain/entities/users_filter.dart';
 import '../models/app_user_model.dart';
 
@@ -14,6 +17,9 @@ abstract interface class UsersRemoteDataSource {
 
   /// Bitta foydalanuvchi (`GET /users/{id}/`).
   Future<AppUser> getUser(int id);
+
+  /// Yangi foydalanuvchi (`POST /users/`, multipart).
+  Future<AppUser> createUser(NewUser user);
 }
 
 class UsersRemoteDataSourceImpl implements UsersRemoteDataSource {
@@ -52,6 +58,40 @@ class UsersRemoteDataSourceImpl implements UsersRemoteDataSource {
   Future<AppUser> getUser(int id) async {
     try {
       final response = await _client.get(ApiConstants.userById(id));
+      return AppUserModel.fromJson(
+        ResponseMapper.asMap(response.data).cast<String, dynamic>(),
+      );
+    } on DioException catch (e) {
+      throw ResponseMapper.mapDioException(e);
+    }
+  }
+
+  @override
+  Future<AppUser> createUser(NewUser user) async {
+    try {
+      final form = FormData.fromMap({
+        'username': user.username,
+        'password': user.password,
+        'confirm_password': user.confirmPassword,
+        'phone_number': user.phoneNumber,
+        'region': user.regionId,
+        'district': user.districtId,
+        'position': user.positionId,
+        'roles': user.roles,
+        if (user.cardNumber.isNotEmpty) 'card_number': user.cardNumber,
+        if (user.fixedSalary.isNotEmpty) 'fixed_salary': user.fixedSalary,
+        if (user.passportSeries.isNotEmpty)
+          'passport_series': user.passportSeries,
+        if (user.socialLinks.isNotEmpty)
+          'social_links': jsonEncode(user.socialLinks),
+        if (user.avatarPath != null)
+          'avatar': await MultipartFile.fromFile(user.avatarPath!),
+        if (user.passportImagePath != null)
+          'passport_image': await MultipartFile.fromFile(
+            user.passportImagePath!,
+          ),
+      });
+      final response = await _client.post(ApiConstants.users, data: form);
       return AppUserModel.fromJson(
         ResponseMapper.asMap(response.data).cast<String, dynamic>(),
       );

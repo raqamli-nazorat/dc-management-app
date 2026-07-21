@@ -1162,6 +1162,45 @@ class AppLocalizationsEn extends AppLocalizations {
   String get usersSortOldest => 'Old → New';
 
   @override
+  String get userCreateTitle => 'Add new employee';
+
+  @override
+  String get userCreateNameHint => 'Enter full name';
+
+  @override
+  String get userCreatePassword => 'Password';
+
+  @override
+  String get userCreateConfirmPassword => 'Confirm password';
+
+  @override
+  String get userCreatePasswordMismatch => 'Passwords do not match';
+
+  @override
+  String get userCreateSalaryInvalid => 'Check salary format';
+
+  @override
+  String get userCreateDistrictHint => 'Select district';
+
+  @override
+  String get userCreateAvatarUpload => 'Upload avatar';
+
+  @override
+  String get userCreateImageUpload => 'Upload image';
+
+  @override
+  String get userCreateLinkHint => 'Enter link';
+
+  @override
+  String get userCreateSubmit => 'Add';
+
+  @override
+  String get userCreateSuccess => 'User added';
+
+  @override
+  String get userCreateRequiredError => 'Fill in required fields';
+
+  @override
   String get userDetailTitle => 'User details';
 
   @override

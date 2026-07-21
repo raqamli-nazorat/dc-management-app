@@ -80,6 +80,9 @@ abstract final class NavPermissions {
   /// tahrirlash / parol o'zgartirish shu bilan cheklanmaydi.
   static bool canPerformActions(RoleType role) => role != RoleType.auditor;
 
+  /// `POST /users/` backendida yaratish huquqi faqat administratorga tegishli.
+  static bool canCreateUser(RoleType role) => role == RoleType.admin;
+
   static bool canCreateProject(RoleType role) => role == RoleType.admin;
 
   /// Loyiha kartasidagi "Tahrirlash" va `/edit` sahifasiga kirish. Menejer

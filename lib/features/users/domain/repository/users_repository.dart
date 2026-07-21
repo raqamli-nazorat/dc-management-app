@@ -1,4 +1,5 @@
 import '../entities/app_user.dart';
+import '../entities/new_user.dart';
 import '../entities/users_filter.dart';
 
 /// Foydalanuvchilar domen shartnomasi. Implementatsiya `Exception`larni
@@ -9,4 +10,6 @@ abstract interface class UsersRepository {
 
   /// Bitta foydalanuvchi (`GET /users/{id}/`).
   Future<AppUser> getUser(int id);
+
+  Future<AppUser> createUser(NewUser user);
 }

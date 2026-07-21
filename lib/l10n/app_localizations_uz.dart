@@ -1167,6 +1167,45 @@ class AppLocalizationsUz extends AppLocalizations {
   String get usersSortOldest => 'Eski → Yangi';
 
   @override
+  String get userCreateTitle => 'Yangi xodim qo‘shish';
+
+  @override
+  String get userCreateNameHint => 'F.I.O kiriting';
+
+  @override
+  String get userCreatePassword => 'Parol';
+
+  @override
+  String get userCreateConfirmPassword => 'Parolni tasdiqlang';
+
+  @override
+  String get userCreatePasswordMismatch => 'Parollar bir xil emas';
+
+  @override
+  String get userCreateSalaryInvalid => 'Maosh formatini tekshiring';
+
+  @override
+  String get userCreateDistrictHint => 'Tuman tanlang';
+
+  @override
+  String get userCreateAvatarUpload => 'Avatar yuklash';
+
+  @override
+  String get userCreateImageUpload => 'Rasm yuklash';
+
+  @override
+  String get userCreateLinkHint => 'Havola kiriting';
+
+  @override
+  String get userCreateSubmit => 'Qo‘shish';
+
+  @override
+  String get userCreateSuccess => 'Foydalanuvchi qo‘shildi';
+
+  @override
+  String get userCreateRequiredError => 'Majburiy maydonlarni to‘ldiring';
+
+  @override
   String get userDetailTitle => 'Foydalanuvchining ma’lumotlari';
 
   @override
