@@ -176,6 +176,15 @@
     "placeholders": { "version": { "type": "String" } }
   },
   "roleSwitchedTitle": "Switched to {role}.",
+  "profilePersonalInfo": "Personal account",
+  "profileLinkLabel": "Link {index}",
+  "@profileLinkLabel": {
+    "placeholders": { "index": { "type": "int" } }
+  },
+  "profileSave": "Save",
+  "profileUpdateSuccess": "Information updated",
+  "profilePhoneInvalid": "Enter phone number in +998XXXXXXXXX format",
+  "profileDistrictRequired": "Select a district after selecting a region.",
   "@roleSwitchedTitle": {
     "placeholders": { "role": { "type": "String" } }
   },

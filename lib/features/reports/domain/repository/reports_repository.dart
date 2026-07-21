@@ -18,6 +18,8 @@ abstract interface class ReportsRepository {
   /// Viloyatlar ro'yxati (`GET /applications/regions/`).
   Future<List<Region>> getRegions();
 
+  Future<List<District>> getDistricts({required int regionId});
+
   /// Loyihalar bo'yicha hisobot sahifasi (`GET /reports/projects/?page=` + filtr).
   Future<ProjectReportPage> getProjectReports({
     int page,

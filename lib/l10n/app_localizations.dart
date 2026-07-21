@@ -1016,6 +1016,42 @@ abstract class AppLocalizations {
   /// **'{role} roliga o‘tildi.'**
   String roleSwitchedTitle(String role);
 
+  /// No description provided for @profilePersonalInfo.
+  ///
+  /// In uz, this message translates to:
+  /// **'Shaxsiy kabinet'**
+  String get profilePersonalInfo;
+
+  /// No description provided for @profileLinkLabel.
+  ///
+  /// In uz, this message translates to:
+  /// **'{index}.Havola'**
+  String profileLinkLabel(int index);
+
+  /// No description provided for @profileSave.
+  ///
+  /// In uz, this message translates to:
+  /// **'Saqlash'**
+  String get profileSave;
+
+  /// No description provided for @profileUpdateSuccess.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ma\'lumotlar yangilandi'**
+  String get profileUpdateSuccess;
+
+  /// No description provided for @profilePhoneInvalid.
+  ///
+  /// In uz, this message translates to:
+  /// **'Telefon raqamini +998XXXXXXXXX formatida kiriting'**
+  String get profilePhoneInvalid;
+
+  /// No description provided for @profileDistrictRequired.
+  ///
+  /// In uz, this message translates to:
+  /// **'Viloyat tanlangandan so‘ng tumanni ham tanlang.'**
+  String get profileDistrictRequired;
+
   /// No description provided for @roleSwitchedSubtitle.
   ///
   /// In uz, this message translates to:
@@ -2345,7 +2381,7 @@ abstract class AppLocalizations {
   /// No description provided for @userDetailRole.
   ///
   /// In uz, this message translates to:
-  /// **'Rolli'**
+  /// **'Roli'**
   String get userDetailRole;
 
   /// No description provided for @financeExpenseRequests.

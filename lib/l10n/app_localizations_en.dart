@@ -476,6 +476,28 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get profilePersonalInfo => 'Personal account';
+
+  @override
+  String profileLinkLabel(int index) {
+    return 'Link $index';
+  }
+
+  @override
+  String get profileSave => 'Save';
+
+  @override
+  String get profileUpdateSuccess => 'Information updated';
+
+  @override
+  String get profilePhoneInvalid =>
+      'Enter phone number in +998XXXXXXXXX format';
+
+  @override
+  String get profileDistrictRequired =>
+      'Select a district after selecting a region.';
+
+  @override
   String roleSwitchedSubtitle(String role) {
     return 'You are now working as $role.';
   }

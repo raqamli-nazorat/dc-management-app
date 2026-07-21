@@ -16,6 +16,7 @@ import '../../domain/entities/task_report_filter.dart';
 import '../models/payroll_report_model.dart';
 import '../models/project_report_model.dart';
 import '../models/expense_report_model.dart';
+import '../models/district_model.dart';
 import '../models/region_model.dart';
 import '../models/task_report_model.dart';
 import '../models/user_report_model.dart';
@@ -28,6 +29,9 @@ abstract interface class ReportsRemoteDataSource {
 
   /// Viloyatlar ro'yxati — filtr "Viloyat" tanlovi (`GET /applications/regions/`).
   Future<List<Region>> getRegions();
+
+  /// Tanlangan viloyatga tegishli tumanlar (`GET /applications/districts/`).
+  Future<List<District>> getDistricts({required int regionId});
 
   /// Loyihalar bo'yicha hisobot sahifasi (`GET /reports/projects/?page=` + filtr).
   Future<ProjectReportPage> getProjectReports({
@@ -120,11 +124,26 @@ class ReportsRemoteDataSourceImpl implements ReportsRemoteDataSource {
     try {
       final response = await _client.get(
         ApiConstants.applicationsRegions,
-        queryParameters: {'page_size': 100},
       );
       return ResponseMapper.asList(response.data)
           .whereType<Map>()
           .map((e) => RegionModel.fromJson(e.cast<String, dynamic>()))
+          .toList();
+    } on DioException catch (e) {
+      throw ResponseMapper.mapDioException(e);
+    }
+  }
+
+  @override
+  Future<List<District>> getDistricts({required int regionId}) async {
+    try {
+      final response = await _client.get(
+        ApiConstants.applicationsDistricts,
+        queryParameters: {'region': regionId},
+      );
+      return ResponseMapper.asList(response.data)
+          .whereType<Map>()
+          .map((e) => DistrictModel.fromJson(e.cast<String, dynamic>()))
           .toList();
     } on DioException catch (e) {
       throw ResponseMapper.mapDioException(e);

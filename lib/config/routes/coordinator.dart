@@ -46,6 +46,7 @@ import '../../features/tasks/presentation/pages/task_filter_page.dart';
 import '../../features/tasks/presentation/pages/task_multi_select_page.dart';
 import '../../features/tasks/presentation/pages/tasks_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
+import '../../features/profile/presentation/pages/profile_edit_page.dart';
 import '../../features/profile/presentation/pages/security_page.dart';
 import '../../features/users/domain/entities/users_filter.dart';
 import '../../features/users/presentation/pages/user_detail_page.dart';
@@ -130,6 +131,11 @@ class AppRouter {
           name: Routes.profile.name,
           path: Routes.profile.path,
           builder: (context, state) => const ProfilePage(),
+        ),
+        GoRoute(
+          name: Routes.profileEdit.name,
+          path: Routes.profileEdit.path,
+          builder: (context, state) => const ProfileEditPage(),
         ),
         GoRoute(
           name: Routes.security.name,
@@ -453,7 +459,8 @@ class AppRouter {
       return Routes.projectsList.path;
     }
 
-    if (location.endsWith('/edit') &&
+    if (location.startsWith('/projects/') &&
+        location.endsWith('/edit') &&
         !NavPermissions.canManageProject(session.roleType)) {
       final id = state.pathParameters['id'];
       return id == null

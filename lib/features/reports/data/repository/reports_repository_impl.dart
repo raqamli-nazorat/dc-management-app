@@ -30,6 +30,10 @@ class ReportsRepositoryImpl implements ReportsRepository {
   Future<List<Region>> getRegions() => _guard(_remote.getRegions);
 
   @override
+  Future<List<District>> getDistricts({required int regionId}) =>
+      _guard(() => _remote.getDistricts(regionId: regionId));
+
+  @override
   Future<ProjectReportPage> getProjectReports({
     int page = 1,
     ProjectReportFilter filter = ProjectReportFilter.empty,

@@ -479,6 +479,28 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
+  String get profilePersonalInfo => 'Shaxsiy kabinet';
+
+  @override
+  String profileLinkLabel(int index) {
+    return '$index.Havola';
+  }
+
+  @override
+  String get profileSave => 'Saqlash';
+
+  @override
+  String get profileUpdateSuccess => 'Ma\'lumotlar yangilandi';
+
+  @override
+  String get profilePhoneInvalid =>
+      'Telefon raqamini +998XXXXXXXXX formatida kiriting';
+
+  @override
+  String get profileDistrictRequired =>
+      'Viloyat tanlangandan so‘ng tumanni ham tanlang.';
+
+  @override
   String roleSwitchedSubtitle(String role) {
     return 'Siz endi $role sifatida ishlayapsiz.';
   }
@@ -1159,7 +1181,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get userDetailPosition => 'Lavozimi';
 
   @override
-  String get userDetailRole => 'Rolli';
+  String get userDetailRole => 'Roli';
 
   @override
   String get financeExpenseRequests => 'Xarajat so\'rovlari';
