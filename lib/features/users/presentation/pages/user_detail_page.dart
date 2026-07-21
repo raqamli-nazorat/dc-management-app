@@ -7,6 +7,7 @@ import '../../../../config/theme/app_colors.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
+import '../../../../core/util/contact_input_formatters.dart';
 import '../../../../core/util/formatters.dart';
 import '../../../../core/widgets/app_file_actions.dart';
 import '../../../../core/widgets/app_filter_components.dart';
@@ -122,13 +123,13 @@ class _UserDetailBody extends StatelessWidget {
               Expanded(
                 child: _ReadonlyField(
                   label: l10n.userDetailPhone,
-                  value: user.phoneNumber,
+                  value: formatPhoneNumber(user.phoneNumber),
                 ),
               ),
               Expanded(
                 child: _ReadonlyField(
                   label: l10n.userDetailCard,
-                  value: user.cardNumber,
+                  value: formatCardNumber(user.cardNumber),
                 ),
               ),
             ],

@@ -1,6 +1,7 @@
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
 import '../../domain/entities/app_user.dart';
+import '../../domain/entities/new_user.dart';
 import '../../domain/entities/users_filter.dart';
 import '../../domain/repository/users_repository.dart';
 import '../data_sources/users_remote_data_source.dart';
@@ -20,6 +21,10 @@ class UsersRepositoryImpl implements UsersRepository {
 
   @override
   Future<AppUser> getUser(int id) => _guard(() => _remote.getUser(id));
+
+  @override
+  Future<AppUser> createUser(NewUser user) =>
+      _guard(() => _remote.createUser(user));
 
   Future<T> _guard<T>(Future<T> Function() action) async {
     try {

@@ -50,6 +50,7 @@ import 'features/tasks/domain/usecases/delete_task_usecase.dart';
 import 'features/tasks/domain/usecases/get_project_members_usecase.dart';
 import 'features/tasks/domain/usecases/get_task_edit_data_usecase.dart';
 import 'features/tasks/domain/usecases/get_task_form_options_usecase.dart';
+import 'features/tasks/domain/usecases/get_positions_usecase.dart';
 import 'features/tasks/domain/usecases/get_tasks_usecase.dart';
 import 'features/tasks/domain/usecases/get_managers_usecase.dart';
 import 'features/tasks/domain/usecases/get_users_usecase.dart';
@@ -90,7 +91,9 @@ import 'features/users/data/repository/users_repository_impl.dart';
 import 'features/users/domain/repository/users_repository.dart';
 import 'features/users/domain/usecases/get_app_user_detail_usecase.dart';
 import 'features/users/domain/usecases/get_app_users_usecase.dart';
+import 'features/users/domain/usecases/create_app_user_usecase.dart';
 import 'features/users/presentation/bloc/user_detail_bloc.dart';
+import 'features/users/presentation/bloc/user_create_bloc.dart';
 import 'features/users/presentation/bloc/users_bloc.dart';
 import 'features/ledger/data/data_sources/ledger_remote_data_source.dart';
 import 'features/ledger/data/repository/ledger_repository_impl.dart';
@@ -312,6 +315,9 @@ Future<void> configureDependencies() async {
     ..registerLazySingleton<GetTaskFormOptionsUseCase>(
       () => GetTaskFormOptionsUseCase(getIt()),
     )
+    ..registerLazySingleton<GetPositionsUseCase>(
+      () => GetPositionsUseCase(getIt()),
+    )
     ..registerLazySingleton<GetProjectMembersUseCase>(
       () => GetProjectMembersUseCase(getIt()),
     )
@@ -498,8 +504,19 @@ Future<void> configureDependencies() async {
     ..registerLazySingleton<GetAppUserDetailUseCase>(
       () => GetAppUserDetailUseCase(getIt()),
     )
+    ..registerLazySingleton<CreateAppUserUseCase>(
+      () => CreateAppUserUseCase(getIt()),
+    )
     ..registerFactory<UsersBloc>(() => UsersBloc(getUsers: getIt()))
     ..registerFactory<UserDetailBloc>(() => UserDetailBloc(getUser: getIt()))
+    ..registerFactory<UserCreateBloc>(
+      () => UserCreateBloc(
+        getPositions: getIt(),
+        getRegions: getIt(),
+        getDistricts: getIt(),
+        createUser: getIt(),
+      ),
+    )
     ..registerFactory<UsersFilterBloc>(
       () => UsersFilterBloc(getOptions: getIt()),
     );

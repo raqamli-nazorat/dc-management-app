@@ -138,6 +138,12 @@ class Routes implements Coordinate {
     path: '/users/filter',
   );
 
+  /// Yangi foydalanuvchi qo'shish sahifasi.
+  static const userCreate = Routes._(
+    name: 'user_create',
+    path: '/users/create',
+  );
+
   /// Foydalanuvchi detail sahifasi (kartaga bosilganda).
   static const userDetail = Routes._(name: 'user_detail', path: '/users/:id');
 

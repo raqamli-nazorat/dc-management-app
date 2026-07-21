@@ -2348,6 +2348,84 @@ abstract class AppLocalizations {
   /// **'Eski → Yangi'**
   String get usersSortOldest;
 
+  /// No description provided for @userCreateTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Yangi xodim qo‘shish'**
+  String get userCreateTitle;
+
+  /// No description provided for @userCreateNameHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'F.I.O kiriting'**
+  String get userCreateNameHint;
+
+  /// No description provided for @userCreatePassword.
+  ///
+  /// In uz, this message translates to:
+  /// **'Parol'**
+  String get userCreatePassword;
+
+  /// No description provided for @userCreateConfirmPassword.
+  ///
+  /// In uz, this message translates to:
+  /// **'Parolni tasdiqlang'**
+  String get userCreateConfirmPassword;
+
+  /// No description provided for @userCreatePasswordMismatch.
+  ///
+  /// In uz, this message translates to:
+  /// **'Parollar bir xil emas'**
+  String get userCreatePasswordMismatch;
+
+  /// No description provided for @userCreateSalaryInvalid.
+  ///
+  /// In uz, this message translates to:
+  /// **'Maosh formatini tekshiring'**
+  String get userCreateSalaryInvalid;
+
+  /// No description provided for @userCreateDistrictHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tuman tanlang'**
+  String get userCreateDistrictHint;
+
+  /// No description provided for @userCreateAvatarUpload.
+  ///
+  /// In uz, this message translates to:
+  /// **'Avatar yuklash'**
+  String get userCreateAvatarUpload;
+
+  /// No description provided for @userCreateImageUpload.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rasm yuklash'**
+  String get userCreateImageUpload;
+
+  /// No description provided for @userCreateLinkHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Havola kiriting'**
+  String get userCreateLinkHint;
+
+  /// No description provided for @userCreateSubmit.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qo‘shish'**
+  String get userCreateSubmit;
+
+  /// No description provided for @userCreateSuccess.
+  ///
+  /// In uz, this message translates to:
+  /// **'Foydalanuvchi qo‘shildi'**
+  String get userCreateSuccess;
+
+  /// No description provided for @userCreateRequiredError.
+  ///
+  /// In uz, this message translates to:
+  /// **'Majburiy maydonlarni to‘ldiring'**
+  String get userCreateRequiredError;
+
   /// No description provided for @userDetailTitle.
   ///
   /// In uz, this message translates to:

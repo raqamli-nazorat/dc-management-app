@@ -5,8 +5,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/bloc/session_bloc.dart';
 import '../../../../config/routes/entity/routes.dart';
 import '../../../../config/theme/app_colors.dart';
+import '../../../../core/access/nav_permissions.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
@@ -209,6 +211,13 @@ class _UsersHeaderState extends State<_UsersHeader> {
     }
   }
 
+  Future<void> _openCreate() async {
+    final created = await context.pushNamed<bool>(Routes.userCreate.name);
+    if (created == true && mounted) {
+      context.read<UsersBloc>().add(const UsersRequested());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -231,6 +240,7 @@ class _UsersHeaderState extends State<_UsersHeader> {
                 key: const ValueKey('title'),
                 onSearch: _openSearch,
                 onFilter: _openFilter,
+                onCreate: _openCreate,
               ),
       ),
     );
@@ -239,10 +249,16 @@ class _UsersHeaderState extends State<_UsersHeader> {
 
 /// Qidiruv yopiq holati: sarlavha + qidiruv + filtr (nuqtali).
 class _TitleBar extends StatelessWidget {
-  const _TitleBar({required this.onSearch, required this.onFilter, super.key});
+  const _TitleBar({
+    required this.onSearch,
+    required this.onFilter,
+    required this.onCreate,
+    super.key,
+  });
 
   final VoidCallback onSearch;
   final VoidCallback onFilter;
+  final VoidCallback onCreate;
 
   @override
   Widget build(BuildContext context) {
@@ -270,6 +286,12 @@ class _TitleBar extends StatelessWidget {
             onTap: onFilter,
           ),
         ),
+        if (context.select<SessionBloc, bool>(
+          (bloc) => NavPermissions.canCreateUser(bloc.state.roleType),
+        )) ...[
+          SizedBox(width: 12.w),
+          _SquareIconButton(icon: Assets.icons.icPlus, onTap: onCreate),
+        ],
       ],
     );
   }
