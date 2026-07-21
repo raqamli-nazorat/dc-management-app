@@ -385,7 +385,13 @@
 
   "securityChangePassword": "Change password",
   "securityAutoLock": "Auto-lock",
-  "securityAutoLockValue": "3 minutes",
+  "securityAutoLockSubtitle": "PIN must be entered again after inactivity.",
+  "securityAutoLockImmediately": "Immediately",
+  "securityAutoLock1Minute": "1 minute",
+  "securityAutoLock5Minutes": "5 minutes",
+  "securityAutoLock15Minutes": "15 minutes",
+  "securityAutoLock30Minutes": "30 minutes",
+  "securityAutoLock1Hour": "1 hour",
 
   "changePasswordTitle": "Change password",
   "changePasswordSubtitle": "For security, enter your current password and set a new one.",

@@ -2144,11 +2144,47 @@ abstract class AppLocalizations {
   /// **'Avtomatik qulflash'**
   String get securityAutoLock;
 
-  /// No description provided for @securityAutoLockValue.
+  /// No description provided for @securityAutoLockSubtitle.
   ///
   /// In uz, this message translates to:
-  /// **'3 daqiqa'**
-  String get securityAutoLockValue;
+  /// **'Faoliyatsizlikdan so‘ng PIN kodni qayta kiritish talab qilinadi.'**
+  String get securityAutoLockSubtitle;
+
+  /// No description provided for @securityAutoLockImmediately.
+  ///
+  /// In uz, this message translates to:
+  /// **'Darhol'**
+  String get securityAutoLockImmediately;
+
+  /// No description provided for @securityAutoLock1Minute.
+  ///
+  /// In uz, this message translates to:
+  /// **'1 daqiqa'**
+  String get securityAutoLock1Minute;
+
+  /// No description provided for @securityAutoLock5Minutes.
+  ///
+  /// In uz, this message translates to:
+  /// **'5 daqiqa'**
+  String get securityAutoLock5Minutes;
+
+  /// No description provided for @securityAutoLock15Minutes.
+  ///
+  /// In uz, this message translates to:
+  /// **'15 daqiqa'**
+  String get securityAutoLock15Minutes;
+
+  /// No description provided for @securityAutoLock30Minutes.
+  ///
+  /// In uz, this message translates to:
+  /// **'30 daqiqa'**
+  String get securityAutoLock30Minutes;
+
+  /// No description provided for @securityAutoLock1Hour.
+  ///
+  /// In uz, this message translates to:
+  /// **'1 soat'**
+  String get securityAutoLock1Hour;
 
   /// No description provided for @changePasswordTitle.
   ///

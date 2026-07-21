@@ -76,3 +76,13 @@ class SessionBackgrounded extends SessionEvent {
 class SessionResumed extends SessionEvent {
   const SessionResumed();
 }
+
+/// PIN avtomatik qulfi vaqtini o‘zgartirish.
+class SessionAutoLockChanged extends SessionEvent {
+  const SessionAutoLockChanged(this.timeout);
+
+  final Duration timeout;
+
+  @override
+  List<Object?> get props => [timeout];
+}

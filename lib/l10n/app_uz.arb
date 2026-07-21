@@ -388,7 +388,13 @@
 
   "securityChangePassword": "Parol o‘zgartirish",
   "securityAutoLock": "Avtomatik qulflash",
-  "securityAutoLockValue": "3 daqiqa",
+  "securityAutoLockSubtitle": "Faoliyatsizlikdan so‘ng PIN kodni qayta kiritish talab qilinadi.",
+  "securityAutoLockImmediately": "Darhol",
+  "securityAutoLock1Minute": "1 daqiqa",
+  "securityAutoLock5Minutes": "5 daqiqa",
+  "securityAutoLock15Minutes": "15 daqiqa",
+  "securityAutoLock30Minutes": "30 daqiqa",
+  "securityAutoLock1Hour": "1 soat",
 
   "changePasswordTitle": "Parolni o‘zgartirish",
   "changePasswordSubtitle": "Xavfsizlik uchun joriy parolingizni kiriting va yangi parol o‘rnating.",

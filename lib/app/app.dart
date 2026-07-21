@@ -37,22 +37,6 @@ class _AppState extends State<App> with WidgetsBindingObserver {
     super.dispose();
   }
 
-/*  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    // Fon timeout’i (3 daqiqa) PIN qulfini boshqaradi:
-    // fonga o‘tganda vaqt belgilanadi, qaytganda timeout tekshiriladi.
-    switch (state) {
-      case AppLifecycleState.paused:
-      case AppLifecycleState.hidden:
-      case AppLifecycleState.detached:
-        _session.add(const SessionBackgrounded());
-      case AppLifecycleState.resumed:
-        _session.add(const SessionResumed());
-      case AppLifecycleState.inactive:
-        break;
-    }
-  }*/
-
   // Ilova haqiqatda background (paused/detached) holatiga o'tganini kuzatish uchun flag
   bool _wasPaused = false;
 

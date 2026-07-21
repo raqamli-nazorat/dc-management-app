@@ -20,8 +20,11 @@ abstract final class StorageKeys {
   static const pinLength = 'pin_length';
 
   /// Ilova oxirgi marta faol bo‘lgan (fonga o‘tgan) vaqt — PIN qulfining
-  /// 3 daqiqalik fon timeout’ini hisoblash uchun.
+  /// Tanlangan fon timeout’ini hisoblash uchun.
   static const lastActiveAt = 'last_active_at';
+
+  /// Fonga o‘tgandan keyin PIN so‘raladigan timeout, sekundlarda.
+  static const pinLockTimeout = 'pin_lock_timeout';
 
   /// Backendga oxirgi yuborilgan FCM token — takror yuborishning oldini oladi.
   static const fcmToken = 'fcm_token';
@@ -47,6 +50,7 @@ abstract final class StorageKeys {
     activeRole,
     pinLength,
     lastActiveAt,
+    pinLockTimeout,
     fcmToken,
     deviceId,
     themeMode,

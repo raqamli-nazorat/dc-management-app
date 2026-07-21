@@ -14,12 +14,13 @@ class SessionState extends Equatable {
     this.roleSelectionRequired = false,
     this.attendanceRequired = false,
     this.activeRole,
+    this.autoLockTimeout,
   });
 
   const SessionState.unknown() : this();
 
   const SessionState.unauthenticated()
-      : this(status: SessionStatus.unauthenticated);
+    : this(status: SessionStatus.unauthenticated);
 
   const SessionState.pinRequired() : this(status: SessionStatus.pinRequired);
 
@@ -27,12 +28,14 @@ class SessionState extends Equatable {
     List<String> roles = const <String>[],
     bool roleSelectionRequired = false,
     String? activeRole,
+    Duration? autoLockTimeout,
   }) : this(
-          status: SessionStatus.authenticated,
-          roles: roles,
-          roleSelectionRequired: roleSelectionRequired,
-          activeRole: activeRole,
-        );
+         status: SessionStatus.authenticated,
+         roles: roles,
+         roleSelectionRequired: roleSelectionRequired,
+         activeRole: activeRole,
+         autoLockTimeout: autoLockTimeout,
+       );
 
   final SessionStatus status;
 
@@ -49,6 +52,9 @@ class SessionState extends Equatable {
   /// ko‘p rolli login’da `SessionRoleSelected`dan keyin to‘ldiriladi.
   final String? activeRole;
 
+  /// Fonga o‘tgandan keyin PIN so‘raladigan vaqt.
+  final Duration? autoLockTimeout;
+
   bool get isAuthenticated => status == SessionStatus.authenticated;
   bool get isUnauthenticated => status == SessionStatus.unauthenticated;
   bool get isPinRequired => status == SessionStatus.pinRequired;
@@ -64,6 +70,7 @@ class SessionState extends Equatable {
     bool? roleSelectionRequired,
     bool? attendanceRequired,
     String? activeRole,
+    Duration? autoLockTimeout,
   }) {
     return SessionState(
       status: status ?? this.status,
@@ -72,15 +79,17 @@ class SessionState extends Equatable {
           roleSelectionRequired ?? this.roleSelectionRequired,
       attendanceRequired: attendanceRequired ?? this.attendanceRequired,
       activeRole: activeRole ?? this.activeRole,
+      autoLockTimeout: autoLockTimeout ?? this.autoLockTimeout,
     );
   }
 
   @override
   List<Object?> get props => [
-        status,
-        roles,
-        roleSelectionRequired,
-        attendanceRequired,
-        activeRole,
-      ];
+    status,
+    roles,
+    roleSelectionRequired,
+    attendanceRequired,
+    activeRole,
+    autoLockTimeout,
+  ];
 }

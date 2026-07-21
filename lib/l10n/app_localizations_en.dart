@@ -1058,7 +1058,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get securityAutoLock => 'Auto-lock';
 
   @override
-  String get securityAutoLockValue => '3 minutes';
+  String get securityAutoLockSubtitle =>
+      'PIN must be entered again after inactivity.';
+
+  @override
+  String get securityAutoLockImmediately => 'Immediately';
+
+  @override
+  String get securityAutoLock1Minute => '1 minute';
+
+  @override
+  String get securityAutoLock5Minutes => '5 minutes';
+
+  @override
+  String get securityAutoLock15Minutes => '15 minutes';
+
+  @override
+  String get securityAutoLock30Minutes => '30 minutes';
+
+  @override
+  String get securityAutoLock1Hour => '1 hour';
 
   @override
   String get changePasswordTitle => 'Change password';
