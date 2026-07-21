@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/error/failures.dart';
+import '../../../../profile/domain/entities/profile_update.dart';
 import '../../../../profile/domain/usecases/update_me_usecase.dart';
 
 part 'role_select_event.dart';
@@ -29,7 +30,7 @@ class RoleSelectBloc extends Bloc<RoleSelectEvent, RoleSelectState> {
       submittingRole: event.role,
     ));
     try {
-      await _updateMe({'active_role': event.role});
+      await _updateMe(ProfileUpdate(fields: {'active_role': event.role}));
       emit(RoleSelectState(
         status: RoleSelectStatus.success,
         submittingRole: event.role,

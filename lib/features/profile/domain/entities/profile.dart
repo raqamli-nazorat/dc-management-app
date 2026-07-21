@@ -35,7 +35,7 @@ class Profile extends Equatable {
   final String activeRole;
   final String fixedSalary;
   final String balance;
-  final String socialLinks;
+  final List<String> socialLinks;
   final DateTime? dateJoined;
 
   /// Header uchun ko‘rsatiladigan ism — hozircha `username`.
@@ -46,21 +46,21 @@ class Profile extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        avatar,
-        username,
-        phoneNumber,
-        cardNumber,
-        passportSeries,
-        passportImage,
-        region,
-        district,
-        position,
-        roles,
-        activeRole,
-        fixedSalary,
-        balance,
-        socialLinks,
-        dateJoined,
-      ];
+    id,
+    avatar,
+    username,
+    phoneNumber,
+    cardNumber,
+    passportSeries,
+    passportImage,
+    region,
+    district,
+    position,
+    roles,
+    activeRole,
+    fixedSalary,
+    balance,
+    socialLinks,
+    dateJoined,
+  ];
 }

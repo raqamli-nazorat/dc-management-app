@@ -41,6 +41,12 @@ class Routes implements Coordinate {
   /// Xavfsizlik (profil sozlamalaridan push qilinadi).
   static const security = Routes._(name: 'security', path: '/security');
 
+  /// Joriy foydalanuvchi profilining shaxsiy ma'lumotlarini tahrirlash.
+  static const profileEdit = Routes._(
+    name: 'profile_edit',
+    path: '/profile/edit',
+  );
+
   /// Vazifalar ro‘yxati.
   static const tasks = Routes._(name: 'tasks', path: '/tasks');
 

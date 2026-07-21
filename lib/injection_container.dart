@@ -70,6 +70,7 @@ import 'features/reports/data/repository/reports_repository_impl.dart';
 import 'features/reports/domain/repository/reports_repository.dart';
 import 'features/reports/domain/usecases/get_project_reports_usecase.dart';
 import 'features/reports/domain/usecases/get_regions_usecase.dart';
+import 'features/reports/domain/usecases/get_districts_usecase.dart';
 import 'features/reports/domain/usecases/get_user_reports_usecase.dart';
 import 'features/reports/domain/usecases/get_expense_reports_usecase.dart';
 import 'features/reports/domain/usecases/get_expense_report_options_usecase.dart';
@@ -215,7 +216,9 @@ Future<void> configureDependencies() async {
     ..registerLazySingleton<ChangePasswordUseCase>(
       () => ChangePasswordUseCase(getIt()),
     )
-    ..registerFactory<ProfileBloc>(() => ProfileBloc(getMe: getIt()))
+    ..registerFactory<ProfileBloc>(
+      () => ProfileBloc(getMe: getIt(), updateMe: getIt()),
+    )
     ..registerFactory<ChangePasswordBloc>(
       () => ChangePasswordBloc(changePassword: getIt(), storage: getIt()),
     );
@@ -433,6 +436,9 @@ Future<void> configureDependencies() async {
       () => GetUserReportsUseCase(getIt()),
     )
     ..registerLazySingleton<GetRegionsUseCase>(() => GetRegionsUseCase(getIt()))
+    ..registerLazySingleton<GetDistrictsUseCase>(
+      () => GetDistrictsUseCase(getIt()),
+    )
     ..registerLazySingleton<GetProjectReportsUseCase>(
       () => GetProjectReportsUseCase(getIt()),
     )
@@ -600,9 +606,7 @@ Future<void> configureDependencies() async {
     ..registerLazySingleton<GetPeriodStatisticsUseCase>(
       () => GetPeriodStatisticsUseCase(getIt()),
     )
-    ..registerFactory<StatisticsBloc>(
-      () => StatisticsBloc(getPeriod: getIt()),
-    );
+    ..registerFactory<StatisticsBloc>(() => StatisticsBloc(getPeriod: getIt()));
 
   // ── Notification feature ──────────────────────────────────────────────
   getIt

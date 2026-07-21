@@ -1,6 +1,7 @@
 import '../../../../core/error/exceptions.dart';
 import '../../../../core/error/failures.dart';
 import '../../domain/entities/profile.dart';
+import '../../domain/entities/profile_update.dart';
 import '../../domain/repository/profile_repository.dart';
 import '../data_sources/profile_remote_data_source.dart';
 
@@ -15,20 +16,21 @@ class ProfileRepositoryImpl implements ProfileRepository {
   Future<Profile> getMe() => _guard(() => _remote.getMe());
 
   @override
-  Future<Profile> updateMe(Map<String, dynamic> fields) =>
-      _guard(() => _remote.updateMe(fields));
+  Future<Profile> updateMe(ProfileUpdate update) =>
+      _guard(() => _remote.updateMe(update));
 
   @override
   Future<void> changePassword({
     required String oldPassword,
     required String newPassword,
     required String confirmNewPassword,
-  }) =>
-      _guard(() => _remote.changePassword(
-            oldPassword: oldPassword,
-            newPassword: newPassword,
-            confirmNewPassword: confirmNewPassword,
-          ));
+  }) => _guard(
+    () => _remote.changePassword(
+      oldPassword: oldPassword,
+      newPassword: newPassword,
+      confirmNewPassword: confirmNewPassword,
+    ),
+  );
 
   /// Data source chaqiruvini o‘rab, `Exception` → `Failure` xaritalaydi.
   Future<T> _guard<T>(Future<T> Function() action) async {

@@ -1,18 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/bloc/session_bloc.dart';
 import '../../../../config/theme/app_colors.dart';
 import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../widgets/auto_lock_sheet.dart';
 import '../widgets/change_password_dialog.dart';
 
 /// Xavfsizlik sahifasi — profil sozlamalaridagi "Xavfsizlik" qatoridan
 /// push qilinadi. Hozircha bitta amal: parolni o'zgartirish (dialog ochadi).
 /// Vizual naqsh profil sahifasidagi `_SettingsRow` bilan bir xil.
-class SecurityPage extends StatelessWidget {
+class SecurityPage extends StatefulWidget {
   const SecurityPage({super.key});
+
+  @override
+  State<SecurityPage> createState() => _SecurityPageState();
+}
+
+class _SecurityPageState extends State<SecurityPage> {
+  late Duration _autoLockTimeout;
+
+  @override
+  void initState() {
+    super.initState();
+    _autoLockTimeout = context.read<SessionBloc>().pinLockTimeout;
+  }
+
+  Future<void> _selectAutoLock() async {
+    final selected = await showAutoLockSheet(
+      context,
+      selected: _autoLockTimeout,
+    );
+    if (!mounted || selected == null || selected == _autoLockTimeout) return;
+
+    context.read<SessionBloc>().add(SessionAutoLockChanged(selected));
+    setState(() => _autoLockTimeout = selected);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +68,8 @@ class SecurityPage extends StatelessWidget {
                     _SecurityInfoRow(
                       icon: Assets.icons.icAutoLock,
                       label: l10n.securityAutoLock,
-                      value: l10n.securityAutoLockValue,
+                      value: autoLockLabel(l10n, _autoLockTimeout),
+                      onTap: _selectAutoLock,
                     ),
                   ],
                 ),
@@ -76,8 +104,10 @@ class _SecurityAppBar extends StatelessWidget {
               child: Assets.icons.icArrowLeftLarge.svg(
                 width: 24.w,
                 height: 24.w,
-                colorFilter:
-                    ColorFilter.mode(colors.iconStrong, BlendMode.srcIn),
+                colorFilter: ColorFilter.mode(
+                  colors.iconStrong,
+                  BlendMode.srcIn,
+                ),
               ),
             ),
           ),
@@ -97,8 +127,7 @@ class _SecurityAppBar extends StatelessWidget {
   }
 }
 
-/// Xavfsizlik sozlamalari qatori — leading ikonka + yozuv. Figma dizaynida
-/// bu ro'yxatda o'ng "chevron" yo'q (`_SettingsRow`dan farqli).
+/// Xavfsizlik sozlamalari qatori — leading ikonka + yozuv.
 class _SecurityRow extends StatelessWidget {
   const _SecurityRow({
     required this.icon,
@@ -129,8 +158,10 @@ class _SecurityRow extends StatelessWidget {
               icon.svg(
                 width: 20.w,
                 height: 20.w,
-                colorFilter:
-                    ColorFilter.mode(colors.iconAccent, BlendMode.srcIn),
+                colorFilter: ColorFilter.mode(
+                  colors.iconAccent,
+                  BlendMode.srcIn,
+                ),
               ),
               SizedBox(width: 8.w),
               Expanded(
@@ -148,49 +179,62 @@ class _SecurityRow extends StatelessWidget {
   }
 }
 
-/// Faqat ma'lumot ko'rsatuvchi qator (harakat yo'q) — masalan "Avtomatik
-/// qulflash: 3 daqiqa". Qiymat `colors.textAccent` bilan, o'ng tomonda.
+/// Sozlama qatori: qiymat `colors.textAccent` bilan o‘ng tomonda.
 class _SecurityInfoRow extends StatelessWidget {
   const _SecurityInfoRow({
     required this.icon,
     required this.label,
     required this.value,
+    required this.onTap,
   });
 
   final SvgGenImage icon;
   final String label;
   final String value;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: colors.backgroundElevation1Alt,
-        borderRadius: BorderRadius.circular(24.r),
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(16.w),
-        child: Row(
-          children: [
-            icon.svg(
-              width: 20.w,
-              height: 20.w,
-              colorFilter:
-                  ColorFilter.mode(colors.iconAccent, BlendMode.srcIn),
-            ),
-            SizedBox(width: 8.w),
-            Expanded(
-              child: label
-                  .s(15.sp)
-                  .w(500)
-                  .c(colors.textStrong)
+    final radius = BorderRadius.circular(24.r);
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: radius,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: colors.backgroundElevation1Alt,
+          borderRadius: radius,
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(16.w),
+          child: Row(
+            children: [
+              icon.svg(
+                width: 20.w,
+                height: 20.w,
+                colorFilter: ColorFilter.mode(
+                  colors.iconAccent,
+                  BlendMode.srcIn,
+                ),
+              ),
+              SizedBox(width: 8.w),
+              Expanded(
+                child: label
+                    .s(15.sp)
+                    .w(500)
+                    .c(colors.textStrong)
+                    .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+              ),
+              SizedBox(width: 8.w),
+              value
+                  .s(13.sp)
+                  .w(800)
+                  .c(colors.textAccent)
                   .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
-            ),
-            SizedBox(width: 8.w),
-            value.s(13.sp).w(800).c(colors.textAccent),
-          ],
+            ],
+          ),
         ),
       ),
     );

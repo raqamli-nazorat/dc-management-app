@@ -1,4 +1,5 @@
 import '../entities/profile.dart';
+import '../entities/profile_update.dart';
 
 /// Profil domen shartnomasi. Implementatsiya `Exception`larni `Failure`ga
 /// aylantiradi (bloclar `Failure` ustida ishlaydi).
@@ -7,7 +8,7 @@ abstract interface class ProfileRepository {
   Future<Profile> getMe();
 
   /// Profilni qisman yangilaydi (`PATCH /users/me/`).
-  Future<Profile> updateMe(Map<String, dynamic> fields);
+  Future<Profile> updateMe(ProfileUpdate update);
 
   /// Parolni almashtiradi (`PUT /users/me/change-password/`).
   Future<void> changePassword({

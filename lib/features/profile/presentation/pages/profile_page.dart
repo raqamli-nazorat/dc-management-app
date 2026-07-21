@@ -197,7 +197,19 @@ class _ProfileBody extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    _ProfileInfoCard(profile: profile, onTap: () {}),
+                    _ProfileInfoCard(
+                      profile: profile,
+                      onTap: () async {
+                        final updated = await context.pushNamed<bool>(
+                          Routes.profileEdit.name,
+                        );
+                        if (updated == true && context.mounted) {
+                          context.read<ProfileBloc>().add(
+                            const ProfileRequested(),
+                          );
+                        }
+                      },
+                    ),
                     SizedBox(height: 10.h),
                     _RoleManageRow(onTap: () => _openRoleSwitch(context)),
                     SizedBox(height: 20.h),
@@ -210,8 +222,7 @@ class _ProfileBody extends StatelessWidget {
                     _SettingsRow(
                       icon: Assets.icons.icProfileNotification,
                       label: l10n.notificationsTitle,
-                      onTap: () =>
-                          context.pushNamed(Routes.notifications.name),
+                      onTap: () => context.pushNamed(Routes.notifications.name),
                     ),
                     SizedBox(height: 12.h),
                     _SettingsRow(
@@ -256,10 +267,7 @@ class _ProfileInfoCard extends StatelessWidget {
           padding: EdgeInsets.all(16.w),
           child: Row(
             children: [
-              _ProfileAvatar(
-                url: profile.avatar,
-                initial: profile.displayName,
-              ),
+              _ProfileAvatar(url: profile.avatar, initial: profile.displayName),
               SizedBox(width: 8.w),
               Expanded(
                 child: Column(
@@ -284,8 +292,10 @@ class _ProfileInfoCard extends StatelessWidget {
               Assets.icons.icPersonalInformationArrow.svg(
                 width: 20.w,
                 height: 20.w,
-                colorFilter:
-                    ColorFilter.mode(colors.iconStrong, BlendMode.srcIn),
+                colorFilter: ColorFilter.mode(
+                  colors.iconStrong,
+                  BlendMode.srcIn,
+                ),
               ),
             ],
           ),
@@ -334,8 +344,9 @@ class _AvatarLetter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
-    final letter =
-        initial.isEmpty ? '?' : initial.characters.first.toUpperCase();
+    final letter = initial.isEmpty
+        ? '?'
+        : initial.characters.first.toUpperCase();
 
     return DecoratedBox(
       decoration: BoxDecoration(color: colors.avatarPlaceholder),
@@ -372,8 +383,10 @@ class _RoleManageRow extends StatelessWidget {
               Assets.icons.icPersonalInformationIcon.svg(
                 width: 20.w,
                 height: 20.w,
-                colorFilter:
-                    ColorFilter.mode(colors.iconAccent, BlendMode.srcIn),
+                colorFilter: ColorFilter.mode(
+                  colors.iconAccent,
+                  BlendMode.srcIn,
+                ),
               ),
               SizedBox(width: 8.w),
               Expanded(
@@ -387,8 +400,10 @@ class _RoleManageRow extends StatelessWidget {
               Assets.icons.icPersonalInformationSwitch.svg(
                 width: 20.w,
                 height: 20.w,
-                colorFilter:
-                    ColorFilter.mode(colors.iconStrong, BlendMode.srcIn),
+                colorFilter: ColorFilter.mode(
+                  colors.iconStrong,
+                  BlendMode.srcIn,
+                ),
               ),
             ],
           ),
@@ -429,8 +444,10 @@ class _SettingsRow extends StatelessWidget {
               icon.svg(
                 width: 20.w,
                 height: 20.w,
-                colorFilter:
-                    ColorFilter.mode(colors.iconAccent, BlendMode.srcIn),
+                colorFilter: ColorFilter.mode(
+                  colors.iconAccent,
+                  BlendMode.srcIn,
+                ),
               ),
               SizedBox(width: 8.w),
               Expanded(
@@ -444,8 +461,10 @@ class _SettingsRow extends StatelessWidget {
               Assets.icons.icArrowRight.svg(
                 width: 20.w,
                 height: 20.w,
-                colorFilter:
-                    ColorFilter.mode(colors.iconStrong, BlendMode.srcIn),
+                colorFilter: ColorFilter.mode(
+                  colors.iconStrong,
+                  BlendMode.srcIn,
+                ),
               ),
             ],
           ),
@@ -519,8 +538,9 @@ class _ProfileError extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
     final l10n = AppLocalizations.of(context);
-    final message =
-        failure is NetworkFailure ? l10n.networkError : l10n.commonError;
+    final message = failure is NetworkFailure
+        ? l10n.networkError
+        : l10n.commonError;
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 40.h),

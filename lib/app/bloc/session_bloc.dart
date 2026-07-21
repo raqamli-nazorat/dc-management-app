@@ -17,16 +17,16 @@ part 'session_state.dart';
 /// → home`.
 ///
 /// PIN qulfi fon timeout’iga bog‘liq: foydalanuvchi ilovani [pinLockTimeout]
-/// (3 daqiqa) dan kam vaqt tark etsa — sessiya tiklanadi (PIN so‘ralmaydi);
+/// tanlangan vaqtdan kam vaqt tark etsa — sessiya tiklanadi (PIN so‘ralmaydi);
 /// undan ko‘proq bo‘lsa — PIN majburiy. Bu ham resume’da, ham sovuq
 /// ishga tushirishda (bootstrap) bir xil ishlaydi.
 class SessionBloc extends Bloc<SessionEvent, SessionState> {
   SessionBloc({
     required TokenService tokenService,
     required StorageService storage,
-  })  : _tokenService = tokenService,
-        _storage = storage,
-        super(const SessionState.unknown()) {
+  }) : _tokenService = tokenService,
+       _storage = storage,
+       super(const SessionState.unknown()) {
     on<SessionStarted>(_onStarted);
     on<SessionLoggedIn>(_onLoggedIn);
     on<SessionRoleSelected>(_onRoleSelected);
@@ -37,6 +37,7 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
     on<SessionKeepAliveRequested>(_onKeepAlive);
     on<SessionBackgrounded>(_onBackgrounded);
     on<SessionResumed>(_onResumed);
+    on<SessionAutoLockChanged>(_onAutoLockChanged);
   }
 
   final TokenService _tokenService;
@@ -49,8 +50,29 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
 
   static const Duration sessionDuration = Duration(hours: 8);
 
-  /// Fon timeout’i: bundan ortiq tark etilsa PIN qayta so‘raladi.
-  static const Duration pinLockTimeout = Duration(seconds: 6);
+  /// Figma’dagi timeout variantlari.
+  static const autoLockTimeouts = <Duration>[
+    Duration.zero,
+    Duration(minutes: 1),
+    Duration(minutes: 5),
+    Duration(minutes: 15),
+    Duration(minutes: 30),
+    Duration(hours: 1),
+  ];
+
+  static const defaultPinLockTimeout = Duration(hours: 1);
+
+  /// Tanlangan fon timeout’i. Noto‘g‘ri yoki eski qiymat xavfsiz defaultga
+  /// qaytadi.
+  Duration get pinLockTimeout {
+    final seconds = int.tryParse(
+      _storage.getString(StorageKeys.pinLockTimeout) ?? '',
+    );
+    final selected = seconds == null ? null : Duration(seconds: seconds);
+    return autoLockTimeouts.contains(selected)
+        ? selected!
+        : defaultPinLockTimeout;
+  }
 
   bool get _hasCachedLogin {
     final username = _storage.getString(StorageKeys.loginUsername);
@@ -67,7 +89,8 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
   /// Faqat ichki: background→resume o‘tishida (`_onResumed`) va bootstrap’da.
   bool get _pinLockExpired {
     // RAM nusxasi ustun (eng yangi, race’dan xoli); bo‘lmasa diskdan (cold start).
-    final lastActive = _lastActiveAtMemory ??
+    final lastActive =
+        _lastActiveAtMemory ??
         DateTime.tryParse(_storage.getString(StorageKeys.lastActiveAt) ?? '');
     if (lastActive == null) return true;
     return DateTime.now().difference(lastActive) > pinLockTimeout;
@@ -86,6 +109,7 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
       emit(
         SessionState.authenticated(
           activeRole: _storage.getString(StorageKeys.activeRole),
+          autoLockTimeout: pinLockTimeout,
         ),
       );
       return;
@@ -109,11 +133,14 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
       await _storage.setString(StorageKeys.activeRole, activeRole);
     }
 
-    emit(SessionState.authenticated(
-      roles: event.roles,
-      roleSelectionRequired: roleSelectionRequired,
-      activeRole: activeRole,
-    ));
+    emit(
+      SessionState.authenticated(
+        roles: event.roles,
+        roleSelectionRequired: roleSelectionRequired,
+        activeRole: activeRole,
+        autoLockTimeout: pinLockTimeout,
+      ),
+    );
   }
 
   Future<void> _onBackgrounded(
@@ -135,15 +162,24 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
     }
   }
 
+  Future<void> _onAutoLockChanged(
+    SessionAutoLockChanged event,
+    Emitter<SessionState> emit,
+  ) async {
+    if (!autoLockTimeouts.contains(event.timeout)) return;
+    await _storage.setString(
+      StorageKeys.pinLockTimeout,
+      event.timeout.inSeconds.toString(),
+    );
+    emit(state.copyWith(autoLockTimeout: event.timeout));
+  }
+
   Future<void> _onRoleSelected(
     SessionRoleSelected event,
     Emitter<SessionState> emit,
   ) async {
     await _storage.setString(StorageKeys.activeRole, event.role);
-    emit(state.copyWith(
-      roleSelectionRequired: false,
-      activeRole: event.role,
-    ));
+    emit(state.copyWith(roleSelectionRequired: false, activeRole: event.role));
   }
 
   /// `GET /users/me/` javobi autoritativ — token bilan kelgan/tanlangan
@@ -233,6 +269,7 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
     await _storage.remove(StorageKeys.activeRole);
     await _storage.remove(StorageKeys.pinLength);
     await _storage.remove(StorageKeys.lastActiveAt);
+    await _storage.remove(StorageKeys.pinLockTimeout);
     _lastActiveAtMemory = null;
   }
 }

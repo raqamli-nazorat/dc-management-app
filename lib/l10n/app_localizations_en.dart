@@ -476,6 +476,28 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get profilePersonalInfo => 'Personal account';
+
+  @override
+  String profileLinkLabel(int index) {
+    return 'Link $index';
+  }
+
+  @override
+  String get profileSave => 'Save';
+
+  @override
+  String get profileUpdateSuccess => 'Information updated';
+
+  @override
+  String get profilePhoneInvalid =>
+      'Enter phone number in +998XXXXXXXXX format';
+
+  @override
+  String get profileDistrictRequired =>
+      'Select a district after selecting a region.';
+
+  @override
   String roleSwitchedSubtitle(String role) {
     return 'You are now working as $role.';
   }
@@ -1036,7 +1058,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get securityAutoLock => 'Auto-lock';
 
   @override
-  String get securityAutoLockValue => '3 minutes';
+  String get securityAutoLockSubtitle =>
+      'PIN must be entered again after inactivity.';
+
+  @override
+  String get securityAutoLockImmediately => 'Immediately';
+
+  @override
+  String get securityAutoLock1Minute => '1 minute';
+
+  @override
+  String get securityAutoLock5Minutes => '5 minutes';
+
+  @override
+  String get securityAutoLock15Minutes => '15 minutes';
+
+  @override
+  String get securityAutoLock30Minutes => '30 minutes';
+
+  @override
+  String get securityAutoLock1Hour => '1 hour';
 
   @override
   String get changePasswordTitle => 'Change password';

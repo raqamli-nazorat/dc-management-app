@@ -50,6 +50,7 @@ abstract final class ApiConstants {
 
   /// Viloyatlar — hisobot filtri "Viloyat" tanlovi (`GET /applications/regions/`).
   static const applicationsRegions = '/applications/regions/';
+  static const applicationsDistricts = '/applications/districts/';
 
   // ── Tasks ─────────────────────────────────────────────────────────────
   static const tasks = '/tasks/';

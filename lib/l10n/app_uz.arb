@@ -179,6 +179,15 @@
     "placeholders": { "version": { "type": "String" } }
   },
   "roleSwitchedTitle": "{role} roliga o‘tildi.",
+  "profilePersonalInfo": "Shaxsiy kabinet",
+  "profileLinkLabel": "{index}.Havola",
+  "@profileLinkLabel": {
+    "placeholders": { "index": { "type": "int" } }
+  },
+  "profileSave": "Saqlash",
+  "profileUpdateSuccess": "Ma'lumotlar yangilandi",
+  "profilePhoneInvalid": "Telefon raqamini +998XXXXXXXXX formatida kiriting",
+  "profileDistrictRequired": "Viloyat tanlangandan so‘ng tumanni ham tanlang.",
   "@roleSwitchedTitle": {
     "placeholders": { "role": { "type": "String" } }
   },
@@ -379,7 +388,13 @@
 
   "securityChangePassword": "Parol o‘zgartirish",
   "securityAutoLock": "Avtomatik qulflash",
-  "securityAutoLockValue": "3 daqiqa",
+  "securityAutoLockSubtitle": "Faoliyatsizlikdan so‘ng PIN kodni qayta kiritish talab qilinadi.",
+  "securityAutoLockImmediately": "Darhol",
+  "securityAutoLock1Minute": "1 daqiqa",
+  "securityAutoLock5Minutes": "5 daqiqa",
+  "securityAutoLock15Minutes": "15 daqiqa",
+  "securityAutoLock30Minutes": "30 daqiqa",
+  "securityAutoLock1Hour": "1 soat",
 
   "changePasswordTitle": "Parolni o‘zgartirish",
   "changePasswordSubtitle": "Xavfsizlik uchun joriy parolingizni kiriting va yangi parol o‘rnating.",
@@ -422,7 +437,7 @@
   "userDetailPassport": "Passport ma’lumotlari",
   "userDetailPassportImage": "Passport rasmi",
   "userDetailPosition": "Lavozimi",
-  "userDetailRole": "Rolli",
+  "userDetailRole": "Roli",
 
   "financeExpenseRequests": "Xarajat so'rovlari",
   "financeWages": "Ish haqi",

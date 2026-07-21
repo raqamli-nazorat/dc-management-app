@@ -1,14 +1,17 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/network/response_mapper.dart';
 import '../models/profile_model.dart';
+import '../../domain/entities/profile_update.dart';
 
 /// Profil backend bilan to‘g‘ridan-to‘g‘ri muloqot (`/users/me/`).
 abstract interface class ProfileRemoteDataSource {
   Future<ProfileModel> getMe();
-  Future<ProfileModel> updateMe(Map<String, dynamic> fields);
+  Future<ProfileModel> updateMe(ProfileUpdate update);
   Future<void> changePassword({
     required String oldPassword,
     required String newPassword,
@@ -32,9 +35,18 @@ class ProfileRemoteDataSourceImpl implements ProfileRemoteDataSource {
   }
 
   @override
-  Future<ProfileModel> updateMe(Map<String, dynamic> fields) async {
+  Future<ProfileModel> updateMe(ProfileUpdate update) async {
     try {
-      final response = await _client.patch(ApiConstants.usersMe, data: fields);
+      final data = update.avatarPath == null
+          ? update.fields
+          : FormData.fromMap({
+              for (final entry in update.fields.entries)
+                entry.key: entry.value is List
+                    ? jsonEncode(entry.value)
+                    : entry.value,
+              'avatar': await MultipartFile.fromFile(update.avatarPath!),
+            });
+      final response = await _client.patch(ApiConstants.usersMe, data: data);
       return ProfileModel.fromJson(ResponseMapper.asMap(response.data));
     } on DioException catch (e) {
       throw ResponseMapper.mapDioException(e);

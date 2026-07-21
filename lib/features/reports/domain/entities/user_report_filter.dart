@@ -14,6 +14,22 @@ class Region extends Equatable {
   List<Object?> get props => [id, name];
 }
 
+/// Tuman (`GET /applications/districts/?region=`).
+class District extends Equatable {
+  const District({
+    required this.id,
+    required this.name,
+    required this.regionId,
+  });
+
+  final int id;
+  final String name;
+  final int regionId;
+
+  @override
+  List<Object?> get props => [id, name, regionId];
+}
+
 /// Yig'ilish ishtirok holati (`meetings_status`).
 enum ReportMeetingStatus {
   attended,

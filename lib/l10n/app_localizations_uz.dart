@@ -479,6 +479,28 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
+  String get profilePersonalInfo => 'Shaxsiy kabinet';
+
+  @override
+  String profileLinkLabel(int index) {
+    return '$index.Havola';
+  }
+
+  @override
+  String get profileSave => 'Saqlash';
+
+  @override
+  String get profileUpdateSuccess => 'Ma\'lumotlar yangilandi';
+
+  @override
+  String get profilePhoneInvalid =>
+      'Telefon raqamini +998XXXXXXXXX formatida kiriting';
+
+  @override
+  String get profileDistrictRequired =>
+      'Viloyat tanlangandan so‘ng tumanni ham tanlang.';
+
+  @override
   String roleSwitchedSubtitle(String role) {
     return 'Siz endi $role sifatida ishlayapsiz.';
   }
@@ -1040,7 +1062,26 @@ class AppLocalizationsUz extends AppLocalizations {
   String get securityAutoLock => 'Avtomatik qulflash';
 
   @override
-  String get securityAutoLockValue => '3 daqiqa';
+  String get securityAutoLockSubtitle =>
+      'Faoliyatsizlikdan so‘ng PIN kodni qayta kiritish talab qilinadi.';
+
+  @override
+  String get securityAutoLockImmediately => 'Darhol';
+
+  @override
+  String get securityAutoLock1Minute => '1 daqiqa';
+
+  @override
+  String get securityAutoLock5Minutes => '5 daqiqa';
+
+  @override
+  String get securityAutoLock15Minutes => '15 daqiqa';
+
+  @override
+  String get securityAutoLock30Minutes => '30 daqiqa';
+
+  @override
+  String get securityAutoLock1Hour => '1 soat';
 
   @override
   String get changePasswordTitle => 'Parolni o‘zgartirish';
@@ -1159,7 +1200,7 @@ class AppLocalizationsUz extends AppLocalizations {
   String get userDetailPosition => 'Lavozimi';
 
   @override
-  String get userDetailRole => 'Rolli';
+  String get userDetailRole => 'Roli';
 
   @override
   String get financeExpenseRequests => 'Xarajat so\'rovlari';
