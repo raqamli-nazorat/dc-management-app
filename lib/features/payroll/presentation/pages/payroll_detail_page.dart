@@ -4,7 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../app/bloc/session_bloc.dart';
 import '../../../../config/theme/app_colors.dart';
+import '../../../../core/access/role_type.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
@@ -45,6 +47,9 @@ class _PayrollDetailView extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
     final l10n = AppLocalizations.of(context);
+    final isAccountant =
+        context.select<SessionBloc, RoleType>((b) => b.state.roleType) ==
+        RoleType.accountant;
 
     return BlocListener<PayrollDetailBloc, PayrollDetailState>(
       listenWhen: (p, c) =>
@@ -89,6 +94,7 @@ class _PayrollDetailView extends StatelessWidget {
                         return _PayrollDetailBody(
                           payroll: state.payroll!,
                           confirming: state.confirming,
+                          canConfirm: isAccountant,
                         );
                     }
                   },
@@ -103,10 +109,15 @@ class _PayrollDetailView extends StatelessWidget {
 }
 
 class _PayrollDetailBody extends StatelessWidget {
-  const _PayrollDetailBody({required this.payroll, required this.confirming});
+  const _PayrollDetailBody({
+    required this.payroll,
+    required this.confirming,
+    required this.canConfirm,
+  });
 
   final Payroll payroll;
   final bool confirming;
+  final bool canConfirm;
 
   @override
   Widget build(BuildContext context) {
@@ -181,7 +192,7 @@ class _PayrollDetailBody extends StatelessWidget {
             ),
           ),
         ),
-        if (!payroll.isConfirmed)
+        if (!payroll.isConfirmed && canConfirm)
           Padding(
             padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 12.h),
             child: _ConfirmButton(
