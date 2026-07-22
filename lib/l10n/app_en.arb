@@ -196,6 +196,7 @@
   "tasksTitle": "Tasks",
   "dailyPlansTitle": "Daily plans",
   "dailyPlansAdd": "Add task",
+  "dailyPlansSubtitle": "Create a task for yourself.",
   "dailyPlansEmpty": "No daily plans yet",
   "dailyPlansNameHint": "Enter plan name",
   "dailyPlansItemHint": "Add subtask...",

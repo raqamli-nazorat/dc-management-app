@@ -512,6 +512,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dailyPlansAdd => 'Add task';
 
   @override
+  String get dailyPlansSubtitle => 'Create a task for yourself.';
+
+  @override
   String get dailyPlansEmpty => 'No daily plans yet';
 
   @override

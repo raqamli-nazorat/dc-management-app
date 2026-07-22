@@ -515,6 +515,9 @@ class AppLocalizationsUz extends AppLocalizations {
   String get dailyPlansAdd => 'Vazifa qo‘shish';
 
   @override
+  String get dailyPlansSubtitle => 'O‘zingiz uchun vazifa yarating.';
+
+  @override
   String get dailyPlansEmpty => 'Hozircha kundalik rejalar yo‘q';
 
   @override

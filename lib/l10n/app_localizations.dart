@@ -1076,6 +1076,12 @@ abstract class AppLocalizations {
   /// **'Vazifa qo‘shish'**
   String get dailyPlansAdd;
 
+  /// No description provided for @dailyPlansSubtitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'O‘zingiz uchun vazifa yarating.'**
+  String get dailyPlansSubtitle;
+
   /// No description provided for @dailyPlansEmpty.
   ///
   /// In uz, this message translates to:

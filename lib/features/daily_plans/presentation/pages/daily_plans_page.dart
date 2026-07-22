@@ -63,7 +63,7 @@ class _DailyPlansView extends StatelessWidget {
         body: SafeArea(
           child: Column(
             children: [
-              _Header(onAdd: () => _openPlanSheet(context)),
+              _Header(onAdd: () => _openPlanDialog(context)),
               Expanded(
                 child: RefreshIndicator(
                   color: colors.accentSub,
@@ -106,7 +106,7 @@ class _DailyPlansView extends StatelessWidget {
                         itemBuilder: (_, index) => _PlanCard(
                           plan: state.plans[index],
                           onEdit: () =>
-                              _openPlanSheet(context, state.plans[index]),
+                              _openPlanDialog(context, state.plans[index]),
                           onDelete: () =>
                               _confirmDelete(context, state.plans[index]),
                         ),
@@ -122,12 +122,13 @@ class _DailyPlansView extends StatelessWidget {
     );
   }
 
-  Future<void> _openPlanSheet(BuildContext context, [DailyPlan? plan]) =>
-      showModalBottomSheet<void>(
+  Future<void> _openPlanDialog(BuildContext context, [DailyPlan? plan]) =>
+      showDialog<void>(
         context: context,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        builder: (sheetContext) => _PlanSheet(plan: plan),
+        builder: (_) => BlocProvider.value(
+          value: context.read<DailyPlansBloc>(),
+          child: _PlanDialog(plan: plan),
+        ),
       );
 
   Future<void> _confirmDelete(BuildContext context, DailyPlan plan) async {
@@ -501,14 +502,14 @@ class _AddItemState extends State<_AddItem> {
   }
 }
 
-class _PlanSheet extends StatefulWidget {
-  const _PlanSheet({this.plan});
+class _PlanDialog extends StatefulWidget {
+  const _PlanDialog({this.plan});
   final DailyPlan? plan;
   @override
-  State<_PlanSheet> createState() => _PlanSheetState();
+  State<_PlanDialog> createState() => _PlanDialogState();
 }
 
-class _PlanSheetState extends State<_PlanSheet> {
+class _PlanDialogState extends State<_PlanDialog> {
   late final _controller = TextEditingController(
     text: widget.plan?.title ?? '',
   );
@@ -534,86 +535,126 @@ class _PlanSheetState extends State<_PlanSheet> {
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
     final l10n = AppLocalizations.of(context);
-    return Padding(
-      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: colors.overlaySurface,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(28.r)),
-        ),
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(20.w, 12.h, 20.w, 24.h),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Center(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: colors.strokeStrong,
-                    borderRadius: BorderRadius.circular(4.r),
-                  ),
-                  child: SizedBox(width: 40.w, height: 4.h),
-                ),
-              ),
-              SizedBox(height: 20.h),
-              TextField(
-                controller: _controller,
-                autofocus: true,
-                textInputAction: TextInputAction.done,
-                onSubmitted: (_) => _save(),
-                style: TextStyle(fontSize: 16.sp, color: colors.textStrong),
-                decoration: InputDecoration(
-                  hintText: l10n.dailyPlansNameHint,
-                  hintStyle: TextStyle(fontSize: 16.sp, color: colors.textSoft),
-                ),
-              ),
-              SizedBox(height: 16.h),
-              Wrap(
-                spacing: 10.w,
-                children: DailyPlanColor.values
-                    .map(
-                      (color) => InkWell(
-                        onTap: () => setState(() => _color = color),
-                        borderRadius: BorderRadius.circular(20.r),
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: _colorValue(colors, color),
-                            shape: BoxShape.circle,
-                            border: _color == color
-                                ? Border.all(
-                                    color: colors.textStrong,
-                                    width: 2.w,
-                                  )
-                                : null,
+    return Dialog(
+      insetPadding: EdgeInsets.symmetric(horizontal: 20.w),
+      backgroundColor: Colors.transparent,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: 480.w),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: colors.overlaySurface,
+            borderRadius: BorderRadius.circular(28.r),
+            border: Border.all(color: colors.strokeAccent, width: 1.w),
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(20.w),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: l10n.dailyPlansAdd
+                          .s(20.sp)
+                          .w(800)
+                          .c(colors.textStrong),
+                    ),
+                    InkWell(
+                      onTap: () => context.pop(),
+                      borderRadius: BorderRadius.circular(12.r),
+                      child: Padding(
+                        padding: EdgeInsets.all(4.w),
+                        child: Assets.icons.icClose.svg(
+                          width: 20.w,
+                          height: 20.w,
+                          colorFilter: ColorFilter.mode(
+                            colors.iconSub,
+                            BlendMode.srcIn,
                           ),
-                          child: SizedBox(width: 28.w, height: 28.w),
                         ),
                       ),
-                    )
-                    .toList(),
-              ),
-              SizedBox(height: 20.h),
-              InkWell(
-                onTap: _save,
-                borderRadius: BorderRadius.circular(14.r),
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: colors.accentStrong,
-                    borderRadius: BorderRadius.circular(14.r),
-                  ),
-                  child: SizedBox(
-                    height: 48.h,
-                    child: Center(
-                      child: l10n.dailyPlansSave
-                          .s(14.sp)
-                          .w(800)
-                          .c(colors.textWhite),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 4.h),
+                l10n.dailyPlansSubtitle.s(13.sp).w(500).c(colors.textSub),
+                SizedBox(height: 20.h),
+                TextField(
+                  controller: _controller,
+                  autofocus: true,
+                  textInputAction: TextInputAction.done,
+                  onSubmitted: (_) => _save(),
+                  style: TextStyle(fontSize: 16.sp, color: colors.textStrong),
+                  decoration: InputDecoration(
+                    hintText: l10n.dailyPlansNameHint,
+                    hintStyle: TextStyle(
+                      fontSize: 16.sp,
+                      color: colors.textSoft,
                     ),
                   ),
                 ),
-              ),
-            ],
+                SizedBox(height: 16.h),
+                Wrap(
+                  spacing: 10.w,
+                  children: DailyPlanColor.values
+                      .map(
+                        (color) => InkWell(
+                          onTap: () => setState(() => _color = color),
+                          borderRadius: BorderRadius.circular(20.r),
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: _colorValue(colors, color),
+                              shape: BoxShape.circle,
+                              border: _color == color
+                                  ? Border.all(
+                                      color: colors.textStrong,
+                                      width: 2.w,
+                                    )
+                                  : null,
+                            ),
+                            child: SizedBox(width: 28.w, height: 28.w),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ),
+                SizedBox(height: 24.h),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () => context.pop(),
+                      child: l10n.dailyPlansCancel
+                          .s(14.sp)
+                          .w(700)
+                          .c(colors.textSub),
+                    ),
+                    SizedBox(width: 8.w),
+                    InkWell(
+                      onTap: _save,
+                      borderRadius: BorderRadius.circular(14.r),
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: colors.accentStrong,
+                          borderRadius: BorderRadius.circular(14.r),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 12.h,
+                          ),
+                          child: l10n.dailyPlansAdd
+                              .s(14.sp)
+                              .w(800)
+                              .c(colors.textWhite),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

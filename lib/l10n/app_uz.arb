@@ -199,6 +199,7 @@
   "tasksTitle": "Vazifalar",
   "dailyPlansTitle": "Kundalik rejalar",
   "dailyPlansAdd": "Vazifa qo‘shish",
+  "dailyPlansSubtitle": "O‘zingiz uchun vazifa yarating.",
   "dailyPlansEmpty": "Hozircha kundalik rejalar yo‘q",
   "dailyPlansNameHint": "Reja nomini kiriting",
   "dailyPlansItemHint": "Kichik reja qo‘shish...",
