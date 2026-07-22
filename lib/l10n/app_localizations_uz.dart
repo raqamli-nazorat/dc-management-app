@@ -509,6 +509,51 @@ class AppLocalizationsUz extends AppLocalizations {
   String get tasksTitle => 'Vazifalar';
 
   @override
+  String get dailyPlansTitle => 'Kundalik rejalar';
+
+  @override
+  String get dailyPlansAdd => 'Vazifa qo‘shish';
+
+  @override
+  String get dailyPlansEmpty => 'Hozircha kundalik rejalar yo‘q';
+
+  @override
+  String get dailyPlansNameHint => 'Reja nomini kiriting';
+
+  @override
+  String get dailyPlansItemHint => 'Kichik reja qo‘shish...';
+
+  @override
+  String get dailyPlansEdit => 'Tahrirlash';
+
+  @override
+  String get dailyPlansDelete => 'O‘chirish';
+
+  @override
+  String get dailyPlansDeleteTitle => 'Rejani o‘chirish';
+
+  @override
+  String get dailyPlansDeleteMessage => 'Bu amalni ortga qaytarib bo‘lmaydi.';
+
+  @override
+  String get dailyPlansCancel => 'Bekor qilish';
+
+  @override
+  String get dailyPlansSave => 'Saqlash';
+
+  @override
+  String get dailyPlansSaved => 'Reja saqlandi';
+
+  @override
+  String get dailyPlansDeleted => 'Reja o‘chirildi';
+
+  @override
+  String get dailyPlansDone => 'Bajarildi';
+
+  @override
+  String get dailyPlansUndone => 'Bajarilmadi';
+
+  @override
   String get taskAdd => 'Vazifa qo‘shish';
 
   @override

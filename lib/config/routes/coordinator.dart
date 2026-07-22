@@ -45,6 +45,7 @@ import '../../features/tasks/presentation/pages/task_detail_page.dart';
 import '../../features/tasks/presentation/pages/task_filter_page.dart';
 import '../../features/tasks/presentation/pages/task_multi_select_page.dart';
 import '../../features/tasks/presentation/pages/tasks_page.dart';
+import '../../features/daily_plans/presentation/pages/daily_plans_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/profile/presentation/pages/profile_edit_page.dart';
 import '../../features/profile/presentation/pages/security_page.dart';
@@ -147,6 +148,11 @@ class AppRouter {
           name: Routes.tasks.name,
           path: Routes.tasks.path,
           builder: (context, state) => const TasksPage(),
+        ),
+        GoRoute(
+          name: Routes.dailyPlans.name,
+          path: Routes.dailyPlans.path,
+          builder: (context, state) => const DailyPlansPage(),
         ),
         GoRoute(
           name: Routes.projectsList.name,
