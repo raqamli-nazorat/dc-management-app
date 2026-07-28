@@ -74,7 +74,7 @@ class TaskDetailModel extends TaskDetail {
       positionId: asInt(posMap['id']),
       positionName: str(posMap['name']),
       createdByName: str(cMap['username'] ?? cMap['full_name'] ?? cMap['name']),
-      deadline: DateTime.tryParse(str(json['deadline'])),
+      deadline: DateTime.tryParse(str(json['deadline']))?.toLocal(),
       taskPrice: str(json['task_price']),
       penaltyPercentage: str(json['penalty_percentage']),
       sprint: asInt(json['sprint']),

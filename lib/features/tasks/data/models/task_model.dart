@@ -59,7 +59,7 @@ class TaskModel extends Task {
       projectInfo: projectInfo(),
       status: TaskStatus.fromApi(json['status'] as String?),
       priority: TaskPriority.fromApi(json['priority'] as String?),
-      deadline: DateTime.tryParse(str(json['deadline'])),
+      deadline: DateTime.tryParse(str(json['deadline']))?.toLocal(),
       estimatedMinutes: estimated is num ? estimated.toInt() : null,
       assigneeName: pick(aMap, ['username', 'full_name', 'name']),
       assigneePosition: pick(aMap, ['position']),

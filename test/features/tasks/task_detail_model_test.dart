@@ -1,4 +1,5 @@
 import 'package:dc_management_app/features/tasks/data/models/task_detail_model.dart';
+import 'package:dc_management_app/features/tasks/data/models/task_model.dart';
 import 'package:dc_management_app/features/tasks/domain/entities/task.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -62,5 +63,18 @@ void main() {
     });
     expect(model.projectId, 42);
     expect(model.projectInfo, 'CRM');
+  });
+
+  test('TaskModel keeps offset deadlines in local time for UI', () {
+    final model = TaskModel.fromJson({
+      'id': 1,
+      'deadline': '2026-07-28T23:59:00+05:00',
+    });
+
+    expect(
+      model.deadline,
+      DateTime.parse('2026-07-28T23:59:00+05:00').toLocal(),
+    );
+    expect(model.deadline!.isUtc, isFalse);
   });
 }

@@ -13,9 +13,10 @@ import '../../domain/entities/task.dart';
 /// `dd.MM.yyyy HH:mm` ko'rinishida sana.
 String _formatDeadline(DateTime? date) {
   if (date == null) return '';
+  final localDate = date.toLocal();
   String two(int v) => v.toString().padLeft(2, '0');
-  return '${two(date.day)}.${two(date.month)}.${date.year} '
-      '${two(date.hour)}:${two(date.minute)}';
+  return '${two(localDate.day)}.${two(localDate.month)}.${localDate.year} '
+      '${two(localDate.hour)}:${two(localDate.minute)}';
 }
 
 /// Rejalashtirilgan vaqt: "24h 12min" / "12min" / bo'sh.
@@ -32,7 +33,7 @@ String _formatEstimated(int? minutes) {
 /// Faqat bugungi deadline uchun ko'rsatiladi; ticker page-level.
 String _formatCountdown(DateTime? deadline, DateTime now) {
   if (!shouldShowTaskCountdown(deadline, now)) return '';
-  final diff = deadline!.difference(now);
+  final diff = deadline!.toLocal().difference(now.toLocal());
   String two(int v) => v.toString().padLeft(2, '0');
   final h = diff.inHours;
   final m = diff.inMinutes % 60;
@@ -42,9 +43,11 @@ String _formatCountdown(DateTime? deadline, DateTime now) {
 
 bool shouldShowTaskCountdown(DateTime? deadline, DateTime now) {
   if (deadline == null || !deadline.isAfter(now)) return false;
-  return deadline.year == now.year &&
-      deadline.month == now.month &&
-      deadline.day == now.day;
+  final localDeadline = deadline.toLocal();
+  final localNow = now.toLocal();
+  return localDeadline.year == localNow.year &&
+      localDeadline.month == localNow.month &&
+      localDeadline.day == localNow.day;
 }
 
 /// Vazifalar ro'yxatidagi bitta karta (Figma: elevation-1 fon, 16 radius).
