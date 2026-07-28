@@ -53,6 +53,16 @@ class Routes implements Coordinate {
   /// Shaxsiy kundalik rejalar.
   static const dailyPlans = Routes._(name: 'daily_plans', path: '/daily-plans');
 
+  static const dailyPlanCreate = Routes._(
+    name: 'daily_plan_create',
+    path: '/daily-plans/create',
+  );
+
+  static const dailyPlanEdit = Routes._(
+    name: 'daily_plan_edit',
+    path: '/daily-plans/:id/edit',
+  );
+
   /// Loyihalar ro‘yxati.
   static const projectsList = Routes._(
     name: 'projects_list',

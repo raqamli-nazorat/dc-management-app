@@ -18,6 +18,17 @@ class DailyPlanSaved extends DailyPlansEvent {
   List<Object?> get props => [id, input];
 }
 
+class DailyPlanFormSaved extends DailyPlansEvent {
+  const DailyPlanFormSaved({required this.input, required this.items, this.id});
+
+  final int? id;
+  final DailyPlanInput input;
+  final List<({DailyPlanItem? item, String title})> items;
+
+  @override
+  List<Object?> get props => [id, input, items];
+}
+
 class DailyPlanDeleted extends DailyPlansEvent {
   const DailyPlanDeleted(this.id);
   final int id;

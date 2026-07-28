@@ -27,6 +27,7 @@ class DailyPlansBloc extends Bloc<DailyPlansEvent, DailyPlansState> {
        super(const DailyPlansState()) {
     on<DailyPlansRequested>(_onRequested);
     on<DailyPlanSaved>(_onSaved);
+    on<DailyPlanFormSaved>(_onFormSaved);
     on<DailyPlanDeleted>(_onDeleted);
     on<DailyPlanItemSaved>(_onItemSaved);
   }
@@ -104,6 +105,58 @@ class DailyPlansBloc extends Bloc<DailyPlansEvent, DailyPlansState> {
           failure: failure,
           message: DailyPlansMessage.failure,
         ),
+      );
+    }
+  }
+
+  Future<void> _onFormSaved(
+    DailyPlanFormSaved event,
+    Emitter<DailyPlansState> emit,
+  ) async {
+    emit(state.copyWith(clearMessage: true));
+    DailyPlan? createdPlan;
+    try {
+      final plan = event.id == null
+          ? await _createPlan(event.input)
+          : await _updatePlan((id: event.id!, input: event.input));
+      createdPlan = event.id == null ? plan : null;
+      final items = await Future.wait(
+        event.items.map((draft) {
+          final item = draft.item;
+          if (item == null) {
+            return _createItem((planId: plan.id, title: draft.title));
+          }
+          return item.title == draft.title
+              ? Future.value(item)
+              : _updateItem((item: item, title: draft.title, isDone: null));
+        }),
+      );
+      final savedPlan = DailyPlan(
+        id: plan.id,
+        title: plan.title,
+        color: plan.color,
+        isDone: plan.isDone,
+        items: items,
+        createdAt: plan.createdAt,
+      );
+      emit(
+        state.copyWith(
+          plans: event.id == null
+              ? [savedPlan, ...state.plans]
+              : _replacePlan(savedPlan),
+          message: DailyPlansMessage.planSaved,
+        ),
+      );
+    } on Failure catch (failure) {
+      if (createdPlan != null) {
+        try {
+          await _deletePlan(createdPlan.id);
+        } on Failure {
+          // The original failure remains more useful to the form caller.
+        }
+      }
+      emit(
+        state.copyWith(failure: failure, message: DailyPlansMessage.failure),
       );
     }
   }

@@ -1160,6 +1160,42 @@ abstract class AppLocalizations {
   /// **'Bajarilmadi'**
   String get dailyPlansUndone;
 
+  /// No description provided for @dailyPlansMyTasks.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mening vazifalarim'**
+  String get dailyPlansMyTasks;
+
+  /// No description provided for @dailyPlansTaskName.
+  ///
+  /// In uz, this message translates to:
+  /// **'Vazifa nomi'**
+  String get dailyPlansTaskName;
+
+  /// No description provided for @dailyPlansDeadline.
+  ///
+  /// In uz, this message translates to:
+  /// **'Muddati'**
+  String get dailyPlansDeadline;
+
+  /// No description provided for @dailyPlansToday.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bugun'**
+  String get dailyPlansToday;
+
+  /// No description provided for @dailyPlansTomorrow.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ertaga'**
+  String get dailyPlansTomorrow;
+
+  /// No description provided for @dailyPlansEditTask.
+  ///
+  /// In uz, this message translates to:
+  /// **'Vazifani tahrirlash'**
+  String get dailyPlansEditTask;
+
   /// No description provided for @taskAdd.
   ///
   /// In uz, this message translates to:

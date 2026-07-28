@@ -119,6 +119,12 @@ class AppColors extends ThemeExtension<AppColors> {
   /// "Rad etildi" holati nuqtasi (qizil).
   final Color taskStatusRejected;
 
+  // ── Daily plans ─────────────────────────────────────────────────────────
+  final Color dailyPlanRed;
+  final Color dailyPlanYellow;
+  final Color dailyPlanGreen;
+  final Color dailyPlanBlue;
+
   /// Xarajat kartasi va shunga o‘xshash bosh harf avatarlari uchun fon.
   final Color avatarPlaceholder;
 
@@ -203,6 +209,10 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.taskStatusProduction,
     required this.taskStatusChecked,
     required this.taskStatusRejected,
+    required this.dailyPlanRed,
+    required this.dailyPlanYellow,
+    required this.dailyPlanGreen,
+    required this.dailyPlanBlue,
     required this.avatarPlaceholder,
     required this.badgeRead,
     required this.badgeUnread,
@@ -276,6 +286,10 @@ class AppColors extends ThemeExtension<AppColors> {
     taskStatusProduction: Color(0xFF43A047),
     taskStatusChecked: Color(0xFFFB8C00),
     taskStatusRejected: Color(0xFFE53935),
+    dailyPlanRed: Color(0xFFEF161E),
+    dailyPlanYellow: Color(0xFFFFD702),
+    dailyPlanGreen: Color(0xFF2DBE2C),
+    dailyPlanBlue: Color(0xFF005FF9),
     avatarPlaceholder: Color(0xFFDADFF0),
     badgeRead: Color(0xFF526ED3),
     badgeUnread: Color(0xFFFF6A2E),
@@ -349,6 +363,10 @@ class AppColors extends ThemeExtension<AppColors> {
     taskStatusProduction: Color(0xFF43A047),
     taskStatusChecked: Color(0xFFFB8C00),
     taskStatusRejected: Color(0xFFE53935),
+    dailyPlanRed: Color(0xFFEF161E),
+    dailyPlanYellow: Color(0xFFFFD702),
+    dailyPlanGreen: Color(0xFF2DBE2C),
+    dailyPlanBlue: Color(0xFF005FF9),
     avatarPlaceholder: Color(0xFF3A3B3B),
     badgeRead: Color(0xFF526ED3),
     badgeUnread: Color(0xFFFF6A2E),
@@ -460,6 +478,10 @@ class AppColors extends ThemeExtension<AppColors> {
     Color? taskStatusProduction,
     Color? taskStatusChecked,
     Color? taskStatusRejected,
+    Color? dailyPlanRed,
+    Color? dailyPlanYellow,
+    Color? dailyPlanGreen,
+    Color? dailyPlanBlue,
     Color? avatarPlaceholder,
     Color? badgeRead,
     Color? badgeUnread,
@@ -534,6 +556,10 @@ class AppColors extends ThemeExtension<AppColors> {
     taskStatusProduction: taskStatusProduction ?? this.taskStatusProduction,
     taskStatusChecked: taskStatusChecked ?? this.taskStatusChecked,
     taskStatusRejected: taskStatusRejected ?? this.taskStatusRejected,
+    dailyPlanRed: dailyPlanRed ?? this.dailyPlanRed,
+    dailyPlanYellow: dailyPlanYellow ?? this.dailyPlanYellow,
+    dailyPlanGreen: dailyPlanGreen ?? this.dailyPlanGreen,
+    dailyPlanBlue: dailyPlanBlue ?? this.dailyPlanBlue,
     avatarPlaceholder: avatarPlaceholder ?? this.avatarPlaceholder,
     badgeRead: badgeRead ?? this.badgeRead,
     badgeUnread: badgeUnread ?? this.badgeUnread,
@@ -666,6 +692,10 @@ class AppColors extends ThemeExtension<AppColors> {
         other.taskStatusRejected,
         t,
       )!,
+      dailyPlanRed: Color.lerp(dailyPlanRed, other.dailyPlanRed, t)!,
+      dailyPlanYellow: Color.lerp(dailyPlanYellow, other.dailyPlanYellow, t)!,
+      dailyPlanGreen: Color.lerp(dailyPlanGreen, other.dailyPlanGreen, t)!,
+      dailyPlanBlue: Color.lerp(dailyPlanBlue, other.dailyPlanBlue, t)!,
       avatarPlaceholder: Color.lerp(
         avatarPlaceholder,
         other.avatarPlaceholder,

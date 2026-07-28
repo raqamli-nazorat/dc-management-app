@@ -554,6 +554,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dailyPlansUndone => 'Not done';
 
   @override
+  String get dailyPlansMyTasks => 'My tasks';
+
+  @override
+  String get dailyPlansTaskName => 'Task name';
+
+  @override
+  String get dailyPlansDeadline => 'Deadline';
+
+  @override
+  String get dailyPlansToday => 'Today';
+
+  @override
+  String get dailyPlansTomorrow => 'Tomorrow';
+
+  @override
+  String get dailyPlansEditTask => 'Edit task';
+
+  @override
   String get taskAdd => 'Add task';
 
   @override

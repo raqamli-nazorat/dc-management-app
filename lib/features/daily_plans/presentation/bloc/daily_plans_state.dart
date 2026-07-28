@@ -20,11 +20,12 @@ class DailyPlansState extends Equatable {
     List<DailyPlan>? plans,
     Failure? failure,
     DailyPlansMessage? message,
+    bool clearMessage = false,
   }) => DailyPlansState(
     status: status ?? this.status,
     plans: plans ?? this.plans,
     failure: failure,
-    message: message,
+    message: clearMessage ? null : message,
   );
   @override
   List<Object?> get props => [status, plans, failure, message];

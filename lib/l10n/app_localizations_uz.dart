@@ -557,6 +557,24 @@ class AppLocalizationsUz extends AppLocalizations {
   String get dailyPlansUndone => 'Bajarilmadi';
 
   @override
+  String get dailyPlansMyTasks => 'Mening vazifalarim';
+
+  @override
+  String get dailyPlansTaskName => 'Vazifa nomi';
+
+  @override
+  String get dailyPlansDeadline => 'Muddati';
+
+  @override
+  String get dailyPlansToday => 'Bugun';
+
+  @override
+  String get dailyPlansTomorrow => 'Ertaga';
+
+  @override
+  String get dailyPlansEditTask => 'Vazifani tahrirlash';
+
+  @override
   String get taskAdd => 'Vazifa qo‘shish';
 
   @override
