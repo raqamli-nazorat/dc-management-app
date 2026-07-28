@@ -206,9 +206,16 @@ class TasksBloc extends Bloc<TasksEvent, TasksState> {
     );
     try {
       await _deleteTask(event.id);
-    } on Failure catch (_) {
+    } on Failure catch (failure) {
       // Tiklaymiz (o'chirilmadi).
-      emit(state.copyWith(items: previous, statusPages: previousStatusPages));
+      emit(
+        state.copyWith(
+          items: previous,
+          statusPages: previousStatusPages,
+          deleteFailure: failure,
+          deleteFailureTick: state.deleteFailureTick + 1,
+        ),
+      );
     }
   }
 }

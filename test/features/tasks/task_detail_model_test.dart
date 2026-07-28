@@ -50,6 +50,7 @@ void main() {
     expect(model.sprint, 2);
     expect(model.estimatedMinutes, 90);
     expect(model.status, TaskStatus.done);
+    expect(model.createdById, 9);
     expect(model.createdByName, 'Vali');
     expect(model.rejectionReason, 'Xato bor');
     expect(model.rejectionFiles, ['https://x/y.png']);
@@ -69,6 +70,7 @@ void main() {
     final model = TaskModel.fromJson({
       'id': 1,
       'deadline': '2026-07-28T23:59:00+05:00',
+      'created_by_info': {'id': 7},
     });
 
     expect(
@@ -76,5 +78,6 @@ void main() {
       DateTime.parse('2026-07-28T23:59:00+05:00').toLocal(),
     );
     expect(model.deadline!.isUtc, isFalse);
+    expect(model.createdById, 7);
   });
 }

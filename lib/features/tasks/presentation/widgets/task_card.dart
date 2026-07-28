@@ -345,113 +345,168 @@ enum _TaskMenuAction { details, edit, delete }
 /// Karta ⋮ tugmasi — bosilganda "Batafsil / Tahrirlash / O'chirish" menyusini
 /// ochadi (Figma: tui-dropdown, background-base fon, stroke-sub chegara,
 /// 12 radius).
-class _MoreMenu extends StatelessWidget {
+class _MoreMenu extends StatefulWidget {
   const _MoreMenu({this.onDetails, this.onEdit, this.onDelete});
 
   final VoidCallback? onDetails;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
 
+  @override
+  State<_MoreMenu> createState() => _MoreMenuState();
+}
+
+class _MoreMenuState extends State<_MoreMenu> {
+  final _controller = OverlayPortalController();
+  final _layerLink = LayerLink();
+
+  void _hide() => _controller.hide();
+
   Future<void> _onSelected(BuildContext context, _TaskMenuAction action) async {
+    _hide();
     switch (action) {
       case _TaskMenuAction.details:
-        onDetails?.call();
+        widget.onDetails?.call();
       case _TaskMenuAction.edit:
-        onEdit?.call();
+        widget.onEdit?.call();
       case _TaskMenuAction.delete:
         final confirmed = await showTaskDeleteDialog(context);
-        if (confirmed == true) onDelete?.call();
+        if (confirmed == true) widget.onDelete?.call();
     }
+  }
+
+  Widget _overlay(BuildContext context) {
+    final colors = AppColors.of(context);
+    final l10n = AppLocalizations.of(context);
+
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: _hide,
+            onPanStart: (_) => _hide(),
+          ),
+        ),
+        CompositedTransformFollower(
+          link: _layerLink,
+          showWhenUnlinked: false,
+          targetAnchor: Alignment.bottomRight,
+          followerAnchor: Alignment.topRight,
+          offset: Offset(0, 8.h),
+          child: Material(
+            type: MaterialType.transparency,
+            child: SizedBox(
+              width: 180.w,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: colors.backgroundBase,
+                  borderRadius: BorderRadius.circular(12.r),
+                  border: Border.all(color: colors.strokeSub, width: 1.w),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 4.h),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _MenuTile(
+                        icon: Assets.icons.icAlertCircle,
+                        label: l10n.taskMenuDetails,
+                        color: colors.textStrong,
+                        onTap: () =>
+                            _onSelected(context, _TaskMenuAction.details),
+                      ),
+                      if (widget.onEdit != null)
+                        _MenuTile(
+                          icon: Assets.icons.icSettingsLarge,
+                          label: l10n.projectMenuEdit,
+                          color: colors.textStrong,
+                          onTap: () =>
+                              _onSelected(context, _TaskMenuAction.edit),
+                        ),
+                      if (widget.onDelete != null)
+                        _MenuTile(
+                          icon: Assets.icons.icTrash,
+                          label: l10n.taskMenuDelete,
+                          color: colors.errorStrong,
+                          onTap: () =>
+                              _onSelected(context, _TaskMenuAction.delete),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
-    final l10n = AppLocalizations.of(context);
 
-    return PopupMenuButton<_TaskMenuAction>(
-      tooltip: '',
-      padding: EdgeInsets.zero,
-      color: colors.backgroundBase,
-      elevation: 0,
-      position: PopupMenuPosition.under,
-      constraints: BoxConstraints(minWidth: 180.w),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.r),
-        side: BorderSide(color: colors.strokeSub, width: 1.w),
-      ),
-      onSelected: (action) => _onSelected(context, action),
-      itemBuilder: (_) => [
-        PopupMenuItem(
-          value: _TaskMenuAction.details,
-          height: 40.h,
-          padding: EdgeInsets.symmetric(horizontal: 8.w),
-          child: _MenuRow(
-            icon: Assets.icons.icAlertCircle,
-            label: l10n.taskMenuDetails,
-            color: colors.textStrong,
+    return OverlayPortal(
+      controller: _controller,
+      overlayChildBuilder: _overlay,
+      child: CompositedTransformTarget(
+        link: _layerLink,
+        child: InkWell(
+          onTap: () =>
+              _controller.isShowing ? _controller.hide() : _controller.show(),
+          borderRadius: BorderRadius.circular(12.r),
+          child: Assets.icons.icMoreVertical.svg(
+            width: 24.w,
+            height: 24.w,
+            colorFilter: ColorFilter.mode(colors.iconSub, BlendMode.srcIn),
           ),
         ),
-        PopupMenuItem(
-          value: _TaskMenuAction.edit,
-          height: 40.h,
-          padding: EdgeInsets.symmetric(horizontal: 8.w),
-          child: _MenuRow(
-            icon: Assets.icons.icSettingsLarge,
-            label: l10n.projectMenuEdit,
-            color: colors.textStrong,
-          ),
-        ),
-        PopupMenuItem(
-          value: _TaskMenuAction.delete,
-          height: 40.h,
-          padding: EdgeInsets.symmetric(horizontal: 8.w),
-          child: _MenuRow(
-            icon: Assets.icons.icTrash,
-            label: l10n.taskMenuDelete,
-            color: colors.errorStrong,
-          ),
-        ),
-      ],
-      child: Assets.icons.icMoreVertical.svg(
-        width: 24.w,
-        height: 24.w,
-        colorFilter: ColorFilter.mode(colors.iconSub, BlendMode.srcIn),
       ),
     );
   }
 }
 
-/// Menyu qatori: ikonka + yozuv (yozuv rangi = ikonka rangi).
-class _MenuRow extends StatelessWidget {
-  const _MenuRow({
+class _MenuTile extends StatelessWidget {
+  const _MenuTile({
     required this.icon,
     required this.label,
     required this.color,
+    required this.onTap,
   });
 
   final SvgGenImage icon;
   final String label;
   final Color color;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        icon.svg(
-          width: 16.w,
-          height: 16.w,
-          colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 8.w),
+        child: SizedBox(
+          height: 40.h,
+          child: Row(
+            children: [
+              icon.svg(
+                width: 16.w,
+                height: 16.w,
+                colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+              ),
+              SizedBox(width: 8.w),
+              Expanded(
+                child: label
+                    .s(13.sp)
+                    .w(500)
+                    .c(color)
+                    .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
+              ),
+            ],
+          ),
         ),
-        SizedBox(width: 8.w),
-        Expanded(
-          child: label
-              .s(13.sp)
-              .w(500)
-              .c(color)
-              .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
-        ),
-      ],
+      ),
     );
   }
 }

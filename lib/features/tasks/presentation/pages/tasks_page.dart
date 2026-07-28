@@ -7,13 +7,17 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../config/routes/entity/routes.dart';
 import '../../../../config/theme/app_colors.dart';
+import '../../../../app/bloc/session_bloc.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
+import '../../../../core/widgets/app_toast.dart';
 import '../../../../injection_container.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../profile/presentation/bloc/profile_bloc.dart';
 import '../../domain/entities/task.dart';
 import '../../domain/entities/task_filter.dart';
+import '../../domain/task_status_policy.dart';
 import '../bloc/tasks_bloc.dart';
 import '../widgets/task_card.dart';
 
@@ -23,8 +27,15 @@ class TasksPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<TasksBloc>(
-      create: (_) => getIt<TasksBloc>()..add(const TasksRequested()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<TasksBloc>(
+          create: (_) => getIt<TasksBloc>()..add(const TasksRequested()),
+        ),
+        BlocProvider<ProfileBloc>(
+          create: (_) => getIt<ProfileBloc>()..add(const ProfileRequested()),
+        ),
+      ],
       child: const _TasksView(),
     );
   }
@@ -116,6 +127,12 @@ class _TasksViewState extends State<_TasksView> {
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
+    final currentUserId = context.select<ProfileBloc, int>(
+      (bloc) => bloc.state.profile?.id ?? 0,
+    );
+    final activeRole = context.select<SessionBloc, String>(
+      (bloc) => bloc.state.activeRole ?? '',
+    );
 
     return Scaffold(
       backgroundColor: colors.backgroundBase,
@@ -128,7 +145,19 @@ class _TasksViewState extends State<_TasksView> {
                 color: colors.accentSub,
                 onRefresh: () => _onRefresh(context),
                 child: BlocConsumer<TasksBloc, TasksState>(
-                  listener: (_, state) {
+                  listenWhen: (previous, current) =>
+                      previous.status != current.status ||
+                      previous.items != current.items ||
+                      previous.deleteFailureTick != current.deleteFailureTick,
+                  listener: (context, state) {
+                    if (state.deleteFailureTick > 0 &&
+                        state.deleteFailure != null) {
+                      AppToast.showError(
+                        context,
+                        title: AppLocalizations.of(context).commonError,
+                        message: state.deleteFailure!.message,
+                      );
+                    }
                     if (state.status == TasksStatus.success) {
                       _syncCountdownTimer(state.items);
                     } else {
@@ -190,20 +219,36 @@ class _TasksViewState extends State<_TasksView> {
                               countdownTicker: _countdownNow,
                               onTap: () => _openDetails(context, task.id),
                               onDetails: () => _openDetails(context, task.id),
-                              onEdit: () async {
-                                final bloc = context.read<TasksBloc>();
-                                final updated = await context.pushNamed<bool>(
-                                  Routes.taskEdit.name,
-                                  pathParameters: {'id': '${task.id}'},
-                                );
-                                // O'zgartirilgan bo'lsa ro'yxatni qayta yuklaymiz.
-                                if (updated == true) {
-                                  bloc.add(const TasksRequested());
-                                }
-                              },
-                              onDelete: () => context.read<TasksBloc>().add(
-                                TasksTaskDeleted(task.id),
-                              ),
+                              onEdit:
+                                  TaskEditPolicy.canShowListAction(
+                                    activeRole: activeRole,
+                                    createdById: task.createdById,
+                                    currentUserId: currentUserId,
+                                  )
+                                  ? () async {
+                                      final bloc = context.read<TasksBloc>();
+                                      final updated = await context
+                                          .pushNamed<bool>(
+                                            Routes.taskEdit.name,
+                                            pathParameters: {
+                                              'id': '${task.id}',
+                                            },
+                                          );
+                                      // O'zgartirilgan bo'lsa ro'yxatni qayta yuklaymiz.
+                                      if (updated == true) {
+                                        bloc.add(const TasksRequested());
+                                      }
+                                    }
+                                  : null,
+                              onDelete:
+                                  TaskDeletePolicy.canDelete(
+                                    createdById: task.createdById,
+                                    currentUserId: currentUserId,
+                                  )
+                                  ? () => context.read<TasksBloc>().add(
+                                      TasksTaskDeleted(task.id),
+                                    )
+                                  : null,
                             );
                           },
                         );

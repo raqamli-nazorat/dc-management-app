@@ -18,11 +18,13 @@ class TaskModel extends Task {
     required super.assigneeName,
     required super.assigneePosition,
     required super.assigneeAvatar,
+    super.createdById,
     super.createdByAvatar,
   });
 
   factory TaskModel.fromJson(Map<String, dynamic> json) {
     String str(dynamic v) => v?.toString() ?? '';
+    int? asInt(dynamic v) => v is num ? v.toInt() : int.tryParse(str(v));
 
     String pick(Map<String, dynamic> src, List<String> keys) {
       for (final k in keys) {
@@ -64,6 +66,7 @@ class TaskModel extends Task {
       assigneeName: pick(aMap, ['username', 'full_name', 'name']),
       assigneePosition: pick(aMap, ['position']),
       assigneeAvatar: pick(aMap, ['avatar']),
+      createdById: asInt(cMap['id']) ?? asInt(json['created_by']),
       createdByAvatar: pick(cMap, ['avatar']),
     );
   }

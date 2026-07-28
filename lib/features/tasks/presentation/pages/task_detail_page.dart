@@ -149,6 +149,7 @@ class _TaskDetailView extends StatelessWidget {
                     final editScope = TaskEditPolicy.scope(
                       status: detail.status,
                       context: state.permissionContext,
+                      createdById: detail.createdById,
                     );
                     return Column(
                       children: [

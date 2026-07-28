@@ -84,12 +84,25 @@ class TaskStatusPolicy {
 class TaskEditPolicy {
   const TaskEditPolicy._();
 
+  static bool canShowListAction({
+    required String activeRole,
+    required int? createdById,
+    required int currentUserId,
+  }) {
+    if (activeRole.toLowerCase() != 'employee') return true;
+    return createdById != null && createdById == currentUserId;
+  }
+
   static TaskEditScope scope({
     required TaskStatus status,
     required TaskStatusPermissionContext? context,
+    int? createdById,
   }) {
     if (context == null) return TaskEditScope.none;
     if (context.activeRole.toLowerCase() == 'admin') {
+      return TaskEditScope.full;
+    }
+    if (createdById != null && createdById == context.currentUserId) {
       return TaskEditScope.full;
     }
     if (status == TaskStatus.overdue &&
@@ -103,9 +116,25 @@ class TaskEditPolicy {
     required TaskStatus status,
     required TaskStatusPermissionContext? context,
     required bool deadlineOnly,
-  }) => switch (scope(status: status, context: context)) {
+    int? createdById,
+  }) => switch (scope(
+    status: status,
+    context: context,
+    createdById: createdById,
+  )) {
     TaskEditScope.full => !deadlineOnly,
     TaskEditScope.deadlineOnly => deadlineOnly,
     TaskEditScope.none => false,
   };
+}
+
+class TaskDeletePolicy {
+  const TaskDeletePolicy._();
+
+  static bool canDelete({
+    required int? createdById,
+    required int currentUserId,
+  }) {
+    return createdById != null && createdById == currentUserId;
+  }
 }
