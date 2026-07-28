@@ -506,6 +506,72 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tasksTitle => 'Tasks';
 
   @override
+  String get dailyPlansTitle => 'Daily plans';
+
+  @override
+  String get dailyPlansAdd => 'Add task';
+
+  @override
+  String get dailyPlansSubtitle => 'Create a task for yourself.';
+
+  @override
+  String get dailyPlansEmpty => 'No daily plans yet';
+
+  @override
+  String get dailyPlansNameHint => 'Enter plan name';
+
+  @override
+  String get dailyPlansItemHint => 'Add subtask...';
+
+  @override
+  String get dailyPlansEdit => 'Edit';
+
+  @override
+  String get dailyPlansDelete => 'Delete';
+
+  @override
+  String get dailyPlansDeleteTitle => 'Delete plan';
+
+  @override
+  String get dailyPlansDeleteMessage => 'This action cannot be undone.';
+
+  @override
+  String get dailyPlansCancel => 'Cancel';
+
+  @override
+  String get dailyPlansSave => 'Save';
+
+  @override
+  String get dailyPlansSaved => 'Plan saved';
+
+  @override
+  String get dailyPlansDeleted => 'Plan deleted';
+
+  @override
+  String get dailyPlansDone => 'Done';
+
+  @override
+  String get dailyPlansUndone => 'Not done';
+
+  @override
+  String get dailyPlansMyTasks => 'My tasks';
+
+  @override
+  String get dailyPlansTaskName => 'Task name';
+
+  @override
+  String get dailyPlansDeadline => 'Deadline';
+
+  @override
+  String get dailyPlansToday => 'Today';
+
+  @override
+  String get dailyPlansTomorrow => 'Tomorrow';
+
+  @override
+  String get dailyPlansEditTask => 'Edit task';
+
+  @override
   String get taskAdd => 'Add task';
 
   @override

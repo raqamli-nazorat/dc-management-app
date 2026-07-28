@@ -132,4 +132,71 @@ void main() {
       TaskEditScope.none,
     );
   });
+
+  test('task creator can edit own task as employee', () {
+    expect(
+      TaskEditPolicy.canShowListAction(
+        activeRole: 'employee',
+        createdById: 7,
+        currentUserId: 7,
+      ),
+      isTrue,
+    );
+    expect(
+      TaskEditPolicy.canShowListAction(
+        activeRole: 'employee',
+        createdById: 8,
+        currentUserId: 7,
+      ),
+      isFalse,
+    );
+    expect(
+      TaskEditPolicy.canShowListAction(
+        activeRole: 'manager',
+        createdById: 8,
+        currentUserId: 7,
+      ),
+      isTrue,
+    );
+    expect(
+      TaskEditPolicy.scope(
+        status: TaskStatus.todo,
+        context: employee,
+        createdById: 7,
+      ),
+      TaskEditScope.full,
+    );
+    expect(
+      TaskEditPolicy.canUpdate(
+        status: TaskStatus.todo,
+        context: employee,
+        deadlineOnly: false,
+        createdById: 7,
+      ),
+      isTrue,
+    );
+    expect(
+      TaskEditPolicy.scope(
+        status: TaskStatus.todo,
+        context: employee,
+        createdById: 8,
+      ),
+      TaskEditScope.none,
+    );
+  });
+
+  test('only task creator can delete, regardless role', () {
+    expect(
+      TaskDeletePolicy.canDelete(createdById: 7, currentUserId: 7),
+      isTrue,
+    );
+    expect(
+      TaskDeletePolicy.canDelete(createdById: 8, currentUserId: 7),
+      isFalse,
+    );
+    expect(
+      TaskDeletePolicy.canDelete(createdById: null, currentUserId: 7),
+      isFalse,
+    );
+  });
 }

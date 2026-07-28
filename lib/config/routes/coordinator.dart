@@ -45,6 +45,9 @@ import '../../features/tasks/presentation/pages/task_detail_page.dart';
 import '../../features/tasks/presentation/pages/task_filter_page.dart';
 import '../../features/tasks/presentation/pages/task_multi_select_page.dart';
 import '../../features/tasks/presentation/pages/tasks_page.dart';
+import '../../features/daily_plans/domain/entities/daily_plan.dart';
+import '../../features/daily_plans/presentation/pages/daily_plan_editor_page.dart';
+import '../../features/daily_plans/presentation/pages/daily_plans_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/profile/presentation/pages/profile_edit_page.dart';
 import '../../features/profile/presentation/pages/security_page.dart';
@@ -147,6 +150,25 @@ class AppRouter {
           name: Routes.tasks.name,
           path: Routes.tasks.path,
           builder: (context, state) => const TasksPage(),
+        ),
+        GoRoute(
+          name: Routes.dailyPlans.name,
+          path: Routes.dailyPlans.path,
+          builder: (context, state) => const DailyPlansPage(),
+        ),
+        GoRoute(
+          name: Routes.dailyPlanCreate.name,
+          path: Routes.dailyPlanCreate.path,
+          builder: (context, state) => const DailyPlanEditorPage(),
+        ),
+        GoRoute(
+          name: Routes.dailyPlanEdit.name,
+          path: Routes.dailyPlanEdit.path,
+          builder: (context, state) => DailyPlanEditorPage(
+            initial: state.extra is DailyPlan
+                ? state.extra! as DailyPlan
+                : null,
+          ),
         ),
         GoRoute(
           name: Routes.projectsList.name,

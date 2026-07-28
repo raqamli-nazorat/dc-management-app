@@ -25,7 +25,7 @@ class ProjectShortModel extends ProjectShort {
       id: (json['id'] as num?)?.toInt() ?? 0,
       title: str(json['title']),
       description: str(json['description']),
-      deadline: DateTime.tryParse(str(json['deadline'])),
+      deadline: DateTime.tryParse(str(json['deadline']))?.toLocal(),
     );
   }
 }

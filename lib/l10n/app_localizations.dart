@@ -1064,6 +1064,138 @@ abstract class AppLocalizations {
   /// **'Vazifalar'**
   String get tasksTitle;
 
+  /// No description provided for @dailyPlansTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kundalik rejalar'**
+  String get dailyPlansTitle;
+
+  /// No description provided for @dailyPlansAdd.
+  ///
+  /// In uz, this message translates to:
+  /// **'Vazifa qo‘shish'**
+  String get dailyPlansAdd;
+
+  /// No description provided for @dailyPlansSubtitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'O‘zingiz uchun vazifa yarating.'**
+  String get dailyPlansSubtitle;
+
+  /// No description provided for @dailyPlansEmpty.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hozircha kundalik rejalar yo‘q'**
+  String get dailyPlansEmpty;
+
+  /// No description provided for @dailyPlansNameHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Reja nomini kiriting'**
+  String get dailyPlansNameHint;
+
+  /// No description provided for @dailyPlansItemHint.
+  ///
+  /// In uz, this message translates to:
+  /// **'Kichik reja qo‘shish...'**
+  String get dailyPlansItemHint;
+
+  /// No description provided for @dailyPlansEdit.
+  ///
+  /// In uz, this message translates to:
+  /// **'Tahrirlash'**
+  String get dailyPlansEdit;
+
+  /// No description provided for @dailyPlansDelete.
+  ///
+  /// In uz, this message translates to:
+  /// **'O‘chirish'**
+  String get dailyPlansDelete;
+
+  /// No description provided for @dailyPlansDeleteTitle.
+  ///
+  /// In uz, this message translates to:
+  /// **'Rejani o‘chirish'**
+  String get dailyPlansDeleteTitle;
+
+  /// No description provided for @dailyPlansDeleteMessage.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bu amalni ortga qaytarib bo‘lmaydi.'**
+  String get dailyPlansDeleteMessage;
+
+  /// No description provided for @dailyPlansCancel.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bekor qilish'**
+  String get dailyPlansCancel;
+
+  /// No description provided for @dailyPlansSave.
+  ///
+  /// In uz, this message translates to:
+  /// **'Saqlash'**
+  String get dailyPlansSave;
+
+  /// No description provided for @dailyPlansSaved.
+  ///
+  /// In uz, this message translates to:
+  /// **'Reja saqlandi'**
+  String get dailyPlansSaved;
+
+  /// No description provided for @dailyPlansDeleted.
+  ///
+  /// In uz, this message translates to:
+  /// **'Reja o‘chirildi'**
+  String get dailyPlansDeleted;
+
+  /// No description provided for @dailyPlansDone.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bajarildi'**
+  String get dailyPlansDone;
+
+  /// No description provided for @dailyPlansUndone.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bajarilmadi'**
+  String get dailyPlansUndone;
+
+  /// No description provided for @dailyPlansMyTasks.
+  ///
+  /// In uz, this message translates to:
+  /// **'Mening vazifalarim'**
+  String get dailyPlansMyTasks;
+
+  /// No description provided for @dailyPlansTaskName.
+  ///
+  /// In uz, this message translates to:
+  /// **'Vazifa nomi'**
+  String get dailyPlansTaskName;
+
+  /// No description provided for @dailyPlansDeadline.
+  ///
+  /// In uz, this message translates to:
+  /// **'Muddati'**
+  String get dailyPlansDeadline;
+
+  /// No description provided for @dailyPlansToday.
+  ///
+  /// In uz, this message translates to:
+  /// **'Bugun'**
+  String get dailyPlansToday;
+
+  /// No description provided for @dailyPlansTomorrow.
+  ///
+  /// In uz, this message translates to:
+  /// **'Ertaga'**
+  String get dailyPlansTomorrow;
+
+  /// No description provided for @dailyPlansEditTask.
+  ///
+  /// In uz, this message translates to:
+  /// **'Vazifani tahrirlash'**
+  String get dailyPlansEditTask;
+
   /// No description provided for @taskAdd.
   ///
   /// In uz, this message translates to:

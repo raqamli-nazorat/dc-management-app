@@ -55,8 +55,9 @@ class _MainView extends StatelessWidget {
     statisticsBloc.add(const StatisticsRequested());
     profileBloc.add(const ProfileRequested());
     return Future.wait([
-      statisticsBloc.stream
-          .firstWhere((s) => s.status != StatisticsStatus.loading),
+      statisticsBloc.stream.firstWhere(
+        (s) => s.status != StatisticsStatus.loading,
+      ),
       profileBloc.stream.firstWhere((s) => s.status != ProfileStatus.loading),
     ]);
   }
@@ -68,19 +69,15 @@ class _MainView extends StatelessWidget {
     // scrollable'ning tepasiga bog‘lanadi, shu bois AppBar balandligicha
     // pastga suriladi (aks holda ustidan chiqib qoladi).
     final appBarHeight = MediaQuery.paddingOf(context).top + 64.h;
-    final role =
-        context.select<SessionBloc, RoleType>((b) => b.state.roleType);
-    final showAnalytics = NavPermissions.isVisible(
-      AppSection.analytics,
-      role,
-    );
+    final role = context.select<SessionBloc, RoleType>((b) => b.state.roleType);
+    final showAnalytics = NavPermissions.isVisible(AppSection.analytics, role);
 
     return BlocListener<ProfileBloc, ProfileState>(
       listenWhen: (_, current) =>
           current.status == ProfileStatus.success && current.profile != null,
-      listener: (context, state) => context
-          .read<SessionBloc>()
-          .add(SessionActiveRoleSynced(state.profile!.activeRole)),
+      listener: (context, state) => context.read<SessionBloc>().add(
+        SessionActiveRoleSynced(state.profile!.activeRole),
+      ),
       child: RefreshIndicator(
         onRefresh: () => _onRefresh(context),
         color: colors.accentSub,
@@ -132,15 +129,11 @@ class _Header extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
     final l10n = AppLocalizations.of(context);
-    final roleType =
-        context.select<SessionBloc, RoleType>((b) => b.state.roleType);
-    final showApplications =
-        NavPermissions.isVisible(AppSection.applications, roleType);
-
     return BlocBuilder<ProfileBloc, ProfileState>(
       builder: (context, state) {
         final profile = state.profile;
-        final loading = state.status == ProfileStatus.loading ||
+        final loading =
+            state.status == ProfileStatus.loading ||
             state.status == ProfileStatus.initial;
         final name = profile?.displayName ?? '';
         final role = profile?.displaySubtitle ?? l10n.roleEmployee;
@@ -186,14 +179,11 @@ class _Header extends StatelessWidget {
                   ),
                 ),
               ),
-              if (showApplications) ...[
-                SizedBox(width: 8.w),
-                // Arizalar tugmasi — feature hali qurilmagan, onTap stub.
-                _HeaderIconButton(
-                  icon: Assets.icons.icTaskDaliy,
-                  onTap: () {},
-                ),
-              ],
+              SizedBox(width: 8.w),
+              _HeaderIconButton(
+                icon: Assets.icons.icTaskDaliy,
+                onTap: () => context.pushNamed(Routes.dailyPlans.name),
+              ),
               SizedBox(width: 16.w),
               _HeaderIconButton(
                 icon: Assets.icons.icNotification,
@@ -267,7 +257,9 @@ class _AvatarLetter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
-    final letter = initial.isEmpty ? '?' : initial.characters.first.toUpperCase();
+    final letter = initial.isEmpty
+        ? '?'
+        : initial.characters.first.toUpperCase();
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -340,9 +332,9 @@ class _PeriodRow extends StatelessWidget {
               SizedBox(width: 8.w),
               StatisticsPeriodSelector(
                 selected: state.period,
-                onChanged: (period) => context
-                    .read<StatisticsBloc>()
-                    .add(StatisticsPeriodChanged(period)),
+                onChanged: (period) => context.read<StatisticsBloc>().add(
+                  StatisticsPeriodChanged(period),
+                ),
               ),
             ],
           );
@@ -424,8 +416,9 @@ class _StatisticsError extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
     final l10n = AppLocalizations.of(context);
-    final message =
-        failure is NetworkFailure ? l10n.networkError : l10n.commonError;
+    final message = failure is NetworkFailure
+        ? l10n.networkError
+        : l10n.commonError;
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 40.h),

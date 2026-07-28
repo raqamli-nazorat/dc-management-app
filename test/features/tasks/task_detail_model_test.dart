@@ -1,4 +1,5 @@
 import 'package:dc_management_app/features/tasks/data/models/task_detail_model.dart';
+import 'package:dc_management_app/features/tasks/data/models/task_model.dart';
 import 'package:dc_management_app/features/tasks/domain/entities/task.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -49,6 +50,7 @@ void main() {
     expect(model.sprint, 2);
     expect(model.estimatedMinutes, 90);
     expect(model.status, TaskStatus.done);
+    expect(model.createdById, 9);
     expect(model.createdByName, 'Vali');
     expect(model.rejectionReason, 'Xato bor');
     expect(model.rejectionFiles, ['https://x/y.png']);
@@ -62,5 +64,20 @@ void main() {
     });
     expect(model.projectId, 42);
     expect(model.projectInfo, 'CRM');
+  });
+
+  test('TaskModel keeps offset deadlines in local time for UI', () {
+    final model = TaskModel.fromJson({
+      'id': 1,
+      'deadline': '2026-07-28T23:59:00+05:00',
+      'created_by_info': {'id': 7},
+    });
+
+    expect(
+      model.deadline,
+      DateTime.parse('2026-07-28T23:59:00+05:00').toLocal(),
+    );
+    expect(model.deadline!.isUtc, isFalse);
+    expect(model.createdById, 7);
   });
 }

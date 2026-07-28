@@ -139,6 +139,7 @@ class Task extends Equatable {
     required this.assigneeName,
     required this.assigneePosition,
     required this.assigneeAvatar,
+    this.createdById,
     this.createdByAvatar = '',
   });
 
@@ -167,6 +168,9 @@ class Task extends Equatable {
   final String assigneePosition;
   final String assigneeAvatar;
 
+  /// Muallif id (`created_by_info.id`) — delete permission uchun.
+  final int? createdById;
+
   /// Muallif (`created_by_info.avatar`) — ijrochi avatari bo'lmasa fallback.
   final String createdByAvatar;
 
@@ -184,6 +188,7 @@ class Task extends Equatable {
     assigneeName,
     assigneePosition,
     assigneeAvatar,
+    createdById,
     createdByAvatar,
   ];
 }

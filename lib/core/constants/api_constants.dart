@@ -58,6 +58,12 @@ abstract final class ApiConstants {
   /// Bitta vazifa: `GET/PUT/PATCH/DELETE /tasks/{id}/`.
   static String taskById(int id) => '/tasks/$id/';
 
+  // ── Daily plans ──────────────────────────────────────────────────────────
+  static const todos = '/todos/';
+  static String todoById(int id) => '/todos/$id/';
+  static const todoItems = '/todo-items/';
+  static String todoItemById(int id) => '/todo-items/$id/';
+
   /// Lavozimlar — vazifa "Kimlar uchun" tanlovi (`GET /applications/positions/`).
   static const positions = '/applications/positions/';
 

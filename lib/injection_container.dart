@@ -59,6 +59,11 @@ import 'features/tasks/domain/usecases/update_task_usecase.dart';
 import 'features/tasks/presentation/bloc/task_create_bloc.dart';
 import 'features/tasks/presentation/bloc/task_filter_bloc.dart';
 import 'features/tasks/presentation/bloc/tasks_bloc.dart';
+import 'features/daily_plans/data/data_sources/daily_plan_remote_data_source.dart';
+import 'features/daily_plans/data/repository/daily_plan_repository_impl.dart';
+import 'features/daily_plans/domain/repository/daily_plan_repository.dart';
+import 'features/daily_plans/domain/usecases/daily_plan_usecases.dart';
+import 'features/daily_plans/presentation/bloc/daily_plans_bloc.dart';
 import 'features/notification/data/data_sources/notification_remote_data_source.dart';
 import 'features/notification/data/data_sources/notification_socket_service.dart';
 import 'features/notification/data/repository/notification_repository_impl.dart';
@@ -351,6 +356,42 @@ Future<void> configureDependencies() async {
     )
     ..registerFactory<TaskFilterBloc>(
       () => TaskFilterBloc(getOptions: getIt(), getUsers: getIt()),
+    );
+
+  getIt
+    ..registerLazySingleton<DailyPlanRemoteDataSource>(
+      () => DailyPlanRemoteDataSourceImpl(getIt()),
+    )
+    ..registerLazySingleton<DailyPlanRepository>(
+      () => DailyPlanRepositoryImpl(getIt()),
+    )
+    ..registerLazySingleton<GetDailyPlansUseCase>(
+      () => GetDailyPlansUseCase(getIt()),
+    )
+    ..registerLazySingleton<CreateDailyPlanUseCase>(
+      () => CreateDailyPlanUseCase(getIt()),
+    )
+    ..registerLazySingleton<UpdateDailyPlanUseCase>(
+      () => UpdateDailyPlanUseCase(getIt()),
+    )
+    ..registerLazySingleton<DeleteDailyPlanUseCase>(
+      () => DeleteDailyPlanUseCase(getIt()),
+    )
+    ..registerLazySingleton<CreateDailyPlanItemUseCase>(
+      () => CreateDailyPlanItemUseCase(getIt()),
+    )
+    ..registerLazySingleton<UpdateDailyPlanItemUseCase>(
+      () => UpdateDailyPlanItemUseCase(getIt()),
+    )
+    ..registerFactory<DailyPlansBloc>(
+      () => DailyPlansBloc(
+        getPlans: getIt(),
+        createPlan: getIt(),
+        updatePlan: getIt(),
+        deletePlan: getIt(),
+        createItem: getIt(),
+        updateItem: getIt(),
+      ),
     );
 
   getIt

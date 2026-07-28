@@ -94,6 +94,7 @@ class _TaskCreateViewState extends State<_TaskCreateView> {
     return TaskEditPolicy.scope(
       status: detail.status,
       context: state.permissionContext,
+      createdById: detail.createdById,
     );
   }
 

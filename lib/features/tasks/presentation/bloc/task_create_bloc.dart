@@ -198,6 +198,7 @@ class TaskCreateBloc extends Bloc<TaskCreateEvent, TaskCreateState> {
           status: detail.status,
           context: state.permissionContext,
           deadlineOnly: event.params.task.deadlineOnly,
+          createdById: detail.createdById,
         );
     if (!isAllowed) {
       emit(

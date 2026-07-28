@@ -55,6 +55,8 @@ class TasksState extends Equatable {
     this.filter = TaskFilter.empty,
     this.statusPages = const {},
     this.statusBaseFilter,
+    this.deleteFailure,
+    this.deleteFailureTick = 0,
   });
 
   final TasksStatus status;
@@ -79,6 +81,12 @@ class TasksState extends Equatable {
   /// [statusPages] qaysi statussiz filter uchun olingan.
   final TaskFilter? statusBaseFilter;
 
+  /// Oxirgi delete xatosi — UI toast chiqarishi uchun.
+  final Failure? deleteFailure;
+
+  /// Bir xil xabar ketma-ket kelsa ham listener ishlashi uchun.
+  final int deleteFailureTick;
+
   Map<TaskStatus, int> get statusCounts => {
     for (final entry in statusPages.entries) entry.key: entry.value.totalCount,
   };
@@ -93,6 +101,8 @@ class TasksState extends Equatable {
     TaskFilter? filter,
     Map<TaskStatus, TaskStatusPageSnapshot>? statusPages,
     TaskFilter? statusBaseFilter,
+    Failure? deleteFailure,
+    int? deleteFailureTick,
     bool clearStatusBaseFilter = false,
   }) => TasksState(
     status: status ?? this.status,
@@ -106,6 +116,8 @@ class TasksState extends Equatable {
     statusBaseFilter: clearStatusBaseFilter
         ? null
         : statusBaseFilter ?? this.statusBaseFilter,
+    deleteFailure: deleteFailure,
+    deleteFailureTick: deleteFailureTick ?? this.deleteFailureTick,
   );
 
   @override
@@ -119,5 +131,7 @@ class TasksState extends Equatable {
     filter,
     statusPages,
     statusBaseFilter,
+    deleteFailure,
+    deleteFailureTick,
   ];
 }

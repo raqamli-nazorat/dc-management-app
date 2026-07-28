@@ -25,6 +25,7 @@ class TaskDetail extends Equatable {
     required this.assigneeAvatar,
     required this.positionId,
     required this.positionName,
+    required this.createdById,
     required this.createdByName,
     required this.deadline,
     required this.taskPrice,
@@ -49,6 +50,9 @@ class TaskDetail extends Equatable {
   final String assigneeAvatar;
   final int? positionId;
   final String positionName;
+
+  /// Topshiruvchi id (`created_by_info.id`) — edit permission uchun.
+  final int? createdById;
 
   /// Topshiruvchi (`created_by_info.username`) — Batafsil sahifasida.
   final String createdByName;
@@ -80,6 +84,7 @@ class TaskDetail extends Equatable {
     assigneeAvatar,
     positionId,
     positionName,
+    createdById,
     createdByName,
     deadline,
     taskPrice,

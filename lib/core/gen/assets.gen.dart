@@ -83,6 +83,14 @@ class $AssetsIconsGen {
   /// File path: assets/icons/ic_close.svg
   SvgGenImage get icClose => const SvgGenImage('assets/icons/ic_close.svg');
 
+  /// File path: assets/icons/ic_daily_plan_bookmark.svg
+  SvgGenImage get icDailyPlanBookmark =>
+      const SvgGenImage('assets/icons/ic_daily_plan_bookmark.svg');
+
+  /// File path: assets/icons/ic_daily_plan_star.svg
+  SvgGenImage get icDailyPlanStar =>
+      const SvgGenImage('assets/icons/ic_daily_plan_star.svg');
+
   /// File path: assets/icons/ic_dashboard_square.svg
   SvgGenImage get icDashboardSquare =>
       const SvgGenImage('assets/icons/ic_dashboard_square.svg');
@@ -218,6 +226,8 @@ class $AssetsIconsGen {
     icCheckCircle,
     icCheckmarkCircle,
     icClose,
+    icDailyPlanBookmark,
+    icDailyPlanStar,
     icDashboardSquare,
     icDatabese,
     icDocument,
