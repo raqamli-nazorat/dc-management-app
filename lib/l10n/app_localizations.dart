@@ -134,6 +134,48 @@ abstract class AppLocalizations {
   /// **'Qayta urinish uchun: {time}'**
   String pinBlockedRetryIn(String time);
 
+  /// No description provided for @biometricUnlock.
+  ///
+  /// In uz, this message translates to:
+  /// **'Biometrika orqali kirish'**
+  String get biometricUnlock;
+
+  /// No description provided for @biometricPromptReason.
+  ///
+  /// In uz, this message translates to:
+  /// **'Hisobingizga kirishni tasdiqlang'**
+  String get biometricPromptReason;
+
+  /// No description provided for @biometricNotAvailable.
+  ///
+  /// In uz, this message translates to:
+  /// **'Biometrik kirish mavjud emas'**
+  String get biometricNotAvailable;
+
+  /// No description provided for @biometricNotEnrolled.
+  ///
+  /// In uz, this message translates to:
+  /// **'Qurilmada biometrika sozlanmagan'**
+  String get biometricNotEnrolled;
+
+  /// No description provided for @biometricLocked.
+  ///
+  /// In uz, this message translates to:
+  /// **'Biometrik kirish vaqtincha bloklandi'**
+  String get biometricLocked;
+
+  /// No description provided for @biometricTryPin.
+  ///
+  /// In uz, this message translates to:
+  /// **'PIN orqali davom eting'**
+  String get biometricTryPin;
+
+  /// No description provided for @sessionExpiredLoginAgain.
+  ///
+  /// In uz, this message translates to:
+  /// **'Sessiya tugagan. Qayta login qiling'**
+  String get sessionExpiredLoginAgain;
+
   /// No description provided for @roleTitle.
   ///
   /// In uz, this message translates to:

@@ -29,6 +29,28 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get biometricUnlock => 'Use biometrics';
+
+  @override
+  String get biometricPromptReason => 'Confirm access to your account';
+
+  @override
+  String get biometricNotAvailable => 'Biometric sign-in is not available';
+
+  @override
+  String get biometricNotEnrolled => 'No biometrics are set up on this device';
+
+  @override
+  String get biometricLocked => 'Biometric sign-in is temporarily locked';
+
+  @override
+  String get biometricTryPin => 'Continue with PIN';
+
+  @override
+  String get sessionExpiredLoginAgain =>
+      'Session expired. Please sign in again';
+
+  @override
   String get roleTitle => 'You can use the app with multiple roles';
 
   @override

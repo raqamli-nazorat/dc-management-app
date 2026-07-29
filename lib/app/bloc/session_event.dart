@@ -86,3 +86,8 @@ class SessionAutoLockChanged extends SessionEvent {
   @override
   List<Object?> get props => [timeout];
 }
+
+/// Saqlangan token bilan biometrik tasdiqdan keyin sessiyani ochish.
+class SessionBiometricUnlocked extends SessionEvent {
+  const SessionBiometricUnlocked();
+}

@@ -11,21 +11,31 @@ class PinKeypad extends StatelessWidget {
   const PinKeypad({
     super.key,
     required this.onDigit,
-    required this.onLogin,
     required this.onBackspace,
+    required this.onBiometric,
+    required this.biometricAvailable,
     this.enabled = true,
   });
 
   final ValueChanged<String> onDigit;
-  final VoidCallback onLogin;
   final VoidCallback onBackspace;
+  final VoidCallback onBiometric;
+  final bool biometricAvailable;
   final bool enabled;
 
   static const List<String> _keys = [
-    '1', '2', '3',
-    '4', '5', '6',
-    '7', '8', '9',
-    'login', '0', 'backspace',
+    '1',
+    '2',
+    '3',
+    '4',
+    '5',
+    '6',
+    '7',
+    '8',
+    '9',
+    'biometric',
+    '0',
+    'backspace',
   ];
 
   @override
@@ -37,14 +47,17 @@ class PinKeypad extends StatelessWidget {
       itemCount: _keys.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
-        crossAxisSpacing: 8.w,
-        mainAxisSpacing: 8.h,
-        mainAxisExtent: 64.h,
+        crossAxisSpacing: 10.w,
+        mainAxisSpacing: 10.h,
+        mainAxisExtent: 76.h,
       ),
       itemBuilder: (context, index) {
         final key = _keys[index];
         return switch (key) {
-          'login' => PinKey.login(onTap: enabled ? onLogin : () {}),
+          'biometric' when biometricAvailable => PinKey.biometric(
+            onTap: enabled ? onBiometric : () {},
+          ),
+          'biometric' => const SizedBox.shrink(),
           'backspace' => PinKey.backspace(onTap: enabled ? onBackspace : () {}),
           _ => PinKey.number(key, onTap: enabled ? () => onDigit(key) : () {}),
         };

@@ -127,6 +127,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/ic_globe.svg
   SvgGenImage get icGlobe => const SvgGenImage('assets/icons/ic_globe.svg');
 
+  /// File path: assets/icons/ic_hugeicons_fingerprint_scan.svg
+  SvgGenImage get icHugeiconsFingerprintScan =>
+      const SvgGenImage('assets/icons/ic_hugeicons_fingerprint_scan.svg');
+
   /// File path: assets/icons/ic_lock.svg
   SvgGenImage get icLock => const SvgGenImage('assets/icons/ic_lock.svg');
 
@@ -238,6 +242,7 @@ class $AssetsIconsGen {
     icFilter,
     icFolder,
     icGlobe,
+    icHugeiconsFingerprintScan,
     icLock,
     icMoon,
     icMoreVertical,

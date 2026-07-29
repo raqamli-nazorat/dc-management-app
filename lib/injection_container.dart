@@ -10,6 +10,7 @@ import 'core/network/interceptors/auth_interceptor.dart';
 import 'core/network/interceptors/logging_interceptor.dart';
 import 'core/network/interceptors/refresh_interceptor.dart';
 import 'core/services/logger_service.dart';
+import 'core/services/biometric_auth_service.dart';
 import 'core/services/push_notification_service.dart';
 import 'core/services/storage_service.dart';
 import 'core/services/token_service.dart';
@@ -160,6 +161,7 @@ Future<void> configureDependencies() async {
   getIt
     ..registerSingleton<StorageService>(storage)
     ..registerLazySingleton<LoggerService>(() => LoggerService())
+    ..registerLazySingleton<BiometricAuthService>(() => BiometricAuthService())
     ..registerLazySingleton<TokenService>(() => TokenService(getIt()))
     ..registerLazySingleton<PushNotificationService>(
       () => PushNotificationService(getIt(), getIt()),
@@ -205,7 +207,11 @@ Future<void> configureDependencies() async {
     ..registerLazySingleton<LoginUseCase>(() => LoginUseCase(getIt()))
     ..registerFactory<LoginBloc>(() => LoginBloc(loginUseCase: getIt()))
     ..registerFactory<PinBloc>(
-      () => PinBloc(loginUseCase: getIt(), storage: getIt()),
+      () => PinBloc(
+        loginUseCase: getIt(),
+        storage: getIt(),
+        biometricAuth: getIt(),
+      ),
     )
     // `UpdateMeUseCase` Profile bo‘limida ro‘yxatga olinadi — lazy factory
     // bo‘lgani uchun chaqiruv vaqtida (getIt<RoleSelectBloc>()) hal bo‘ladi.

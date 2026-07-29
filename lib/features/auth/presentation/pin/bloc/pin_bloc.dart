@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/constants/storage_keys.dart';
 import '../../../../../core/error/failures.dart';
+import '../../../../../core/services/biometric_auth_service.dart';
 import '../../../../../core/services/storage_service.dart';
 import '../../../domain/entities/auth_session.dart';
 import '../../../domain/usecases/login_usecase.dart';
@@ -21,18 +22,23 @@ class PinBloc extends Bloc<PinEvent, PinState> {
   PinBloc({
     required LoginUseCase loginUseCase,
     required StorageService storage,
-  })  : _loginUseCase = loginUseCase,
-        _storage = storage,
-        super(PinState(length: _readLength(storage))) {
+    required BiometricAuthService biometricAuth,
+  }) : _loginUseCase = loginUseCase,
+       _storage = storage,
+       _biometricAuth = biometricAuth,
+       super(PinState(length: _readLength(storage))) {
     on<PinDigitPressed>(_onDigitPressed);
     on<PinBackspacePressed>(_onBackspace);
     on<PinVisibilityToggled>(_onVisibilityToggled);
     on<PinSubmitted>(_onSubmitted);
     on<PinThrottleTicked>(_onThrottleTicked);
+    on<PinBiometricAvailabilityChecked>(_onBiometricAvailabilityChecked);
+    on<PinBiometricRequested>(_onBiometricRequested);
   }
 
   final LoginUseCase _loginUseCase;
   final StorageService _storage;
+  final BiometricAuthService _biometricAuth;
 
   Timer? _throttleTimer;
 
@@ -51,11 +57,9 @@ class PinBloc extends Bloc<PinEvent, PinState> {
     if (state.pin.length >= state.length) return;
 
     final pin = state.pin + event.digit;
-    emit(state.copyWith(
-      pin: pin,
-      status: PinStatus.input,
-      error: PinError.none,
-    ));
+    emit(
+      state.copyWith(pin: pin, status: PinStatus.input, error: PinError.none),
+    );
 
     if (pin.length == state.length) {
       add(const PinSubmitted());
@@ -64,11 +68,13 @@ class PinBloc extends Bloc<PinEvent, PinState> {
 
   void _onBackspace(PinBackspacePressed event, Emitter<PinState> emit) {
     if (state.isBusy || state.isBlocked || state.pin.isEmpty) return;
-    emit(state.copyWith(
-      pin: state.pin.substring(0, state.pin.length - 1),
-      status: PinStatus.input,
-      error: PinError.none,
-    ));
+    emit(
+      state.copyWith(
+        pin: state.pin.substring(0, state.pin.length - 1),
+        status: PinStatus.input,
+        error: PinError.none,
+      ),
+    );
   }
 
   void _onVisibilityToggled(
@@ -76,6 +82,45 @@ class PinBloc extends Bloc<PinEvent, PinState> {
     Emitter<PinState> emit,
   ) {
     emit(state.copyWith(obscure: !state.obscure));
+  }
+
+  Future<void> _onBiometricAvailabilityChecked(
+    PinBiometricAvailabilityChecked event,
+    Emitter<PinState> emit,
+  ) async {
+    final availability = await _biometricAuth.checkAvailability();
+    emit(state.copyWith(biometricAvailability: availability));
+  }
+
+  Future<void> _onBiometricRequested(
+    PinBiometricRequested event,
+    Emitter<PinState> emit,
+  ) async {
+    if (state.biometricAvailability != BiometricAvailability.available ||
+        state.biometricPromptInProgress) {
+      return;
+    }
+
+    emit(
+      state.copyWith(
+        status: PinStatus.input,
+        biometricPromptInProgress: true,
+        error: PinError.none,
+      ),
+    );
+    final result = await _biometricAuth.authenticate(event.localizedReason);
+    emit(
+      state.copyWith(
+        biometricPromptInProgress: false,
+        biometricResult: result,
+        error: switch (result) {
+          BiometricAuthResult.lockedOut => PinError.biometricLocked,
+          BiometricAuthResult.failed ||
+          BiometricAuthResult.unavailable => PinError.biometricUnavailable,
+          _ => PinError.none,
+        },
+      ),
+    );
   }
 
   Future<void> _onSubmitted(PinSubmitted event, Emitter<PinState> emit) async {
@@ -92,37 +137,47 @@ class PinBloc extends Bloc<PinEvent, PinState> {
       final AuthSession session = await _loginUseCase(
         LoginParams(username: username, password: state.pin),
       );
-      emit(state.copyWith(
-        status: PinStatus.success,
-        roles: session.user.roles,
-        token: session.tokens.access,
-      ));
+      emit(
+        state.copyWith(
+          status: PinStatus.success,
+          roles: session.user.roles,
+          token: session.tokens.access,
+        ),
+      );
     } on ThrottleFailure catch (failure) {
       _startThrottle(_parseSeconds(failure.message), emit);
     } on UnauthorizedFailure catch (_) {
-      emit(state.copyWith(
-        pin: '',
-        status: PinStatus.error,
-        error: PinError.incorrect,
-      ));
+      emit(
+        state.copyWith(
+          pin: '',
+          status: PinStatus.error,
+          error: PinError.incorrect,
+        ),
+      );
     } on NetworkFailure catch (_) {
-      emit(state.copyWith(
-        pin: '',
-        status: PinStatus.error,
-        error: PinError.network,
-      ));
+      emit(
+        state.copyWith(
+          pin: '',
+          status: PinStatus.error,
+          error: PinError.network,
+        ),
+      );
     } on Failure catch (_) {
-      emit(state.copyWith(
-        pin: '',
-        status: PinStatus.error,
-        error: PinError.generic,
-      ));
+      emit(
+        state.copyWith(
+          pin: '',
+          status: PinStatus.error,
+          error: PinError.generic,
+        ),
+      );
     } catch (_) {
-      emit(state.copyWith(
-        pin: '',
-        status: PinStatus.error,
-        error: PinError.generic,
-      ));
+      emit(
+        state.copyWith(
+          pin: '',
+          status: PinStatus.error,
+          error: PinError.generic,
+        ),
+      );
     }
   }
 
@@ -130,11 +185,13 @@ class PinBloc extends Bloc<PinEvent, PinState> {
     final remaining = state.blockedSeconds - 1;
     if (remaining <= 0) {
       _throttleTimer?.cancel();
-      emit(state.copyWith(
-        status: PinStatus.input,
-        error: PinError.none,
-        blockedSeconds: 0,
-      ));
+      emit(
+        state.copyWith(
+          status: PinStatus.input,
+          error: PinError.none,
+          blockedSeconds: 0,
+        ),
+      );
       return;
     }
     emit(state.copyWith(blockedSeconds: remaining));
@@ -142,12 +199,14 @@ class PinBloc extends Bloc<PinEvent, PinState> {
 
   void _startThrottle(int seconds, Emitter<PinState> emit) {
     final total = seconds <= 0 ? 1 : seconds;
-    emit(state.copyWith(
-      pin: '',
-      status: PinStatus.blocked,
-      error: PinError.blocked,
-      blockedSeconds: total,
-    ));
+    emit(
+      state.copyWith(
+        pin: '',
+        status: PinStatus.blocked,
+        error: PinError.blocked,
+        blockedSeconds: total,
+      ),
+    );
     _throttleTimer?.cancel();
     _throttleTimer = Timer.periodic(
       const Duration(seconds: 1),

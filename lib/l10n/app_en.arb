@@ -7,6 +7,13 @@
   "pinRetry": "Please try again",
   "pinBlocked": "Access temporarily blocked",
   "pinBlockedRetryIn": "Try again in: {time}",
+  "biometricUnlock": "Use biometrics",
+  "biometricPromptReason": "Confirm access to your account",
+  "biometricNotAvailable": "Biometric sign-in is not available",
+  "biometricNotEnrolled": "No biometrics are set up on this device",
+  "biometricLocked": "Biometric sign-in is temporarily locked",
+  "biometricTryPin": "Continue with PIN",
+  "sessionExpiredLoginAgain": "Session expired. Please sign in again",
 
   "roleTitle": "You can use the app with multiple roles",
   "roleSubtitle": "Select one of the following.",

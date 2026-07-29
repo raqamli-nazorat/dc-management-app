@@ -36,3 +36,16 @@ class PinSubmitted extends PinEvent {
 class PinThrottleTicked extends PinEvent {
   const PinThrottleTicked();
 }
+
+class PinBiometricAvailabilityChecked extends PinEvent {
+  const PinBiometricAvailabilityChecked();
+}
+
+class PinBiometricRequested extends PinEvent {
+  const PinBiometricRequested(this.localizedReason);
+
+  final String localizedReason;
+
+  @override
+  List<Object?> get props => [localizedReason];
+}
