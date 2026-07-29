@@ -5,6 +5,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../../app/bloc/session_bloc.dart';
 import '../../../../../config/theme/app_colors.dart';
 import '../../../../../core/extentions/text_extensions.dart';
+import '../../../../../core/gen/assets.gen.dart';
+import '../../../../../core/services/biometric_auth_service.dart';
 import '../../../../../injection_container.dart';
 import '../../../../../l10n/app_localizations.dart';
 import '../bloc/pin_bloc.dart';
@@ -19,14 +21,22 @@ class PinPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<PinBloc>(
-      create: (_) => getIt<PinBloc>(),
+      create: (_) =>
+          getIt<PinBloc>()..add(const PinBiometricAvailabilityChecked()),
       child: const _PinView(),
     );
   }
 }
 
-class _PinView extends StatelessWidget {
+class _PinView extends StatefulWidget {
   const _PinView();
+
+  @override
+  State<_PinView> createState() => _PinViewState();
+}
+
+class _PinViewState extends State<_PinView> {
+  bool _autoBiometricPromptRequested = false;
 
   @override
   Widget build(BuildContext context) {
@@ -36,12 +46,29 @@ class _PinView extends StatelessWidget {
     return Scaffold(
       backgroundColor: colors.backgroundBase,
       body: BlocListener<PinBloc, PinState>(
-        listenWhen: (p, c) => p.status != c.status,
+        listenWhen: (p, c) =>
+            p.status != c.status ||
+            p.biometricResult != c.biometricResult ||
+            p.biometricAvailability != c.biometricAvailability,
         listener: (context, state) {
+          if (!_autoBiometricPromptRequested &&
+              state.biometricAvailability == BiometricAvailability.available &&
+              !state.biometricPromptInProgress &&
+              state.pin.isEmpty &&
+              !state.isBusy &&
+              !state.isBlocked) {
+            _autoBiometricPromptRequested = true;
+            context.read<PinBloc>().add(
+              PinBiometricRequested(l10n.biometricPromptReason),
+            );
+          }
           if (state.status == PinStatus.success && state.token != null) {
             context.read<SessionBloc>().add(
-                  SessionLoggedIn(token: state.token!, roles: state.roles),
-                );
+              SessionLoggedIn(token: state.token!, roles: state.roles),
+            );
+          }
+          if (state.biometricResult == BiometricAuthResult.success) {
+            context.read<SessionBloc>().add(const SessionBiometricUnlocked());
           }
         },
         child: SafeArea(
@@ -50,13 +77,39 @@ class _PinView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 40.h),
-                l10n.pinTitle
-                    .s(28.sp)
-                    .w(800)
-                    .c(colors.textStrong)
-                    .h(32 / 28)
-                    .copyWith(maxLines: 2, overflow: TextOverflow.ellipsis),
+                SizedBox(height: 72.h),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: l10n.pinTitle
+                          .s(28.sp)
+                          .w(800)
+                          .c(colors.textStrong)
+                          .h(32 / 28)
+                          .copyWith(
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                    ),
+                    Tooltip(
+                      message: l10n.profileLogoutConfirm,
+                      child: IconButton(
+                        onPressed: () => context.read<SessionBloc>().add(
+                          const SessionLogoutRequested(),
+                        ),
+                        icon: Assets.icons.icArrowRightExit.svg(
+                          width: 28.r,
+                          height: 28.r,
+                          colorFilter: ColorFilter.mode(
+                            colors.errorStrong,
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
                 SizedBox(height: 8.h),
                 l10n.pinSubtitle
                     .s(15.sp)
@@ -103,16 +156,26 @@ class _PinView extends StatelessWidget {
                   ),
                 ),
                 BlocBuilder<PinBloc, PinState>(
-                  buildWhen: (p, c) => p.status != c.status,
+                  buildWhen: (p, c) =>
+                      p.status != c.status ||
+                      p.biometricAvailability != c.biometricAvailability ||
+                      p.biometricPromptInProgress !=
+                          c.biometricPromptInProgress,
                   builder: (context, state) {
                     final bloc = context.read<PinBloc>();
                     return PinKeypad(
-                      enabled: !state.isBusy && !state.isBlocked,
+                      enabled:
+                          !state.isBusy &&
+                          !state.isBlocked &&
+                          !state.biometricPromptInProgress,
                       onDigit: (d) => bloc.add(PinDigitPressed(d)),
                       onBackspace: () => bloc.add(const PinBackspacePressed()),
-                      onLogin: () => context
-                          .read<SessionBloc>()
-                          .add(const SessionLogoutRequested()),
+                      biometricAvailable:
+                          state.biometricAvailability ==
+                          BiometricAvailability.available,
+                      onBiometric: () => bloc.add(
+                        PinBiometricRequested(l10n.biometricPromptReason),
+                      ),
                     );
                   },
                 ),
@@ -153,6 +216,14 @@ class _PinStatusMessage extends StatelessWidget {
             l10n.pinBlockedRetryIn(_formatCountdown(state.blockedSeconds)),
           ),
           PinError.network => (l10n.networkError, null),
+          PinError.biometricLocked => (
+            l10n.biometricLocked,
+            l10n.biometricTryPin,
+          ),
+          PinError.biometricUnavailable => (
+            l10n.biometricNotAvailable,
+            l10n.biometricTryPin,
+          ),
           PinError.generic => (l10n.commonError, null),
           PinError.none => (null, null),
         };

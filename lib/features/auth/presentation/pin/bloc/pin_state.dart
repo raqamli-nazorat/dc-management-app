@@ -3,7 +3,15 @@ part of 'pin_bloc.dart';
 enum PinStatus { input, loading, error, blocked, success }
 
 /// Xato turi — lokalizatsiya UI qatlamida (bloc context'siz).
-enum PinError { none, incorrect, blocked, network, generic }
+enum PinError {
+  none,
+  incorrect,
+  blocked,
+  network,
+  generic,
+  biometricLocked,
+  biometricUnavailable,
+}
 
 class PinState extends Equatable {
   const PinState({
@@ -15,6 +23,9 @@ class PinState extends Equatable {
     this.blockedSeconds = 0,
     this.roles = const <String>[],
     this.token,
+    this.biometricAvailability = BiometricAvailability.unavailable,
+    this.biometricResult,
+    this.biometricPromptInProgress = false,
   });
 
   /// Storage'da uzunlik bo‘lmasa — zaxira qiymat.
@@ -31,6 +42,9 @@ class PinState extends Equatable {
   /// Muvaffaqiyatda qaytgan rollar + token.
   final List<String> roles;
   final String? token;
+  final BiometricAvailability biometricAvailability;
+  final BiometricAuthResult? biometricResult;
+  final bool biometricPromptInProgress;
 
   bool get isComplete => pin.length == length;
   bool get isBlocked => status == PinStatus.blocked;
@@ -45,6 +59,9 @@ class PinState extends Equatable {
     int? blockedSeconds,
     List<String>? roles,
     String? token,
+    BiometricAvailability? biometricAvailability,
+    BiometricAuthResult? biometricResult,
+    bool? biometricPromptInProgress,
   }) {
     return PinState(
       length: length ?? this.length,
@@ -55,10 +72,26 @@ class PinState extends Equatable {
       blockedSeconds: blockedSeconds ?? this.blockedSeconds,
       roles: roles ?? this.roles,
       token: token ?? this.token,
+      biometricAvailability:
+          biometricAvailability ?? this.biometricAvailability,
+      biometricResult: biometricResult ?? this.biometricResult,
+      biometricPromptInProgress:
+          biometricPromptInProgress ?? this.biometricPromptInProgress,
     );
   }
 
   @override
-  List<Object?> get props =>
-      [length, pin, obscure, status, error, blockedSeconds, roles, token];
+  List<Object?> get props => [
+    length,
+    pin,
+    obscure,
+    status,
+    error,
+    blockedSeconds,
+    roles,
+    token,
+    biometricAvailability,
+    biometricResult,
+    biometricPromptInProgress,
+  ];
 }

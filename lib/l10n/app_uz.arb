@@ -10,6 +10,13 @@
   "@pinBlockedRetryIn": {
     "placeholders": { "time": { "type": "String" } }
   },
+  "biometricUnlock": "Biometrika orqali kirish",
+  "biometricPromptReason": "Hisobingizga kirishni tasdiqlang",
+  "biometricNotAvailable": "Biometrik kirish mavjud emas",
+  "biometricNotEnrolled": "Qurilmada biometrika sozlanmagan",
+  "biometricLocked": "Biometrik kirish vaqtincha bloklandi",
+  "biometricTryPin": "PIN orqali davom eting",
+  "sessionExpiredLoginAgain": "Sessiya tugagan. Qayta login qiling",
 
   "roleTitle": "Siz dasturni bir nechta rol bilan foydalanishingiz mumkin",
   "roleSubtitle": "Quyidagilardan birini tanlang.",

@@ -30,6 +30,27 @@ class AppLocalizationsUz extends AppLocalizations {
   }
 
   @override
+  String get biometricUnlock => 'Biometrika orqali kirish';
+
+  @override
+  String get biometricPromptReason => 'Hisobingizga kirishni tasdiqlang';
+
+  @override
+  String get biometricNotAvailable => 'Biometrik kirish mavjud emas';
+
+  @override
+  String get biometricNotEnrolled => 'Qurilmada biometrika sozlanmagan';
+
+  @override
+  String get biometricLocked => 'Biometrik kirish vaqtincha bloklandi';
+
+  @override
+  String get biometricTryPin => 'PIN orqali davom eting';
+
+  @override
+  String get sessionExpiredLoginAgain => 'Sessiya tugagan. Qayta login qiling';
+
+  @override
   String get roleTitle =>
       'Siz dasturni bir nechta rol bilan foydalanishingiz mumkin';
 

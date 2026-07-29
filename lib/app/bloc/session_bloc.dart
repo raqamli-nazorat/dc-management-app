@@ -38,6 +38,7 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
     on<SessionBackgrounded>(_onBackgrounded);
     on<SessionResumed>(_onResumed);
     on<SessionAutoLockChanged>(_onAutoLockChanged);
+    on<SessionBiometricUnlocked>(_onBiometricUnlocked);
   }
 
   final TokenService _tokenService;
@@ -172,6 +173,25 @@ class SessionBloc extends Bloc<SessionEvent, SessionState> {
       event.timeout.inSeconds.toString(),
     );
     emit(state.copyWith(autoLockTimeout: event.timeout));
+  }
+
+  Future<void> _onBiometricUnlocked(
+    SessionBiometricUnlocked event,
+    Emitter<SessionState> emit,
+  ) async {
+    if (!_hasToken) {
+      emit(const SessionState.unauthenticated());
+      return;
+    }
+
+    await _touchExpiry();
+    await _touchLastActive();
+    emit(
+      SessionState.authenticated(
+        activeRole: _storage.getString(StorageKeys.activeRole),
+        autoLockTimeout: pinLockTimeout,
+      ),
+    );
   }
 
   Future<void> _onRoleSelected(
