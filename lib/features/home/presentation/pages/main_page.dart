@@ -15,6 +15,7 @@ import '../../../../core/gen/assets.gen.dart';
 import '../../../../injection_container.dart';
 import '../../../../l10n/app_localizations.dart';
 import '../../../profile/presentation/bloc/profile_bloc.dart';
+import '../../../notification/presentation/bloc/notification_bloc.dart';
 import '../../../statistics/presentation/bloc/statistics_bloc.dart';
 import '../../../statistics/presentation/widgets/chart_card.dart';
 import '../../../statistics/presentation/widgets/meetings_donut_chart.dart';
@@ -37,6 +38,11 @@ class MainPage extends StatelessWidget {
         BlocProvider<StatisticsBloc>(
           create: (_) =>
               getIt<StatisticsBloc>()..add(const StatisticsRequested()),
+        ),
+        BlocProvider<NotificationBloc>(
+          create: (_) =>
+              getIt<NotificationBloc>()
+                ..add(const NotificationsUnreadCountRequested()),
         ),
       ],
       child: const _MainView(),
@@ -185,9 +191,14 @@ class _Header extends StatelessWidget {
                 onTap: () => context.pushNamed(Routes.dailyPlans.name),
               ),
               SizedBox(width: 16.w),
-              _HeaderIconButton(
-                icon: Assets.icons.icNotification,
-                onTap: () => context.pushNamed(Routes.notifications.name),
+              BlocBuilder<NotificationBloc, NotificationState>(
+                buildWhen: (previous, current) =>
+                    previous.unreadCount != current.unreadCount,
+                builder: (context, state) => _HeaderIconButton(
+                  icon: Assets.icons.icNotification,
+                  badgeCount: state.unreadCount,
+                  onTap: () => context.pushNamed(Routes.notifications.name),
+                ),
               ),
             ],
           ),
@@ -272,10 +283,15 @@ class _AvatarLetter extends StatelessWidget {
 }
 
 class _HeaderIconButton extends StatelessWidget {
-  const _HeaderIconButton({required this.icon, required this.onTap});
+  const _HeaderIconButton({
+    required this.icon,
+    required this.onTap,
+    this.badgeCount = 0,
+  });
 
   final SvgGenImage icon;
   final VoidCallback onTap;
+  final int badgeCount;
 
   @override
   Widget build(BuildContext context) {
@@ -290,20 +306,87 @@ class _HeaderIconButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(color: colors.strokeStrong, width: 1.w),
         ),
-        child: SizedBox(
-          width: 40.w,
-          height: 40.w,
-          child: Center(
-            child: icon.svg(
-              width: 24.w,
-              height: 24.w,
-              colorFilter: ColorFilter.mode(colors.iconStrong, BlendMode.srcIn),
+        child: CustomPaint(
+          painter: _UnreadBadgePainter(
+            count: badgeCount,
+            badgeColor: colors.badgeUnread,
+            textColor: colors.textWhite,
+            ringColor: colors.backgroundElevation1,
+          ),
+          child: SizedBox(
+            width: 40.w,
+            height: 40.w,
+            child: Center(
+              child: icon.svg(
+                width: 24.w,
+                height: 24.w,
+                colorFilter: ColorFilter.mode(
+                  colors.iconStrong,
+                  BlendMode.srcIn,
+                ),
+              ),
             ),
           ),
         ),
       ),
     );
   }
+}
+
+class _UnreadBadgePainter extends CustomPainter {
+  const _UnreadBadgePainter({
+    required this.count,
+    required this.badgeColor,
+    required this.textColor,
+    required this.ringColor,
+  });
+
+  final int count;
+  final Color badgeColor;
+  final Color textColor;
+  final Color ringColor;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (count <= 0) return;
+
+    final label = count > 99 ? '99+' : '$count';
+    final width = label.length == 1 ? 14.w : 22.w;
+    final badge = RRect.fromRectAndRadius(
+      Rect.fromLTWH(size.width - width, 0, width, 14.w),
+      Radius.circular(7.r),
+    );
+    canvas.drawRRect(badge, Paint()..color = ringColor);
+    canvas.drawRRect(badge.shift(Offset(0, 1.w)), Paint()..color = badgeColor);
+
+    final painter = TextPainter(
+      text: TextSpan(
+        text: label,
+        style: TextStyle(
+          color: textColor,
+          fontFamily: 'Manrope',
+          fontSize: 8.sp,
+          fontWeight: FontWeight.w800,
+          height: 1,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout(maxWidth: width);
+    painter.paint(
+      canvas,
+      Offset(
+        size.width - (width + painter.width) / 2,
+        1.w + (14.w - painter.height) / 2,
+      ),
+    );
+  }
+
+  @override
+  bool shouldRepaint(_UnreadBadgePainter old) =>
+      old.count != count ||
+      old.badgeColor != badgeColor ||
+      old.textColor != textColor ||
+      old.ringColor != ringColor;
 }
 
 /// "Davrni tanlang" + segment selektori qatori.

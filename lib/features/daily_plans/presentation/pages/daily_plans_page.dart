@@ -53,20 +53,23 @@ class _DailyPlansView extends StatelessWidget {
   }
 
   Future<void> _confirmDelete(BuildContext context, DailyPlan plan) async {
+    final colors = AppColors.of(context);
     final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: Text(l10n.dailyPlansDeleteTitle),
-        content: Text(l10n.dailyPlansDeleteMessage),
+        backgroundColor: colors.backgroundBase,
+        surfaceTintColor: Colors.transparent,
+        title: l10n.dailyPlansDeleteTitle.s(20.sp).w(600).c(colors.textStrong),
+        content: l10n.dailyPlansDeleteMessage.s(15.sp).w(400).c(colors.textSub),
         actions: [
           TextButton(
             onPressed: () => context.pop(false),
-            child: Text(l10n.dailyPlansCancel),
+            child: l10n.dailyPlansCancel.s(14.sp).w(600).c(colors.textAccent),
           ),
           TextButton(
             onPressed: () => context.pop(true),
-            child: Text(l10n.dailyPlansDelete),
+            child: l10n.dailyPlansDelete.s(14.sp).w(600).c(colors.errorStrong),
           ),
         ],
       ),

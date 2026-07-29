@@ -869,6 +869,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get taskFilterStatus => 'Status';
 
   @override
+  String get taskFilterAllStatuses => 'All';
+
+  @override
   String get taskFilterStatusHint => 'Select status';
 
   @override

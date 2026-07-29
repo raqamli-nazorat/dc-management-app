@@ -12,6 +12,11 @@ class NotificationsRequested extends NotificationEvent {
   const NotificationsRequested();
 }
 
+/// Header badge uchun o'qilmaganlar sonini yuklash.
+class NotificationsUnreadCountRequested extends NotificationEvent {
+  const NotificationsUnreadCountRequested();
+}
+
 /// Bittasini o‘qilgan deb belgilash.
 class NotificationMarkedRead extends NotificationEvent {
   const NotificationMarkedRead(this.id);

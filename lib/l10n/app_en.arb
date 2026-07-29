@@ -316,6 +316,7 @@
 
   "taskFilterTitle": "Filter",
   "taskFilterStatus": "Status",
+  "taskFilterAllStatuses": "All",
   "taskFilterStatusHint": "Select status",
   "taskStatusTodo": "To do",
   "taskStatusInProgress": "In progress",

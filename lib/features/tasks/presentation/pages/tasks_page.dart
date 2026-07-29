@@ -392,7 +392,7 @@ class _SearchFilterRowState extends State<_SearchFilterRow> {
     }
   }
 
-  void _selectStatus(TaskStatus status) {
+  void _selectStatus(TaskStatus? status) {
     _statusPortalController.hide();
     final bloc = context.read<TasksBloc>();
     bloc.add(TasksFilterChanged(bloc.state.filter.copyWithStatus(status)));
@@ -638,7 +638,7 @@ class _StatusDropdown extends StatelessWidget {
 
   final TaskStatus? selected;
   final Map<TaskStatus, int> counts;
-  final ValueChanged<TaskStatus> onSelected;
+  final ValueChanged<TaskStatus?> onSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -657,6 +657,13 @@ class _StatusDropdown extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              _StatusDropdownItem(
+                status: null,
+                count: null,
+                selected: selected == null,
+                onTap: () => onSelected(null),
+              ),
+              SizedBox(height: 2.h),
               for (final status in taskFilterStatuses) ...[
                 _StatusDropdownItem(
                   status: status,
@@ -682,8 +689,8 @@ class _StatusDropdownItem extends StatelessWidget {
     required this.onTap,
   });
 
-  final TaskStatus status;
-  final int count;
+  final TaskStatus? status;
+  final int? count;
   final bool selected;
   final VoidCallback onTap;
 
@@ -691,6 +698,9 @@ class _StatusDropdownItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
     final l10n = AppLocalizations.of(context);
+    final label = status == null
+        ? l10n.taskFilterAllStatuses
+        : _statusLabel(status!, l10n);
 
     return InkWell(
       onTap: onTap,
@@ -705,15 +715,20 @@ class _StatusDropdownItem extends StatelessWidget {
           child: Row(
             children: [
               Expanded(
-                child: _statusLabel(status, l10n)
+                child: label
                     .s(13.sp)
                     .w(800)
                     .h(20 / 13)
                     .c(colors.textStrong)
                     .copyWith(maxLines: 1, overflow: TextOverflow.ellipsis),
               ),
-              SizedBox(width: 8.w),
-              _StatusBadge(count: count, color: _statusColor(status, colors)),
+              if (status != null) ...[
+                SizedBox(width: 8.w),
+                _StatusBadge(
+                  count: count ?? 0,
+                  color: _statusColor(status!, colors),
+                ),
+              ],
             ],
           ),
         ),
