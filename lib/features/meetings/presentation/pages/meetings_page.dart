@@ -7,11 +7,14 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../config/routes/entity/routes.dart';
 import '../../../../config/theme/app_colors.dart';
+import '../../../../app/bloc/session_bloc.dart';
+import '../../../../core/access/role_type.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/extentions/text_extensions.dart';
 import '../../../../core/gen/assets.gen.dart';
 import '../../../../injection_container.dart';
 import '../../../../l10n/app_localizations.dart';
+import '../../../profile/presentation/bloc/profile_bloc.dart';
 import '../../domain/entities/meeting_filter.dart';
 import '../bloc/meetings_bloc.dart';
 import '../widgets/meeting_card.dart';
@@ -22,8 +25,15 @@ class MeetingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<MeetingsBloc>(
-      create: (_) => getIt<MeetingsBloc>()..add(const MeetingsRequested()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<MeetingsBloc>(
+          create: (_) => getIt<MeetingsBloc>()..add(const MeetingsRequested()),
+        ),
+        BlocProvider<ProfileBloc>(
+          create: (_) => getIt<ProfileBloc>()..add(const ProfileRequested()),
+        ),
+      ],
       child: const _MeetingsView(),
     );
   }
@@ -41,6 +51,12 @@ class _MeetingsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = AppColors.of(context);
+    final activeRole = context.select<SessionBloc, RoleType>(
+      (bloc) => bloc.state.roleType,
+    );
+    final currentUserId = context.select<ProfileBloc, int>(
+      (bloc) => bloc.state.profile?.id ?? 0,
+    );
 
     return Scaffold(
       backgroundColor: colors.backgroundBase,
@@ -84,6 +100,9 @@ class _MeetingsView extends StatelessWidget {
                           separatorBuilder: (_, _) => SizedBox(height: 12.h),
                           itemBuilder: (_, i) {
                             final meeting = state.items[i];
+                            final canManage =
+                                activeRole != RoleType.employee ||
+                                meeting.organizerId == currentUserId;
                             return MeetingCard(
                               meeting: meeting,
                               // Detail'da yig'ilish yakunlansa pop(true)
@@ -99,20 +118,27 @@ class _MeetingsView extends StatelessWidget {
                                   bloc.add(const MeetingsRequested());
                                 }
                               },
-                              onEdit: () async {
-                                final bloc = context.read<MeetingsBloc>();
-                                final updated = await context.pushNamed<bool>(
-                                  Routes.meetingEdit.name,
-                                  pathParameters: {'id': '${meeting.id}'},
-                                  extra: meeting,
-                                );
-                                if (updated == true) {
-                                  bloc.add(const MeetingsRequested());
-                                }
-                              },
-                              onDelete: () => context.read<MeetingsBloc>().add(
-                                MeetingsMeetingDeleted(meeting.id),
-                              ),
+                              onEdit: canManage
+                                  ? () async {
+                                      final bloc = context.read<MeetingsBloc>();
+                                      final updated = await context
+                                          .pushNamed<bool>(
+                                            Routes.meetingEdit.name,
+                                            pathParameters: {
+                                              'id': '${meeting.id}',
+                                            },
+                                            extra: meeting,
+                                          );
+                                      if (updated == true) {
+                                        bloc.add(const MeetingsRequested());
+                                      }
+                                    }
+                                  : null,
+                              onDelete: canManage
+                                  ? () => context.read<MeetingsBloc>().add(
+                                      MeetingsMeetingDeleted(meeting.id),
+                                    )
+                                  : null,
                             );
                           },
                         );

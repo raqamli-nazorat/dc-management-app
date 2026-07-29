@@ -153,7 +153,8 @@ class MeetingCard extends StatelessWidget {
                     ),
                   ),
                   SizedBox(width: 8.w),
-                  _MoreMenu(onEdit: onEdit, onDelete: onDelete),
+                  if (onEdit != null || onDelete != null)
+                    _MoreMenu(onEdit: onEdit, onDelete: onDelete),
                 ],
               ),
             ],
@@ -211,26 +212,28 @@ class _MoreMenu extends StatelessWidget {
       ),
       onSelected: (action) => _onSelected(context, action),
       itemBuilder: (_) => [
-        PopupMenuItem(
-          value: _MeetingMenuAction.edit,
-          height: 40.h,
-          padding: EdgeInsets.symmetric(horizontal: 8.w),
-          child: _MenuRow(
-            icon: Assets.icons.icSettingsLarge,
-            label: l10n.projectMenuEdit,
-            color: colors.textStrong,
+        if (onEdit != null)
+          PopupMenuItem(
+            value: _MeetingMenuAction.edit,
+            height: 40.h,
+            padding: EdgeInsets.symmetric(horizontal: 8.w),
+            child: _MenuRow(
+              icon: Assets.icons.icSettingsLarge,
+              label: l10n.projectMenuEdit,
+              color: colors.textStrong,
+            ),
           ),
-        ),
-        PopupMenuItem(
-          value: _MeetingMenuAction.delete,
-          height: 40.h,
-          padding: EdgeInsets.symmetric(horizontal: 8.w),
-          child: _MenuRow(
-            icon: Assets.icons.icTrash,
-            label: l10n.taskMenuDelete,
-            color: colors.errorStrong,
+        if (onDelete != null)
+          PopupMenuItem(
+            value: _MeetingMenuAction.delete,
+            height: 40.h,
+            padding: EdgeInsets.symmetric(horizontal: 8.w),
+            child: _MenuRow(
+              icon: Assets.icons.icTrash,
+              label: l10n.taskMenuDelete,
+              color: colors.errorStrong,
+            ),
           ),
-        ),
       ],
       child: Assets.icons.icMoreVertical.svg(
         width: 24.w,

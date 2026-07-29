@@ -319,6 +319,7 @@
 
   "taskFilterTitle": "Filtrlash",
   "taskFilterStatus": "Holati",
+  "taskFilterAllStatuses": "Barchasi",
   "taskFilterStatusHint": "Holati tanlang",
   "taskStatusTodo": "Bajarilishi kerak",
   "taskStatusInProgress": "Jarayonda",

@@ -15,14 +15,17 @@ part 'notification_state.dart';
 class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   NotificationBloc({
     required GetNotificationsUseCase getNotifications,
+    required GetUnreadCountUseCase getUnreadCount,
     required MarkNotificationReadUseCase markRead,
     required ReadAllNotificationsUseCase readAll,
     required WatchNotificationsUseCase watch,
-  })  : _getNotifications = getNotifications,
-        _markRead = markRead,
-        _readAll = readAll,
-        super(const NotificationState()) {
+  }) : _getNotifications = getNotifications,
+       _getUnreadCount = getUnreadCount,
+       _markRead = markRead,
+       _readAll = readAll,
+       super(const NotificationState()) {
     on<NotificationsRequested>(_onRequested);
+    on<NotificationsUnreadCountRequested>(_onUnreadCountRequested);
     on<NotificationMarkedRead>(_onMarkedRead);
     on<NotificationReadAllRequested>(_onReadAll);
     on<NotificationReceived>(_onReceived);
@@ -32,6 +35,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   }
 
   final GetNotificationsUseCase _getNotifications;
+  final GetUnreadCountUseCase _getUnreadCount;
   final MarkNotificationReadUseCase _markRead;
   final ReadAllNotificationsUseCase _readAll;
   late final StreamSubscription<NotificationEntity> _socketSub;
@@ -43,7 +47,28 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     emit(state.copyWith(status: NotificationStatus.loading));
     try {
       final items = await _getNotifications(null);
-      emit(state.copyWith(status: NotificationStatus.success, items: items));
+      final unreadCount = await _getUnreadCount(null);
+      emit(
+        state.copyWith(
+          status: NotificationStatus.success,
+          items: items,
+          unreadTotal: unreadCount,
+        ),
+      );
+    } on Failure catch (f) {
+      emit(state.copyWith(status: NotificationStatus.failure, failure: f));
+    }
+  }
+
+  Future<void> _onUnreadCountRequested(
+    NotificationsUnreadCountRequested event,
+    Emitter<NotificationState> emit,
+  ) async {
+    try {
+      final count = await _getUnreadCount(null);
+      emit(
+        state.copyWith(status: NotificationStatus.success, unreadTotal: count),
+      );
     } on Failure catch (f) {
       emit(state.copyWith(status: NotificationStatus.failure, failure: f));
     }
@@ -54,10 +79,18 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     Emitter<NotificationState> emit,
   ) async {
     // Optimistik yangilash — UI darhol o‘qilgan holatga o‘tadi.
+    final wasUnread = state.items.any((e) => e.id == event.id && !e.isRead);
     final updated = state.items
         .map((e) => e.id == event.id ? e.copyWith(isRead: true) : e)
         .toList();
-    emit(state.copyWith(items: updated));
+    emit(
+      state.copyWith(
+        items: updated,
+        unreadTotal: wasUnread && state.unreadCount > 0
+            ? state.unreadCount - 1
+            : state.unreadCount,
+      ),
+    );
     try {
       await _markRead(event.id);
     } on Failure {
@@ -70,7 +103,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     Emitter<NotificationState> emit,
   ) async {
     final updated = state.items.map((e) => e.copyWith(isRead: true)).toList();
-    emit(state.copyWith(items: updated));
+    emit(state.copyWith(items: updated, unreadTotal: 0));
     try {
       await _readAll(null);
     } on Failure {
@@ -85,11 +118,21 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     Emitter<NotificationState> emit,
   ) {
     final incoming = event.notification;
+    final existing = state.items.where((e) => e.id == incoming.id).firstOrNull;
     final rest = state.items.where((e) => e.id != incoming.id);
-    emit(state.copyWith(
-      status: NotificationStatus.success,
-      items: [incoming, ...rest],
-    ));
+    var unreadCount = state.unreadCount;
+    if (existing != null && !existing.isRead && incoming.isRead) {
+      unreadCount = unreadCount > 0 ? unreadCount - 1 : 0;
+    } else if ((existing == null || existing.isRead) && !incoming.isRead) {
+      unreadCount++;
+    }
+    emit(
+      state.copyWith(
+        status: NotificationStatus.success,
+        items: [incoming, ...rest],
+        unreadTotal: unreadCount,
+      ),
+    );
   }
 
   @override

@@ -870,6 +870,9 @@ class AppLocalizationsUz extends AppLocalizations {
   String get taskFilterStatus => 'Holati';
 
   @override
+  String get taskFilterAllStatuses => 'Barchasi';
+
+  @override
   String get taskFilterStatusHint => 'Holati tanlang';
 
   @override

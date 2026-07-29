@@ -706,6 +706,7 @@ Future<void> configureDependencies() async {
     ..registerFactory<NotificationBloc>(
       () => NotificationBloc(
         getNotifications: getIt(),
+        getUnreadCount: getIt(),
         markRead: getIt(),
         readAll: getIt(),
         watch: getIt(),

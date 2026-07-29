@@ -1778,6 +1778,12 @@ abstract class AppLocalizations {
   /// **'Holati'**
   String get taskFilterStatus;
 
+  /// No description provided for @taskFilterAllStatuses.
+  ///
+  /// In uz, this message translates to:
+  /// **'Barchasi'**
+  String get taskFilterAllStatuses;
+
   /// No description provided for @taskFilterStatusHint.
   ///
   /// In uz, this message translates to:
